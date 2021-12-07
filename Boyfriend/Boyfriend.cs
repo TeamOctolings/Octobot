@@ -2,21 +2,24 @@
 using Discord.WebSocket;
 
 namespace Boyfriend;
-    public class Boyfriend {
+    public static class Boyfriend {
 
-        public static void Main(string[] args)
-            => new Boyfriend().MainAsync().GetAwaiter().GetResult();
+        public static void Main()
+            => Init().GetAwaiter().GetResult();
 
-        public static readonly DiscordSocketClient Client = new();
+        private static readonly DiscordSocketConfig Config = new() {
+            MessageCacheSize = 250
+        };
+        public static readonly DiscordSocketClient Client = new(Config);
 
-        private async Task MainAsync() {
+        private static async Task Init() {
             Client.Log += Log;
-            var token = File.ReadAllText("token.txt").Trim();
+            var token = (await File.ReadAllTextAsync("token.txt")).Trim();
 
             await Client.LoginAsync(TokenType.Bot, token);
             await Client.StartAsync();
 
-            await new CommandHandler().InstallCommandsAsync();
+            await new EventHandler().InitEvents();
 
             await Task.Delay(-1);
         }

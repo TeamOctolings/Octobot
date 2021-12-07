@@ -1,4 +1,6 @@
 ﻿using Discord.Commands;
+// ReSharper disable UnusedType.Global
+// ReSharper disable UnusedMember.Global
 
 namespace Boyfriend.Commands;
 
