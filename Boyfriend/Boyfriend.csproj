@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+        <Title>Boyfriend</Title>
+        <Authors>l1ttle</Authors>
+        <PackageProjectUrl>https://github.com/l1ttleO/Boyfriend-CSharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/l1ttleO/Boyfriend-CSharp</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Discord.Net" Version="2.4.0" />
+    </ItemGroup>
+
+</Project>
