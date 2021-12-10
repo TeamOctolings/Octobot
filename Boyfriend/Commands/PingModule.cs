@@ -10,5 +10,5 @@ public class PingModule : ModuleBase<SocketCommandContext> {
     [Summary("Измеряет время обработки REST-запроса")]
     [Alias("пинг")]
     public async Task Run()
-        => await ReplyAsync(Utils.GetBeep() + Boyfriend.Client.Latency + "мс");
+        => await ReplyAsync($"{Utils.GetBeep()}{Boyfriend.Client.Latency}мс");
 }

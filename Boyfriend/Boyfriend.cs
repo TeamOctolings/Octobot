@@ -8,7 +8,8 @@ namespace Boyfriend;
             => Init().GetAwaiter().GetResult();
 
         private static readonly DiscordSocketConfig Config = new() {
-            MessageCacheSize = 250
+            MessageCacheSize = 250,
+            GatewayIntents = GatewayIntents.All
         };
         public static readonly DiscordSocketClient Client = new(Config);
 
@@ -18,6 +19,7 @@ namespace Boyfriend;
 
             await Client.LoginAsync(TokenType.Bot, token);
             await Client.StartAsync();
+            await Client.SetActivityAsync(new Game("Retrospecter - Electrospasm", ActivityType.Listening));
 
             await new EventHandler().InitEvents();
 
