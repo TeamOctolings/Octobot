@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Discord;
 using Discord.Net;
 
@@ -6,15 +7,16 @@ namespace Boyfriend;
 
 public static class Utils {
     public static string GetBeep() {
-        var letters = new[] { "а", "о", "и"};
+        var letters = new[] {"а", "о", "и"};
         return $"Б{letters[new Random().Next(3)]}п! ";
     }
 
-    [Obsolete("Stop hard-coding things!")]
-    public static ITextChannel GetAdminLogChannel() {
-        if (Boyfriend.Client.GetChannel(870929165141032971) is not ITextChannel adminLogChannel)
-            throw new Exception("Invalid admin log channel");
-        return adminLogChannel;
+    public static async Task<ITextChannel> GetAdminLogChannel(IGuild guild) {
+        var adminLogChannel = await ParseChannel(Boyfriend.GetGuildConfig(guild).AdminLogChannel.ToString());
+        if (adminLogChannel is ITextChannel channel)
+            return channel;
+
+        throw new Exception("Неверный канал админ-логов для гильдии " + guild.Id);
     }
 
     public static string Wrap(string original) {
@@ -50,6 +52,14 @@ public static class Utils {
         return await guild.GetUserAsync(ParseMention(mention));
     }
 
+    public static async Task<IChannel> ParseChannel(string mention) {
+        return await Boyfriend.Client.GetChannelAsync(ParseMention(mention));
+    }
+
+    public static IRole ParseRole(IGuild guild, string mention) {
+        return guild.GetRole(ParseMention(mention));
+    }
+
     public static async Task SendDirectMessage(IUser user, string toSend) {
         try {
             await user.SendMessageAsync(toSend);
@@ -60,12 +70,23 @@ public static class Utils {
     }
 
     public static IRole GetMuteRole(IGuild guild) {
-        var role = guild.Roles.FirstOrDefault(x => x.Name.ToLower() is "заключённый" or "muted");
-        if (role == null) throw new Exception("Не удалось найти роль мута");
+        var role = guild.Roles.FirstOrDefault(x => x.Id == Boyfriend.GetGuildConfig(guild).MuteRole);
+        if (role == null) throw new Exception("Требуется указать роль мута в настройках!");
         return role;
     }
 
     public static async Task SilentSendAsync(ITextChannel channel, string text) {
-        await channel.SendMessageAsync(text, false, null, null, AllowedMentions.None);
+        try {
+            await channel.SendMessageAsync(text, false, null, null, AllowedMentions.None);
+        } catch (ArgumentException) {}
+    }
+
+    private static readonly string[] Formats = {
+        "%d'd'%h'h'%m'm'%s's'", "%d'd'%h'h'%m'm'", "%d'd'%h'h'%s's'", "%d'd'%h'h'", "%d'd'%m'm'%s's'", "%d'd'%m'm'",
+        "%d'd'%s's'", "%d'd'", "%h'h'%m'm'%s's'", "%h'h'%m'm'", "%h'h'%s's'", "%h'h'", "%m'm'%s's'", "%m'm'", "%s's'"
+    };
+    public static TimeSpan GetTimeSpan(string from) {
+        return TimeSpan.ParseExact(from.ToLowerInvariant(), Formats,
+            CultureInfo.InvariantCulture);
     }
 }

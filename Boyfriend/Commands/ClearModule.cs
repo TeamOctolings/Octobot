@@ -23,7 +23,7 @@ public class ClearModule : ModuleBase<SocketCommandContext> {
             default: {
                 var messages = await channel.GetMessagesAsync(toDelete + 1).FlattenAsync();
                 await channel.DeleteMessagesAsync(messages);
-                await Utils.GetAdminLogChannel().SendMessageAsync(
+                await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Context.Guild),
                     $"{Context.User.Mention} удаляет {toDelete + 1} сообщений в канале " +
                     $"{Utils.MentionChannel(Context.Channel.Id)}");
                 break;

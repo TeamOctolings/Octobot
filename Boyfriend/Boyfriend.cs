@@ -45,18 +45,29 @@ public static class Boyfriend {
             try {
                 config = await JsonSerializer.DeserializeAsync<GuildConfig>(openStream) ?? throw new Exception();
             } catch (JsonException) {
-                config = new GuildConfig(guild.Id, "ru", "!", false);
+                config = new GuildConfig(guild.Id, "ru", "!", false, true, true, 0, 0, 0);
             }
             GuildConfigDictionary.Add(guild.Id, config);
         }
     }
 
     public static GuildConfig GetGuildConfig(IGuild guild) {
-        GuildConfig toReturn;
-        toReturn = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id]
-            : new GuildConfig(guild.Id, "ru", "!", false);
+        var toReturn = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id]
+            : new GuildConfig(guild.Id, "ru", "!", false, true, true, 0, 0, 0);
 
         if (toReturn.Id != guild.Id) throw new Exception();
         return toReturn;
+    }
+
+    public static IGuild FindGuild(ITextChannel channel) {
+        foreach (var guild in Client.Guilds) {
+            if (guild.Channels.Any(x => x == channel)) return guild;
+        }
+
+        throw new Exception("Не удалось найти сервер по каналу!");
+    }
+
+    public static void ThrowFatal(Exception e) {
+        throw e;
     }
 }

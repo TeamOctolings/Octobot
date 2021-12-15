@@ -12,13 +12,14 @@ public class BanModule : ModuleBase<SocketCommandContext> {
     [Command("ban")]
     [Summary("Банит пользователя")]
     [Alias("бан")]
-    public async Task Run(string user, string durationString, [Remainder]string reason) {
+    public async Task Run(string user, [Remainder]string reason) {
         TimeSpan duration;
         try {
-            duration = TimeSpan.Parse(durationString);
+            var reasonArray = reason.Split();
+            duration = Utils.GetTimeSpan(reasonArray[0]);
+            reason = string.Join(" ", reasonArray.Skip(1));
         } catch (Exception e) when (e is ArgumentNullException or FormatException or OverflowException) {
             duration = TimeSpan.FromMilliseconds(-1);
-            reason = durationString + reason;
         }
         var author = Context.Guild.GetUser(Context.User.Id);
         var toBan = await Utils.ParseUser(user);
@@ -35,8 +36,8 @@ public class BanModule : ModuleBase<SocketCommandContext> {
         var guildBanMessage = $"({author.Username}#{author.Discriminator}) {reason}";
         await guild.AddBanAsync(toBan, 0, guildBanMessage);
         var notification = $"{authorMention} банит {toBan.Mention} за {Utils.WrapInline(reason)}";
-        await Utils.SilentSendAsync(guild.GetSystemChannelAsync().Result, notification);
-        await Utils.SilentSendAsync(Utils.GetAdminLogChannel(), notification);
+        await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
+        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
         var task = new Task(() => UnbanModule.UnbanUser(guild, guild.GetCurrentUserAsync().Result, toBan,
             "Время наказания истекло"));
         await Utils.StartDelayed(task, duration, () => guild.GetBanAsync(toBan).Result != null);

@@ -19,23 +19,27 @@ public class EventHandler {
         await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
     }
 
-    [Obsolete("Stop hard-coding things!")]
-    private async Task ReadyEvent() {
-        if (_client.GetChannel(618044439939645444) is not IMessageChannel botLogChannel)
-            throw new Exception("Invalid bot log channel");
-        await botLogChannel.SendMessageAsync($"{Utils.GetBeep()}Я запустился! (C#)");
-
+    private static async Task ReadyEvent() {
         await Boyfriend.SetupGuildConfigs();
+
+        foreach (var guild in Boyfriend.Client.Guilds) {
+            var channel = guild.GetTextChannel(Boyfriend.GetGuildConfig(guild).BotLogChannel);
+            if (channel == null) continue;
+            await channel.SendMessageAsync($"{Utils.GetBeep()}Я запустился! (C#)");
+        }
     }
 
     private static async Task MessageDeletedEvent(Cacheable<IMessage, ulong> message,
         Cacheable<IMessageChannel, ulong> channel) {
         var msg = message.Value;
         var toSend = msg == null
-            ? "Удалено сообщение в канале {Utils.MentionChannel(channel.Id)}, но я забыл что там было"
+            ? $"Удалено сообщение в канале {Utils.MentionChannel(channel.Id)}, но я забыл что там было"
             : $"Удалено сообщение от {msg.Author.Mention} в канале " +
               $"{Utils.MentionChannel(channel.Id)}: {Environment.NewLine}{Utils.Wrap(msg.Content)}";
-        await Utils.SilentSendAsync(Utils.GetAdminLogChannel(), toSend);
+        try {
+            await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(
+                    Boyfriend.FindGuild(channel.Value as ITextChannel)), toSend);
+        } catch (ArgumentException) {}
     }
 
     private static async Task MessageReceivedEvent(SocketMessage messageParam) {
@@ -46,15 +50,17 @@ public class EventHandler {
 
         if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2)
             && !user.GuildPermissions.MentionEveryone)
-            BanModule.BanUser(guild, guild.GetCurrentUserAsync().Result, user, TimeSpan.FromMilliseconds(-1),
+            BanModule.BanUser(guild, await guild.GetCurrentUserAsync(), user, TimeSpan.FromMilliseconds(-1),
                 "Более 3-ёх упоминаний в одном сообщении");
 
         var prevs = await message.Channel.GetMessagesAsync(3).FlattenAsync();
         var prevsArray = prevs as IMessage[] ?? prevs.ToArray();
         var prev = prevsArray[1].Content;
         var prevFailsafe = prevsArray[2].Content;
+        if (message.Channel is not ITextChannel channel) throw new Exception();
         if (!(message.HasStringPrefix(Boyfriend.GetGuildConfig(guild).Prefix, ref argPos)
               || message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos))
+            || user == await Boyfriend.FindGuild(channel).GetCurrentUserAsync()
             || user.IsBot && message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))
             return;
 
@@ -73,7 +79,10 @@ public class EventHandler {
             : $"Отредактировано сообщение от {msg.Author.Mention} " +
               $"в канале {Utils.MentionChannel(channel.Id)}." +
               $"{nl}До:{nl}{Utils.Wrap(msg.Content)}{nl}После:{nl}{Utils.Wrap(messageSocket.Content)}";
-        await Utils.SilentSendAsync(Utils.GetAdminLogChannel(), toSend);
+        try {
+            await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Boyfriend.FindGuild(channel as ITextChannel)),
+                toSend);
+        } catch (ArgumentException) {}
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
