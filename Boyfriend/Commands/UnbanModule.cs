@@ -11,15 +11,16 @@ public class UnbanModule : ModuleBase<SocketCommandContext> {
     [Command("unban")]
     [Summary("Возвращает пользователя из бана")]
     [Alias("разбан")]
-    [RequireBotPermission(GuildPermission.BanMembers)]
-    [RequireUserPermission(GuildPermission.BanMembers)]
     public Task Run(string user, [Remainder] string reason) {
-        var toBan = Utils.ParseUser(user).Result;
-        UnbanUser(Context.Guild, Context.User, toBan, reason);
+        var toUnban = Utils.ParseUser(user).Result;
+        if (Context.Guild.GetBanAsync(toUnban.Id) == null)
+            throw new Exception("Пользователь не забанен!");
+        UnbanUser(Context.Guild, Context.Guild.GetUser(Context.User.Id), toUnban, reason);
         return Task.CompletedTask;
     }
 
-    public static async void UnbanUser(IGuild guild, IUser author, IUser toUnban, string reason) {
+    public static async void UnbanUser(IGuild guild, IGuildUser author, IUser toUnban, string reason) {
+        await CommandHandler.CheckPermissions(author, GuildPermission.BanMembers);
         var authorMention = author.Mention;
         var notification = $"{authorMention} возвращает из бана {toUnban.Mention} за {Utils.WrapInline(reason)}";
         await guild.RemoveBanAsync(toUnban);

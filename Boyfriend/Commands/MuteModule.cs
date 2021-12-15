@@ -12,18 +12,33 @@ public class MuteModule : ModuleBase<SocketCommandContext> {
     [Command("mute")]
     [Summary("Глушит пользователя")]
     [Alias("мут")]
-    [RequireBotPermission(GuildPermission.ManageRoles)]
-    [RequireUserPermission(GuildPermission.ManageMessages)]
-    public Task Run(string user, TimeSpan duration, [Remainder]string reason) {
-        var toMute = Utils.ParseMember(Context.Guild, user).Result;
-        MuteMember(Context.Guild, Context.User, toMute, duration, reason);
-        return Task.CompletedTask;
+    public async Task Run(string user, string durationString, [Remainder]string reason) {
+        TimeSpan duration;
+        try {
+            duration = TimeSpan.Parse(durationString);
+        } catch (Exception e) when (e is ArgumentNullException or FormatException or OverflowException) {
+            duration = TimeSpan.FromMilliseconds(-1);
+            reason = durationString + reason;
+        }
+        var author = Context.Guild.GetUser(Context.User.Id);
+        var toMute = await Utils.ParseMember(Context.Guild, user);
+        await CommandHandler.CheckPermissions(author, GuildPermission.ManageMessages, GuildPermission.ManageRoles);
+        await CommandHandler.CheckInteractions(author, toMute);
+        MuteMember(Context.Guild, Context.Guild.GetUser(Context.User.Id), toMute, duration, reason);
     }
 
-    private static async void MuteMember(IGuild guild, IMentionable author, IGuildUser toMute, TimeSpan duration,
+    private static async void MuteMember(IGuild guild, IGuildUser author, IGuildUser toMute, TimeSpan duration,
         string reason) {
+        await CommandHandler.CheckPermissions(author, GuildPermission.ManageMessages, GuildPermission.ManageRoles);
         var authorMention = author.Mention;
         var role = Utils.GetMuteRole(guild);
+        if (Boyfriend.GetGuildConfig(guild).RemoveRolesOnMute) {
+            foreach (var roleId in toMute.RoleIds) {
+                await toMute.RemoveRoleAsync(roleId);
+
+            }
+        }
+
         await toMute.AddRoleAsync(role);
         var notification = $"{authorMention} глушит {toMute.Mention} за {Utils.WrapInline(reason)}";
         await Utils.SilentSendAsync(guild.GetSystemChannelAsync().Result, notification);

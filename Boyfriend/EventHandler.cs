@@ -8,7 +8,7 @@ namespace Boyfriend;
 
 public class EventHandler {
     private readonly DiscordSocketClient _client = Boyfriend.Client;
-    private readonly CommandService _commands = new();
+    public static readonly CommandService Commands = new();
 
     public async Task InitEvents() {
         _client.Ready += ReadyEvent;
@@ -16,50 +16,16 @@ public class EventHandler {
         _client.MessageReceived += MessageReceivedEvent;
         _client.MessageUpdated += MessageUpdatedEvent;
         _client.UserJoined += UserJoinedEvent;
-        await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
-    }
-
-    private static async Task HandleErrors(SocketCommandContext context, IResult result) {
-        var channel = context.Channel;
-        var reason = Utils.WrapInline(result.ErrorReason);
-        switch (result.Error) {
-            case CommandError.Exception:
-                await channel.SendMessageAsync($"Произошла непредвиденная ошибка при выполнении команды: {reason}");
-                break;
-            case CommandError.Unsuccessful:
-                await channel.SendMessageAsync($"Выполнение команды завершилось неудачей: {reason}");
-                break;
-            case CommandError.MultipleMatches:
-                await channel.SendMessageAsync($"Обнаружены повторяющиеся типы аргументов! {reason}");
-                break;
-            case CommandError.ParseFailed:
-                await channel.SendMessageAsync($"Не удалось обработать команду: {reason}");
-                break;
-            case CommandError.UnknownCommand:
-                await channel.SendMessageAsync($"Неизвестная команда! {reason}");
-                break;
-            case CommandError.UnmetPrecondition:
-                await channel.SendMessageAsync($"У тебя недостаточно прав для выполнения этой команды! {reason}");
-                break;
-            case CommandError.BadArgCount:
-                await channel.SendMessageAsync($"Неверное количество аргументов! {reason}");
-                break;
-            case CommandError.ObjectNotFound:
-                await channel.SendMessageAsync($"Нету нужных аргументов! {reason}");
-                break;
-            case null:
-                break;
-            default:
-                throw new ArgumentException("CommandError");
-
-        }
+        await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
     }
 
     [Obsolete("Stop hard-coding things!")]
     private async Task ReadyEvent() {
         if (_client.GetChannel(618044439939645444) is not IMessageChannel botLogChannel)
-            throw new ArgumentException("Invalid bot log channel");
+            throw new Exception("Invalid bot log channel");
         await botLogChannel.SendMessageAsync($"{Utils.GetBeep()}Я запустился! (C#)");
+
+        await Boyfriend.SetupGuildConfigs();
     }
 
     private static async Task MessageDeletedEvent(Cacheable<IMessage, ulong> message,
@@ -72,34 +38,38 @@ public class EventHandler {
         await Utils.SilentSendAsync(Utils.GetAdminLogChannel(), toSend);
     }
 
-    private async Task MessageReceivedEvent(SocketMessage messageParam) {
-        if (messageParam is not SocketUserMessage {Author: IGuildUser user} message) return;
-        var argPos = 0;
+    private static async Task MessageReceivedEvent(SocketMessage messageParam) {
+        if (messageParam is not SocketUserMessage message) return;
+        var user = (IGuildUser) message.Author;
         var guild = user.Guild;
+        var argPos = 0;
 
         if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2)
             && !user.GuildPermissions.MentionEveryone)
             BanModule.BanUser(guild, guild.GetCurrentUserAsync().Result, user, TimeSpan.FromMilliseconds(-1),
                 "Более 3-ёх упоминаний в одном сообщении");
 
-        if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
-            message.Author.IsBot)
+        var prevs = await message.Channel.GetMessagesAsync(3).FlattenAsync();
+        var prevsArray = prevs as IMessage[] ?? prevs.ToArray();
+        var prev = prevsArray[1].Content;
+        var prevFailsafe = prevsArray[2].Content;
+        if (!(message.HasStringPrefix(Boyfriend.GetGuildConfig(guild).Prefix, ref argPos)
+              || message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos))
+            || user.IsBot && message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))
             return;
 
-        var context = new SocketCommandContext(_client, message);
-
-        var result = await _commands.ExecuteAsync(context, argPos, null);
-        await HandleErrors(context, result);
+        await CommandHandler.HandleCommand(message, argPos);
     }
 
     private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,
         ISocketMessageChannel channel) {
         var msg = messageCached.Value;
         var nl = Environment.NewLine;
+        if (msg.Content == messageSocket.Content) return;
         var toSend = msg == null
             ? $"Отредактировано сообщение от {messageSocket.Author.Mention} в канале" +
-              $" {Utils.MentionChannel(channel.Id)}," + $" но я забыл что там было до редактирования: " +
-              $"{Utils.Wrap(messageSocket.Content)}"
+              $" {Utils.MentionChannel(channel.Id)}," + " но я забыл что там было до редактирования: " +
+              Utils.Wrap(messageSocket.Content)
             : $"Отредактировано сообщение от {msg.Author.Mention} " +
               $"в канале {Utils.MentionChannel(channel.Id)}." +
               $"{nl}До:{nl}{Utils.Wrap(msg.Content)}{nl}После:{nl}{Utils.Wrap(messageSocket.Content)}";

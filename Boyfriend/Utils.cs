@@ -13,7 +13,7 @@ public static class Utils {
     [Obsolete("Stop hard-coding things!")]
     public static ITextChannel GetAdminLogChannel() {
         if (Boyfriend.Client.GetChannel(870929165141032971) is not ITextChannel adminLogChannel)
-            throw new ArgumentException("Invalid admin log channel");
+            throw new Exception("Invalid admin log channel");
         return adminLogChannel;
     }
 
@@ -31,13 +31,6 @@ public static class Utils {
     }
 
     public static async Task StartDelayed(Task toRun, TimeSpan delay, Func<bool>? condition = null) {
-        switch (delay.TotalMilliseconds) {
-            case < -1:
-                throw new ArgumentOutOfRangeException(nameof(delay), "Указана отрицательная продолжительность!");
-            case > int.MaxValue:
-                throw new ArgumentOutOfRangeException(nameof(delay), "Указана слишком большая продолжительность!");
-        }
-
         await Task.Delay(delay);
         var conditionResult = condition?.Invoke() ?? true;
         if (conditionResult)

@@ -12,15 +12,15 @@ public class KickModule : ModuleBase<SocketCommandContext> {
     [Command("kick")]
     [Summary("Выгоняет пользователя")]
     [Alias("кик")]
-    [RequireBotPermission(GuildPermission.KickMembers)]
-    [RequireUserPermission(GuildPermission.KickMembers)]
-    public Task Run(string user, [Remainder]string reason) {
+    public async Task Run(string user, [Remainder]string reason) {
+        var author = Context.Guild.GetUser(Context.User.Id);
         var toKick = Utils.ParseMember(Context.Guild, user).Result;
-        KickMember(Context.Guild, Context.User, toKick, reason);
-        return Task.CompletedTask;
+        await CommandHandler.CheckPermissions(author, GuildPermission.KickMembers);
+        await CommandHandler.CheckInteractions(author, toKick);
+        KickMember(Context.Guild, Context.Guild.GetUser(Context.User.Id), toKick, reason);
     }
 
-    private static async void KickMember(IGuild guild, IUser author, IGuildUser toKick, string reason) {
+    private static async void KickMember(IGuild guild, IGuildUser author, IGuildUser toKick, string reason) {
         var authorMention = author.Mention;
         await Utils.SendDirectMessage(toKick, $"Тебя кикнул {authorMention} на сервере {guild.Name} за " +
                                               $"{Utils.WrapInline(reason)}");
