@@ -1,48 +1,43 @@
-﻿using Discord;
+﻿using System.Text.RegularExpressions;
+using Boyfriend.Commands;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 namespace Boyfriend;
 
 public static class CommandHandler {
-    public static async Task HandleCommand(SocketUserMessage message, int argPos) {
-        var context = new SocketCommandContext(Boyfriend.Client, message);
-        var result = await EventHandler.Commands.ExecuteAsync(context, argPos, null);
+    public static readonly Command[] Commands = {
+        new BanCommand(), new ClearCommand(), new HelpCommand(),
+        new KickCommand(), new MuteCommand()
+    };
 
-        await HandleErrors(context, result);
-    }
-    private static async Task HandleErrors(SocketCommandContext context, IResult result) {
-        var channel = context.Channel;
-        var reason = Utils.WrapInline(result.ErrorReason);
-        switch (result.Error) {
-            case CommandError.Exception:
-                await channel.SendMessageAsync(reason);
-                break;
-            case CommandError.Unsuccessful:
-                await channel.SendMessageAsync($"Выполнение команды завершилось неудачей: {reason}");
-                break;
-            case CommandError.MultipleMatches:
-                await channel.SendMessageAsync($"Обнаружены повторяющиеся типы аргументов! {reason}");
-                break;
-            case CommandError.ParseFailed:
-                await channel.SendMessageAsync($"Не удалось обработать команду: {reason}");
-                break;
-            case CommandError.UnknownCommand:
-                await channel.SendMessageAsync($"Неизвестная команда! {reason}");
-                break;
-            case CommandError.UnmetPrecondition:
-                await channel.SendMessageAsync($"У тебя недостаточно прав для выполнения этой к: {reason}");
-                break;
-            case CommandError.BadArgCount:
-                await channel.SendMessageAsync($"Неверное количество аргументов! {reason}");
-                break;
-            case CommandError.ObjectNotFound:
-                await channel.SendMessageAsync($"Нету нужных аргументов! {reason}");
-                break;
-            case null:
-                break;
-            default:
-                throw new Exception("CommandError");
+    public static async Task HandleCommand(SocketUserMessage message) {
+        var context = new SocketCommandContext(Boyfriend.Client, message);
+
+        foreach (var command in Commands) {
+            var regex = new Regex(Regex.Escape(Boyfriend.GetGuildConfig(context.Guild).Prefix));
+            if (!command.GetAliases().Contains(regex.Replace(message.Content, "", 1).Split()[0])) continue;
+
+            var args = message.Content.Split().Skip(1).ToArray();
+            try {
+                if (command.GetArgumentsAmountRequired() > args.Length)
+                    throw new ApplicationException(string.Format(Messages.NotEnoughArguments,
+                        command.GetArgumentsAmountRequired(), args.Length));
+                await command.Run(context, args);
+            }
+            catch (Exception e) {
+                var signature = e switch {
+                    ApplicationException => ":x:",
+                    UnauthorizedAccessException => ":no_entry_sign:",
+                    _ => ":stop_sign:"
+                };
+                await context.Channel.SendMessageAsync($"{signature} `{e.Message}`");
+                if (e.StackTrace != null && e is not ApplicationException or UnauthorizedAccessException)
+                    await context.Channel.SendMessageAsync(Utils.Wrap(e.StackTrace));
+            }
+
+            break;
         }
     }
 
@@ -50,25 +45,25 @@ public static class CommandHandler {
         GuildPermission forBot = GuildPermission.StartEmbeddedActivities) {
         if (forBot == GuildPermission.StartEmbeddedActivities) forBot = toCheck;
         if (!(await user.Guild.GetCurrentUserAsync()).GuildPermissions.Has(forBot))
-            throw new Exception("У меня недостаточно прав для выполнения этой команды!");
+            throw new UnauthorizedAccessException(Messages.CommandNoPermissionBot);
         if (!user.GuildPermissions.Has(toCheck))
-            throw new Exception("У тебя недостаточно прав для выполнения этой команды!");
+            throw new UnauthorizedAccessException(Messages.CommandNoPermissionUser);
     }
 
     public static async Task CheckInteractions(IGuildUser actor, IGuildUser target) {
         if (actor.Guild != target.Guild)
-            throw new Exception("Участники находятся в разных гильдиях!");
+            throw new UnauthorizedAccessException(Messages.InteractionsDifferentGuilds);
         var me = await target.Guild.GetCurrentUserAsync();
         if (actor.Id == actor.Guild.OwnerId) return;
         if (target.Id == target.Guild.OwnerId)
-            throw new Exception("Ты не можешь взаимодействовать с владельцем сервера!");
+            throw new UnauthorizedAccessException(Messages.InteractionsOwner);
         if (actor == target)
-            throw new Exception("Ты не можешь взаимодействовать с самим собой!");
+            throw new UnauthorizedAccessException(Messages.InteractionsYourself);
         if (target == me)
-            throw new Exception("Ты не можешь со мной взаимодействовать!");
-        if (actor.Hierarchy <= target.Hierarchy)
-            throw new Exception("Ты не можешь взаимодействовать с этим участником!");
+            throw new UnauthorizedAccessException(Messages.InteractionsMe);
         if (me.Hierarchy <= target.Hierarchy)
-            throw new Exception("Я не могу взаимодействовать с этим участником!");
+            throw new UnauthorizedAccessException(Messages.InteractionsFailedBot);
+        if (actor.Hierarchy <= target.Hierarchy)
+            throw new UnauthorizedAccessException(Messages.InteractionsFailedUser);
     }
 }

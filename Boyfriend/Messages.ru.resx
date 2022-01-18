@@ -1,0 +1,237 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="CouldntFindGuildByChannel" xml:space="preserve">
+        <value>Не удалось найти сервер по каналу!</value>
+    </data>
+    <data name="Ready" xml:space="preserve">
+        <value>{0}Я запустился! (C#)</value>
+    </data>
+    <data name="UncachedMessageDeleted" xml:space="preserve">
+        <value>Удалено сообщение в канале {0}, но я забыл что там было</value>
+    </data>
+    <data name="CachedMessageDeleted" xml:space="preserve">
+        <value>Удалено сообщение от {0} в канале </value>
+    </data>
+    <data name="AutobanReason" xml:space="preserve">
+        <value>Слишком много упоминаний в одном сообщении</value>
+    </data>
+    <data name="UncachedMessageEdited" xml:space="preserve">
+        <value>Отредактировано сообщение от {0} в канале {1}, но я забыл что там было до редактирования</value>
+    </data>
+    <data name="CachedMessageEdited" xml:space="preserve">
+        <value>Отредактировано сообщение от {0} в канале {1}.{2}До:{3}{4}{5}После:{6}{7}</value>
+    </data>
+    <data name="DefaultWelcomeMessage" xml:space="preserve">
+        <value>{0}, добро пожаловать на сервер {1}</value>
+    </data>
+    <data name="Beep1" xml:space="preserve">
+        <value>Бап! </value>
+    </data>
+    <data name="Beep2" xml:space="preserve">
+        <value>Боп! </value>
+    </data>
+    <data name="Beep3" xml:space="preserve">
+        <value>Бип! </value>
+    </data>
+    <data name="MuteRoleRequired" xml:space="preserve">
+        <value>Требуется указать роль мута в настройках!</value>
+    </data>
+    <data name="InvalidAdminLogChannel" xml:space="preserve">
+        <value>Неверный канал админ-логов для гильдии </value>
+    </data>
+    <data name="CommandExecutionUnsuccessful" xml:space="preserve">
+        <value>Выполнение команды завершилось неудачей: {0}</value>
+    </data>
+    <data name="RepeatedArgumentsDetected" xml:space="preserve">
+        <value>Обнаружены повторяющиеся типы аргументов! {0}</value>
+    </data>
+    <data name="CommandParseFailed" xml:space="preserve">
+        <value>Не удалось обработать команду: {0}</value>
+    </data>
+    <data name="UnknownCommand" xml:space="preserve">
+        <value>Неизвестная команда! {0}</value>
+    </data>
+    <data name="BadArgumentCount" xml:space="preserve">
+        <value>Неверное количество аргументов! {0}</value>
+    </data>
+    <data name="ArgumentNotPresent" xml:space="preserve">
+        <value>Нету нужных аргументов! {0}</value>
+    </data>
+    <data name="CommandNoPermissionBot" xml:space="preserve">
+        <value>У меня недостаточно прав для выполнения этой команды!</value>
+    </data>
+    <data name="CommandNoPermissionUser" xml:space="preserve">
+        <value>У тебя недостаточно прав для выполнения этой команды!</value>
+    </data>
+    <data name="InteractionsDifferentGuilds" xml:space="preserve">
+        <value>Участники находятся в разных гильдиях!</value>
+    </data>
+    <data name="InteractionsOwner" xml:space="preserve">
+        <value>Ты не можешь взаимодействовать с владельцем сервера!</value>
+    </data>
+    <data name="InteractionsYourself" xml:space="preserve">
+        <value>Ты не можешь взаимодействовать с самим собой!</value>
+    </data>
+    <data name="InteractionsMe" xml:space="preserve">
+        <value>Ты не можешь со мной взаимодействовать!</value>
+    </data>
+    <data name="InteractionsFailedUser" xml:space="preserve">
+        <value>Ты не можешь взаимодействовать с этим участником!</value>
+    </data>
+    <data name="InteractionsFailedBot" xml:space="preserve">
+        <value>Я не могу взаимодействовать с этим участником!</value>
+    </data>
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>Тебя забанил {0} на сервере {1} за {2}</value>
+    </data>
+    <data name="UserBanned" xml:space="preserve">
+        <value>{0} банит {1} за {2}</value>
+    </data>
+    <data name="PunishmentExpired" xml:space="preserve">
+        <value>Время наказания истекло</value>
+    </data>
+    <data name="ClearNegativeAmount" xml:space="preserve">
+        <value>Указано отрицательное количество сообщений!</value>
+    </data>
+    <data name="ClearAmountTooLarge" xml:space="preserve">
+        <value>Указано слишком много сообщений!</value>
+    </data>
+    <data name="MessagesDeleted" xml:space="preserve">
+        <value>{0} удаляет {1} сообщений в канале {2}</value>
+    </data>
+    <data name="CommandHelp" xml:space="preserve">
+        <value>Справка по командам:{0}</value>
+    </data>
+    <data name="YouWereKicked" xml:space="preserve">
+        <value>Тебя кикнул {0} на сервере {1} за {2}</value>
+    </data>
+    <data name="MemberKicked" xml:space="preserve">
+        <value>{0} выгоняет {1} за {2}</value>
+    </data>
+    <data name="MemberMuted" xml:space="preserve">
+        <value>{0} глушит {1} за {2}</value>
+    </data>
+    <data name="Milliseconds" xml:space="preserve">
+        <value>мс</value>
+    </data>
+    <data name="MemberAlreadyMuted" xml:space="preserve">
+        <value>Участник уже заглушен!</value>
+    </data>
+    <data name="MuteRoleManuallyRemoved" xml:space="preserve">
+        <value>Кто-то убрал роль мута самостоятельно!</value>
+    </data>
+    <data name="ChannelNotSpecified" xml:space="preserve">
+        <value>Не указан</value>
+    </data>
+    <data name="RoleNotSpecified" xml:space="preserve">
+        <value>Не указана</value>
+    </data>
+    <data name="CurrentSettings" xml:space="preserve">
+        <value>Текущие настройки:{0}</value>
+    </data>
+    <data name="CurrentSettingsLang" xml:space="preserve">
+        <value>Язык (`lang`): `{0}`{1}</value>
+    </data>
+    <data name="CurrentSettingsPrefix" xml:space="preserve">
+        <value>Префикс (`prefix`): `{0}`{1}</value>
+    </data>
+    <data name="CurrentSettingsRemoveRoles" xml:space="preserve">
+        <value>Удалять роли при муте (`removeRolesOnMute`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsUseSystemChannel" xml:space="preserve">
+        <value>Использовать канал системных сообщений для уведомлений (`useSystemChannel`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsSendWelcomeMessages" xml:space="preserve">
+        <value>Отправлять приветствия (`sendWelcomeMessages`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsDefaultRole" xml:space="preserve">
+        <value>Стандартная роль (`defaultRole`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsMuteRole" xml:space="preserve">
+        <value>Роль мута (`muteRole`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsAdminLogChannel" xml:space="preserve">
+        <value>Канал админ-уведомлений (`adminLogChannel`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsBotLogChannel" xml:space="preserve">
+        <value>Канал бот-уведомлений (`botLogChannel`): {0}</value>
+    </data>
+    <data name="LanguageNotSupported" xml:space="preserve">
+        <value>Язык не поддерживается!</value>
+    </data>
+    <data name="SettingsUpdated" xml:space="preserve">
+        <value>Настройки успешно обновлены!</value>
+    </data>
+    <data name="InvalidBoolean" xml:space="preserve">
+        <value>Неверный параметр! Требуется 'true' или 'false'</value>
+    </data>
+    <data name="InvalidRoleSpecified" xml:space="preserve">
+        <value>Указана недействительная роль!</value>
+    </data>
+    <data name="InvalidChannelSpecified" xml:space="preserve">
+        <value>Указан недействильный канал!</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Да</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>Нет</value>
+    </data>
+    <data name="UserNotBanned" xml:space="preserve">
+        <value>Пользователь не забанен!</value>
+    </data>
+    <data name="MemberNotMuted" xml:space="preserve">
+        <value>Участник не заглушен!</value>
+    </data>
+    <data name="RolesReturned" xml:space="preserve">
+        <value>Кто-то убрал роль мута самостоятельно! Я вернул все роли, которые забрал при муте</value>
+    </data>
+    <data name="MemberUnmuted" xml:space="preserve">
+        <value>{0} возвращает из мута {1} за {2}</value>
+    </data>
+    <data name="UserUnbanned" xml:space="preserve">
+        <value>{0} возвращает из бана {1} за {2}</value>
+    </data>
+    <data name="CurrentSettingsWelcomeMessage" xml:space="preserve">
+        <value>Приветствие: `{0}`{1}</value>
+    </data>
+    <data name="NotEnoughArguments" xml:space="preserve">
+        <value>Недостаточно аргументов! Требуется: {0}, указано: {1}</value>
+    </data>
+    <data name="ClearInvalidAmountSpecified" xml:space="preserve">
+        <value>Указано неверное количество сообщений!</value>
+    </data>
+    <data name="BanResponse" xml:space="preserve">
+        <value>:white_check_mark: Успешно забанен {0} за {1}</value>
+    </data>
+    <data name="KickResponse" xml:space="preserve">
+        <value>:white_check_mark: Успешно выгнан {0} за {1}</value>
+    </data>
+    <data name="UserNotInGuild" xml:space="preserve">
+        <value>Указанный пользователь не является участником этого сервера!</value>
+    </data>
+    <data name="MuteResponse" xml:space="preserve">
+        <value>:white_check_mark: Успешно заглушен {0} за {1}</value>
+    </data>
+    <data name="UnbanResponse" xml:space="preserve">
+        <value>:white_check_mark: Успешно возвращён из бана {0} за {1}</value>
+    </data>
+    <data name="UnmuteResponse" xml:space="preserve">
+        <value>:white_check_mark: Успешно возвращён из мута {0} за {1}</value>
+    </data>
+</root>

@@ -6,17 +6,23 @@ using Discord.Net;
 namespace Boyfriend;
 
 public static class Utils {
-    public static string GetBeep() {
-        var letters = new[] {"а", "о", "и"};
-        return $"Б{letters[new Random().Next(3)]}п! ";
+    private static readonly string[] Formats = {
+        "%d'd'%h'h'%m'm'%s's'", "%d'd'%h'h'%m'm'", "%d'd'%h'h'%s's'", "%d'd'%h'h'", "%d'd'%m'm'%s's'", "%d'd'%m'm'",
+        "%d'd'%s's'", "%d'd'", "%h'h'%m'm'%s's'", "%h'h'%m'm'", "%h'h'%s's'", "%h'h'", "%m'm'%s's'", "%m'm'", "%s's'",
+
+        "%d'д'%h'ч'%m'м'%s'с'", "%d'д'%h'ч'%m'м'", "%d'д'%h'ч'%s'с'", "%d'д'%h'ч'", "%d'д'%m'м'%s'с'", "%d'д'%m'м'",
+        "%d'д'%s'с'", "%d'д'", "%h'ч'%m'м'%s'с'", "%h'ч'%m'м'", "%h'ч'%s'с'", "%h'ч'", "%m'м'%s'с'", "%m'м'", "%s'с'"
+    };
+
+    public static string GetBeep(string cultureInfo, int i = -1) {
+        Messages.Culture = new CultureInfo(cultureInfo);
+        var beeps = new[] {Messages.Beep1, Messages.Beep2, Messages.Beep3};
+        return beeps[i < 0 ? new Random().Next(3) : i];
     }
 
-    public static async Task<ITextChannel> GetAdminLogChannel(IGuild guild) {
-        var adminLogChannel = await ParseChannel(Boyfriend.GetGuildConfig(guild).AdminLogChannel.ToString());
-        if (adminLogChannel is ITextChannel channel)
-            return channel;
-
-        throw new Exception("Неверный канал админ-логов для гильдии " + guild.Id);
+    public static async Task<ITextChannel?> GetAdminLogChannel(IGuild guild) {
+        var adminLogChannel = await ParseChannelNullable(Boyfriend.GetGuildConfig(guild).AdminLogChannel.ToString());
+        return adminLogChannel as ITextChannel;
     }
 
     public static string Wrap(string original) {
@@ -43,6 +49,15 @@ public static class Utils {
         return Convert.ToUInt64(Regex.Replace(mention, "[^0-9]", ""));
     }
 
+    private static ulong? ParseMentionNullable(string mention) {
+        try {
+            return ParseMention(mention) == 0 ? throw new FormatException() : ParseMention(mention);
+        }
+        catch (FormatException) {
+            return null;
+        }
+    }
+
     public static async Task<IUser> ParseUser(string mention) {
         var user = Boyfriend.Client.GetUserAsync(ParseMention(mention));
         return await user;
@@ -52,12 +67,20 @@ public static class Utils {
         return await guild.GetUserAsync(ParseMention(mention));
     }
 
-    public static async Task<IChannel> ParseChannel(string mention) {
+    private static async Task<IChannel> ParseChannel(string mention) {
         return await Boyfriend.Client.GetChannelAsync(ParseMention(mention));
     }
 
-    public static IRole ParseRole(IGuild guild, string mention) {
+    public static async Task<IChannel?> ParseChannelNullable(string mention) {
+        return ParseMentionNullable(mention) == null ? null : await ParseChannel(mention);
+    }
+
+    public static IRole? ParseRole(IGuild guild, string mention) {
         return guild.GetRole(ParseMention(mention));
+    }
+
+    public static IRole? ParseRoleNullable(IGuild guild, string mention) {
+        return ParseMentionNullable(mention) == null ? null : ParseRole(guild, mention);
     }
 
     public static async Task SendDirectMessage(IUser user, string toSend) {
@@ -69,24 +92,23 @@ public static class Utils {
         }
     }
 
-    public static IRole GetMuteRole(IGuild guild) {
+    public static IRole? GetMuteRole(IGuild guild) {
         var role = guild.Roles.FirstOrDefault(x => x.Id == Boyfriend.GetGuildConfig(guild).MuteRole);
-        if (role == null) throw new Exception("Требуется указать роль мута в настройках!");
         return role;
     }
 
-    public static async Task SilentSendAsync(ITextChannel channel, string text) {
+    public static async Task SilentSendAsync(ITextChannel? channel, string text) {
+        if (channel == null) return;
         try {
             await channel.SendMessageAsync(text, false, null, null, AllowedMentions.None);
         } catch (ArgumentException) {}
     }
-
-    private static readonly string[] Formats = {
-        "%d'd'%h'h'%m'm'%s's'", "%d'd'%h'h'%m'm'", "%d'd'%h'h'%s's'", "%d'd'%h'h'", "%d'd'%m'm'%s's'", "%d'd'%m'm'",
-        "%d'd'%s's'", "%d'd'", "%h'h'%m'm'%s's'", "%h'h'%m'm'", "%h'h'%s's'", "%h'h'", "%m'm'%s's'", "%m'm'", "%s's'"
-    };
     public static TimeSpan GetTimeSpan(string from) {
         return TimeSpan.ParseExact(from.ToLowerInvariant(), Formats,
             CultureInfo.InvariantCulture);
+    }
+
+    public static string JoinString(string[] args, int startIndex) {
+        return string.Join(" ", args, startIndex, args.Length - startIndex);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
 using Boyfriend.Commands;
 using Discord;
 using Discord.Commands;
@@ -8,24 +8,25 @@ namespace Boyfriend;
 
 public class EventHandler {
     private readonly DiscordSocketClient _client = Boyfriend.Client;
-    public static readonly CommandService Commands = new();
 
-    public async Task InitEvents() {
+    public void InitEvents() {
         _client.Ready += ReadyEvent;
         _client.MessageDeleted += MessageDeletedEvent;
         _client.MessageReceived += MessageReceivedEvent;
         _client.MessageUpdated += MessageUpdatedEvent;
         _client.UserJoined += UserJoinedEvent;
-        await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
     }
 
     private static async Task ReadyEvent() {
         await Boyfriend.SetupGuildConfigs();
 
+        var i = new Random().Next(3);
         foreach (var guild in Boyfriend.Client.Guilds) {
-            var channel = guild.GetTextChannel(Boyfriend.GetGuildConfig(guild).BotLogChannel);
+            var config = Boyfriend.GetGuildConfig(guild);
+            Messages.Culture = new CultureInfo(config.Lang);
+            var channel = guild.GetTextChannel(config.BotLogChannel);
             if (channel == null) continue;
-            await channel.SendMessageAsync($"{Utils.GetBeep()}Я запустился! (C#)");
+            await channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(config.Lang, i)));
         }
     }
 
@@ -33,13 +34,11 @@ public class EventHandler {
         Cacheable<IMessageChannel, ulong> channel) {
         var msg = message.Value;
         var toSend = msg == null
-            ? $"Удалено сообщение в канале {Utils.MentionChannel(channel.Id)}, но я забыл что там было"
-            : $"Удалено сообщение от {msg.Author.Mention} в канале " +
+            ? string.Format(Messages.UncachedMessageDeleted, Utils.MentionChannel(channel.Id))
+            : string.Format(Messages.CachedMessageDeleted, msg.Author.Mention) +
               $"{Utils.MentionChannel(channel.Id)}: {Environment.NewLine}{Utils.Wrap(msg.Content)}";
-        try {
-            await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(
-                    Boyfriend.FindGuild(channel.Value as ITextChannel)), toSend);
-        } catch (ArgumentException) {}
+        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(
+            Boyfriend.FindGuild(channel.Value)), toSend);
     }
 
     private static async Task MessageReceivedEvent(SocketMessage messageParam) {
@@ -48,45 +47,54 @@ public class EventHandler {
         var guild = user.Guild;
         var argPos = 0;
 
+        var guildConfig = Boyfriend.GetGuildConfig(guild);
+        Messages.Culture = new CultureInfo(guildConfig.Lang);
         if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2)
             && !user.GuildPermissions.MentionEveryone)
-            BanModule.BanUser(guild, await guild.GetCurrentUserAsync(), user, TimeSpan.FromMilliseconds(-1),
-                "Более 3-ёх упоминаний в одном сообщении");
+            await BanCommand.BanUser(guild, null, await guild.GetCurrentUserAsync(), user,
+                TimeSpan.FromMilliseconds(-1), Messages.AutobanReason);
 
         var prevs = await message.Channel.GetMessagesAsync(3).FlattenAsync();
         var prevsArray = prevs as IMessage[] ?? prevs.ToArray();
-        var prev = prevsArray[1].Content;
-        var prevFailsafe = prevsArray[2].Content;
-        if (message.Channel is not ITextChannel channel) throw new Exception();
-        if (!(message.HasStringPrefix(Boyfriend.GetGuildConfig(guild).Prefix, ref argPos)
+        var prev = "";
+        var prevFailsafe = "";
+        try {
+            prev = prevsArray[1].Content;
+            prevFailsafe = prevsArray[2].Content;
+        }
+        catch (IndexOutOfRangeException) { }
+
+        if (!(message.HasStringPrefix(guildConfig.Prefix, ref argPos)
               || message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos))
-            || user == await Boyfriend.FindGuild(channel).GetCurrentUserAsync()
+            || user == await guild.GetCurrentUserAsync()
             || user.IsBot && message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))
             return;
 
-        await CommandHandler.HandleCommand(message, argPos);
+        await CommandHandler.HandleCommand(message);
     }
 
     private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,
         ISocketMessageChannel channel) {
         var msg = messageCached.Value;
         var nl = Environment.NewLine;
-        if (msg.Content == messageSocket.Content) return;
+        if (msg != null && msg.Content == messageSocket.Content) return;
         var toSend = msg == null
-            ? $"Отредактировано сообщение от {messageSocket.Author.Mention} в канале" +
-              $" {Utils.MentionChannel(channel.Id)}," + " но я забыл что там было до редактирования: " +
+            ? string.Format(Messages.UncachedMessageEdited, messageSocket.Author.Mention,
+                  Utils.MentionChannel(channel.Id)) +
               Utils.Wrap(messageSocket.Content)
-            : $"Отредактировано сообщение от {msg.Author.Mention} " +
-              $"в канале {Utils.MentionChannel(channel.Id)}." +
-              $"{nl}До:{nl}{Utils.Wrap(msg.Content)}{nl}После:{nl}{Utils.Wrap(messageSocket.Content)}";
-        try {
-            await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Boyfriend.FindGuild(channel as ITextChannel)),
+            : string.Format(Messages.CachedMessageEdited, msg.Author.Mention, Utils.MentionChannel(channel.Id), nl, nl,
+                Utils.Wrap(msg.Content), nl, nl, Utils.Wrap(messageSocket.Content));
+        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Boyfriend.FindGuild(channel)),
                 toSend);
-        } catch (ArgumentException) {}
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
         var guild = user.Guild;
-        await guild.SystemChannel.SendMessageAsync($"{user.Mention}, добро пожаловать на сервер {guild.Name}");
+        var config = Boyfriend.GetGuildConfig(guild);
+        if (config.SendWelcomeMessages)
+            await Utils.SilentSendAsync(guild.SystemChannel, string.Format(config.WelcomeMessage, user.Mention,
+                guild.Name));
+        if (config.DefaultRole != 0)
+            await user.AddRoleAsync(Utils.ParseRole(guild, config.DefaultRole.ToString()));
     }
 }

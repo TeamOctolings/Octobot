@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true">
+
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="CouldntFindGuildByChannel" xml:space="preserve">
+        <value>Couldn't find guild by message!</value>
+    </data>
+    <data name="Ready" xml:space="preserve">
+        <value>{0}I'm ready! (C#)</value>
+    </data>
+    <data name="UncachedMessageDeleted" xml:space="preserve">
+        <value>Deleted message in {0}, but I forgot what was there</value>
+    </data>
+    <data name="CachedMessageDeleted" xml:space="preserve">
+        <value>Deleted message from {0} in channel </value>
+    </data>
+    <data name="AutobanReason" xml:space="preserve">
+        <value>Too many mentions in 1 message</value>
+    </data>
+    <data name="UncachedMessageEdited" xml:space="preserve">
+        <value>Message edited from {0} in channel {1}, but I forgot what was there before the edit</value>
+    </data>
+    <data name="CachedMessageEdited" xml:space="preserve">
+        <value>Message edited from {0} in channel {1}.{2}Before:{3}{4}{5}After:{6}{7}</value>
+    </data>
+    <data name="DefaultWelcomeMessage" xml:space="preserve">
+        <value>{0}, welcome to {1}</value>
+    </data>
+    <data name="Beep1" xml:space="preserve">
+        <value>Bah! </value>
+    </data>
+    <data name="Beep2" xml:space="preserve">
+        <value>Bop! </value>
+    </data>
+    <data name="Beep3" xml:space="preserve">
+        <value>Beep! </value>
+    </data>
+    <data name="InvalidAdminLogChannel" xml:space="preserve">
+        <value>Invalid admin log channel for guild</value>
+    </data>
+    <data name="MuteRoleRequired" xml:space="preserve">
+        <value>You must set up a mute role in settings!</value>
+    </data>
+    <data name="CommandExecutionUnsuccessful" xml:space="preserve">
+        <value>Command execution was unsuccessful: {0}</value>
+    </data>
+    <data name="RepeatedArgumentsDetected" xml:space="preserve">
+        <value>Repeated arguments detected! {0}</value>
+    </data>
+    <data name="CommandParseFailed" xml:space="preserve">
+        <value>Command parsing failed: {0}</value>
+    </data>
+    <data name="UnknownCommand" xml:space="preserve">
+        <value>Unknown command! {0}</value>
+    </data>
+    <data name="BadArgumentCount" xml:space="preserve">
+        <value>Invalid argument count! {0}</value>
+    </data>
+    <data name="ArgumentNotPresent" xml:space="preserve">
+        <value>Arguments not present! {0}</value>
+    </data>
+    <data name="CommandNoPermissionBot" xml:space="preserve">
+        <value>I do not have permission to execute this command!</value>
+    </data>
+    <data name="CommandNoPermissionUser" xml:space="preserve">
+        <value>You do not have permission to execute this command!</value>
+    </data>
+    <data name="InteractionsDifferentGuilds" xml:space="preserve">
+        <value>Members are in different guilds!</value>
+    </data>
+    <data name="InteractionsOwner" xml:space="preserve">
+        <value>You cannot interact with guild owner!</value>
+    </data>
+    <data name="InteractionsYourself" xml:space="preserve">
+        <value>You cannot interact with yourself!</value>
+    </data>
+    <data name="InteractionsMe" xml:space="preserve">
+        <value>You cannot interact with me!</value>
+    </data>
+    <data name="InteractionsFailedUser" xml:space="preserve">
+        <value>You cannot interact with this member!</value>
+    </data>
+    <data name="InteractionsFailedBot" xml:space="preserve">
+        <value>I cannot interact with this member!</value>
+    </data>
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>You were banned by {0} in guild {1} for {2}</value>
+    </data>
+    <data name="UserBanned" xml:space="preserve">
+        <value>{0} banned {1} for {2}</value>
+    </data>
+    <data name="PunishmentExpired" xml:space="preserve">
+        <value>Punishment expired</value>
+    </data>
+    <data name="ClearNegativeAmount" xml:space="preserve">
+        <value>Negative message amount specified!</value>
+    </data>
+    <data name="ClearAmountTooLarge" xml:space="preserve">
+        <value>Too many messages specified!</value>
+    </data>
+    <data name="MessagesDeleted" xml:space="preserve">
+        <value>{0} deleted {1} messages in channel {2}</value>
+    </data>
+    <data name="CommandHelp" xml:space="preserve">
+        <value>Command help:{0}</value>
+    </data>
+    <data name="YouWereKicked" xml:space="preserve">
+        <value>You were kicked by {0} in guild {1} for {2}</value>
+    </data>
+    <data name="MemberKicked" xml:space="preserve">
+        <value>{0} kicked {1} for {2}</value>
+    </data>
+    <data name="MemberMuted" xml:space="preserve">
+        <value>{0} muted {1} for {2}</value>
+    </data>
+    <data name="Milliseconds" xml:space="preserve">
+        <value>ms</value>
+    </data>
+    <data name="MemberAlreadyMuted" xml:space="preserve">
+        <value>Member is already muted!</value>
+    </data>
+    <data name="MuteRoleManuallyRemoved" xml:space="preserve">
+        <value>Someone removed the mute role manually!</value>
+    </data>
+    <data name="ChannelNotSpecified" xml:space="preserve">
+        <value>Not specified</value>
+    </data>
+    <data name="RoleNotSpecified" xml:space="preserve">
+        <value>Not specified</value>
+    </data>
+    <data name="CurrentSettings" xml:space="preserve">
+        <value>Current settings:{0}</value>
+    </data>
+    <data name="CurrentSettingsLang" xml:space="preserve">
+        <value>Language (`lang`): `{0}`{1}</value>
+    </data>
+    <data name="CurrentSettingsPrefix" xml:space="preserve">
+        <value>Prefix (`prefix`): `{0}`{1}</value>
+    </data>
+    <data name="CurrentSettingsRemoveRoles" xml:space="preserve">
+        <value>Remove roles on mute (`removeRolesOnMute`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsUseSystemChannel" xml:space="preserve">
+        <value>Use system channel for notifications (`useSystemChannel`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsSendWelcomeMessages" xml:space="preserve">
+        <value>Send welcome messages (`sendWelcomeMessages`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsDefaultRole" xml:space="preserve">
+        <value>Default role (`defaultRole`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsMuteRole" xml:space="preserve">
+        <value>Mute role (`muteRole`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsAdminLogChannel" xml:space="preserve">
+        <value>Admin log channel (`adminLogChannel`): {0}{1}</value>
+    </data>
+    <data name="CurrentSettingsBotLogChannel" xml:space="preserve">
+        <value>Bot log channel (`botLogChannel`): {0}</value>
+    </data>
+    <data name="LanguageNotSupported" xml:space="preserve">
+        <value>Language not supported!</value>
+    </data>
+    <data name="SettingsUpdated" xml:space="preserve">
+        <value>Settings successfully updated</value>
+    </data>
+    <data name="InvalidBoolean" xml:space="preserve">
+        <value>Invalid argument! 'true' or 'false' required!</value>
+    </data>
+    <data name="InvalidRoleSpecified" xml:space="preserve">
+        <value>Invalid role specified!</value>
+    </data>
+    <data name="InvalidChannelSpecified" xml:space="preserve">
+        <value>Invalid channel specified!</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>No</value>
+    </data>
+    <data name="UserNotBanned" xml:space="preserve">
+        <value>User not banned!</value>
+    </data>
+    <data name="MemberNotMuted" xml:space="preserve">
+        <value>Member not muted!</value>
+    </data>
+    <data name="RolesReturned" xml:space="preserve">
+        <value>Someone removed the mute role manually! I added back all roles that I removed during the mute</value>
+    </data>
+    <data name="MemberUnmuted" xml:space="preserve">
+        <value>{0} unmuted {1} for {2}</value>
+    </data>
+    <data name="UserUnbanned" xml:space="preserve">
+        <value>{0} unbanned {1} for {2}</value>
+    </data>
+    <data name="CurrentSettingsWelcomeMessage" xml:space="preserve">
+        <value>Welcome message: `{0}`{1}</value>
+    </data>
+    <data name="NotEnoughArguments" xml:space="preserve">
+        <value>Not enough arguments! Needed: {0}, provided: {1}</value>
+    </data>
+    <data name="ClearInvalidAmountSpecified" xml:space="preserve">
+        <value>Invalid message amount specified!</value>
+    </data>
+    <data name="BanResponse" xml:space="preserve">
+        <value>:white_check_mark: Successfully banned {0} for {1}</value>
+    </data>
+    <data name="KickResponse" xml:space="preserve">
+        <value>:white_check_mark: Successfully kicked {0} for {1}</value>
+    </data>
+    <data name="UserNotInGuild" xml:space="preserve">
+        <value>The specified user is not a member of this server!</value>
+    </data>
+    <data name="MuteResponse" xml:space="preserve">
+        <value>:white_check_mark: Successfully muted {0} for {1}</value>
+    </data>
+    <data name="UnbanResponse" xml:space="preserve">
+        <value>:white_check_mark: Successfully unbanned {0} for {1}</value>
+    </data>
+    <data name="UnmuteResponse" xml:space="preserve">
+        <value>:white_check_mark: Successfully unmuted {0} for {1}</value>
+    </data>
+</root>
