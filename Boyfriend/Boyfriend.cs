@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using System.Text.Json;
+using Newtonsoft.Json;
 using Discord;
 using Discord.WebSocket;
 
@@ -26,7 +26,7 @@ public static class Boyfriend {
 
         await Client.LoginAsync(TokenType.Bot, token);
         await Client.StartAsync();
-        await Client.SetActivityAsync(new Game("Retrospecter - Chiller", ActivityType.Listening));
+        await Client.SetActivityAsync(new Game("Retrospecter - Expurgation", ActivityType.Listening));
 
         new EventHandler().InitEvents();
 
@@ -41,27 +41,33 @@ public static class Boyfriend {
     public static async Task SetupGuildConfigs() {
         foreach (var guild in Client.Guilds) {
             var path = "config_" + guild.Id + ".json";
-            var openStream = !File.Exists(path) ? File.Create(path) : File.OpenRead(path);
+            if (!File.Exists(path)) File.Create(path);
 
-            GuildConfig config;
-            try {
-                config = await JsonSerializer.DeserializeAsync<GuildConfig>(openStream) ?? throw new Exception();
-            } catch (JsonException) {
+            var config = JsonConvert.DeserializeObject<GuildConfig>(await File.ReadAllTextAsync(path));
+            if (config == null) {
                 Messages.Culture = new CultureInfo("ru");
-                config = new GuildConfig(guild.Id, "ru", "!", false, true,
-                    true, Messages.DefaultWelcomeMessage, 0, 0, 0, 0);
+                config = new GuildConfig(guild.Id);
             }
-            GuildConfigDictionary.Add(guild.Id, config);
+            config.Validate();
+
+            GuildConfigDictionary.Add(config.Id.GetValueOrDefault(0), config);
         }
+    }
+
+    public static void ResetGuildConfig(IGuild guild) {
+        GuildConfigDictionary.Remove(guild.Id);
+        var config = new GuildConfig(guild.Id);
+        config.Validate();
+        GuildConfigDictionary.Add(guild.Id, config);
     }
 
     public static GuildConfig GetGuildConfig(IGuild guild) {
         Messages.Culture = new CultureInfo("ru");
-        var toReturn = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id]
-            : new GuildConfig(guild.Id, "ru", "!", false, true, true, Messages.DefaultWelcomeMessage, 0, 0, 0, 0);
+        var config = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id] :
+            new GuildConfig(guild.Id);
+        config.Validate();
 
-        if (toReturn.Id != guild.Id) throw new Exception();
-        return toReturn;
+        return config;
     }
 
     public static IGuild FindGuild(IMessageChannel channel) {

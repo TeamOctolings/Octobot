@@ -234,4 +234,10 @@
     <data name="UnmuteResponse" xml:space="preserve">
         <value>:white_check_mark: Успешно возвращён из мута {0} за {1}</value>
     </data>
+    <data name="SettingDoesntExist" xml:space="preserve">
+        <value>Такая настройка не существует!</value>
+    </data>
+    <data name="CurrentSettingsReceiveStartupMessages" xml:space="preserve">
+        <value>Получать сообщения о запуске (`receiveStartupMessages`): {0}{1}</value>
+    </data>
 </root>

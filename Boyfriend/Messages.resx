@@ -243,4 +243,10 @@
     <data name="UnmuteResponse" xml:space="preserve">
         <value>:white_check_mark: Successfully unmuted {0} for {1}</value>
     </data>
+    <data name="SettingDoesntExist" xml:space="preserve">
+        <value>That setting doesn't exist!</value>
+    </data>
+    <data name="CurrentSettingsReceiveStartupMessages" xml:space="preserve">
+        <value>Receive startup messages (`receiveStartupMessages`): {0}{1}</value>
+    </data>
 </root>

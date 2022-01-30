@@ -11,7 +11,7 @@ public class UnbanCommand : Command {
     public override async Task Run(SocketCommandContext context, string[] args) {
         var toUnban = await Utils.ParseUser(args[0]);
         if (context.Guild.GetBanAsync(toUnban.Id) == null)
-            throw new Exception(Messages.UserNotBanned);
+            throw new ApplicationException(Messages.UserNotBanned);
         UnbanUser(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id), toUnban,
             Utils.JoinString(args, 1));
     }

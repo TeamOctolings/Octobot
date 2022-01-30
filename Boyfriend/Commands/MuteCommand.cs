@@ -28,15 +28,17 @@ public class MuteCommand : Command {
             toMute.TimedOutUntil != null && toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds()
             > DateTimeOffset.Now.ToUnixTimeMilliseconds())
             throw new ApplicationException(Messages.MemberAlreadyMuted);
-        var rolesRemoved = Boyfriend.GetGuildConfig(context.Guild).RolesRemovedOnMute;
+        var config = Boyfriend.GetGuildConfig(context.Guild);
+        var rolesRemoved = config.RolesRemovedOnMute!;
         if (rolesRemoved.ContainsKey(toMute.Id)) {
             foreach (var roleId in rolesRemoved[toMute.Id]) await toMute.AddRoleAsync(roleId);
             rolesRemoved.Remove(toMute.Id);
+            await config.Save();
             await Warn(context.Channel, Messages.RolesReturned);
             return;
         }
 
-        await CommandHandler.CheckPermissions(author, GuildPermission.ManageMessages, GuildPermission.ManageRoles);
+        await CommandHandler.CheckPermissions(author, GuildPermission.ModerateMembers, GuildPermission.ManageRoles);
         await CommandHandler.CheckInteractions(author, toMute);
         MuteMember(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id), toMute,
             duration, reason);
@@ -48,7 +50,7 @@ public class MuteCommand : Command {
         var authorMention = author.Mention;
         var role = Utils.GetMuteRole(guild);
         var config = Boyfriend.GetGuildConfig(guild);
-        if (config.RemoveRolesOnMute && role != null) {
+        if (config.RemoveRolesOnMute.GetValueOrDefault(false) && role != null) {
             var rolesRemoved = new List<ulong>();
             try {
                 foreach (var roleId in toMute.RoleIds) {
@@ -59,7 +61,7 @@ public class MuteCommand : Command {
             }
             catch (NullReferenceException) { }
 
-            config.RolesRemovedOnMute.Add(toMute.Id, rolesRemoved);
+            config.RolesRemovedOnMute!.Add(toMute.Id, rolesRemoved);
             await config.Save();
         }
 

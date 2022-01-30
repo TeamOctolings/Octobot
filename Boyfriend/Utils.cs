@@ -21,7 +21,7 @@ public static class Utils {
     }
 
     public static async Task<ITextChannel?> GetAdminLogChannel(IGuild guild) {
-        var adminLogChannel = await ParseChannelNullable(Boyfriend.GetGuildConfig(guild).AdminLogChannel.ToString());
+        var adminLogChannel = await ParseChannelNullable(Boyfriend.GetGuildConfig(guild).AdminLogChannel.ToString()!);
         return adminLogChannel as ITextChannel;
     }
 

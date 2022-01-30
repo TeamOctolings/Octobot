@@ -7,7 +7,7 @@ namespace Boyfriend.Commands;
 
 public class PingCommand : Command {
     public override async Task Run(SocketCommandContext context, string[] args) {
-        await context.Channel.SendMessageAsync($"{Utils.GetBeep(Boyfriend.GetGuildConfig(context.Guild).Lang)}" +
+        await context.Channel.SendMessageAsync($"{Utils.GetBeep(Boyfriend.GetGuildConfig(context.Guild).Lang!)}" +
                                                $"{Boyfriend.Client.Latency}{Messages.Milliseconds}");
     }
 

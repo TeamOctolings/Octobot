@@ -9,14 +9,15 @@ namespace Boyfriend;
 public static class CommandHandler {
     public static readonly Command[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
-        new KickCommand(), new MuteCommand()
+        new KickCommand(), new MuteCommand(), new PingCommand(),
+        new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
     };
 
     public static async Task HandleCommand(SocketUserMessage message) {
         var context = new SocketCommandContext(Boyfriend.Client, message);
 
         foreach (var command in Commands) {
-            var regex = new Regex(Regex.Escape(Boyfriend.GetGuildConfig(context.Guild).Prefix));
+            var regex = new Regex(Regex.Escape(Boyfriend.GetGuildConfig(context.Guild).Prefix!));
             if (!command.GetAliases().Contains(regex.Replace(message.Content, "", 1).Split()[0])) continue;
 
             var args = message.Content.Split().Skip(1).ToArray();
@@ -35,6 +36,7 @@ public static class CommandHandler {
                 await context.Channel.SendMessageAsync($"{signature} `{e.Message}`");
                 if (e.StackTrace != null && e is not ApplicationException or UnauthorizedAccessException)
                     await context.Channel.SendMessageAsync(Utils.Wrap(e.StackTrace));
+                throw;
             }
 
             break;

@@ -23,10 +23,10 @@ public class EventHandler {
         var i = new Random().Next(3);
         foreach (var guild in Boyfriend.Client.Guilds) {
             var config = Boyfriend.GetGuildConfig(guild);
-            Messages.Culture = new CultureInfo(config.Lang);
-            var channel = guild.GetTextChannel(config.BotLogChannel);
-            if (channel == null) continue;
-            await channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(config.Lang, i)));
+            Messages.Culture = new CultureInfo(config.Lang!);
+            var channel = guild.GetTextChannel(config.BotLogChannel.GetValueOrDefault(0));
+            if (!config.ReceiveStartupMessages.GetValueOrDefault(true) || channel == null) continue;
+            await channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(config.Lang!, i)));
         }
     }
 
@@ -48,7 +48,7 @@ public class EventHandler {
         var argPos = 0;
 
         var guildConfig = Boyfriend.GetGuildConfig(guild);
-        Messages.Culture = new CultureInfo(guildConfig.Lang);
+        Messages.Culture = new CultureInfo(guildConfig.Lang!);
         if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2)
             && !user.GuildPermissions.MentionEveryone)
             await BanCommand.BanUser(guild, null, await guild.GetCurrentUserAsync(), user,
@@ -67,7 +67,7 @@ public class EventHandler {
         if (!(message.HasStringPrefix(guildConfig.Prefix, ref argPos)
               || message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos))
             || user == await guild.GetCurrentUserAsync()
-            || user.IsBot && message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))
+            || user.IsBot && (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe)))
             return;
 
         await CommandHandler.HandleCommand(message);
@@ -91,10 +91,10 @@ public class EventHandler {
     private static async Task UserJoinedEvent(SocketGuildUser user) {
         var guild = user.Guild;
         var config = Boyfriend.GetGuildConfig(guild);
-        if (config.SendWelcomeMessages)
-            await Utils.SilentSendAsync(guild.SystemChannel, string.Format(config.WelcomeMessage, user.Mention,
+        if (config.SendWelcomeMessages.GetValueOrDefault(true))
+            await Utils.SilentSendAsync(guild.SystemChannel, string.Format(config.WelcomeMessage!, user.Mention,
                 guild.Name));
         if (config.DefaultRole != 0)
-            await user.AddRoleAsync(Utils.ParseRole(guild, config.DefaultRole.ToString()));
+            await user.AddRoleAsync(Utils.ParseRole(guild, config.DefaultRole.ToString()!));
     }
 }
