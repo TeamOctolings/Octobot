@@ -9,49 +9,45 @@ namespace Boyfriend.Commands;
 
 public class UnmuteCommand : Command {
     public override async Task Run(SocketCommandContext context, string[] args) {
-        var toUnmute = await Utils.ParseMember(context.Guild, args[0]);
-        var author = context.Guild.GetUser(context.User.Id);
-        await CommandHandler.CheckPermissions(author, GuildPermission.ManageMessages, GuildPermission.ManageRoles);
+        await UnmuteMember(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id),
+            await Utils.ParseMember(context.Guild, args[0]), Utils.JoinString(args, 1));
+    }
+
+    public static async Task UnmuteMember(IGuild guild, ITextChannel? channel, IGuildUser author, IGuildUser toUnmute,
+        string reason) {
+        await CommandHandler.CheckPermissions(author, GuildPermission.ModerateMembers, GuildPermission.ManageRoles);
         await CommandHandler.CheckInteractions(author, toUnmute);
-        var role = Utils.GetMuteRole(context.Guild);
+        var authorMention = author.Mention;
+        var config = Boyfriend.GetGuildConfig(guild);
+        var notification = string.Format(Messages.MemberUnmuted, authorMention, toUnmute.Mention,
+            Utils.WrapInline(reason));
+        var requestOptions = Utils.GetRequestOptions($"({Utils.GetNameAndDiscrim(author)}) {reason}");
+        var role = Utils.GetMuteRole(guild);
+
         if (role != null) {
             if (toUnmute.RoleIds.All(x => x != role.Id)) {
-                var config = Boyfriend.GetGuildConfig(context.Guild);
                 var rolesRemoved = config.RolesRemovedOnMute;
 
-                foreach (var roleId in rolesRemoved![toUnmute.Id]) await toUnmute.AddRoleAsync(roleId);
+                await toUnmute.AddRolesAsync(rolesRemoved![toUnmute.Id]);
                 rolesRemoved.Remove(toUnmute.Id);
                 await config.Save();
                 throw new ApplicationException(Messages.RolesReturned);
             }
-        }
-        if (role != null && toUnmute.RoleIds.All(x => x != role.Id) ||
-            toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds()
-            < DateTimeOffset.Now.ToUnixTimeMilliseconds())
-            throw new ApplicationException(Messages.MemberNotMuted);
 
-        UnmuteMember(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id),
-            toUnmute, Utils.JoinString(args, 1));
-    }
+            if (toUnmute.RoleIds.All(x => x != role.Id))
+                throw new ApplicationException(Messages.MemberNotMuted);
 
-    public static async void UnmuteMember(IGuild guild, ITextChannel? channel, IGuildUser author, IGuildUser toUnmute,
-        string reason) {
-        await CommandHandler.CheckPermissions(author, GuildPermission.ManageMessages, GuildPermission.ManageRoles);
-        var authorMention = author.Mention;
-        var notification = string.Format(Messages.MemberUnmuted, authorMention, toUnmute.Mention,
-            Utils.WrapInline(reason));
-        var role = Utils.GetMuteRole(guild);
-
-        if (role != null) {
-            await toUnmute.RemoveRoleAsync(role);
-            var config = Boyfriend.GetGuildConfig(guild);
-
+            await toUnmute.RemoveRoleAsync(role, requestOptions);
             if (config.RolesRemovedOnMute!.ContainsKey(toUnmute.Id)) {
-                foreach (var roleId in config.RolesRemovedOnMute[toUnmute.Id]) await toUnmute.AddRoleAsync(roleId);
+                await toUnmute.AddRolesAsync(config.RolesRemovedOnMute[toUnmute.Id]);
                 config.RolesRemovedOnMute.Remove(toUnmute.Id);
                 await config.Save();
             }
         } else {
+            if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds()
+                < DateTimeOffset.Now.ToUnixTimeMilliseconds())
+                throw new ApplicationException(Messages.MemberNotMuted);
+
             await toUnmute.RemoveTimeOutAsync();
         }
 

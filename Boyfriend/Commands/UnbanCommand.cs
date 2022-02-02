@@ -9,20 +9,25 @@ namespace Boyfriend.Commands;
 
 public class UnbanCommand : Command {
     public override async Task Run(SocketCommandContext context, string[] args) {
-        var toUnban = await Utils.ParseUser(args[0]);
-        if (context.Guild.GetBanAsync(toUnban.Id) == null)
-            throw new ApplicationException(Messages.UserNotBanned);
-        UnbanUser(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id), toUnban,
-            Utils.JoinString(args, 1));
+        await UnbanUser(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id),
+            await Utils.ParseUser(args[0]), Utils.JoinString(args, 1));
     }
 
-    public static async void UnbanUser(IGuild guild, ITextChannel? channel, IGuildUser author, IUser toUnban,
+    public static async Task UnbanUser(IGuild guild, ITextChannel? channel, IGuildUser author, IUser toUnban,
         string reason) {
-        await CommandHandler.CheckPermissions(author, GuildPermission.BanMembers);
+
         var authorMention = author.Mention;
         var notification = string.Format(Messages.UserUnbanned, authorMention, toUnban.Mention,
             Utils.WrapInline(reason));
-        await guild.RemoveBanAsync(toUnban);
+        var requestOptions = Utils.GetRequestOptions($"({Utils.GetNameAndDiscrim(author)}) {reason}");
+
+        await CommandHandler.CheckPermissions(author, GuildPermission.BanMembers);
+
+        if (guild.GetBanAsync(toUnban.Id) == null)
+            throw new ApplicationException(Messages.UserNotBanned);
+
+        await guild.RemoveBanAsync(toUnban, requestOptions);
+
         await Utils.SilentSendAsync(channel, string.Format(Messages.UnbanResponse, toUnban.Mention,
             Utils.WrapInline(reason)));
         await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);

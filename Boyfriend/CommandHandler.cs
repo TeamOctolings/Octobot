@@ -18,7 +18,8 @@ public static class CommandHandler {
 
         foreach (var command in Commands) {
             var regex = new Regex(Regex.Escape(Boyfriend.GetGuildConfig(context.Guild).Prefix!));
-            if (!command.GetAliases().Contains(regex.Replace(message.Content, "", 1).Split()[0])) continue;
+            if (!command.GetAliases().Contains(regex.Replace(message.Content, "", 1).Split()[0]))
+                continue;
 
             var args = message.Content.Split().Skip(1).ToArray();
             try {
@@ -26,16 +27,17 @@ public static class CommandHandler {
                     throw new ApplicationException(string.Format(Messages.NotEnoughArguments,
                         command.GetArgumentsAmountRequired(), args.Length));
                 await command.Run(context, args);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 var signature = e switch {
                     ApplicationException => ":x:",
                     UnauthorizedAccessException => ":no_entry_sign:",
                     _ => ":stop_sign:"
                 };
-                await context.Channel.SendMessageAsync($"{signature} `{e.Message}`");
-                if (e.StackTrace != null && e is not ApplicationException or UnauthorizedAccessException)
-                    await context.Channel.SendMessageAsync(Utils.Wrap(e.StackTrace));
+                var stacktrace = e.StackTrace;
+                var toSend = $"{signature} `{e.Message}`";
+                if (stacktrace != null && e is not ApplicationException && e is not UnauthorizedAccessException)
+                    toSend += $"{Environment.NewLine}{Utils.Wrap(stacktrace)}";
+                await context.Channel.SendMessageAsync(toSend);
                 throw;
             }
 
@@ -45,18 +47,26 @@ public static class CommandHandler {
 
     public static async Task CheckPermissions(IGuildUser user, GuildPermission toCheck,
         GuildPermission forBot = GuildPermission.StartEmbeddedActivities) {
+        var me = await user.Guild.GetCurrentUserAsync();
         if (forBot == GuildPermission.StartEmbeddedActivities) forBot = toCheck;
-        if (!(await user.Guild.GetCurrentUserAsync()).GuildPermissions.Has(forBot))
-            throw new UnauthorizedAccessException(Messages.CommandNoPermissionBot);
-        if (!user.GuildPermissions.Has(toCheck))
-            throw new UnauthorizedAccessException(Messages.CommandNoPermissionUser);
+
+        if (user.Id != user.Guild.OwnerId
+            && (!me.GuildPermissions.Has(GuildPermission.Administrator)
+                || !user.GuildPermissions.Has(GuildPermission.Administrator))) {
+            if (!me.GuildPermissions.Has(forBot))
+                throw new UnauthorizedAccessException(Messages.CommandNoPermissionBot);
+            if (!user.GuildPermissions.Has(toCheck))
+                throw new UnauthorizedAccessException(Messages.CommandNoPermissionUser);
+        }
     }
 
     public static async Task CheckInteractions(IGuildUser actor, IGuildUser target) {
-        if (actor.Guild != target.Guild)
-            throw new UnauthorizedAccessException(Messages.InteractionsDifferentGuilds);
         var me = await target.Guild.GetCurrentUserAsync();
+
+        if (actor.Guild != target.Guild)
+            throw new Exception(Messages.InteractionsDifferentGuilds);
         if (actor.Id == actor.Guild.OwnerId) return;
+
         if (target.Id == target.Guild.OwnerId)
             throw new UnauthorizedAccessException(Messages.InteractionsOwner);
         if (actor == target)

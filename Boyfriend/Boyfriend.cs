@@ -21,8 +21,9 @@ public static class Boyfriend {
     }
 
     private static async Task Init() {
-        Client.Log += Log;
         var token = (await File.ReadAllTextAsync("token.txt")).Trim();
+
+        Client.Log += Log;
 
         await Client.LoginAsync(TokenType.Bot, token);
         await Client.StartAsync();
@@ -35,6 +36,7 @@ public static class Boyfriend {
 
     private static Task Log(LogMessage msg) {
         Console.WriteLine(msg.ToString());
+
         return Task.CompletedTask;
     }
 
@@ -56,13 +58,16 @@ public static class Boyfriend {
 
     public static void ResetGuildConfig(IGuild guild) {
         GuildConfigDictionary.Remove(guild.Id);
+
         var config = new GuildConfig(guild.Id);
         config.Validate();
+
         GuildConfigDictionary.Add(guild.Id, config);
     }
 
     public static GuildConfig GetGuildConfig(IGuild guild) {
         Messages.Culture = new CultureInfo("ru");
+
         var config = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id] :
             new GuildConfig(guild.Id);
         config.Validate();

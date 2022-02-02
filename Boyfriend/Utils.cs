@@ -16,6 +16,7 @@ public static class Utils {
 
     public static string GetBeep(string cultureInfo, int i = -1) {
         Messages.Culture = new CultureInfo(cultureInfo);
+
         var beeps = new[] {Messages.Beep1, Messages.Beep2, Messages.Beep3};
         return beeps[i < 0 ? new Random().Next(3) : i];
     }
@@ -38,11 +39,9 @@ public static class Utils {
         return $"<#{id}>";
     }
 
-    public static async Task StartDelayed(Task toRun, TimeSpan delay, Func<bool>? condition = null) {
+    public static async Task StartDelayed(Task toRun, TimeSpan delay) {
         await Task.Delay(delay);
-        var conditionResult = condition?.Invoke() ?? true;
-        if (conditionResult)
-            toRun.Start();
+        toRun.Start();
     }
 
     private static ulong ParseMention(string mention) {
@@ -52,8 +51,7 @@ public static class Utils {
     private static ulong? ParseMentionNullable(string mention) {
         try {
             return ParseMention(mention) == 0 ? throw new FormatException() : ParseMention(mention);
-        }
-        catch (FormatException) {
+        } catch (FormatException) {
             return null;
         }
     }
@@ -99,6 +97,7 @@ public static class Utils {
 
     public static async Task SilentSendAsync(ITextChannel? channel, string text) {
         if (channel == null) return;
+
         try {
             await channel.SendMessageAsync(text, false, null, null, AllowedMentions.None);
         } catch (ArgumentException) {}
@@ -110,5 +109,15 @@ public static class Utils {
 
     public static string JoinString(string[] args, int startIndex) {
         return string.Join(" ", args, startIndex, args.Length - startIndex);
+    }
+
+    public static string GetNameAndDiscrim(IUser user) {
+        return $"{user.Username}#{user.Discriminator}";
+    }
+
+    public static RequestOptions GetRequestOptions(string reason) {
+        var options = RequestOptions.Default;
+        options.AuditLogReason = reason;
+        return options;
     }
 }

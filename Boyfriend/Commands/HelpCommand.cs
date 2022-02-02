@@ -8,11 +8,11 @@ namespace Boyfriend.Commands;
 public class HelpCommand : Command {
     public override async Task Run(SocketCommandContext context, string[] args) {
         var nl = Environment.NewLine;
-        var toSend = string.Format(Messages.CommandHelp, nl);
         var prefix = Boyfriend.GetGuildConfig(context.Guild).Prefix;
+        var toSend = string.Format(Messages.CommandHelp, nl);
+
         toSend = CommandHandler.Commands.Aggregate(toSend,
             (current, command) => current + $"`{prefix}{command.GetAliases()[0]}`: {command.GetSummary()}{nl}");
-
         await context.Channel.SendMessageAsync(toSend);
     }
 

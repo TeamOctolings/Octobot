@@ -9,9 +9,11 @@ namespace Boyfriend.Commands;
 
 public class SettingsCommand : Command {
     public override async Task Run(SocketCommandContext context, string[] args) {
-        await CommandHandler.CheckPermissions(context.Guild.GetUser(context.User.Id), GuildPermission.ManageGuild);
         var config = Boyfriend.GetGuildConfig(context.Guild);
         var guild = context.Guild;
+
+        await CommandHandler.CheckPermissions(context.Guild.GetUser(context.User.Id), GuildPermission.ManageGuild);
+
         if (args.Length == 0) {
             var nl = Environment.NewLine;
             var adminLogChannel = guild.GetTextChannel(config.AdminLogChannel.GetValueOrDefault(0));
@@ -43,8 +45,9 @@ public class SettingsCommand : Command {
         }
 
         var setting = args[0].ToLower();
-        var value = "";
         var shouldDefault = false;
+        var value = "";
+
         if (args.Length >= 2)
             value = args[1].ToLower();
         else
