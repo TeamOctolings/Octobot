@@ -475,7 +475,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} muted {1} for {2}.
+        ///   Looks up a localized string similar to {0} muted {1} for {2}{3}.
         /// </summary>
         internal static string MemberMuted {
             get {
@@ -570,6 +570,15 @@ namespace Boyfriend {
         internal static string PunishmentExpired {
             get {
                 return ResourceManager.GetString("PunishmentExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}This punishment will expire &lt;t:{1}:R&gt;.
+        /// </summary>
+        internal static string PunishmentExpiresIn {
+            get {
+                return ResourceManager.GetString("PunishmentExpiresIn", resourceCulture);
             }
         }
         
@@ -673,7 +682,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} banned {1} for {2}.
+        ///   Looks up a localized string similar to {0} banned {1} for {2}{3}.
         /// </summary>
         internal static string UserBanned {
             get {

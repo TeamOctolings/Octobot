@@ -28,7 +28,12 @@ public class BanCommand : Command {
         var authorMention = author.Mention;
         var guildBanMessage = $"({Utils.GetNameAndDiscrim(author)}) {reason}";
         var memberToBan = await guild.GetUserAsync(toBan.Id);
-        var notification = string.Format(Messages.UserBanned, authorMention, toBan.Mention, Utils.WrapInline(reason));
+        var expiresIn = duration.TotalSeconds > 0
+            ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
+                DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds)
+            : "";
+        var notification = string.Format(Messages.UserBanned, authorMention, toBan.Mention, Utils.WrapInline(reason),
+            expiresIn);
 
         await CommandHandler.CheckPermissions(author, GuildPermission.BanMembers);
         if (memberToBan != null)
@@ -44,14 +49,16 @@ public class BanCommand : Command {
         await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
         await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
 
-        async void UnbanWhenExpires() {
-            try {
-                await UnbanCommand.UnbanUser(guild, null, await guild.GetCurrentUserAsync(), toBan,
-                    Messages.PunishmentExpired);
-            } catch (ApplicationException) {}
+        if (duration.TotalSeconds > 0) {
+            var task = new Task(async () => {
+                await Task.Delay(duration);
+                try {
+                    await UnbanCommand.UnbanUser(guild, null, await guild.GetCurrentUserAsync(), toBan,
+                        Messages.PunishmentExpired);
+                } catch (ApplicationException) {}
+            });
+            task.Start();
         }
-
-        await Utils.StartDelayed(new Task(UnbanWhenExpires), duration);
     }
 
     public override List<string> GetAliases() {

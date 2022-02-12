@@ -100,7 +100,7 @@
         <value>Тебя забанил {0} на сервере {1} за {2}</value>
     </data>
     <data name="UserBanned" xml:space="preserve">
-        <value>{0} банит {1} за {2}</value>
+        <value>{0} банит {1} за {2}{3}</value>
     </data>
     <data name="PunishmentExpired" xml:space="preserve">
         <value>Время наказания истекло</value>
@@ -124,7 +124,7 @@
         <value>{0} выгоняет {1} за {2}</value>
     </data>
     <data name="MemberMuted" xml:space="preserve">
-        <value>{0} глушит {1} за {2}</value>
+        <value>{0} глушит {1} за {2}{3}</value>
     </data>
     <data name="Milliseconds" xml:space="preserve">
         <value>мс</value>
@@ -239,5 +239,8 @@
     </data>
     <data name="CurrentSettingsReceiveStartupMessages" xml:space="preserve">
         <value>Получать сообщения о запуске (`receiveStartupMessages`): {0}{1}</value>
+    </data>
+    <data name="PunishmentExpiresIn" xml:space="preserve">
+        <value>{0}Это наказание истечёт &lt;t:{1}:R&gt;</value>
     </data>
 </root>

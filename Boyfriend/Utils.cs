@@ -39,11 +39,6 @@ public static class Utils {
         return $"<#{id}>";
     }
 
-    public static async Task StartDelayed(Task toRun, TimeSpan delay) {
-        await Task.Delay(delay);
-        toRun.Start();
-    }
-
     private static ulong ParseMention(string mention) {
         return Convert.ToUInt64(Regex.Replace(mention, "[^0-9]", ""));
     }

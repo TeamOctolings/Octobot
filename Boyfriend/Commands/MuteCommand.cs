@@ -55,6 +55,12 @@ public class MuteCommand : Command {
         var config = Boyfriend.GetGuildConfig(guild);
         var requestOptions = Utils.GetRequestOptions($"({Utils.GetNameAndDiscrim(author)}) {reason}");
         var role = Utils.GetMuteRole(guild);
+        var expiresIn = duration.TotalSeconds > 0
+            ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
+                DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds)
+            : "";
+        var notification = string.Format(Messages.MemberMuted, authorMention, toMute.Mention, Utils.WrapInline(reason),
+            expiresIn);
 
         if (role != null) {
             if (config.RemoveRolesOnMute.GetValueOrDefault(false)) {
@@ -75,21 +81,21 @@ public class MuteCommand : Command {
             await toMute.AddRoleAsync(role, requestOptions);
         } else
             await toMute.SetTimeOutAsync(duration, requestOptions);
-        var notification = string.Format(Messages.MemberMuted, authorMention, toMute.Mention, Utils.WrapInline(reason));
         await Utils.SilentSendAsync(channel, string.Format(Messages.MuteResponse, toMute.Mention,
             Utils.WrapInline(reason)));
         await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
         await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
 
-        async void UnmuteWhenExpires() {
-            try {
-                await UnmuteCommand.UnmuteMember(guild, null, await guild.GetCurrentUserAsync(), toMute,
-                    Messages.PunishmentExpired);
-            } catch (ApplicationException) {}
+        if (role != null && duration.TotalSeconds > 0) {
+            var task = new Task(async () => {
+                await Task.Delay(duration);
+                try {
+                    await UnmuteCommand.UnmuteMember(guild, null, await guild.GetCurrentUserAsync(), toMute,
+                        Messages.PunishmentExpired);
+                } catch (ApplicationException) {}
+            });
+            task.Start();
         }
-
-        if (role != null)
-            await Utils.StartDelayed(new Task(UnmuteWhenExpires), duration);
     }
 
     public override List<string> GetAliases() {

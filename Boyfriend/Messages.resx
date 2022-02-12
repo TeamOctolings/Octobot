@@ -109,7 +109,7 @@
         <value>You were banned by {0} in guild {1} for {2}</value>
     </data>
     <data name="UserBanned" xml:space="preserve">
-        <value>{0} banned {1} for {2}</value>
+        <value>{0} banned {1} for {2}{3}</value>
     </data>
     <data name="PunishmentExpired" xml:space="preserve">
         <value>Punishment expired</value>
@@ -133,7 +133,7 @@
         <value>{0} kicked {1} for {2}</value>
     </data>
     <data name="MemberMuted" xml:space="preserve">
-        <value>{0} muted {1} for {2}</value>
+        <value>{0} muted {1} for {2}{3}</value>
     </data>
     <data name="Milliseconds" xml:space="preserve">
         <value>ms</value>
@@ -248,5 +248,8 @@
     </data>
     <data name="CurrentSettingsReceiveStartupMessages" xml:space="preserve">
         <value>Receive startup messages (`receiveStartupMessages`): {0}{1}</value>
+    </data>
+    <data name="PunishmentExpiresIn" xml:space="preserve">
+        <value>{0}This punishment will expire &lt;t:{1}:R&gt;</value>
     </data>
 </root>
