@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
@@ -13,7 +12,7 @@ public abstract class Command {
 
     public abstract string GetSummary();
 
-    protected static async Task Warn(ISocketMessageChannel channel, string warning) {
-        await Utils.SilentSendAsync(channel as ITextChannel, ":warning: " + warning);
+    protected static async Task Warn(ITextChannel? channel, string warning) {
+        await Utils.SilentSendAsync(channel, ":warning: " + warning);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using Newtonsoft.Json;
 using Discord;
 using Discord.WebSocket;
+using Newtonsoft.Json;
 
 namespace Boyfriend;
 
@@ -56,20 +56,11 @@ public static class Boyfriend {
         }
     }
 
-    public static void ResetGuildConfig(IGuild guild) {
-        GuildConfigDictionary.Remove(guild.Id);
-
-        var config = new GuildConfig(guild.Id);
-        config.Validate();
-
-        GuildConfigDictionary.Add(guild.Id, config);
-    }
-
     public static GuildConfig GetGuildConfig(IGuild guild) {
         Messages.Culture = new CultureInfo("ru");
 
-        var config = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id] :
-            new GuildConfig(guild.Id);
+        var config = GuildConfigDictionary.ContainsKey(guild.Id) ? GuildConfigDictionary[guild.Id]
+            : new GuildConfig(guild.Id);
         config.Validate();
 
         return config;

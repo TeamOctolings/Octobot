@@ -22,23 +22,22 @@ public class MuteCommand : Command {
             duration = Utils.GetTimeSpan(args[1]);
             reason = Utils.JoinString(args, 2);
         } catch (Exception e) when (e is ArgumentNullException or FormatException or OverflowException) {
+            await Warn(context.Channel as ITextChannel, Messages.DurationParseFailed);
             duration = TimeSpan.FromMilliseconds(-1);
         }
 
         if (toMute == null)
             throw new ApplicationException(Messages.UserNotInGuild);
 
-        if (role != null && toMute.RoleIds.Any(x => x == role.Id) ||
-            toMute.TimedOutUntil != null && toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds()
-            > DateTimeOffset.Now.ToUnixTimeMilliseconds())
+        if (role != null && toMute.RoleIds.Any(x => x == role.Id) || toMute.TimedOutUntil != null &&
+            toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds() > DateTimeOffset.Now.ToUnixTimeMilliseconds())
             throw new ApplicationException(Messages.MemberAlreadyMuted);
 
         if (rolesRemoved.ContainsKey(toMute.Id)) {
             foreach (var roleId in rolesRemoved[toMute.Id]) await toMute.AddRoleAsync(roleId);
             rolesRemoved.Remove(toMute.Id);
             await config.Save();
-            await Warn(context.Channel, Messages.RolesReturned);
-            return;
+            throw new ApplicationException(Messages.RolesReturned);
         }
 
         await CommandHandler.CheckPermissions(author, GuildPermission.ModerateMembers, GuildPermission.ManageRoles);
@@ -55,10 +54,9 @@ public class MuteCommand : Command {
         var config = Boyfriend.GetGuildConfig(guild);
         var requestOptions = Utils.GetRequestOptions($"({Utils.GetNameAndDiscrim(author)}) {reason}");
         var role = Utils.GetMuteRole(guild);
-        var expiresIn = duration.TotalSeconds > 0
-            ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
-                DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds)
-            : "";
+        var hasDuration = duration.TotalSeconds > 0;
+        var expiresIn = hasDuration ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
+            DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds) : "";
         var notification = string.Format(Messages.MemberMuted, authorMention, toMute.Mention, Utils.WrapInline(reason),
             expiresIn);
 
@@ -71,31 +69,38 @@ public class MuteCommand : Command {
                         if (roleId == role.Id) continue;
                         await toMute.RemoveRoleAsync(roleId);
                         rolesRemoved.Add(roleId);
-                    } catch (HttpException) {}
+                    } catch (HttpException e) {
+                        await Warn(channel,
+                            string.Format(Messages.RoleRemovalFailed, $"<@&{roleId}>", Utils.WrapInline(e.Reason)));
+                    }
                 }
 
                 config.RolesRemovedOnMute!.Add(toMute.Id, rolesRemoved);
                 await config.Save();
+
+                if (hasDuration)
+                    await Task.Run(async () => {
+                        await Task.Delay(duration);
+                        try {
+                            await UnmuteCommand.UnmuteMember(guild, null, await guild.GetCurrentUserAsync(), toMute,
+                                Messages.PunishmentExpired);
+                        } catch (ApplicationException) {}
+                    });
             }
 
             await toMute.AddRoleAsync(role, requestOptions);
-        } else
+        } else {
+            if (!hasDuration)
+                throw new ApplicationException(Messages.DurationRequiredForTimeOuts);
+            if (toMute.IsBot)
+                throw new ApplicationException(Messages.CannotTimeOutBot);
+
             await toMute.SetTimeOutAsync(duration, requestOptions);
-        await Utils.SilentSendAsync(channel, string.Format(Messages.MuteResponse, toMute.Mention,
-            Utils.WrapInline(reason)));
+        }
+        await Utils.SilentSendAsync(channel,
+            string.Format(Messages.MuteResponse, toMute.Mention, Utils.WrapInline(reason)));
         await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
         await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
-
-        if (role != null && duration.TotalSeconds > 0) {
-            var task = new Task(async () => {
-                await Task.Delay(duration);
-                try {
-                    await UnmuteCommand.UnmuteMember(guild, null, await guild.GetCurrentUserAsync(), toMute,
-                        Messages.PunishmentExpired);
-                } catch (ApplicationException) {}
-            });
-            task.Start();
-        }
     }
 
     public override List<string> GetAliases() {

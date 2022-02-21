@@ -31,7 +31,7 @@
         <value>Слишком много упоминаний в одном сообщении</value>
     </data>
     <data name="UncachedMessageEdited" xml:space="preserve">
-        <value>Отредактировано сообщение от {0} в канале {1}, но я забыл что там было до редактирования</value>
+        <value>Отредактировано сообщение от {0} в канале {1}, но я забыл что там было до редактирования: </value>
     </data>
     <data name="CachedMessageEdited" xml:space="preserve">
         <value>Отредактировано сообщение от {0} в канале {1}.{2}До:{3}{4}{5}После:{6}{7}</value>
@@ -47,30 +47,6 @@
     </data>
     <data name="Beep3" xml:space="preserve">
         <value>Бип! </value>
-    </data>
-    <data name="MuteRoleRequired" xml:space="preserve">
-        <value>Требуется указать роль мута в настройках!</value>
-    </data>
-    <data name="InvalidAdminLogChannel" xml:space="preserve">
-        <value>Неверный канал админ-логов для гильдии </value>
-    </data>
-    <data name="CommandExecutionUnsuccessful" xml:space="preserve">
-        <value>Выполнение команды завершилось неудачей: {0}</value>
-    </data>
-    <data name="RepeatedArgumentsDetected" xml:space="preserve">
-        <value>Обнаружены повторяющиеся типы аргументов! {0}</value>
-    </data>
-    <data name="CommandParseFailed" xml:space="preserve">
-        <value>Не удалось обработать команду: {0}</value>
-    </data>
-    <data name="UnknownCommand" xml:space="preserve">
-        <value>Неизвестная команда! {0}</value>
-    </data>
-    <data name="BadArgumentCount" xml:space="preserve">
-        <value>Неверное количество аргументов! {0}</value>
-    </data>
-    <data name="ArgumentNotPresent" xml:space="preserve">
-        <value>Нету нужных аргументов! {0}</value>
     </data>
     <data name="CommandNoPermissionBot" xml:space="preserve">
         <value>У меня недостаточно прав для выполнения этой команды!</value>
@@ -132,9 +108,6 @@
     <data name="MemberAlreadyMuted" xml:space="preserve">
         <value>Участник уже заглушен!</value>
     </data>
-    <data name="MuteRoleManuallyRemoved" xml:space="preserve">
-        <value>Кто-то убрал роль мута самостоятельно!</value>
-    </data>
     <data name="ChannelNotSpecified" xml:space="preserve">
         <value>Не указан</value>
     </data>
@@ -176,15 +149,6 @@
     </data>
     <data name="SettingsUpdated" xml:space="preserve">
         <value>Настройки успешно обновлены!</value>
-    </data>
-    <data name="InvalidBoolean" xml:space="preserve">
-        <value>Неверный параметр! Требуется 'true' или 'false'</value>
-    </data>
-    <data name="InvalidRoleSpecified" xml:space="preserve">
-        <value>Указана недействительная роль!</value>
-    </data>
-    <data name="InvalidChannelSpecified" xml:space="preserve">
-        <value>Указан недействильный канал!</value>
     </data>
     <data name="Yes" xml:space="preserve">
         <value>Да</value>
@@ -242,5 +206,26 @@
     </data>
     <data name="PunishmentExpiresIn" xml:space="preserve">
         <value>{0}Это наказание истечёт &lt;t:{1}:R&gt;</value>
+    </data>
+    <data name="InvalidSettingValue" xml:space="preserve">
+        <value>Указано недействительное значение для настройки!</value>
+    </data>
+    <data name="InvalidRole" xml:space="preserve">
+        <value>Эта роль не существует!</value>
+    </data>
+    <data name="InvalidChannel" xml:space="preserve">
+        <value>Этот канал не существует!</value>
+    </data>
+    <data name="DurationParseFailed" xml:space="preserve">
+        <value>Мне не удалось обработать продолжительность! Один из компонентов может быть за пределами допустимого диапазона (например, `24ч` или `60м`)</value>
+    </data>
+    <data name="RoleRemovalFailed" xml:space="preserve">
+        <value>Я не смог забрать роль {0} в связи с ошибкой! {1}</value>
+    </data>
+    <data name="DurationRequiredForTimeOuts" xml:space="preserve">
+        <value>Я не могу заглушить кого-то навсегда, используя тайм-ауты! Или укажи правильную продолжительность, или установи роль мута в настройках</value>
+    </data>
+    <data name="CannotTimeOutBot" xml:space="preserve">
+        <value>Я не могу использовать тайм-ауты на других ботах! Попробуй указать роль мута в настройках</value>
     </data>
 </root>

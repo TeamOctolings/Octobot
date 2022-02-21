@@ -36,12 +36,10 @@ public class EventHandler {
         Cacheable<IMessageChannel, ulong> channel) {
         var msg = message.Value;
 
-        var toSend = msg == null
-            ? string.Format(Messages.UncachedMessageDeleted, Utils.MentionChannel(channel.Id))
+        var toSend = msg == null ? string.Format(Messages.UncachedMessageDeleted, Utils.MentionChannel(channel.Id))
             : string.Format(Messages.CachedMessageDeleted, msg.Author.Mention) +
               $"{Utils.MentionChannel(channel.Id)}: {Environment.NewLine}{Utils.Wrap(msg.Content)}";
-        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(
-            Boyfriend.FindGuild(channel.Value)), toSend);
+        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Boyfriend.FindGuild(channel.Value)), toSend);
     }
 
     private static async Task MessageReceivedEvent(SocketMessage messageParam) {
@@ -58,21 +56,20 @@ public class EventHandler {
 
         Messages.Culture = new CultureInfo(guildConfig.Lang!);
 
-        if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2)
-            && !user.GuildPermissions.MentionEveryone)
+        if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2) &&
+            !user.GuildPermissions.MentionEveryone)
             await BanCommand.BanUser(guild, null, await guild.GetCurrentUserAsync(), user,
                 TimeSpan.FromMilliseconds(-1), Messages.AutobanReason);
 
         try {
             prev = prevsArray[1].Content;
             prevFailsafe = prevsArray[2].Content;
-        }
-        catch (IndexOutOfRangeException) { }
+        } catch (IndexOutOfRangeException) {}
 
-        if (!(message.HasStringPrefix(guildConfig.Prefix, ref argPos)
-              || message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos))
-            || user == await guild.GetCurrentUserAsync()
-            || user.IsBot && (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe)))
+        if (!(message.HasStringPrefix(guildConfig.Prefix, ref argPos) ||
+              message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos)) ||
+            user == await guild.GetCurrentUserAsync() ||
+            user.IsBot && (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe)))
             return;
 
         await CommandHandler.HandleCommand(message);
@@ -87,12 +84,10 @@ public class EventHandler {
 
         var toSend = msg == null
             ? string.Format(Messages.UncachedMessageEdited, messageSocket.Author.Mention,
-                  Utils.MentionChannel(channel.Id)) +
-              Utils.Wrap(messageSocket.Content)
-            : string.Format(Messages.CachedMessageEdited, msg.Author.Mention, Utils.MentionChannel(channel.Id), nl, nl,
+                Utils.MentionChannel(channel.Id)) + Utils.Wrap(messageSocket.Content) : string.Format(
+                Messages.CachedMessageEdited, msg.Author.Mention, Utils.MentionChannel(channel.Id), nl, nl,
                 Utils.Wrap(msg.Content), nl, nl, Utils.Wrap(messageSocket.Content));
-        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Boyfriend.FindGuild(channel)),
-                toSend);
+        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(Boyfriend.FindGuild(channel)), toSend);
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
@@ -100,8 +95,8 @@ public class EventHandler {
         var config = Boyfriend.GetGuildConfig(guild);
 
         if (config.SendWelcomeMessages.GetValueOrDefault(true))
-            await Utils.SilentSendAsync(guild.SystemChannel, string.Format(config.WelcomeMessage!, user.Mention,
-                guild.Name));
+            await Utils.SilentSendAsync(guild.SystemChannel,
+                string.Format(config.WelcomeMessage!, user.Mention, guild.Name));
 
         if (config.DefaultRole != 0)
             await user.AddRoleAsync(Utils.ParseRole(guild, config.DefaultRole.ToString()!));

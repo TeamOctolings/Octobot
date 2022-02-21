@@ -40,7 +40,7 @@
         <value>Too many mentions in 1 message</value>
     </data>
     <data name="UncachedMessageEdited" xml:space="preserve">
-        <value>Message edited from {0} in channel {1}, but I forgot what was there before the edit</value>
+        <value>Message edited from {0} in channel {1}, but I forgot what was there before the edit: </value>
     </data>
     <data name="CachedMessageEdited" xml:space="preserve">
         <value>Message edited from {0} in channel {1}.{2}Before:{3}{4}{5}After:{6}{7}</value>
@@ -56,30 +56,6 @@
     </data>
     <data name="Beep3" xml:space="preserve">
         <value>Beep! </value>
-    </data>
-    <data name="InvalidAdminLogChannel" xml:space="preserve">
-        <value>Invalid admin log channel for guild</value>
-    </data>
-    <data name="MuteRoleRequired" xml:space="preserve">
-        <value>You must set up a mute role in settings!</value>
-    </data>
-    <data name="CommandExecutionUnsuccessful" xml:space="preserve">
-        <value>Command execution was unsuccessful: {0}</value>
-    </data>
-    <data name="RepeatedArgumentsDetected" xml:space="preserve">
-        <value>Repeated arguments detected! {0}</value>
-    </data>
-    <data name="CommandParseFailed" xml:space="preserve">
-        <value>Command parsing failed: {0}</value>
-    </data>
-    <data name="UnknownCommand" xml:space="preserve">
-        <value>Unknown command! {0}</value>
-    </data>
-    <data name="BadArgumentCount" xml:space="preserve">
-        <value>Invalid argument count! {0}</value>
-    </data>
-    <data name="ArgumentNotPresent" xml:space="preserve">
-        <value>Arguments not present! {0}</value>
     </data>
     <data name="CommandNoPermissionBot" xml:space="preserve">
         <value>I do not have permission to execute this command!</value>
@@ -141,9 +117,6 @@
     <data name="MemberAlreadyMuted" xml:space="preserve">
         <value>Member is already muted!</value>
     </data>
-    <data name="MuteRoleManuallyRemoved" xml:space="preserve">
-        <value>Someone removed the mute role manually!</value>
-    </data>
     <data name="ChannelNotSpecified" xml:space="preserve">
         <value>Not specified</value>
     </data>
@@ -185,15 +158,6 @@
     </data>
     <data name="SettingsUpdated" xml:space="preserve">
         <value>Settings successfully updated</value>
-    </data>
-    <data name="InvalidBoolean" xml:space="preserve">
-        <value>Invalid argument! 'true' or 'false' required!</value>
-    </data>
-    <data name="InvalidRoleSpecified" xml:space="preserve">
-        <value>Invalid role specified!</value>
-    </data>
-    <data name="InvalidChannelSpecified" xml:space="preserve">
-        <value>Invalid channel specified!</value>
     </data>
     <data name="Yes" xml:space="preserve">
         <value>Yes</value>
@@ -251,5 +215,26 @@
     </data>
     <data name="PunishmentExpiresIn" xml:space="preserve">
         <value>{0}This punishment will expire &lt;t:{1}:R&gt;</value>
+    </data>
+    <data name="InvalidSettingValue" xml:space="preserve">
+        <value>Invalid setting value specified!</value>
+    </data>
+    <data name="InvalidRole" xml:space="preserve">
+        <value>This role does not exist!</value>
+    </data>
+    <data name="InvalidChannel" xml:space="preserve">
+        <value>This channel does not exist!</value>
+    </data>
+    <data name="DurationParseFailed" xml:space="preserve">
+        <value>I couldn't parse the specified duration! One of the components could be outside it's valid range (e.g. `24h` or `60m`)</value>
+    </data>
+    <data name="RoleRemovalFailed" xml:space="preserve">
+        <value>I couldn't remove role {0} because of an error! {1}</value>
+    </data>
+    <data name="DurationRequiredForTimeOuts" xml:space="preserve">
+        <value>I cannot mute someone forever using timeouts! Either specify a proper duration, or set a mute role in settings</value>
+    </data>
+    <data name="CannotTimeOutBot" xml:space="preserve">
+        <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>
     </data>
 </root>

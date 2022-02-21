@@ -27,12 +27,12 @@ public static class Utils {
     }
 
     public static string Wrap(string original) {
-        var toReturn = original.Replace("```", "​`​`​`​");
+        var toReturn = original.Replace("```", "ˋˋˋ");
         return $"```{toReturn}{(toReturn.EndsWith("`") || toReturn.Trim().Equals("") ? " " : "")}```";
     }
 
     public static string WrapInline(string original) {
-        return $"`{original}`";
+        return $"`{original.Replace("`", "ˋ")}`";
     }
 
     public static string MentionChannel(ulong id) {
@@ -64,16 +64,12 @@ public static class Utils {
         return await Boyfriend.Client.GetChannelAsync(ParseMention(mention));
     }
 
-    public static async Task<IChannel?> ParseChannelNullable(string mention) {
+    private static async Task<IChannel?> ParseChannelNullable(string mention) {
         return ParseMentionNullable(mention) == null ? null : await ParseChannel(mention);
     }
 
     public static IRole? ParseRole(IGuild guild, string mention) {
         return guild.GetRole(ParseMention(mention));
-    }
-
-    public static IRole? ParseRoleNullable(IGuild guild, string mention) {
-        return ParseMentionNullable(mention) == null ? null : ParseRole(guild, mention);
     }
 
     public static async Task SendDirectMessage(IUser user, string toSend) {
@@ -98,8 +94,7 @@ public static class Utils {
         } catch (ArgumentException) {}
     }
     public static TimeSpan GetTimeSpan(string from) {
-        return TimeSpan.ParseExact(from.ToLowerInvariant(), Formats,
-            CultureInfo.InvariantCulture);
+        return TimeSpan.ParseExact(from.ToLowerInvariant(), Formats, CultureInfo.InvariantCulture);
     }
 
     public static string JoinString(string[] args, int startIndex) {

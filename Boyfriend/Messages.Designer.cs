@@ -61,29 +61,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Arguments not present! {0}.
-        /// </summary>
-        internal static string ArgumentNotPresent {
-            get {
-                return ResourceManager.GetString("ArgumentNotPresent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Too many mentions in 1 message.
         /// </summary>
         internal static string AutobanReason {
             get {
                 return ResourceManager.GetString("AutobanReason", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid argument count! {0}.
-        /// </summary>
-        internal static string BadArgumentCount {
-            get {
-                return ResourceManager.GetString("BadArgumentCount", resourceCulture);
             }
         }
         
@@ -142,6 +124,15 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I cannot use time-outs on other bots! Try to set a mute role in settings.
+        /// </summary>
+        internal static string CannotTimeOutBot {
+            get {
+                return ResourceManager.GetString("CannotTimeOutBot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not specified.
         /// </summary>
         internal static string ChannelNotSpecified {
@@ -178,15 +169,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command execution was unsuccessful: {0}.
-        /// </summary>
-        internal static string CommandExecutionUnsuccessful {
-            get {
-                return ResourceManager.GetString("CommandExecutionUnsuccessful", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Command help:{0}.
         /// </summary>
         internal static string CommandHelp {
@@ -210,15 +192,6 @@ namespace Boyfriend {
         internal static string CommandNoPermissionUser {
             get {
                 return ResourceManager.GetString("CommandNoPermissionUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command parsing failed: {0}.
-        /// </summary>
-        internal static string CommandParseFailed {
-            get {
-                return ResourceManager.GetString("CommandParseFailed", resourceCulture);
             }
         }
         
@@ -349,6 +322,24 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I couldn&apos;t parse the specified duration! One of the components could be outside it&apos;s valid range (e.g. `24h` or `60m`).
+        /// </summary>
+        internal static string DurationParseFailed {
+            get {
+                return ResourceManager.GetString("DurationParseFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot mute someone forever using timeouts! Either specify a proper duration, or set a mute role in settings.
+        /// </summary>
+        internal static string DurationRequiredForTimeOuts {
+            get {
+                return ResourceManager.GetString("DurationRequiredForTimeOuts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Members are in different guilds!.
         /// </summary>
         internal static string InteractionsDifferentGuilds {
@@ -403,38 +394,29 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid admin log channel for guild.
+        ///   Looks up a localized string similar to This channel does not exist!.
         /// </summary>
-        internal static string InvalidAdminLogChannel {
+        internal static string InvalidChannel {
             get {
-                return ResourceManager.GetString("InvalidAdminLogChannel", resourceCulture);
+                return ResourceManager.GetString("InvalidChannel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid argument! &apos;true&apos; or &apos;false&apos; required!.
+        ///   Looks up a localized string similar to This role does not exist!.
         /// </summary>
-        internal static string InvalidBoolean {
+        internal static string InvalidRole {
             get {
-                return ResourceManager.GetString("InvalidBoolean", resourceCulture);
+                return ResourceManager.GetString("InvalidRole", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid channel specified!.
+        ///   Looks up a localized string similar to Invalid setting value specified!.
         /// </summary>
-        internal static string InvalidChannelSpecified {
+        internal static string InvalidSettingValue {
             get {
-                return ResourceManager.GetString("InvalidChannelSpecified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid role specified!.
-        /// </summary>
-        internal static string InvalidRoleSpecified {
-            get {
-                return ResourceManager.GetString("InvalidRoleSpecified", resourceCulture);
+                return ResourceManager.GetString("InvalidSettingValue", resourceCulture);
             }
         }
         
@@ -529,24 +511,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Someone removed the mute role manually!.
-        /// </summary>
-        internal static string MuteRoleManuallyRemoved {
-            get {
-                return ResourceManager.GetString("MuteRoleManuallyRemoved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must set up a mute role in settings!.
-        /// </summary>
-        internal static string MuteRoleRequired {
-            get {
-                return ResourceManager.GetString("MuteRoleRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         internal static string No {
@@ -592,20 +556,20 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repeated arguments detected! {0}.
-        /// </summary>
-        internal static string RepeatedArgumentsDetected {
-            get {
-                return ResourceManager.GetString("RepeatedArgumentsDetected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Not specified.
         /// </summary>
         internal static string RoleNotSpecified {
             get {
                 return ResourceManager.GetString("RoleNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I couldn&apos;t remove role {0} because of an error! {1}.
+        /// </summary>
+        internal static string RoleRemovalFailed {
+            get {
+                return ResourceManager.GetString("RoleRemovalFailed", resourceCulture);
             }
         }
         
@@ -655,20 +619,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message edited from {0} in channel {1}, but I forgot what was there before the edit.
+        ///   Looks up a localized string similar to Message edited from {0} in channel {1}, but I forgot what was there before the edit: .
         /// </summary>
         internal static string UncachedMessageEdited {
             get {
                 return ResourceManager.GetString("UncachedMessageEdited", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown command! {0}.
-        /// </summary>
-        internal static string UnknownCommand {
-            get {
-                return ResourceManager.GetString("UnknownCommand", resourceCulture);
             }
         }
         

@@ -16,6 +16,7 @@ public class BanCommand : Command {
             duration = Utils.GetTimeSpan(args[1]);
             reason = Utils.JoinString(args, 2);
         } catch (Exception e) when (e is ArgumentNullException or FormatException or OverflowException) {
+            await Warn(context.Channel as ITextChannel, Messages.DurationParseFailed);
             duration = TimeSpan.FromMilliseconds(-1);
         }
 
@@ -28,10 +29,8 @@ public class BanCommand : Command {
         var authorMention = author.Mention;
         var guildBanMessage = $"({Utils.GetNameAndDiscrim(author)}) {reason}";
         var memberToBan = await guild.GetUserAsync(toBan.Id);
-        var expiresIn = duration.TotalSeconds > 0
-            ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
-                DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds)
-            : "";
+        var expiresIn = duration.TotalSeconds > 0 ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
+            DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds) : "";
         var notification = string.Format(Messages.UserBanned, authorMention, toBan.Mention, Utils.WrapInline(reason),
             expiresIn);
 
@@ -39,25 +38,24 @@ public class BanCommand : Command {
         if (memberToBan != null)
             await CommandHandler.CheckInteractions(author, memberToBan);
 
-        await Utils.SendDirectMessage(toBan, string.Format(Messages.YouWereBanned, author.Mention, guild.Name,
-            Utils.WrapInline(reason)));
+        await Utils.SendDirectMessage(toBan,
+            string.Format(Messages.YouWereBanned, author.Mention, guild.Name, Utils.WrapInline(reason)));
 
         await guild.AddBanAsync(toBan, 0, guildBanMessage);
 
-        await Utils.SilentSendAsync(channel, string.Format(Messages.BanResponse, toBan.Mention,
-            Utils.WrapInline(reason)));
+        await Utils.SilentSendAsync(channel,
+            string.Format(Messages.BanResponse, toBan.Mention, Utils.WrapInline(reason)));
         await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
         await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
 
         if (duration.TotalSeconds > 0) {
-            var task = new Task(async () => {
+            await Task.Run(async () => {
                 await Task.Delay(duration);
                 try {
                     await UnbanCommand.UnbanUser(guild, null, await guild.GetCurrentUserAsync(), toBan,
                         Messages.PunishmentExpired);
                 } catch (ApplicationException) {}
             });
-            task.Start();
         }
     }
 

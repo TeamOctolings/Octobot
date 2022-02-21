@@ -1,9 +1,15 @@
 ﻿using System.Globalization;
 using Newtonsoft.Json;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Boyfriend;
 
 public class GuildConfig {
+
+    public GuildConfig(ulong id) {
+        Id = id;
+        Validate();
+    }
     public ulong? Id { get; }
     public string? Lang { get; set; }
     public string? Prefix { get; set; }
@@ -21,11 +27,6 @@ public class GuildConfig {
     public ulong? BotLogChannel { get; set; }
 
     public Dictionary<ulong, List<ulong>>? RolesRemovedOnMute { get; private set; }
-
-    public GuildConfig(ulong id) {
-        Id = id;
-        Validate();
-    }
 
     public void Validate() {
         if (Id == null) throw new Exception("Something went horribly, horribly wrong");
