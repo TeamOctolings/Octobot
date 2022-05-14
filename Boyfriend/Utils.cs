@@ -1,11 +1,16 @@
 ﻿using System.Globalization;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Discord;
 using Discord.Net;
+using Discord.WebSocket;
+using Humanizer;
+using Humanizer.Localisation;
 
 namespace Boyfriend;
 
 public static class Utils {
+
     private static readonly string[] Formats = {
         "%d'd'%h'h'%m'm'%s's'", "%d'd'%h'h'%m'm'", "%d'd'%h'h'%s's'", "%d'd'%h'h'", "%d'd'%m'm'%s's'", "%d'd'%m'm'",
         "%d'd'%s's'", "%d'd'", "%h'h'%m'm'%s's'", "%h'h'%m'm'", "%h'h'%s's'", "%h'h'", "%m'm'%s's'", "%m'm'", "%s's'",
@@ -14,65 +19,60 @@ public static class Utils {
         "%d'д'%s'с'", "%d'д'", "%h'ч'%m'м'%s'с'", "%h'ч'%m'м'", "%h'ч'%s'с'", "%h'ч'", "%m'м'%s'с'", "%m'м'", "%s'с'"
     };
 
-    public static string GetBeep(string cultureInfo, int i = -1) {
-        Messages.Culture = new CultureInfo(cultureInfo);
+    public static readonly Random Random = new();
+    private static readonly Dictionary<string, string> ReflectionMessageCache = new();
+    private static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
+        {"ru", new CultureInfo("ru-RU")},
+        {"en", new CultureInfo("en-US")}
+    };
+    private static readonly Dictionary<ulong, SocketRole> MuteRoleCache = new();
 
-        var beeps = new[] {Messages.Beep1, Messages.Beep2, Messages.Beep3};
-        return beeps[i < 0 ? new Random().Next(3) : i];
+    private static readonly AllowedMentions AllowRoles = new() {
+        AllowedTypes = AllowedMentionTypes.Roles
+    };
+
+    public static string GetBeep(int i = -1) {
+        return GetMessage($"Beep{(i < 0 ? Random.Next(3) + 1 : ++i)}");
     }
 
-    public static async Task<ITextChannel?> GetAdminLogChannel(IGuild guild) {
-        var adminLogChannel = await ParseChannelNullable(Boyfriend.GetGuildConfig(guild).AdminLogChannel.ToString()!);
-        return adminLogChannel as ITextChannel;
+    public static SocketTextChannel? GetAdminLogChannel(ulong id) {
+        return Boyfriend.Client.GetGuild(id)
+            .GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(id)["AdminLogChannel"]));
     }
 
-    public static string Wrap(string original) {
+    public static string Wrap(string? original) {
+        if (original == null) return "";
         var toReturn = original.Replace("```", "ˋˋˋ");
         return $"```{toReturn}{(toReturn.EndsWith("`") || toReturn.Trim().Equals("") ? " " : "")}```";
     }
 
-    public static string WrapInline(string original) {
-        return $"`{original.Replace("`", "ˋ")}`";
+    public static string? WrapInline(string? original) {
+        return original == null ? null : $"`{original.Replace("`", "ˋ")}`";
+    }
+
+    public static string? WrapAsNeeded(string? original) {
+        if (original == null) return null;
+        return original.Contains('\n') ? Wrap(original) : WrapInline(original);
     }
 
     public static string MentionChannel(ulong id) {
         return $"<#{id}>";
     }
 
-    private static ulong ParseMention(string mention) {
-        return Convert.ToUInt64(Regex.Replace(mention, "[^0-9]", ""));
+    public static ulong ParseMention(string mention) {
+        return ulong.TryParse(Regex.Replace(mention, "[^0-9]", ""), out var id) ? id : 0;
     }
 
-    private static ulong? ParseMentionNullable(string mention) {
-        try {
-            return ParseMention(mention) == 0 ? throw new FormatException() : ParseMention(mention);
-        } catch (FormatException) {
-            return null;
-        }
+    public static SocketUser? ParseUser(string mention) {
+        var user = Boyfriend.Client.GetUser(ParseMention(mention));
+        return user;
     }
 
-    public static async Task<IUser> ParseUser(string mention) {
-        var user = Boyfriend.Client.GetUserAsync(ParseMention(mention));
-        return await user;
+    public static SocketGuildUser? ParseMember(SocketGuild guild, string mention) {
+        return guild.GetUser(ParseMention(mention));
     }
 
-    public static async Task<IGuildUser> ParseMember(IGuild guild, string mention) {
-        return await guild.GetUserAsync(ParseMention(mention));
-    }
-
-    private static async Task<IChannel> ParseChannel(string mention) {
-        return await Boyfriend.Client.GetChannelAsync(ParseMention(mention));
-    }
-
-    private static async Task<IChannel?> ParseChannelNullable(string mention) {
-        return ParseMentionNullable(mention) == null ? null : await ParseChannel(mention);
-    }
-
-    public static IRole? ParseRole(IGuild guild, string mention) {
-        return guild.GetRole(ParseMention(mention));
-    }
-
-    public static async Task SendDirectMessage(IUser user, string toSend) {
+    public static async Task SendDirectMessage(SocketUser user, string toSend) {
         try {
             await user.SendMessageAsync(toSend);
         } catch (HttpException e) {
@@ -81,33 +81,74 @@ public static class Utils {
         }
     }
 
-    public static IRole? GetMuteRole(IGuild guild) {
-        var role = guild.Roles.FirstOrDefault(x => x.Id == Boyfriend.GetGuildConfig(guild).MuteRole);
+    public static SocketRole? GetMuteRole(ref SocketGuild guild) {
+        var id = ulong.Parse(Boyfriend.GetGuildConfig(guild.Id)["MuteRole"]);
+        if (MuteRoleCache.ContainsKey(id)) return MuteRoleCache[id];
+        SocketRole? role = null;
+        foreach (var x in guild.Roles) {
+            if (x.Id != id) continue;
+            role = x;
+            MuteRoleCache.Add(id, role);
+            break;
+        }
         return role;
     }
 
-    public static async Task SilentSendAsync(ITextChannel? channel, string text) {
-        if (channel == null) return;
+    public static async Task SilentSendAsync(SocketTextChannel? channel, string text, bool allowRoles = false) {
+        if (channel == null || text.Length is 0 or > 2000) return;
 
-        try {
-            await channel.SendMessageAsync(text, false, null, null, AllowedMentions.None);
-        } catch (ArgumentException) {}
+        await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
     }
-    public static TimeSpan GetTimeSpan(string from) {
-        return TimeSpan.ParseExact(from.ToLowerInvariant(), Formats, CultureInfo.InvariantCulture);
+    public static TimeSpan? GetTimeSpan(ref string from) {
+        if (TimeSpan.TryParseExact(from.ToLowerInvariant(), Formats, CultureInfo.InvariantCulture, out var timeSpan))
+            return timeSpan;
+        return null;
     }
 
-    public static string JoinString(string[] args, int startIndex) {
+    public static string JoinString(ref string[] args, int startIndex) {
         return string.Join(" ", args, startIndex, args.Length - startIndex);
-    }
-
-    public static string GetNameAndDiscrim(IUser user) {
-        return $"{user.Username}#{user.Discriminator}";
     }
 
     public static RequestOptions GetRequestOptions(string reason) {
         var options = RequestOptions.Default;
         options.AuditLogReason = reason;
         return options;
+    }
+
+    public static string GetMessage(string name) {
+        var propertyName = name;
+        name = $"{Messages.Culture}/{name}";
+        if (ReflectionMessageCache.ContainsKey(name)) return ReflectionMessageCache[name];
+
+        var toReturn =
+            typeof(Messages).GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
+                ?.ToString()! ?? throw new Exception($"Could not find localized property: {name}");
+        ReflectionMessageCache.Add(name, toReturn);
+        return toReturn;
+    }
+
+    public static async Task SendFeedback(string feedback, ulong guildId, string mention, bool sendPublic = false) {
+        var adminChannel = GetAdminLogChannel(guildId);
+        var systemChannel = Boyfriend.Client.GetGuild(guildId).SystemChannel;
+        var toSend = string.Format(Messages.FeedbackFormat, mention, feedback);
+        if (adminChannel != null)
+            await SilentSendAsync(adminChannel, toSend);
+        if (sendPublic && systemChannel != null)
+            await SilentSendAsync(systemChannel, toSend);
+    }
+
+    public static void StackFeedback(ref string feedback, ref string mention, bool isPublic) {
+        var toAppend = string.Format(Messages.FeedbackFormat, mention, feedback);
+        CommandHandler.StackedPrivateFeedback.AppendLine(toAppend);
+        if (isPublic) CommandHandler.StackedPublicFeedback.AppendLine(toAppend);
+    }
+
+    public static string GetHumanizedTimeOffset(ref TimeSpan span) {
+        return span.TotalSeconds > 0 ? $" {span.Humanize(minUnit: TimeUnit.Second, culture: Messages.Culture)}"
+            : Messages.Ever;
+    }
+
+    public static void SetCurrentLanguage(ulong guildId) {
+        Messages.Culture = CultureInfoCache[Boyfriend.GetGuildConfig(guildId)["Lang"]];
     }
 }

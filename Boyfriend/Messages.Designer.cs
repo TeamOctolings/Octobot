@@ -70,15 +70,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to :white_check_mark: Successfully banned {0} for {1}.
-        /// </summary>
-        internal static string BanResponse {
-            get {
-                return ResourceManager.GetString("BanResponse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Bah! .
         /// </summary>
         internal static string Beep1 {
@@ -106,7 +97,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted message from {0} in channel .
+        ///   Looks up a localized string similar to Deleted message from {0} in channel {1}: {2}.
         /// </summary>
         internal static string CachedMessageDeleted {
             get {
@@ -115,7 +106,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message edited from {0} in channel {1}.{2}Before:{3}{4}{5}After:{6}{7}.
+        ///   Looks up a localized string similar to Edited message in channel {0}: {1} -&gt; {2}.
         /// </summary>
         internal static string CachedMessageEdited {
             get {
@@ -169,7 +160,88 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Command help:{0}.
+        ///   Looks up a localized string similar to Bans a user.
+        /// </summary>
+        internal static string CommandDescriptionBan {
+            get {
+                return ResourceManager.GetString("CommandDescriptionBan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deletes a specified amount of messages in this channel.
+        /// </summary>
+        internal static string CommandDescriptionClear {
+            get {
+                return ResourceManager.GetString("CommandDescriptionClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shows this message.
+        /// </summary>
+        internal static string CommandDescriptionHelp {
+            get {
+                return ResourceManager.GetString("CommandDescriptionHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kicks a member.
+        /// </summary>
+        internal static string CommandDescriptionKick {
+            get {
+                return ResourceManager.GetString("CommandDescriptionKick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mutes a member.
+        /// </summary>
+        internal static string CommandDescriptionMute {
+            get {
+                return ResourceManager.GetString("CommandDescriptionMute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shows latency to Discord servers (not counting local processing time).
+        /// </summary>
+        internal static string CommandDescriptionPing {
+            get {
+                return ResourceManager.GetString("CommandDescriptionPing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows you to change certain preferences for this guild.
+        /// </summary>
+        internal static string CommandDescriptionSettings {
+            get {
+                return ResourceManager.GetString("CommandDescriptionSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unbans a user.
+        /// </summary>
+        internal static string CommandDescriptionUnban {
+            get {
+                return ResourceManager.GetString("CommandDescriptionUnban", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unmutes a member.
+        /// </summary>
+        internal static string CommandDescriptionUnmute {
+            get {
+                return ResourceManager.GetString("CommandDescriptionUnmute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command help:.
         /// </summary>
         internal static string CommandHelp {
             get {
@@ -205,110 +277,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current settings:{0}.
+        ///   Looks up a localized string similar to Current settings:.
         /// </summary>
         internal static string CurrentSettings {
             get {
                 return ResourceManager.GetString("CurrentSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Admin log channel (`adminLogChannel`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsAdminLogChannel {
-            get {
-                return ResourceManager.GetString("CurrentSettingsAdminLogChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Bot log channel (`botLogChannel`): {0}.
-        /// </summary>
-        internal static string CurrentSettingsBotLogChannel {
-            get {
-                return ResourceManager.GetString("CurrentSettingsBotLogChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Default role (`defaultRole`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsDefaultRole {
-            get {
-                return ResourceManager.GetString("CurrentSettingsDefaultRole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Language (`lang`): `{0}`{1}.
-        /// </summary>
-        internal static string CurrentSettingsLang {
-            get {
-                return ResourceManager.GetString("CurrentSettingsLang", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Mute role (`muteRole`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsMuteRole {
-            get {
-                return ResourceManager.GetString("CurrentSettingsMuteRole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Prefix (`prefix`): `{0}`{1}.
-        /// </summary>
-        internal static string CurrentSettingsPrefix {
-            get {
-                return ResourceManager.GetString("CurrentSettingsPrefix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Receive startup messages (`receiveStartupMessages`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsReceiveStartupMessages {
-            get {
-                return ResourceManager.GetString("CurrentSettingsReceiveStartupMessages", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove roles on mute (`removeRolesOnMute`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsRemoveRoles {
-            get {
-                return ResourceManager.GetString("CurrentSettingsRemoveRoles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send welcome messages (`sendWelcomeMessages`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsSendWelcomeMessages {
-            get {
-                return ResourceManager.GetString("CurrentSettingsSendWelcomeMessages", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use system channel for notifications (`useSystemChannel`): {0}{1}.
-        /// </summary>
-        internal static string CurrentSettingsUseSystemChannel {
-            get {
-                return ResourceManager.GetString("CurrentSettingsUseSystemChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Welcome message: `{0}`{1}.
-        /// </summary>
-        internal static string CurrentSettingsWelcomeMessage {
-            get {
-                return ResourceManager.GetString("CurrentSettingsWelcomeMessage", resourceCulture);
             }
         }
         
@@ -336,6 +309,123 @@ namespace Boyfriend {
         internal static string DurationRequiredForTimeOuts {
             get {
                 return ResourceManager.GetString("DurationRequiredForTimeOuts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event {0} is cancelled!{1}.
+        /// </summary>
+        internal static string EventCancelled {
+            get {
+                return ResourceManager.GetString("EventCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event {0} has completed! Duration: {1}.
+        /// </summary>
+        internal static string EventCompleted {
+            get {
+                return ResourceManager.GetString("EventCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {1}{2} created event {3}! It will take place in {4} and will start &lt;t:{5}:R&gt;!{0}{6}.
+        /// </summary>
+        internal static string EventCreated {
+            get {
+                return ResourceManager.GetString("EventCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}Event {1} is starting at {2}!.
+        /// </summary>
+        internal static string EventStarted {
+            get {
+                return ResourceManager.GetString("EventStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ever.
+        /// </summary>
+        internal static string Ever {
+            get {
+                return ResourceManager.GetString("Ever", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *[{0}: {1}]*.
+        /// </summary>
+        internal static string FeedbackFormat {
+            get {
+                return ResourceManager.GetString("FeedbackFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kicked {0}: {1}.
+        /// </summary>
+        internal static string FeedbackMemberKicked {
+            get {
+                return ResourceManager.GetString("FeedbackMemberKicked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Muted {0} for{1}: {2}.
+        /// </summary>
+        internal static string FeedbackMemberMuted {
+            get {
+                return ResourceManager.GetString("FeedbackMemberMuted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unmuted {0}: {1}.
+        /// </summary>
+        internal static string FeedbackMemberUnmuted {
+            get {
+                return ResourceManager.GetString("FeedbackMemberUnmuted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted {0} messages in {1}.
+        /// </summary>
+        internal static string FeedbackMessagesCleared {
+            get {
+                return ResourceManager.GetString("FeedbackMessagesCleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value of setting `{0}` is now set to {1}.
+        /// </summary>
+        internal static string FeedbackSettingsUpdated {
+            get {
+                return ResourceManager.GetString("FeedbackSettingsUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Banned {0} for{1}: {2}.
+        /// </summary>
+        internal static string FeedbackUserBanned {
+            get {
+                return ResourceManager.GetString("FeedbackUserBanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unbanned {0}: {1}.
+        /// </summary>
+        internal static string FeedbackUserUnbanned {
+            get {
+                return ResourceManager.GetString("FeedbackUserUnbanned", resourceCulture);
             }
         }
         
@@ -421,15 +511,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to :white_check_mark: Successfully kicked {0} for {1}.
-        /// </summary>
-        internal static string KickResponse {
-            get {
-                return ResourceManager.GetString("KickResponse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Language not supported!.
         /// </summary>
         internal static string LanguageNotSupported {
@@ -444,24 +525,6 @@ namespace Boyfriend {
         internal static string MemberAlreadyMuted {
             get {
                 return ResourceManager.GetString("MemberAlreadyMuted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} kicked {1} for {2}.
-        /// </summary>
-        internal static string MemberKicked {
-            get {
-                return ResourceManager.GetString("MemberKicked", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} muted {1} for {2}{3}.
-        /// </summary>
-        internal static string MemberMuted {
-            get {
-                return ResourceManager.GetString("MemberMuted", resourceCulture);
             }
         }
         
@@ -484,29 +547,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} deleted {1} messages in channel {2}.
-        /// </summary>
-        internal static string MessagesDeleted {
-            get {
-                return ResourceManager.GetString("MessagesDeleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ms.
         /// </summary>
         internal static string Milliseconds {
             get {
                 return ResourceManager.GetString("Milliseconds", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to :white_check_mark: Successfully muted {0} for {1}.
-        /// </summary>
-        internal static string MuteResponse {
-            get {
-                return ResourceManager.GetString("MuteResponse", resourceCulture);
             }
         }
         
@@ -534,15 +579,6 @@ namespace Boyfriend {
         internal static string PunishmentExpired {
             get {
                 return ResourceManager.GetString("PunishmentExpired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}This punishment will expire &lt;t:{1}:R&gt;.
-        /// </summary>
-        internal static string PunishmentExpiresIn {
-            get {
-                return ResourceManager.GetString("PunishmentExpiresIn", resourceCulture);
             }
         }
         
@@ -592,25 +628,178 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Settings successfully updated.
+        ///   Looks up a localized string similar to Not specified.
         /// </summary>
-        internal static string SettingsUpdated {
+        internal static string SettingNotDefined {
             get {
-                return ResourceManager.GetString("SettingsUpdated", resourceCulture);
+                return ResourceManager.GetString("SettingNotDefined", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to :white_check_mark: Successfully unbanned {0} for {1}.
+        ///   Looks up a localized string similar to Admin log channel.
         /// </summary>
-        internal static string UnbanResponse {
+        internal static string SettingsAdminLogChannel {
             get {
-                return ResourceManager.GetString("UnbanResponse", resourceCulture);
+                return ResourceManager.GetString("SettingsAdminLogChannel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted message in {0}, but I forgot what was there.
+        ///   Looks up a localized string similar to Bot log channel.
+        /// </summary>
+        internal static string SettingsBotLogChannel {
+            get {
+                return ResourceManager.GetString("SettingsBotLogChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channel for event cancellation notifications.
+        /// </summary>
+        internal static string SettingsEventCancelledChannel {
+            get {
+                return ResourceManager.GetString("SettingsEventCancelledChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channel for event completion notifications.
+        /// </summary>
+        internal static string SettingsEventCompletedChannel {
+            get {
+                return ResourceManager.GetString("SettingsEventCompletedChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channel for event creation notifications.
+        /// </summary>
+        internal static string SettingsEventCreatedChannel {
+            get {
+                return ResourceManager.GetString("SettingsEventCreatedChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Role for event creation notifications.
+        /// </summary>
+        internal static string SettingsEventNotifyReceiverRole {
+            get {
+                return ResourceManager.GetString("SettingsEventNotifyReceiverRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channel for event start notifications.
+        /// </summary>
+        internal static string SettingsEventStartedChannel {
+            get {
+                return ResourceManager.GetString("SettingsEventStartedChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event start notifications receivers.
+        /// </summary>
+        internal static string SettingsEventStartedReceivers {
+            get {
+                return ResourceManager.GetString("SettingsEventStartedReceivers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to :(.
+        /// </summary>
+        internal static string SettingsFrowningFace {
+            get {
+                return ResourceManager.GetString("SettingsFrowningFace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string SettingsLang {
+            get {
+                return ResourceManager.GetString("SettingsLang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mute role.
+        /// </summary>
+        internal static string SettingsMuteRole {
+            get {
+                return ResourceManager.GetString("SettingsMuteRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nothing changed! `{0}` is already set to {1}.
+        /// </summary>
+        internal static string SettingsNothingChanged {
+            get {
+                return ResourceManager.GetString("SettingsNothingChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix.
+        /// </summary>
+        internal static string SettingsPrefix {
+            get {
+                return ResourceManager.GetString("SettingsPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Receive startup messages.
+        /// </summary>
+        internal static string SettingsReceiveStartupMessages {
+            get {
+                return ResourceManager.GetString("SettingsReceiveStartupMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove roles on mute.
+        /// </summary>
+        internal static string SettingsRemoveRolesOnMute {
+            get {
+                return ResourceManager.GetString("SettingsRemoveRolesOnMute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send welcome messages.
+        /// </summary>
+        internal static string SettingsSendWelcomeMessages {
+            get {
+                return ResourceManager.GetString("SettingsSendWelcomeMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starter role.
+        /// </summary>
+        internal static string SettingsStarterRole {
+            get {
+                return ResourceManager.GetString("SettingsStarterRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome message.
+        /// </summary>
+        internal static string SettingsWelcomeMessage {
+            get {
+                return ResourceManager.GetString("SettingsWelcomeMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message deleted in {0}, but I forgot what was there.
         /// </summary>
         internal static string UncachedMessageDeleted {
             get {
@@ -619,7 +808,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message edited from {0} in channel {1}, but I forgot what was there before the edit: .
+        ///   Looks up a localized string similar to Message edited from {0} in channel {1}, but I forgot what was there before the edit: {2}.
         /// </summary>
         internal static string UncachedMessageEdited {
             get {
@@ -628,20 +817,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to :white_check_mark: Successfully unmuted {0} for {1}.
+        ///   Looks up a localized string similar to That user doesn&apos;t exist!.
         /// </summary>
-        internal static string UnmuteResponse {
+        internal static string UserDoesntExist {
             get {
-                return ResourceManager.GetString("UnmuteResponse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} banned {1} for {2}{3}.
-        /// </summary>
-        internal static string UserBanned {
-            get {
-                return ResourceManager.GetString("UserBanned", resourceCulture);
+                return ResourceManager.GetString("UserDoesntExist", resourceCulture);
             }
         }
         

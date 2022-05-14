@@ -1,30 +1,22 @@
 ﻿using Discord.Commands;
-
-// ReSharper disable UnusedType.Global
-// ReSharper disable UnusedMember.Global
+using Humanizer;
 
 namespace Boyfriend.Commands;
 
 public class HelpCommand : Command {
-    public override async Task Run(SocketCommandContext context, string[] args) {
-        var nl = Environment.NewLine;
-        var prefix = Boyfriend.GetGuildConfig(context.Guild).Prefix;
-        var toSend = string.Format(Messages.CommandHelp, nl);
+    public override string[] Aliases { get; } = {"help", "помощь", "справка"};
+    public override int ArgsLengthRequired => 0;
 
-        toSend = CommandHandler.Commands.Aggregate(toSend,
-            (current, command) => current + $"`{prefix}{command.GetAliases()[0]}`: {command.GetSummary()}{nl}");
-        await context.Channel.SendMessageAsync(toSend);
-    }
+    public override Task Run(SocketCommandContext context, string[] args) {
+        var prefix = Boyfriend.GetGuildConfig(context.Guild.Id)["Prefix"];
+        var toSend = Boyfriend.StringBuilder.Append(Messages.CommandHelp);
 
-    public override List<string> GetAliases() {
-        return new List<string> {"help", "помощь", "справка"};
-    }
+        foreach (var command in CommandHandler.Commands)
+            toSend.Append(
+                $"\n`{prefix}{command.Aliases[0]}`: {Utils.GetMessage($"CommandDescription{command.Aliases[0].Titleize()}")}");
+        Output(ref toSend);
+        toSend.Clear();
 
-    public override int GetArgumentsAmountRequired() {
-        return 0;
-    }
-
-    public override string GetSummary() {
-        return "Показывает эту справку";
+        return Task.CompletedTask;
     }
 }

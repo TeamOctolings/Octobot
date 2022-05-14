@@ -1,71 +1,78 @@
 ﻿using Discord;
 using Discord.Commands;
-
-// ReSharper disable UnusedType.Global
-// ReSharper disable UnusedMember.Global
-// ReSharper disable ClassNeverInstantiated.Global
+using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
 public class UnmuteCommand : Command {
+    public override string[] Aliases { get; } = {"unmute", "размут"};
+    public override int ArgsLengthRequired => 2;
+
     public override async Task Run(SocketCommandContext context, string[] args) {
-        await UnmuteMember(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id),
-            await Utils.ParseMember(context.Guild, args[0]), Utils.JoinString(args, 1));
+        var author = (SocketGuildUser) context.User;
+
+        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
+        if (permissionCheckResponse != "") {
+            Error(permissionCheckResponse, true);
+            return;
+        }
+
+        var toUnmute = Utils.ParseMember(context.Guild, args[0]);
+
+        if (toUnmute == null) {
+            Error(Messages.UserDoesntExist, false);
+            return;
+        }
+
+        var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toUnmute);
+        if (interactionCheckResponse != "") {
+            Error(interactionCheckResponse, true);
+            return;
+        }
+
+        var reason = Utils.JoinString(ref args, 1);
+        await UnmuteMember(context.Guild, author, toUnmute, reason);
     }
 
-    public static async Task UnmuteMember(IGuild guild, ITextChannel? channel, IGuildUser author, IGuildUser toUnmute,
+    public static async Task UnmuteMember(SocketGuild guild, SocketGuildUser author, SocketGuildUser toUnmute,
         string reason) {
-        await CommandHandler.CheckPermissions(author, GuildPermission.ModerateMembers, GuildPermission.ManageRoles);
-        await CommandHandler.CheckInteractions(author, toUnmute);
-        var authorMention = author.Mention;
-        var config = Boyfriend.GetGuildConfig(guild);
-        var notification = string.Format(Messages.MemberUnmuted, authorMention, toUnmute.Mention,
-            Utils.WrapInline(reason));
-        var requestOptions = Utils.GetRequestOptions($"({Utils.GetNameAndDiscrim(author)}) {reason}");
-        var role = Utils.GetMuteRole(guild);
+        var requestOptions = Utils.GetRequestOptions($"({author}) {reason}");
+        var role = Utils.GetMuteRole(ref guild);
 
         if (role != null) {
-            if (toUnmute.RoleIds.All(x => x != role.Id)) {
-                var rolesRemoved = config.RolesRemovedOnMute;
-
-                await toUnmute.AddRolesAsync(rolesRemoved![toUnmute.Id]);
-                rolesRemoved.Remove(toUnmute.Id);
-                await config.Save();
-                throw new ApplicationException(Messages.RolesReturned);
+            var muted = false;
+            foreach (var x in toUnmute.Roles) {
+                if (x != role) continue;
+                muted = true;
+                break;
             }
 
-            if (toUnmute.RoleIds.All(x => x != role.Id))
-                throw new ApplicationException(Messages.MemberNotMuted);
+            var rolesRemoved = Boyfriend.GetRemovedRoles(guild.Id);
 
-            await toUnmute.RemoveRoleAsync(role, requestOptions);
-            if (config.RolesRemovedOnMute!.ContainsKey(toUnmute.Id)) {
-                await toUnmute.AddRolesAsync(config.RolesRemovedOnMute[toUnmute.Id]);
-                config.RolesRemovedOnMute.Remove(toUnmute.Id);
-                await config.Save();
+            if (rolesRemoved.ContainsKey(toUnmute.Id)) {
+                await toUnmute.AddRolesAsync(rolesRemoved[toUnmute.Id]);
+                rolesRemoved.Remove(toUnmute.Id);
+                CommandHandler.ConfigWriteScheduled = true;
+            }
+
+            if (muted) {
+                await toUnmute.RemoveRoleAsync(role, requestOptions);
+            } else {
+                Error(Messages.MemberNotMuted, false);
+                return;
             }
         } else {
-            if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds()
-                < DateTimeOffset.Now.ToUnixTimeMilliseconds())
-                throw new ApplicationException(Messages.MemberNotMuted);
+            if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds() <
+                DateTimeOffset.Now.ToUnixTimeMilliseconds()) {
+                Error(Messages.MemberNotMuted, false);
+                return;
+            }
 
             await toUnmute.RemoveTimeOutAsync();
         }
 
-        await Utils.SilentSendAsync(channel, string.Format(Messages.UnmuteResponse, toUnmute.Mention,
-            Utils.WrapInline(reason)));
-        await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
-        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
-    }
-
-    public override List<string> GetAliases() {
-        return new List<string> {"unmute", "размут"};
-    }
-
-    public override int GetArgumentsAmountRequired() {
-        return 2;
-    }
-
-    public override string GetSummary() {
-        return "Снимает мут с участника";
+        var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.WrapInline(reason));
+        Success(feedback, author.Mention, false, false);
+        await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
     }
 }

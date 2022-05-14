@@ -31,19 +31,19 @@
         <value>{0}I'm ready! (C#)</value>
     </data>
     <data name="UncachedMessageDeleted" xml:space="preserve">
-        <value>Deleted message in {0}, but I forgot what was there</value>
+        <value>Message deleted in {0}, but I forgot what was there</value>
     </data>
     <data name="CachedMessageDeleted" xml:space="preserve">
-        <value>Deleted message from {0} in channel </value>
+        <value>Deleted message from {0} in channel {1}: {2}</value>
     </data>
     <data name="AutobanReason" xml:space="preserve">
         <value>Too many mentions in 1 message</value>
     </data>
     <data name="UncachedMessageEdited" xml:space="preserve">
-        <value>Message edited from {0} in channel {1}, but I forgot what was there before the edit: </value>
+        <value>Message edited from {0} in channel {1}, but I forgot what was there before the edit: {2}</value>
     </data>
     <data name="CachedMessageEdited" xml:space="preserve">
-        <value>Message edited from {0} in channel {1}.{2}Before:{3}{4}{5}After:{6}{7}</value>
+        <value>Edited message in channel {0}: {1} -&gt; {2}</value>
     </data>
     <data name="DefaultWelcomeMessage" xml:space="preserve">
         <value>{0}, welcome to {1}</value>
@@ -84,9 +84,6 @@
     <data name="YouWereBanned" xml:space="preserve">
         <value>You were banned by {0} in guild {1} for {2}</value>
     </data>
-    <data name="UserBanned" xml:space="preserve">
-        <value>{0} banned {1} for {2}{3}</value>
-    </data>
     <data name="PunishmentExpired" xml:space="preserve">
         <value>Punishment expired</value>
     </data>
@@ -96,20 +93,11 @@
     <data name="ClearAmountTooLarge" xml:space="preserve">
         <value>Too many messages specified!</value>
     </data>
-    <data name="MessagesDeleted" xml:space="preserve">
-        <value>{0} deleted {1} messages in channel {2}</value>
-    </data>
     <data name="CommandHelp" xml:space="preserve">
-        <value>Command help:{0}</value>
+        <value>Command help:</value>
     </data>
     <data name="YouWereKicked" xml:space="preserve">
         <value>You were kicked by {0} in guild {1} for {2}</value>
-    </data>
-    <data name="MemberKicked" xml:space="preserve">
-        <value>{0} kicked {1} for {2}</value>
-    </data>
-    <data name="MemberMuted" xml:space="preserve">
-        <value>{0} muted {1} for {2}{3}</value>
     </data>
     <data name="Milliseconds" xml:space="preserve">
         <value>ms</value>
@@ -124,40 +112,34 @@
         <value>Not specified</value>
     </data>
     <data name="CurrentSettings" xml:space="preserve">
-        <value>Current settings:{0}</value>
+        <value>Current settings:</value>
     </data>
-    <data name="CurrentSettingsLang" xml:space="preserve">
-        <value>Language (`lang`): `{0}`{1}</value>
+    <data name="SettingsLang" xml:space="preserve">
+        <value>Language</value>
     </data>
-    <data name="CurrentSettingsPrefix" xml:space="preserve">
-        <value>Prefix (`prefix`): `{0}`{1}</value>
+    <data name="SettingsPrefix" xml:space="preserve">
+        <value>Prefix</value>
     </data>
-    <data name="CurrentSettingsRemoveRoles" xml:space="preserve">
-        <value>Remove roles on mute (`removeRolesOnMute`): {0}{1}</value>
+    <data name="SettingsRemoveRolesOnMute" xml:space="preserve">
+        <value>Remove roles on mute</value>
     </data>
-    <data name="CurrentSettingsUseSystemChannel" xml:space="preserve">
-        <value>Use system channel for notifications (`useSystemChannel`): {0}{1}</value>
+    <data name="SettingsSendWelcomeMessages" xml:space="preserve">
+        <value>Send welcome messages</value>
     </data>
-    <data name="CurrentSettingsSendWelcomeMessages" xml:space="preserve">
-        <value>Send welcome messages (`sendWelcomeMessages`): {0}{1}</value>
+    <data name="SettingsStarterRole" xml:space="preserve">
+        <value>Starter role</value>
     </data>
-    <data name="CurrentSettingsDefaultRole" xml:space="preserve">
-        <value>Default role (`defaultRole`): {0}{1}</value>
+    <data name="SettingsMuteRole" xml:space="preserve">
+        <value>Mute role</value>
     </data>
-    <data name="CurrentSettingsMuteRole" xml:space="preserve">
-        <value>Mute role (`muteRole`): {0}{1}</value>
+    <data name="SettingsAdminLogChannel" xml:space="preserve">
+        <value>Admin log channel</value>
     </data>
-    <data name="CurrentSettingsAdminLogChannel" xml:space="preserve">
-        <value>Admin log channel (`adminLogChannel`): {0}{1}</value>
-    </data>
-    <data name="CurrentSettingsBotLogChannel" xml:space="preserve">
-        <value>Bot log channel (`botLogChannel`): {0}</value>
+    <data name="SettingsBotLogChannel" xml:space="preserve">
+        <value>Bot log channel</value>
     </data>
     <data name="LanguageNotSupported" xml:space="preserve">
         <value>Language not supported!</value>
-    </data>
-    <data name="SettingsUpdated" xml:space="preserve">
-        <value>Settings successfully updated</value>
     </data>
     <data name="Yes" xml:space="preserve">
         <value>Yes</value>
@@ -180,8 +162,8 @@
     <data name="UserUnbanned" xml:space="preserve">
         <value>{0} unbanned {1} for {2}</value>
     </data>
-    <data name="CurrentSettingsWelcomeMessage" xml:space="preserve">
-        <value>Welcome message: `{0}`{1}</value>
+    <data name="SettingsWelcomeMessage" xml:space="preserve">
+        <value>Welcome message</value>
     </data>
     <data name="NotEnoughArguments" xml:space="preserve">
         <value>Not enough arguments! Needed: {0}, provided: {1}</value>
@@ -189,32 +171,17 @@
     <data name="ClearInvalidAmountSpecified" xml:space="preserve">
         <value>Invalid message amount specified!</value>
     </data>
-    <data name="BanResponse" xml:space="preserve">
-        <value>:white_check_mark: Successfully banned {0} for {1}</value>
-    </data>
-    <data name="KickResponse" xml:space="preserve">
-        <value>:white_check_mark: Successfully kicked {0} for {1}</value>
+    <data name="FeedbackUserBanned" xml:space="preserve">
+        <value>Banned {0} for{1}: {2}</value>
     </data>
     <data name="UserNotInGuild" xml:space="preserve">
         <value>The specified user is not a member of this server!</value>
     </data>
-    <data name="MuteResponse" xml:space="preserve">
-        <value>:white_check_mark: Successfully muted {0} for {1}</value>
-    </data>
-    <data name="UnbanResponse" xml:space="preserve">
-        <value>:white_check_mark: Successfully unbanned {0} for {1}</value>
-    </data>
-    <data name="UnmuteResponse" xml:space="preserve">
-        <value>:white_check_mark: Successfully unmuted {0} for {1}</value>
-    </data>
     <data name="SettingDoesntExist" xml:space="preserve">
         <value>That setting doesn't exist!</value>
     </data>
-    <data name="CurrentSettingsReceiveStartupMessages" xml:space="preserve">
-        <value>Receive startup messages (`receiveStartupMessages`): {0}{1}</value>
-    </data>
-    <data name="PunishmentExpiresIn" xml:space="preserve">
-        <value>{0}This punishment will expire &lt;t:{1}:R&gt;</value>
+    <data name="SettingsReceiveStartupMessages" xml:space="preserve">
+        <value>Receive startup messages</value>
     </data>
     <data name="InvalidSettingValue" xml:space="preserve">
         <value>Invalid setting value specified!</value>
@@ -236,5 +203,98 @@
     </data>
     <data name="CannotTimeOutBot" xml:space="preserve">
         <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>
+    </data>
+    <data name="EventCreated" xml:space="preserve">
+        <value>{1}{2} created event {3}! It will take place in {4} and will start &lt;t:{5}:R&gt;!{0}{6}</value>
+    </data>
+    <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
+        <value>Role for event creation notifications</value>
+    </data>
+    <data name="SettingsEventCreatedChannel" xml:space="preserve">
+        <value>Channel for event creation notifications</value>
+    </data>
+    <data name="SettingsEventStartedChannel" xml:space="preserve">
+        <value>Channel for event start notifications</value>
+    </data>
+    <data name="SettingsEventStartedReceivers" xml:space="preserve">
+        <value>Event start notifications receivers</value>
+    </data>
+    <data name="EventStarted" xml:space="preserve">
+        <value>{0}Event {1} is starting at {2}!</value>
+    </data>
+    <data name="SettingsFrowningFace" xml:space="preserve">
+        <value>:(</value>
+    </data>
+    <data name="EventCancelled" xml:space="preserve">
+        <value>Event {0} is cancelled!{1}</value>
+    </data>
+    <data name="SettingsEventCancelledChannel" xml:space="preserve">
+        <value>Channel for event cancellation notifications</value>
+    </data>
+    <data name="SettingsEventCompletedChannel" xml:space="preserve">
+        <value>Channel for event completion notifications</value>
+    </data>
+    <data name="EventCompleted" xml:space="preserve">
+        <value>Event {0} has completed! Duration: {1}</value>
+    </data>
+    <data name="UserDoesntExist" xml:space="preserve">
+        <value>That user doesn't exist!</value>
+    </data>
+    <data name="FeedbackFormat" xml:space="preserve">
+        <value>*[{0}: {1}]*</value>
+    </data>
+    <data name="Ever" xml:space="preserve">
+        <value>ever</value>
+    </data>
+    <data name="FeedbackMessagesCleared" xml:space="preserve">
+        <value>Deleted {0} messages in {1}</value>
+    </data>
+    <data name="FeedbackMemberKicked" xml:space="preserve">
+        <value>Kicked {0}: {1}</value>
+    </data>
+    <data name="FeedbackMemberMuted" xml:space="preserve">
+        <value>Muted {0} for{1}: {2}</value>
+    </data>
+    <data name="FeedbackUserUnbanned" xml:space="preserve">
+        <value>Unbanned {0}: {1}</value>
+    </data>
+    <data name="FeedbackMemberUnmuted" xml:space="preserve">
+        <value>Unmuted {0}: {1}</value>
+    </data>
+    <data name="SettingsNothingChanged" xml:space="preserve">
+        <value>Nothing changed! `{0}` is already set to {1}</value>
+    </data>
+    <data name="SettingNotDefined" xml:space="preserve">
+        <value>Not specified</value>
+    </data>
+    <data name="FeedbackSettingsUpdated" xml:space="preserve">
+        <value>Value of setting `{0}` is now set to {1}</value>
+    </data>
+    <data name="CommandDescriptionBan" xml:space="preserve">
+        <value>Bans a user</value>
+    </data>
+    <data name="CommandDescriptionClear" xml:space="preserve">
+        <value>Deletes a specified amount of messages in this channel</value>
+    </data>
+    <data name="CommandDescriptionHelp" xml:space="preserve">
+        <value>Shows this message</value>
+    </data>
+    <data name="CommandDescriptionKick" xml:space="preserve">
+        <value>Kicks a member</value>
+    </data>
+    <data name="CommandDescriptionMute" xml:space="preserve">
+        <value>Mutes a member</value>
+    </data>
+    <data name="CommandDescriptionPing" xml:space="preserve">
+        <value>Shows latency to Discord servers (not counting local processing time)</value>
+    </data>
+    <data name="CommandDescriptionSettings" xml:space="preserve">
+        <value>Allows you to change certain preferences for this guild</value>
+    </data>
+    <data name="CommandDescriptionUnban" xml:space="preserve">
+        <value>Unbans a user</value>
+    </data>
+    <data name="CommandDescriptionUnmute" xml:space="preserve">
+        <value>Unmutes a member</value>
     </data>
 </root>

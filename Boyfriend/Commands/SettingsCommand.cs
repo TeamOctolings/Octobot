@@ -1,111 +1,156 @@
-﻿using System.Reflection;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
-
-// ReSharper disable UnusedType.Global
-// ReSharper disable UnusedMember.Global
+using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
 public class SettingsCommand : Command {
-    public override async Task Run(SocketCommandContext context, string[] args) {
-        var config = Boyfriend.GetGuildConfig(context.Guild);
-        var guild = context.Guild;
+    public override string[] Aliases { get; } = {"settings", "config", "настройки", "конфиг"};
+    public override int ArgsLengthRequired => 0;
 
-        await CommandHandler.CheckPermissions(context.Guild.GetUser(context.User.Id), GuildPermission.ManageGuild);
+    public override Task Run(SocketCommandContext context, string[] args) {
+        var author = (SocketGuildUser) context.User;
+
+        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ManageGuild);
+        if (permissionCheckResponse != "") {
+            Error(permissionCheckResponse, true);
+            return Task.CompletedTask;
+        }
+
+        var guild = context.Guild;
+        var config = Boyfriend.GetGuildConfig(guild.Id);
 
         if (args.Length == 0) {
-            var nl = Environment.NewLine;
-            dynamic forCheck;
-            var adminLogChannel = (forCheck = guild.GetTextChannel(config.AdminLogChannel.GetValueOrDefault(0))) == null
-                ? Messages.ChannelNotSpecified : forCheck.Mention;
-            var botLogChannel = (forCheck = guild.GetTextChannel(config.BotLogChannel.GetValueOrDefault(0))) == null
-                ? Messages.ChannelNotSpecified : forCheck.Mention;
-            var muteRole = (forCheck = guild.GetRole(config.MuteRole.GetValueOrDefault(0))) == null
-                ? Messages.RoleNotSpecified : forCheck.Mention;
-            var defaultRole = (forCheck = guild.GetRole(config.DefaultRole.GetValueOrDefault(0))) == null
-                ? Messages.RoleNotSpecified : forCheck.Mention;
-            var toSend = string.Format(Messages.CurrentSettings, nl) +
-                         string.Format(Messages.CurrentSettingsLang, config.Lang, nl) +
-                         string.Format(Messages.CurrentSettingsPrefix, config.Prefix, nl) +
-                         string.Format(Messages.CurrentSettingsRemoveRoles,
-                             YesOrNo(config.RemoveRolesOnMute.GetValueOrDefault(false)), nl) +
-                         string.Format(Messages.CurrentSettingsUseSystemChannel,
-                             YesOrNo(config.UseSystemChannel.GetValueOrDefault(true)), nl) +
-                         string.Format(Messages.CurrentSettingsSendWelcomeMessages,
-                             YesOrNo(config.SendWelcomeMessages.GetValueOrDefault(true)), nl) +
-                         string.Format(Messages.CurrentSettingsReceiveStartupMessages,
-                             YesOrNo(config.ReceiveStartupMessages.GetValueOrDefault(true)), nl) +
-                         string.Format(Messages.CurrentSettingsWelcomeMessage, config.WelcomeMessage, nl) +
-                         string.Format(Messages.CurrentSettingsDefaultRole, defaultRole, nl) +
-                         string.Format(Messages.CurrentSettingsMuteRole, muteRole, nl) +
-                         string.Format(Messages.CurrentSettingsAdminLogChannel, adminLogChannel, nl) +
-                         string.Format(Messages.CurrentSettingsBotLogChannel, botLogChannel);
-            await Utils.SilentSendAsync(context.Channel as ITextChannel ?? throw new ApplicationException(), toSend);
-            return;
-        }
+            var currentSettings = Boyfriend.StringBuilder.AppendLine(Messages.CurrentSettings);
 
-        var setting = args[0].ToLower();
-        var value = "";
+            foreach (var setting in Boyfriend.DefaultConfig) {
+                var format = "{0}";
+                var currentValue = config[setting.Key];
 
-        if (args.Length >= 2)
-            try {
-                value = args[1].ToLower();
-            } catch (IndexOutOfRangeException) {
-                throw new ApplicationException(Messages.InvalidSettingValue);
+                if (setting.Key.EndsWith("Channel")) {
+                    if (guild.GetTextChannel(Convert.ToUInt64(currentValue)) != null)
+                        format = "<#{0}>";
+                    else
+                        currentValue = Messages.ChannelNotSpecified;
+                } else if (setting.Key.EndsWith("Role")) {
+                    if (guild.GetRole(Convert.ToUInt64(currentValue)) != null)
+                        format = "<@&{0}>";
+                    else
+                        currentValue = Messages.RoleNotSpecified;
+                } else {
+                    if (IsBool(currentValue))
+                        currentValue = YesOrNo(currentValue == "true");
+                    else
+                        format = Utils.WrapInline("{0}")!;
+                }
+
+                currentSettings.Append($"{Utils.GetMessage($"Settings{setting.Key}")} (`{setting.Key}`): ")
+                    .AppendFormat(format, currentValue).AppendLine();
             }
 
-        PropertyInfo? property = null;
-        foreach (var prop in typeof(GuildConfig).GetProperties())
-            if (setting == prop.Name.ToLower())
-                property = prop;
-        if (property == null || !property.CanWrite)
-            throw new ApplicationException(Messages.SettingDoesntExist);
-        var type = property.PropertyType;
+            Output(ref currentSettings);
+            currentSettings.Clear();
+            return Task.CompletedTask;
+        }
+
+        var selectedSetting = args[0].ToLower();
+
+        var exists = false;
+        foreach (var setting in Boyfriend.DefaultConfig) {
+            if (selectedSetting != setting.Key.ToLower()) continue;
+            selectedSetting = setting.Key;
+            exists = true;
+            break;
+        }
+
+        if (!exists) {
+            Error(Messages.SettingDoesntExist, false);
+            return Task.CompletedTask;
+        }
+
+        string value;
+
+        if (args.Length >= 2) {
+            value = Utils.JoinString(ref args, 1);
+            if (selectedSetting != "WelcomeMessage")
+                value = value.Replace(" ", "").ToLower();
+            if (value.StartsWith(",") || value.Count(x => x == ',') > 1) {
+                Error(Messages.InvalidSettingValue, false);
+                return Task.CompletedTask;
+            }
+        } else {
+            value = "reset";
+        }
+
+        if (IsBool(Boyfriend.DefaultConfig[selectedSetting]) && !IsBool(value)) {
+            value = value switch {
+                "y" or "yes" => "true",
+                "n" or "no" => "false",
+                _ => value
+            };
+            if (!IsBool(value)) {
+                Error(Messages.InvalidSettingValue, false);
+                return Task.CompletedTask;
+            }
+        }
+
+        var localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
+
+        var mention = Utils.ParseMention(value);
+        if (mention != 0) value = mention.ToString();
+
+        var formatting = Utils.WrapInline("{0}")!;
+        if (selectedSetting.EndsWith("Channel"))
+            formatting = "<#{0}>";
+        if (selectedSetting.EndsWith("Role"))
+            formatting = "<@&{0}>";
+        if (value is "0" or "reset" or "default")
+            formatting = Messages.SettingNotDefined;
+        var formattedValue = IsBool(value) ? YesOrNo(value == "true") : string.Format(formatting, value);
 
         if (value is "reset" or "default") {
-            property.SetValue(config, null);
-        } else if (type == typeof(string)) {
-            if (setting == "lang" && value is not ("ru" or "en"))
-                throw new ApplicationException(Messages.LanguageNotSupported);
-            property.SetValue(config, value);
+            config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
         } else {
-            try {
-                if (type == typeof(bool?))
-                    property.SetValue(config, Convert.ToBoolean(value));
-
-                if (type == typeof(ulong?)) {
-                    var id = Convert.ToUInt64(value);
-                    if (property.Name.EndsWith("Channel") && guild.GetTextChannel(id) == null)
-                        throw new ApplicationException(Messages.InvalidChannel);
-                    if (property.Name.EndsWith("Role") && guild.GetRole(id) == null)
-                        throw new ApplicationException(Messages.InvalidRole);
-
-                    property.SetValue(config, id);
-                }
-            } catch (Exception e) when (e is FormatException or OverflowException) {
-                throw new ApplicationException(Messages.InvalidSettingValue);
+            if (value == config[selectedSetting]) {
+                Error(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue), false);
+                return Task.CompletedTask;
             }
-        }
-        config.Validate();
 
-        await config.Save();
-        await context.Channel.SendMessageAsync(Messages.SettingsUpdated);
+            if (selectedSetting == "Lang" && value is not "ru" and not "en") {
+                Error(Messages.LanguageNotSupported, false);
+                return Task.CompletedTask;
+            }
+
+            if (selectedSetting.EndsWith("Channel") && guild.GetTextChannel(mention) == null) {
+                Error(Messages.InvalidChannel, false);
+                return Task.CompletedTask;
+            }
+
+            if (selectedSetting.EndsWith("Role") && guild.GetRole(mention) == null) {
+                Error(Messages.InvalidRole, false);
+                return Task.CompletedTask;
+            }
+
+            config[selectedSetting] = value;
+        }
+
+        if (selectedSetting == "Lang") {
+            Utils.SetCurrentLanguage(guild.Id);
+            localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
+        }
+
+        CommandHandler.ConfigWriteScheduled = true;
+
+        Success(string.Format(Messages.FeedbackSettingsUpdated, localizedSelectedSetting, formattedValue),
+            author.Mention);
+        return Task.CompletedTask;
     }
 
     private static string YesOrNo(bool isYes) {
         return isYes ? Messages.Yes : Messages.No;
     }
 
-    public override List<string> GetAliases() {
-        return new List<string> {"settings", "настройки", "config", "конфиг "};
-    }
-
-    public override int GetArgumentsAmountRequired() {
-        return 0;
-    }
-
-    public override string GetSummary() {
-        return "Настраивает бота отдельно для этого сервера";
+    private static bool IsBool(string value) {
+        return value is "true" or "false";
     }
 }

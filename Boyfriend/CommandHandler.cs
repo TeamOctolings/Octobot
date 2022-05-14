@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using Boyfriend.Commands;
 using Discord;
 using Discord.Commands;
@@ -7,75 +8,104 @@ using Discord.WebSocket;
 namespace Boyfriend;
 
 public static class CommandHandler {
+
     public static readonly Command[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
         new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
     };
 
+    private static readonly Dictionary<string, Regex> RegexCache = new();
+
+    public static readonly StringBuilder StackedReplyMessage = new();
+    public static readonly StringBuilder StackedPublicFeedback = new();
+    public static readonly StringBuilder StackedPrivateFeedback = new();
+
+#pragma warning disable CA2211
+    public static bool ConfigWriteScheduled = false; // HOW IT CAN BE PRIVATE????
+#pragma warning restore CA2211
+
     public static async Task HandleCommand(SocketUserMessage message) {
+        StackedReplyMessage.Clear();
+        StackedPrivateFeedback.Clear();
+        StackedPublicFeedback.Clear();
         var context = new SocketCommandContext(Boyfriend.Client, message);
+        var guild = context.Guild;
+        var config = Boyfriend.GetGuildConfig(guild.Id);
 
-        foreach (var command in Commands) {
-            var regex = new Regex(Regex.Escape(Boyfriend.GetGuildConfig(context.Guild).Prefix!));
-            if (!command.GetAliases().Contains(regex.Replace(message.Content, "", 1).Split()[0]))
-                continue;
+        Regex regex;
+        if (RegexCache.ContainsKey(config["Prefix"])) {
+            regex = RegexCache[config["Prefix"]];
+        } else {
+            regex = new Regex(Regex.Escape(config["Prefix"]));
+            RegexCache.Add(config["Prefix"], regex);
+        }
 
-            var args = message.Content.Split().Skip(1).ToArray();
-            try {
-                if (command.GetArgumentsAmountRequired() > args.Length)
-                    throw new ApplicationException(string.Format(Messages.NotEnoughArguments,
-                        command.GetArgumentsAmountRequired(), args.Length));
-                await command.Run(context, args);
-            } catch (Exception e) {
-                var signature = e switch {
-                    ApplicationException => ":x:",
-                    UnauthorizedAccessException => ":no_entry_sign:",
-                    _ => ":stop_sign:"
-                };
-                var stacktrace = e.StackTrace;
-                var toSend = $"{signature} `{e.Message}`";
-                if (stacktrace != null && e is not ApplicationException && e is not UnauthorizedAccessException)
-                    toSend += $"{Environment.NewLine}{Utils.Wrap(stacktrace)}";
-                await context.Channel.SendMessageAsync(toSend);
-                throw;
+        var list = message.Content.Split("\n");
+        var currentLine = 0;
+        foreach (var line in list) {
+            currentLine++;
+            foreach (var command in Commands) {
+                if (!command.Aliases.Contains(regex.Replace(line, "", 1).ToLower().Split()[0]))
+                    continue;
+
+                await context.Channel.TriggerTypingAsync();
+
+                var args = line.Split().Skip(1).ToArray();
+
+                if (command.ArgsLengthRequired <= args.Length)
+                    await command.Run(context, args);
+                else
+                    StackedReplyMessage.AppendFormat(Messages.NotEnoughArguments, command.ArgsLengthRequired.ToString(),
+                        args.Length.ToString());
+
+                if (currentLine != list.Length) continue;
+                if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfig(guild.Id);
+                await context.Message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
+
+                var adminChannel = Utils.GetAdminLogChannel(guild.Id);
+                var systemChannel = guild.SystemChannel;
+                if (adminChannel != null)
+                    await Utils.SilentSendAsync(adminChannel, StackedPrivateFeedback.ToString());
+                if (systemChannel != null)
+                    await Utils.SilentSendAsync(systemChannel, StackedPublicFeedback.ToString());
             }
-
-            break;
         }
     }
 
-    public static async Task CheckPermissions(IGuildUser user, GuildPermission toCheck,
+    public static string HasPermission(ref SocketGuildUser user, GuildPermission toCheck,
         GuildPermission forBot = GuildPermission.StartEmbeddedActivities) {
-        var me = await user.Guild.GetCurrentUserAsync();
+        var me = user.Guild.CurrentUser;
+
+        if (user.Id == user.Guild.OwnerId || (me.GuildPermissions.Has(GuildPermission.Administrator) &&
+                                              user.GuildPermissions.Has(GuildPermission.Administrator))) return "";
+
         if (forBot == GuildPermission.StartEmbeddedActivities) forBot = toCheck;
 
-        if (user.Id != user.Guild.OwnerId
-            && (!me.GuildPermissions.Has(GuildPermission.Administrator)
-                || !user.GuildPermissions.Has(GuildPermission.Administrator))) {
-            if (!me.GuildPermissions.Has(forBot))
-                throw new UnauthorizedAccessException(Messages.CommandNoPermissionBot);
-            if (!user.GuildPermissions.Has(toCheck))
-                throw new UnauthorizedAccessException(Messages.CommandNoPermissionUser);
-        }
+        if (!me.GuildPermissions.Has(forBot))
+            return Messages.CommandNoPermissionBot;
+
+        return !user.GuildPermissions.Has(toCheck) ? Messages.CommandNoPermissionUser : "";
     }
 
-    public static async Task CheckInteractions(IGuildUser actor, IGuildUser target) {
-        var me = await target.Guild.GetCurrentUserAsync();
-
+    public static string CanInteract(ref SocketGuildUser actor, ref SocketGuildUser target) {
         if (actor.Guild != target.Guild)
-            throw new Exception(Messages.InteractionsDifferentGuilds);
-        if (actor.Id == actor.Guild.OwnerId) return;
+            return Messages.InteractionsDifferentGuilds;
+        if (actor.Id == actor.Guild.OwnerId)
+            return "";
 
         if (target.Id == target.Guild.OwnerId)
-            throw new UnauthorizedAccessException(Messages.InteractionsOwner);
+            return Messages.InteractionsOwner;
         if (actor == target)
-            throw new UnauthorizedAccessException(Messages.InteractionsYourself);
+            return Messages.InteractionsYourself;
+
+        var me = target.Guild.CurrentUser;
+
         if (target == me)
-            throw new UnauthorizedAccessException(Messages.InteractionsMe);
+            return Messages.InteractionsMe;
         if (me.Hierarchy <= target.Hierarchy)
-            throw new UnauthorizedAccessException(Messages.InteractionsFailedBot);
-        if (actor.Hierarchy <= target.Hierarchy)
-            throw new UnauthorizedAccessException(Messages.InteractionsFailedUser);
+            return Messages.InteractionsFailedBot;
+
+        return actor.Hierarchy <= target.Hierarchy ? Messages.InteractionsFailedUser : "";
     }
 }

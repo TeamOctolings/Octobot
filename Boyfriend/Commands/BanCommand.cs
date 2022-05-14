@@ -1,73 +1,72 @@
 ﻿using Discord;
 using Discord.Commands;
-
-// ReSharper disable UnusedType.Global
-// ReSharper disable UnusedMember.Global
-// ReSharper disable ClassNeverInstantiated.Global
+using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
 public class BanCommand : Command {
-    public override async Task Run(SocketCommandContext context, string[] args) {
-        var reason = Utils.JoinString(args, 1);
+    public override string[] Aliases { get; } = {"ban", "бан"};
+    public override int ArgsLengthRequired => 2;
 
-        TimeSpan duration;
-        try {
-            duration = Utils.GetTimeSpan(args[1]);
-            reason = Utils.JoinString(args, 2);
-        } catch (Exception e) when (e is ArgumentNullException or FormatException or OverflowException) {
-            await Warn(context.Channel as ITextChannel, Messages.DurationParseFailed);
-            duration = TimeSpan.FromMilliseconds(-1);
+    public override async Task Run(SocketCommandContext context, string[] args) {
+        var toBan = Utils.ParseUser(args[0]);
+
+        if (toBan == null) {
+            Error(Messages.UserDoesntExist, false);
+            return;
         }
 
-        await BanUser(context.Guild, context.Channel as ITextChannel, context.Guild.GetUser(context.User.Id),
-            await Utils.ParseUser(args[0]), duration, reason);
+        var guild = context.Guild;
+        var author = (SocketGuildUser) context.User;
+
+        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.BanMembers);
+        if (permissionCheckResponse != "") {
+            Error(permissionCheckResponse, true);
+            return;
+        }
+
+        var reason = Utils.JoinString(ref args, 2);
+        var memberToBan = Utils.ParseMember(guild, args[0]);
+
+        if (memberToBan != null) {
+            var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref memberToBan);
+            if (interactionCheckResponse != "") {
+                Error(interactionCheckResponse, true);
+                return;
+            }
+        }
+
+        var duration = Utils.GetTimeSpan(ref args[1]) ?? TimeSpan.FromMilliseconds(-1);
+        if (duration.TotalSeconds < 0) {
+            Warn(Messages.DurationParseFailed);
+            reason = Utils.JoinString(ref args, 1);
+        }
+
+        await BanUser(guild, author, toBan, duration, reason);
     }
 
-    public static async Task BanUser(IGuild guild, ITextChannel? channel, IGuildUser author, IUser toBan,
-        TimeSpan duration, string reason) {
-        var authorMention = author.Mention;
-        var guildBanMessage = $"({Utils.GetNameAndDiscrim(author)}) {reason}";
-        var memberToBan = await guild.GetUserAsync(toBan.Id);
-        var expiresIn = duration.TotalSeconds > 0 ? string.Format(Messages.PunishmentExpiresIn, Environment.NewLine,
-            DateTimeOffset.Now.ToUnixTimeSeconds() + duration.TotalSeconds) : "";
-        var notification = string.Format(Messages.UserBanned, authorMention, toBan.Mention, Utils.WrapInline(reason),
-            expiresIn);
-
-        await CommandHandler.CheckPermissions(author, GuildPermission.BanMembers);
-        if (memberToBan != null)
-            await CommandHandler.CheckInteractions(author, memberToBan);
+    public static async Task BanUser(SocketGuild guild, SocketGuildUser author, SocketUser toBan, TimeSpan duration,
+        string reason) {
+        var guildBanMessage = $"({author}) {reason}";
 
         await Utils.SendDirectMessage(toBan,
             string.Format(Messages.YouWereBanned, author.Mention, guild.Name, Utils.WrapInline(reason)));
 
         await guild.AddBanAsync(toBan, 0, guildBanMessage);
 
-        await Utils.SilentSendAsync(channel,
-            string.Format(Messages.BanResponse, toBan.Mention, Utils.WrapInline(reason)));
-        await Utils.SilentSendAsync(await guild.GetSystemChannelAsync(), notification);
-        await Utils.SilentSendAsync(await Utils.GetAdminLogChannel(guild), notification);
+        var feedback = string.Format(Messages.FeedbackUserBanned, toBan.Mention,
+            Utils.GetHumanizedTimeOffset(ref duration), Utils.WrapInline(reason));
+        Success(feedback, author.Mention, false, false);
+        await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
 
         if (duration.TotalSeconds > 0) {
-            await Task.Run(async () => {
+            async void DelayUnban() {
                 await Task.Delay(duration);
-                try {
-                    await UnbanCommand.UnbanUser(guild, null, await guild.GetCurrentUserAsync(), toBan,
-                        Messages.PunishmentExpired);
-                } catch (ApplicationException) {}
-            });
+                await UnbanCommand.UnbanUser(guild, guild.CurrentUser, toBan, Messages.PunishmentExpired);
+            }
+
+            var task = new Task(DelayUnban);
+            task.Start();
         }
-    }
-
-    public override List<string> GetAliases() {
-        return new List<string> {"ban", "бан"};
-    }
-
-    public override int GetArgumentsAmountRequired() {
-        return 2;
-    }
-
-    public override string GetSummary() {
-        return "Банит пользователя";
     }
 }
