@@ -5,11 +5,11 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class UnbanCommand : Command {
-    public override string[] Aliases { get; } = {"unban", "разбан"};
+    public override string[] Aliases { get; } = { "unban", "разбан" };
     public override int ArgsLengthRequired => 2;
 
     public override async Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser) context.User;
+        var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.BanMembers);
         if (permissionCheckResponse != "") {
@@ -38,7 +38,7 @@ public class UnbanCommand : Command {
         var requestOptions = Utils.GetRequestOptions($"({author}) {reason}");
         await guild.RemoveBanAsync(toUnban, requestOptions);
 
-        var feedback = string.Format(Messages.FeedbackUserUnbanned, toUnban.Mention, Utils.WrapInline(reason));
+        var feedback = string.Format(Messages.FeedbackUserUnbanned, toUnban.Mention, Utils.Wrap(reason));
         Success(feedback, author.Mention, false, false);
         await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
     }

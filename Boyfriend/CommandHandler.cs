@@ -8,7 +8,6 @@ using Discord.WebSocket;
 namespace Boyfriend;
 
 public static class CommandHandler {
-
     public static readonly Command[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
@@ -34,9 +33,7 @@ public static class CommandHandler {
         var config = Boyfriend.GetGuildConfig(guild.Id);
 
         Regex regex;
-        if (RegexCache.ContainsKey(config["Prefix"])) {
-            regex = RegexCache[config["Prefix"]];
-        } else {
+        if (RegexCache.ContainsKey(config["Prefix"])) { regex = RegexCache[config["Prefix"]]; } else {
             regex = new Regex(Regex.Escape(config["Prefix"]));
             RegexCache.Add(config["Prefix"], regex);
         }
@@ -61,13 +58,14 @@ public static class CommandHandler {
 
                 if (currentLine != list.Length) continue;
                 if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfig(guild.Id);
-                await context.Message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
+                await message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
                 var adminChannel = Utils.GetAdminLogChannel(guild.Id);
                 var systemChannel = guild.SystemChannel;
-                if (adminChannel != null)
+                if (StackedPrivateFeedback.Length > 0 && adminChannel != null && adminChannel.Id != message.Channel.Id)
                     await Utils.SilentSendAsync(adminChannel, StackedPrivateFeedback.ToString());
-                if (systemChannel != null)
+                if (StackedPublicFeedback.Length > 0 && systemChannel != null && systemChannel.Id != adminChannel?.Id
+                    && systemChannel.Id != message.Channel.Id)
                     await Utils.SilentSendAsync(systemChannel, StackedPublicFeedback.ToString());
             }
         }

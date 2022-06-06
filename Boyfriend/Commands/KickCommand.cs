@@ -5,11 +5,11 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class KickCommand : Command {
-    public override string[] Aliases { get; } = {"kick", "кик", "выгнать"};
+    public override string[] Aliases { get; } = { "kick", "кик", "выгнать" };
     public override int ArgsLengthRequired => 2;
 
     public override async Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser) context.User;
+        var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.KickMembers);
         if (permissionCheckResponse != "") {
@@ -34,7 +34,7 @@ public class KickCommand : Command {
 
         Success(
             string.Format(Messages.FeedbackMemberKicked, toKick.Mention,
-                Utils.WrapInline(Utils.JoinString(ref args, 1))), author.Mention);
+                Utils.Wrap(Utils.JoinString(ref args, 1))), author.Mention);
     }
 
     private static async Task KickMember(IGuild guild, SocketUser author, SocketGuildUser toKick, string reason) {
@@ -42,7 +42,7 @@ public class KickCommand : Command {
         var guildKickMessage = $"({author}) {reason}";
 
         await Utils.SendDirectMessage(toKick,
-            string.Format(Messages.YouWereKicked, authorMention, guild.Name, Utils.WrapInline(reason)));
+            string.Format(Messages.YouWereKicked, authorMention, guild.Name, Utils.Wrap(reason)));
 
         await toKick.KickAsync(guildKickMessage);
     }

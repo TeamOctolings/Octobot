@@ -4,7 +4,6 @@ using Discord.Commands;
 namespace Boyfriend.Commands;
 
 public abstract class Command {
-
     public abstract string[] Aliases { get; }
 
     public abstract int ArgsLengthRequired { get; }

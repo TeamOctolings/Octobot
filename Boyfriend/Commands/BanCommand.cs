@@ -5,7 +5,7 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class BanCommand : Command {
-    public override string[] Aliases { get; } = {"ban", "бан"};
+    public override string[] Aliases { get; } = { "ban", "бан" };
     public override int ArgsLengthRequired => 2;
 
     public override async Task Run(SocketCommandContext context, string[] args) {
@@ -17,7 +17,7 @@ public class BanCommand : Command {
         }
 
         var guild = context.Guild;
-        var author = (SocketGuildUser) context.User;
+        var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.BanMembers);
         if (permissionCheckResponse != "") {
@@ -40,6 +40,11 @@ public class BanCommand : Command {
         if (duration.TotalSeconds < 0) {
             Warn(Messages.DurationParseFailed);
             reason = Utils.JoinString(ref args, 1);
+
+            if (reason == "") {
+                Error(Messages.ReasonRequired, false);
+                return;
+            }
         }
 
         await BanUser(guild, author, toBan, duration, reason);
@@ -50,12 +55,12 @@ public class BanCommand : Command {
         var guildBanMessage = $"({author}) {reason}";
 
         await Utils.SendDirectMessage(toBan,
-            string.Format(Messages.YouWereBanned, author.Mention, guild.Name, Utils.WrapInline(reason)));
+            string.Format(Messages.YouWereBanned, author.Mention, guild.Name, Utils.Wrap(reason)));
 
         await guild.AddBanAsync(toBan, 0, guildBanMessage);
 
         var feedback = string.Format(Messages.FeedbackUserBanned, toBan.Mention,
-            Utils.GetHumanizedTimeOffset(ref duration), Utils.WrapInline(reason));
+            Utils.GetHumanizedTimeOffset(ref duration), Utils.Wrap(reason));
         Success(feedback, author.Mention, false, false);
         await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
 
@@ -65,8 +70,7 @@ public class BanCommand : Command {
                 await UnbanCommand.UnbanUser(guild, guild.CurrentUser, toBan, Messages.PunishmentExpired);
             }
 
-            var task = new Task(DelayUnban);
-            task.Start();
+            new Task(DelayUnban).Start();
         }
     }
 }

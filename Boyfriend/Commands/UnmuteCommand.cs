@@ -5,11 +5,11 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class UnmuteCommand : Command {
-    public override string[] Aliases { get; } = {"unmute", "размут"};
+    public override string[] Aliases { get; } = { "unmute", "размут" };
     public override int ArgsLengthRequired => 2;
 
     public override async Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser) context.User;
+        var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
         if (permissionCheckResponse != "") {
@@ -40,13 +40,6 @@ public class UnmuteCommand : Command {
         var role = Utils.GetMuteRole(ref guild);
 
         if (role != null) {
-            var muted = false;
-            foreach (var x in toUnmute.Roles) {
-                if (x != role) continue;
-                muted = true;
-                break;
-            }
-
             var rolesRemoved = Boyfriend.GetRemovedRoles(guild.Id);
 
             if (rolesRemoved.ContainsKey(toUnmute.Id)) {
@@ -55,9 +48,7 @@ public class UnmuteCommand : Command {
                 CommandHandler.ConfigWriteScheduled = true;
             }
 
-            if (muted) {
-                await toUnmute.RemoveRoleAsync(role, requestOptions);
-            } else {
+            if (toUnmute.Roles.Contains(role)) { await toUnmute.RemoveRoleAsync(role, requestOptions); } else {
                 Error(Messages.MemberNotMuted, false);
                 return;
             }
@@ -71,7 +62,7 @@ public class UnmuteCommand : Command {
             await toUnmute.RemoveTimeOutAsync();
         }
 
-        var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.WrapInline(reason));
+        var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.Wrap(reason));
         Success(feedback, author.Mention, false, false);
         await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
     }

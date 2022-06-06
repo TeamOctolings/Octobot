@@ -5,11 +5,11 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class SettingsCommand : Command {
-    public override string[] Aliases { get; } = {"settings", "config", "настройки", "конфиг"};
+    public override string[] Aliases { get; } = { "settings", "config", "настройки", "конфиг" };
     public override int ArgsLengthRequired => 0;
 
     public override Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser) context.User;
+        var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ManageGuild);
         if (permissionCheckResponse != "") {
@@ -41,7 +41,7 @@ public class SettingsCommand : Command {
                     if (IsBool(currentValue))
                         currentValue = YesOrNo(currentValue == "true");
                     else
-                        format = Utils.WrapInline("{0}")!;
+                        format = Utils.Wrap("{0}")!;
                 }
 
                 currentSettings.Append($"{Utils.GetMessage($"Settings{setting.Key}")} (`{setting.Key}`): ")
@@ -56,9 +56,11 @@ public class SettingsCommand : Command {
         var selectedSetting = args[0].ToLower();
 
         var exists = false;
-        foreach (var setting in Boyfriend.DefaultConfig) {
-            if (selectedSetting != setting.Key.ToLower()) continue;
-            selectedSetting = setting.Key;
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        // The performance impact is not worth it
+        foreach (var setting in Boyfriend.DefaultConfig.Keys) {
+            if (selectedSetting != setting.ToLower()) continue;
+            selectedSetting = setting;
             exists = true;
             break;
         }
@@ -78,9 +80,7 @@ public class SettingsCommand : Command {
                 Error(Messages.InvalidSettingValue, false);
                 return Task.CompletedTask;
             }
-        } else {
-            value = "reset";
-        }
+        } else { value = "reset"; }
 
         if (IsBool(Boyfriend.DefaultConfig[selectedSetting]) && !IsBool(value)) {
             value = value switch {
@@ -99,7 +99,7 @@ public class SettingsCommand : Command {
         var mention = Utils.ParseMention(value);
         if (mention != 0) value = mention.ToString();
 
-        var formatting = Utils.WrapInline("{0}")!;
+        var formatting = Utils.Wrap("{0}")!;
         if (selectedSetting.EndsWith("Channel"))
             formatting = "<#{0}>";
         if (selectedSetting.EndsWith("Role"))
@@ -130,6 +130,8 @@ public class SettingsCommand : Command {
                 Error(Messages.InvalidRole, false);
                 return Task.CompletedTask;
             }
+
+            if (selectedSetting == "MuteRole") Utils.RemoveMuteRoleFromCache(ulong.Parse(config[selectedSetting]));
 
             config[selectedSetting] = value;
         }

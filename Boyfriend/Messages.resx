@@ -297,4 +297,7 @@
     <data name="CommandDescriptionUnmute" xml:space="preserve">
         <value>Unmutes a member</value>
     </data>
+    <data name="ReasonRequired" xml:space="preserve">
+        <value>You must specify a reason!</value>
+    </data>
 </root>

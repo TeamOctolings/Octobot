@@ -288,4 +288,7 @@
     <data name="CommandDescriptionUnmute" xml:space="preserve">
         <value>Разглушает участника</value>
     </data>
+    <data name="ReasonRequired" xml:space="preserve">
+        <value>Требуется указать причину!</value>
+    </data>
 </root>

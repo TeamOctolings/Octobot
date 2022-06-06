@@ -1,6 +1,7 @@
 ﻿using Boyfriend.Commands;
 using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 
 namespace Boyfriend;
@@ -42,21 +43,23 @@ public class EventHandler {
 
         Utils.SetCurrentLanguage(guild.Id);
 
+        var mention = msg.Author.Mention;
+
+        await Task.Delay(500);
+
         var auditLogEntry = (await guild.GetAuditLogsAsync(1).FlattenAsync()).First();
-        var mention = auditLogEntry.User.Mention;
-        if (auditLogEntry.Action != ActionType.MessageDeleted ||
-            DateTimeOffset.Now.Subtract(auditLogEntry.CreatedAt).TotalMilliseconds > 500 ||
-            auditLogEntry.User.IsBot) mention = msg.Author.Mention;
+        if (auditLogEntry.Data is MessageDeleteAuditLogData data && msg.Author.Id == data.Target.Id)
+            mention = auditLogEntry.User.Mention;
 
         await Utils.SendFeedback(
             string.Format(Messages.CachedMessageDeleted, msg.Author.Mention, Utils.MentionChannel(channel.Id),
-                Utils.WrapAsNeeded(msg.CleanContent)), guild.Id, mention);
+                Utils.Wrap(msg.CleanContent)), guild.Id, mention);
     }
 
     private static async Task MessageReceivedEvent(SocketMessage messageParam) {
         if (messageParam is not SocketUserMessage message) return;
 
-        var user = (SocketGuildUser) message.Author;
+        var user = (SocketGuildUser)message.Author;
         var guild = user.Guild;
         var guildConfig = Boyfriend.GetGuildConfig(guild.Id);
 
@@ -98,10 +101,12 @@ public class EventHandler {
 
         Utils.SetCurrentLanguage(guildId);
 
+        var isLimitedSpace = msg.CleanContent.Length + messageSocket.CleanContent.Length < 1940;
+
         await Utils.SendFeedback(
             string.Format(Messages.CachedMessageEdited, Utils.MentionChannel(channel.Id),
-                Utils.WrapAsNeeded(msg.CleanContent), Utils.WrapAsNeeded(messageSocket.Content)), guildId,
-            msg.Author.Mention);
+                Utils.Wrap(msg.CleanContent, isLimitedSpace), Utils.Wrap(messageSocket.CleanContent, isLimitedSpace)),
+            guildId, msg.Author.Mention);
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
@@ -127,11 +132,11 @@ public class EventHandler {
             if (role != null)
                 roleMention = $"{role.Mention} ";
 
-            var location = Utils.WrapInline(scheduledEvent.Location) ?? Utils.MentionChannel(scheduledEvent.Channel.Id);
+            var location = Utils.Wrap(scheduledEvent.Location) ?? Utils.MentionChannel(scheduledEvent.Channel.Id);
 
             await Utils.SilentSendAsync(channel,
                 string.Format(Messages.EventCreated, "\n", roleMention, scheduledEvent.Creator.Mention,
-                    Utils.WrapInline(scheduledEvent.Name), location,
+                    Utils.Wrap(scheduledEvent.Name), location,
                     scheduledEvent.StartTime.ToUnixTimeSeconds().ToString(), Utils.Wrap(scheduledEvent.Description)),
                 true);
         }
@@ -142,7 +147,7 @@ public class EventHandler {
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventCancelledChannel"]));
         if (channel != null)
-            await channel.SendMessageAsync(string.Format(Messages.EventCancelled, Utils.WrapInline(scheduledEvent.Name),
+            await channel.SendMessageAsync(string.Format(Messages.EventCancelled, Utils.Wrap(scheduledEvent.Name),
                 eventConfig["FrowningFace"] == "true" ? $" {Messages.SettingsFrowningFace}" : ""));
     }
 
@@ -158,12 +163,12 @@ public class EventHandler {
 
             if (receivers.Contains("role") && role != null) mentions.Append($"{role.Mention} ");
             if (receivers.Contains("users") || receivers.Contains("interested"))
-                foreach (var user in await scheduledEvent.GetUsersAsync(15))
-                    mentions = mentions.Append($"{user.Mention} ");
+                mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
+                    (current, user) => current.Append($"{user.Mention} "));
 
             await channel.SendMessageAsync(string.Format(Messages.EventStarted, mentions,
-                Utils.WrapInline(scheduledEvent.Name),
-                Utils.WrapInline(scheduledEvent.Location) ?? Utils.MentionChannel(scheduledEvent.Channel.Id)));
+                Utils.Wrap(scheduledEvent.Name),
+                Utils.Wrap(scheduledEvent.Location) ?? Utils.MentionChannel(scheduledEvent.Channel.Id)));
             mentions.Clear();
         }
     }
@@ -173,7 +178,7 @@ public class EventHandler {
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventCompletedChannel"]));
         if (channel != null)
-            await channel.SendMessageAsync(string.Format(Messages.EventCompleted, Utils.WrapInline(scheduledEvent.Name),
-                Utils.WrapInline(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now).Negate().ToString())));
+            await channel.SendMessageAsync(string.Format(Messages.EventCompleted, Utils.Wrap(scheduledEvent.Name),
+                Utils.Wrap(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now).Negate().ToString())));
     }
 }

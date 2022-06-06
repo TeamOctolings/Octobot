@@ -6,7 +6,7 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class MuteCommand : Command {
-    public override string[] Aliases { get; } = {"mute", "timeout", "заглушить", "мут"};
+    public override string[] Aliases { get; } = { "mute", "timeout", "заглушить", "мут" };
     public override int ArgsLengthRequired => 2;
 
     public override async Task Run(SocketCommandContext context, string[] args) {
@@ -17,6 +17,11 @@ public class MuteCommand : Command {
         if (duration.TotalSeconds < 0) {
             Warn(Messages.DurationParseFailed);
             reason = Utils.JoinString(ref args, 1);
+
+            if (reason == "") {
+                Error(Messages.ReasonRequired, false);
+                return;
+            }
         }
 
         if (toMute == null) {
@@ -28,15 +33,9 @@ public class MuteCommand : Command {
         var role = Utils.GetMuteRole(ref guild);
 
         if (role != null) {
-            var hasMuteRole = false;
-            foreach (var x in toMute.Roles) {
-                if (x != role) continue;
-                hasMuteRole = true;
-                break;
-            }
-
-            if (hasMuteRole || (toMute.TimedOutUntil != null && toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds() >
-                    DateTimeOffset.Now.ToUnixTimeMilliseconds())) {
+            if (toMute.Roles.Contains(role) || (toMute.TimedOutUntil != null &&
+                                                toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds() >
+                                                DateTimeOffset.Now.ToUnixTimeMilliseconds())) {
                 Error(Messages.MemberAlreadyMuted, false);
                 return;
             }
@@ -51,7 +50,7 @@ public class MuteCommand : Command {
             Warn(Messages.RolesReturned);
         }
 
-        var author = (SocketGuildUser) context.User;
+        var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
         if (permissionCheckResponse != "") {
@@ -69,7 +68,7 @@ public class MuteCommand : Command {
 
         Success(
             string.Format(Messages.FeedbackMemberMuted, toMute.Mention, Utils.GetHumanizedTimeOffset(ref duration),
-                Utils.WrapInline(reason)), author.Mention, true);
+                Utils.Wrap(reason)), author.Mention, true);
     }
 
     private static async Task MuteMember(SocketGuild guild, SocketUser author, SocketGuildUser toMute,
@@ -88,7 +87,7 @@ public class MuteCommand : Command {
                         await toMute.RemoveRoleAsync(role);
                         rolesRemoved.Add(userRole.Id);
                     } catch (HttpException e) {
-                        Warn(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.WrapInline(e.Reason)));
+                        Warn(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.Wrap(e.Reason)));
                     }
 
                 Boyfriend.GetRemovedRoles(guild.Id).Add(toMute.Id, rolesRemoved.AsReadOnly());
@@ -100,8 +99,7 @@ public class MuteCommand : Command {
                         await UnmuteCommand.UnmuteMember(guild, guild.CurrentUser, toMute, Messages.PunishmentExpired);
                     }
 
-                    var task = new Task(DelayUnmute);
-                    task.Start();
+                    new Task(DelayUnmute).Start();
                 }
             }
 
@@ -111,6 +109,7 @@ public class MuteCommand : Command {
                 Error(Messages.DurationRequiredForTimeOuts, false);
                 return;
             }
+
             if (toMute.IsBot) {
                 Error(Messages.CannotTimeOutBot, false);
                 return;

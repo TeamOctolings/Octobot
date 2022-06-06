@@ -10,7 +10,6 @@ using Humanizer.Localisation;
 namespace Boyfriend;
 
 public static class Utils {
-
     private static readonly string[] Formats = {
         "%d'd'%h'h'%m'm'%s's'", "%d'd'%h'h'%m'm'", "%d'd'%h'h'%s's'", "%d'd'%h'h'", "%d'd'%m'm'%s's'", "%d'd'%m'm'",
         "%d'd'%s's'", "%d'd'", "%h'h'%m'm'%s's'", "%h'h'%m'm'", "%h'h'%s's'", "%h'h'", "%m'm'%s's'", "%m'm'", "%s's'",
@@ -21,10 +20,12 @@ public static class Utils {
 
     public static readonly Random Random = new();
     private static readonly Dictionary<string, string> ReflectionMessageCache = new();
+
     private static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
-        {"ru", new CultureInfo("ru-RU")},
-        {"en", new CultureInfo("en-US")}
+        { "ru", new CultureInfo("ru-RU") },
+        { "en", new CultureInfo("en-US") }
     };
+
     private static readonly Dictionary<ulong, SocketRole> MuteRoleCache = new();
 
     private static readonly AllowedMentions AllowRoles = new() {
@@ -40,19 +41,12 @@ public static class Utils {
             .GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(id)["AdminLogChannel"]));
     }
 
-    public static string Wrap(string? original) {
-        if (original == null) return "";
-        var toReturn = original.Replace("```", "ˋˋˋ");
-        return $"```{toReturn}{(toReturn.EndsWith("`") || toReturn.Trim().Equals("") ? " " : "")}```";
-    }
-
-    public static string? WrapInline(string? original) {
-        return original == null ? null : $"`{original.Replace("`", "ˋ")}`";
-    }
-
-    public static string? WrapAsNeeded(string? original) {
+    public static string? Wrap(string? original, bool limitedSpace = false) {
         if (original == null) return null;
-        return original.Contains('\n') ? Wrap(original) : WrapInline(original);
+        var maxChars = limitedSpace ? 970 : 1940;
+        if (original.Length > maxChars) original = original[..maxChars];
+        var style = original.Contains('\n') ? "```" : "`";
+        return $"{style}{original}{(original.Equals("") ? " " : "")}{style}";
     }
 
     public static string MentionChannel(ulong id) {
@@ -73,9 +67,7 @@ public static class Utils {
     }
 
     public static async Task SendDirectMessage(SocketUser user, string toSend) {
-        try {
-            await user.SendMessageAsync(toSend);
-        } catch (HttpException e) {
+        try { await user.SendMessageAsync(toSend); } catch (HttpException e) {
             if (e.DiscordCode != DiscordErrorCode.CannotSendMessageToUser)
                 throw;
         }
@@ -91,14 +83,21 @@ public static class Utils {
             MuteRoleCache.Add(id, role);
             break;
         }
+
         return role;
     }
 
+    public static void RemoveMuteRoleFromCache(ulong id) {
+        if (MuteRoleCache.ContainsKey(id)) MuteRoleCache.Remove(id);
+    }
+
     public static async Task SilentSendAsync(SocketTextChannel? channel, string text, bool allowRoles = false) {
-        if (channel == null || text.Length is 0 or > 2000) return;
+        if (channel == null || text.Length is 0 or > 2000)
+            throw new Exception($"Message length is out of range: {text.Length}");
 
         await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
     }
+
     public static TimeSpan? GetTimeSpan(ref string from) {
         if (TimeSpan.TryParseExact(from.ToLowerInvariant(), Formats, CultureInfo.InvariantCulture, out var timeSpan))
             return timeSpan;
@@ -122,7 +121,7 @@ public static class Utils {
 
         var toReturn =
             typeof(Messages).GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
-                ?.ToString()! ?? throw new Exception($"Could not find localized property: {name}");
+                ?.ToString()! ?? throw new Exception($"Could not find localized property: {propertyName}");
         ReflectionMessageCache.Add(name, toReturn);
         return toReturn;
     }
@@ -144,7 +143,8 @@ public static class Utils {
     }
 
     public static string GetHumanizedTimeOffset(ref TimeSpan span) {
-        return span.TotalSeconds > 0 ? $" {span.Humanize(minUnit: TimeUnit.Second, culture: Messages.Culture)}"
+        return span.TotalSeconds > 0
+            ? $" {span.Humanize(minUnit: TimeUnit.Second, culture: Messages.Culture)}"
             : Messages.Ever;
     }
 

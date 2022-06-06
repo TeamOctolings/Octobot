@@ -19,30 +19,28 @@ public static class Boyfriend {
     private static readonly Game Activity = new("Retrospecter - Genocide", ActivityType.Listening);
 
     private static readonly Dictionary<ulong, Dictionary<string, string>> GuildConfigDictionary = new();
+
     private static readonly Dictionary<ulong, Dictionary<ulong, ReadOnlyCollection<ulong>>> RemovedRolesDictionary =
         new();
 
-    private static readonly Dictionary<string, string> EmptyGuildConfig = new();
-    private static readonly Dictionary<ulong, ReadOnlyCollection<ulong>> EmptyRemovedRoles = new();
-
     public static readonly Dictionary<string, string> DefaultConfig = new() {
-        {"Lang", "en"},
-        {"Prefix", "!"},
-        {"RemoveRolesOnMute", "false"},
-        {"SendWelcomeMessages", "true"},
-        {"ReceiveStartupMessages", "false"},
-        {"FrowningFace", "true"},
-        {"WelcomeMessage", Messages.DefaultWelcomeMessage},
-        {"EventStartedReceivers", "interested,role"},
-        {"StarterRole", "0"},
-        {"MuteRole", "0"},
-        {"EventNotifyReceiverRole", "0"},
-        {"AdminLogChannel", "0"},
-        {"BotLogChannel", "0"},
-        {"EventCreatedChannel", "0"},
-        {"EventStartedChannel", "0"},
-        {"EventCancelledChannel", "0"},
-        {"EventCompletedChannel", "0"}
+        { "Lang", "en" },
+        { "Prefix", "!" },
+        { "RemoveRolesOnMute", "false" },
+        { "SendWelcomeMessages", "true" },
+        { "ReceiveStartupMessages", "false" },
+        { "FrowningFace", "true" },
+        { "WelcomeMessage", Messages.DefaultWelcomeMessage },
+        { "EventStartedReceivers", "interested,role" },
+        { "StarterRole", "0" },
+        { "MuteRole", "0" },
+        { "EventNotifyReceiverRole", "0" },
+        { "AdminLogChannel", "0" },
+        { "BotLogChannel", "0" },
+        { "EventCreatedChannel", "0" },
+        { "EventStartedChannel", "0" },
+        { "EventCancelledChannel", "0" },
+        { "EventCompletedChannel", "0" }
     };
 
     public static void Main() {
@@ -79,7 +77,7 @@ public static class Boyfriend {
 
     public static Dictionary<string, string> GetGuildConfig(ulong id) {
         if (!RemovedRolesDictionary.ContainsKey(id))
-            RemovedRolesDictionary.Add(id, EmptyRemovedRoles);
+            RemovedRolesDictionary.Add(id, new Dictionary<ulong, ReadOnlyCollection<ulong>>());
 
         if (GuildConfigDictionary.ContainsKey(id)) return GuildConfigDictionary[id];
 
@@ -88,15 +86,19 @@ public static class Boyfriend {
         if (!File.Exists(path)) File.Create(path).Dispose();
 
         var json = File.ReadAllText(path);
-        var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(json) ?? EmptyGuildConfig;
+        var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(json)
+                     ?? new Dictionary<string, string>();
 
-        foreach (var key in DefaultConfig.Keys)
-            if (!config.ContainsKey(key))
-                config.Add(key, DefaultConfig[key]);
-
-        foreach (var key in config.Keys)
-            if (!DefaultConfig.ContainsKey(key))
+        if (config.Keys.Count < DefaultConfig.Keys.Count) {
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            // Avoids a closure allocation with the config variable
+            foreach (var key in DefaultConfig.Keys)
+                if (!config.ContainsKey(key))
+                    config.Add(key, DefaultConfig[key]);
+        } else if (config.Keys.Count > DefaultConfig.Keys.Count) {
+            foreach (var key in config.Keys.Where(key => !DefaultConfig.ContainsKey(key)))
                 config.Remove(key);
+        }
 
         GuildConfigDictionary.Add(id, config);
 
@@ -111,8 +113,8 @@ public static class Boyfriend {
         if (!File.Exists(path)) File.Create(path);
 
         var json = File.ReadAllText(path);
-        var removedRoles = JsonConvert.DeserializeObject<Dictionary<ulong, ReadOnlyCollection<ulong>>>(json) ??
-                           EmptyRemovedRoles;
+        var removedRoles = JsonConvert.DeserializeObject<Dictionary<ulong, ReadOnlyCollection<ulong>>>(json)
+                           ?? new Dictionary<ulong, ReadOnlyCollection<ulong>>();
 
         RemovedRolesDictionary.Add(id, removedRoles);
 
@@ -121,9 +123,8 @@ public static class Boyfriend {
 
     public static SocketGuild FindGuild(ulong channel) {
         if (GuildCache.ContainsKey(channel)) return GuildCache[channel];
-        foreach (var guild in Client.Guilds)
-        foreach (var x in guild.Channels) {
-            if (x.Id != channel) continue;
+        foreach (var guild in Client.Guilds) {
+            if (guild.Channels.All(x => x.Id != channel)) continue;
             GuildCache.Add(channel, guild);
             return guild;
         }
