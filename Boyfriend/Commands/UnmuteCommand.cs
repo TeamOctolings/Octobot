@@ -39,7 +39,7 @@ public class UnmuteCommand : Command {
         var requestOptions = Utils.GetRequestOptions($"({author}) {reason}");
         var role = Utils.GetMuteRole(ref guild);
 
-        if (role != null) {
+        if (role != null && toUnmute.Roles.Contains(role)) {
             var rolesRemoved = Boyfriend.GetRemovedRoles(guild.Id);
 
             if (rolesRemoved.ContainsKey(toUnmute.Id)) {
@@ -48,10 +48,7 @@ public class UnmuteCommand : Command {
                 CommandHandler.ConfigWriteScheduled = true;
             }
 
-            if (toUnmute.Roles.Contains(role)) { await toUnmute.RemoveRoleAsync(role, requestOptions); } else {
-                Error(Messages.MemberNotMuted, false);
-                return;
-            }
+            await toUnmute.RemoveRoleAsync(role, requestOptions);
         } else {
             if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds() <
                 DateTimeOffset.Now.ToUnixTimeMilliseconds()) {

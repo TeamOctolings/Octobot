@@ -57,9 +57,8 @@ public class EventHandler {
     }
 
     private static async Task MessageReceivedEvent(SocketMessage messageParam) {
-        if (messageParam is not SocketUserMessage message) return;
+        if (messageParam is not SocketUserMessage { Author: SocketGuildUser user } message) return;
 
-        var user = (SocketGuildUser)message.Author;
         var guild = user.Guild;
         var guildConfig = Boyfriend.GetGuildConfig(guild.Id);
 
