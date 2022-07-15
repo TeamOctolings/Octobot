@@ -12,7 +12,7 @@ public class UnmuteCommand : Command {
         var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
-        if (permissionCheckResponse != "") {
+        if (permissionCheckResponse is not "") {
             Error(permissionCheckResponse, true);
             return;
         }
@@ -25,7 +25,7 @@ public class UnmuteCommand : Command {
         }
 
         var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toUnmute);
-        if (interactionCheckResponse != "") {
+        if (interactionCheckResponse is not "") {
             Error(interactionCheckResponse, true);
             return;
         }
@@ -49,7 +49,8 @@ public class UnmuteCommand : Command {
             }
 
             await toUnmute.RemoveRoleAsync(role, requestOptions);
-        } else {
+        }
+        else {
             if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds() <
                 DateTimeOffset.Now.ToUnixTimeMilliseconds()) {
                 Error(Messages.MemberNotMuted, false);

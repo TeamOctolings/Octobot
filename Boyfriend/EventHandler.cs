@@ -29,7 +29,7 @@ public class EventHandler {
             var channel = guild.GetTextChannel(Convert.ToUInt64(config["BotLogChannel"]));
             Utils.SetCurrentLanguage(guild.Id);
 
-            if (config["ReceiveStartupMessages"] != "true" || channel == null) continue;
+            if (config["ReceiveStartupMessages"] is not "true" || channel == null) continue;
             await channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(i)));
         }
     }
@@ -112,11 +112,11 @@ public class EventHandler {
         var guild = user.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
 
-        if (config["SendWelcomeMessages"] == "true")
+        if (config["SendWelcomeMessages"] is "true")
             await Utils.SilentSendAsync(guild.SystemChannel,
                 string.Format(config["WelcomeMessage"], user.Mention, guild.Name));
 
-        if (config["StarterRole"] != "0")
+        if (config["StarterRole"] is not "0")
             await user.AddRoleAsync(ulong.Parse(config["StarterRole"]));
     }
 
@@ -147,7 +147,7 @@ public class EventHandler {
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventCancelledChannel"]));
         if (channel != null)
             await channel.SendMessageAsync(string.Format(Messages.EventCancelled, Utils.Wrap(scheduledEvent.Name),
-                eventConfig["FrowningFace"] == "true" ? $" {Messages.SettingsFrowningFace}" : ""));
+                eventConfig["FrowningFace"] is "true" ? $" {Messages.SettingsFrowningFace}" : ""));
     }
 
     private static async Task ScheduledEventStartedEvent(SocketGuildEvent scheduledEvent) {

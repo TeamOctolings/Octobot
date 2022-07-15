@@ -12,7 +12,7 @@ public class KickCommand : Command {
         var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.KickMembers);
-        if (permissionCheckResponse != "") {
+        if (permissionCheckResponse is not "") {
             Error(permissionCheckResponse, true);
             return;
         }
@@ -25,7 +25,7 @@ public class KickCommand : Command {
         }
 
         var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toKick);
-        if (interactionCheckResponse != "") {
+        if (interactionCheckResponse is not "") {
             Error(interactionCheckResponse, true);
             return;
         }

@@ -18,7 +18,7 @@ public class MuteCommand : Command {
             Warn(Messages.DurationParseFailed);
             reason = Utils.JoinString(ref args, 1);
 
-            if (reason == "") {
+            if (reason is "") {
                 Error(Messages.ReasonRequired, false);
                 return;
             }
@@ -53,13 +53,13 @@ public class MuteCommand : Command {
         var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
-        if (permissionCheckResponse != "") {
+        if (permissionCheckResponse is not "") {
             Error(permissionCheckResponse, true);
             return;
         }
 
         var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toMute);
-        if (interactionCheckResponse != "") {
+        if (interactionCheckResponse is not "") {
             Error(interactionCheckResponse, true);
             return;
         }
@@ -79,14 +79,15 @@ public class MuteCommand : Command {
         var hasDuration = duration.TotalSeconds > 0;
 
         if (role != null) {
-            if (config["RemoveRolesOnMute"] == "true") {
+            if (config["RemoveRolesOnMute"] is "true") {
                 var rolesRemoved = new List<ulong>();
                 foreach (var userRole in toMute.Roles)
                     try {
                         if (userRole == guild.EveryoneRole || userRole == role) continue;
                         await toMute.RemoveRoleAsync(role);
                         rolesRemoved.Add(userRole.Id);
-                    } catch (HttpException e) {
+                    }
+                    catch (HttpException e) {
                         Warn(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.Wrap(e.Reason)));
                     }
 
@@ -104,7 +105,8 @@ public class MuteCommand : Command {
             }
 
             await toMute.AddRoleAsync(role, requestOptions);
-        } else {
+        }
+        else {
             if (!hasDuration) {
                 Error(Messages.DurationRequiredForTimeOuts, false);
                 return;

@@ -20,7 +20,7 @@ public class BanCommand : Command {
         var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.BanMembers);
-        if (permissionCheckResponse != "") {
+        if (permissionCheckResponse is not "") {
             Error(permissionCheckResponse, true);
             return;
         }
@@ -30,7 +30,7 @@ public class BanCommand : Command {
 
         if (memberToBan != null) {
             var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref memberToBan);
-            if (interactionCheckResponse != "") {
+            if (interactionCheckResponse is not "") {
                 Error(interactionCheckResponse, true);
                 return;
             }
@@ -41,7 +41,7 @@ public class BanCommand : Command {
             Warn(Messages.DurationParseFailed);
             reason = Utils.JoinString(ref args, 1);
 
-            if (reason == "") {
+            if (reason is "") {
                 Error(Messages.ReasonRequired, false);
                 return;
             }

@@ -12,7 +12,7 @@ public class SettingsCommand : Command {
         var author = (SocketGuildUser)context.User;
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ManageGuild);
-        if (permissionCheckResponse != "") {
+        if (permissionCheckResponse is not "") {
             Error(permissionCheckResponse, true);
             return Task.CompletedTask;
         }
@@ -32,14 +32,16 @@ public class SettingsCommand : Command {
                         format = "<#{0}>";
                     else
                         currentValue = Messages.ChannelNotSpecified;
-                } else if (setting.Key.EndsWith("Role")) {
+                }
+                else if (setting.Key.EndsWith("Role")) {
                     if (guild.GetRole(Convert.ToUInt64(currentValue)) != null)
                         format = "<@&{0}>";
                     else
                         currentValue = Messages.RoleNotSpecified;
-                } else {
+                }
+                else {
                     if (IsBool(currentValue))
-                        currentValue = YesOrNo(currentValue == "true");
+                        currentValue = YesOrNo(currentValue is "true");
                     else
                         format = Utils.Wrap("{0}")!;
                 }
@@ -74,18 +76,23 @@ public class SettingsCommand : Command {
 
         if (args.Length >= 2) {
             value = Utils.JoinString(ref args, 1);
-            if (selectedSetting != "WelcomeMessage")
+            if (selectedSetting is "EventStartedReceivers") {
                 value = value.Replace(" ", "").ToLower();
-            if (value.StartsWith(",") || value.Count(x => x == ',') > 1) {
-                Error(Messages.InvalidSettingValue, false);
-                return Task.CompletedTask;
+                if (value.StartsWith(",") || value.Count(x => x == ',') > 1 ||
+                    (!value.Contains("interested") && !value.Contains("role"))) {
+                    Error(Messages.InvalidSettingValue, false);
+                    return Task.CompletedTask;
+                }
             }
-        } else { value = "reset"; }
+        }
+        else {
+            value = "reset";
+        }
 
         if (IsBool(Boyfriend.DefaultConfig[selectedSetting]) && !IsBool(value)) {
             value = value switch {
-                "y" or "yes" => "true",
-                "n" or "no" => "false",
+                "y" or "yes" or "д" or "да" => "true",
+                "n" or "no" or "н" or "нет" => "false",
                 _ => value
             };
             if (!IsBool(value)) {
@@ -97,26 +104,37 @@ public class SettingsCommand : Command {
         var localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
 
         var mention = Utils.ParseMention(value);
-        if (mention != 0) value = mention.ToString();
+        if (mention != 0 && selectedSetting is not "WelcomeMessage") value = mention.ToString();
 
         var formatting = Utils.Wrap("{0}")!;
-        if (selectedSetting.EndsWith("Channel"))
-            formatting = "<#{0}>";
-        if (selectedSetting.EndsWith("Role"))
-            formatting = "<@&{0}>";
-        if (value is "0" or "reset" or "default")
-            formatting = Messages.SettingNotDefined;
-        var formattedValue = IsBool(value) ? YesOrNo(value == "true") : string.Format(formatting, value);
+        if (selectedSetting is not "WelcomeMessage") {
+            if (selectedSetting.EndsWith("Channel"))
+                formatting = "<#{0}>";
+            if (selectedSetting.EndsWith("Role"))
+                formatting = "<@&{0}>";
+        }
+
+        var formattedValue = selectedSetting switch {
+            "WelcomeMessage" => Utils.Wrap(Messages.DefaultWelcomeMessage),
+            "EventStartedReceivers" => Utils.Wrap(Boyfriend.DefaultConfig[selectedSetting])!,
+            _ => value is "reset" or "default"
+                ? IsBool(value) ? YesOrNo(value is "true") : string.Format(formatting, value)
+                : Messages.SettingNotDefined
+        };
 
         if (value is "reset" or "default") {
-            config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
-        } else {
+            if (selectedSetting is "WelcomeMessage")
+                config[selectedSetting] = Messages.DefaultWelcomeMessage;
+            else
+                config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
+        }
+        else {
             if (value == config[selectedSetting]) {
                 Error(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue), false);
                 return Task.CompletedTask;
             }
 
-            if (selectedSetting == "Lang" && value is not "ru" and not "en") {
+            if (selectedSetting is "Lang" && value is not "ru" and not "en") {
                 Error(Messages.LanguageNotSupported, false);
                 return Task.CompletedTask;
             }
@@ -131,12 +149,12 @@ public class SettingsCommand : Command {
                 return Task.CompletedTask;
             }
 
-            if (selectedSetting == "MuteRole") Utils.RemoveMuteRoleFromCache(ulong.Parse(config[selectedSetting]));
+            if (selectedSetting is "MuteRole") Utils.RemoveMuteRoleFromCache(ulong.Parse(config[selectedSetting]));
 
             config[selectedSetting] = value;
         }
 
-        if (selectedSetting == "Lang") {
+        if (selectedSetting is "Lang") {
             Utils.SetCurrentLanguage(guild.Id);
             localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
         }

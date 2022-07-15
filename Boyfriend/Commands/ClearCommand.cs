@@ -5,16 +5,16 @@ using Discord.WebSocket;
 namespace Boyfriend.Commands;
 
 public class ClearCommand : Command {
-    public override string[] Aliases { get; } = {"clear", "purge", "очистить", "стереть"};
+    public override string[] Aliases { get; } = { "clear", "purge", "очистить", "стереть" };
     public override int ArgsLengthRequired => 1;
 
     public override async Task Run(SocketCommandContext context, string[] args) {
-        var user = (SocketGuildUser) context.User;
+        var user = (SocketGuildUser)context.User;
 
         if (context.Channel is not SocketTextChannel channel) throw new Exception();
 
         var permissionCheckResponse = CommandHandler.HasPermission(ref user, GuildPermission.ManageMessages);
-        if (permissionCheckResponse != "") {
+        if (permissionCheckResponse is not "") {
             Error(permissionCheckResponse, true);
             return;
         }
