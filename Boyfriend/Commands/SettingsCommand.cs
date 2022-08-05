@@ -32,14 +32,12 @@ public class SettingsCommand : Command {
                         format = "<#{0}>";
                     else
                         currentValue = Messages.ChannelNotSpecified;
-                }
-                else if (setting.Key.EndsWith("Role")) {
+                } else if (setting.Key.EndsWith("Role")) {
                     if (guild.GetRole(Convert.ToUInt64(currentValue)) != null)
                         format = "<@&{0}>";
                     else
                         currentValue = Messages.RoleNotSpecified;
-                }
-                else {
+                } else {
                     if (IsBool(currentValue))
                         currentValue = YesOrNo(currentValue is "true");
                     else
@@ -84,10 +82,7 @@ public class SettingsCommand : Command {
                     return Task.CompletedTask;
                 }
             }
-        }
-        else {
-            value = "reset";
-        }
+        } else { value = "reset"; }
 
         if (IsBool(Boyfriend.DefaultConfig[selectedSetting]) && !IsBool(value)) {
             value = value switch {
@@ -117,9 +112,9 @@ public class SettingsCommand : Command {
         var formattedValue = selectedSetting switch {
             "WelcomeMessage" => Utils.Wrap(Messages.DefaultWelcomeMessage),
             "EventStartedReceivers" => Utils.Wrap(Boyfriend.DefaultConfig[selectedSetting])!,
-            _ => value is "reset" or "default"
-                ? IsBool(value) ? YesOrNo(value is "true") : string.Format(formatting, value)
-                : Messages.SettingNotDefined
+            _ => value is "reset" or "default" ? Messages.SettingNotDefined
+                : IsBool(value) ? YesOrNo(value is "true")
+                : string.Format(formatting, value)
         };
 
         if (value is "reset" or "default") {
@@ -127,8 +122,7 @@ public class SettingsCommand : Command {
                 config[selectedSetting] = Messages.DefaultWelcomeMessage;
             else
                 config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
-        }
-        else {
+        } else {
             if (value == config[selectedSetting]) {
                 Error(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue), false);
                 return Task.CompletedTask;

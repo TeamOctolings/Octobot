@@ -15,6 +15,7 @@ public static class CommandHandler {
     };
 
     private static readonly Dictionary<string, Regex> RegexCache = new();
+    private static readonly Regex MentionRegex = new(Regex.Escape("<@855023234407333888>"));
 
     public static readonly StringBuilder StackedReplyMessage = new();
     public static readonly StringBuilder StackedPublicFeedback = new();
@@ -43,7 +44,8 @@ public static class CommandHandler {
         foreach (var line in list) {
             currentLine++;
             foreach (var command in Commands) {
-                if (!command.Aliases.Contains(regex.Replace(line, "", 1).ToLower().Split()[0]))
+                var lineNoMention = MentionRegex.Replace(line, "", 1);
+                if (!command.Aliases.Contains(regex.Replace(lineNoMention, "", 1).Trim().ToLower().Split()[0]))
                     continue;
 
                 await context.Channel.TriggerTypingAsync();
@@ -58,7 +60,8 @@ public static class CommandHandler {
 
                 if (currentLine != list.Length) continue;
                 if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfig(guild.Id);
-                await message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
+                if (StackedReplyMessage.Length > 0)
+                    await message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
                 var adminChannel = Utils.GetAdminLogChannel(guild.Id);
                 var systemChannel = guild.SystemChannel;

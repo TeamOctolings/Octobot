@@ -1,6 +1,5 @@
 ﻿using Boyfriend.Commands;
 using Discord;
-using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
 
@@ -82,9 +81,8 @@ public class EventHandler {
             prevFailsafe = prevsArray[2].Content;
         }
 
-        if (!(message.HasStringPrefix(guildConfig["Prefix"], ref argPos) ||
-              message.HasMentionPrefix(Boyfriend.Client.CurrentUser, ref argPos)) || user == guild.CurrentUser ||
-            (user.IsBot && (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))))
+        if (user == guild.CurrentUser || (user.IsBot &&
+                                          (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))))
             return;
 
         await CommandHandler.HandleCommand(message);
