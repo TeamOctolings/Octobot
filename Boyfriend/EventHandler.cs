@@ -59,7 +59,6 @@ public class EventHandler {
         if (messageParam is not SocketUserMessage { Author: SocketGuildUser user } message) return;
 
         var guild = user.Guild;
-        var guildConfig = Boyfriend.GetGuildConfig(guild.Id);
 
         Utils.SetCurrentLanguage(guild.Id);
 
@@ -70,7 +69,6 @@ public class EventHandler {
             return;
         }
 
-        var argPos = 0;
         var prev = "";
         var prevFailsafe = "";
         var prevs = await message.Channel.GetMessagesAsync(3).FlattenAsync();
