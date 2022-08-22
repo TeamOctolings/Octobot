@@ -199,7 +199,7 @@
         <value>I couldn't remove role {0} because of an error! {1}</value>
     </data>
     <data name="DurationRequiredForTimeOuts" xml:space="preserve">
-        <value>I cannot mute someone forever using timeouts! Either specify a proper duration, or set a mute role in settings</value>
+        <value>I cannot mute someone for more than 28 days using timeouts! Either specify a duration shorter than 28 days, or set a mute role in settings</value>
     </data>
     <data name="CannotTimeOutBot" xml:space="preserve">
         <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>

@@ -10,14 +10,6 @@ using Humanizer.Localisation;
 namespace Boyfriend;
 
 public static class Utils {
-    private static readonly string[] Formats = {
-        "%d'd'%h'h'%m'm'%s's'", "%d'd'%h'h'%m'm'", "%d'd'%h'h'%s's'", "%d'd'%h'h'", "%d'd'%m'm'%s's'", "%d'd'%m'm'",
-        "%d'd'%s's'", "%d'd'", "%h'h'%m'm'%s's'", "%h'h'%m'm'", "%h'h'%s's'", "%h'h'", "%m'm'%s's'", "%m'm'", "%s's'",
-
-        "%d'д'%h'ч'%m'м'%s'с'", "%d'д'%h'ч'%m'м'", "%d'д'%h'ч'%s'с'", "%d'д'%h'ч'", "%d'д'%m'м'%s'с'", "%d'д'%m'м'",
-        "%d'д'%s'с'", "%d'д'", "%h'ч'%m'м'%s'с'", "%h'ч'%m'м'", "%h'ч'%s'с'", "%h'ч'", "%m'м'%s'с'", "%m'м'", "%s'с'"
-    };
-
     public static readonly Random Random = new();
     private static readonly Dictionary<string, string> ReflectionMessageCache = new();
 
@@ -99,9 +91,34 @@ public static class Utils {
     }
 
     public static TimeSpan? GetTimeSpan(ref string from) {
-        if (TimeSpan.TryParseExact(from.ToLowerInvariant(), Formats, CultureInfo.InvariantCulture, out var timeSpan))
-            return timeSpan;
-        return null;
+        var chars = from.AsSpan();
+        var numberBuilder = Boyfriend.StringBuilder;
+        int days = 0, hours = 0, minutes = 0, seconds = 0;
+        foreach (var c in chars)
+            if (char.IsDigit(c)) { numberBuilder.Append(c); } else {
+                if (numberBuilder.Length == 0) return null;
+                switch (c) {
+                    case 'd' or 'D' or 'д' or 'Д':
+                        days += int.Parse(numberBuilder.ToString());
+                        numberBuilder.Clear();
+                        break;
+                    case 'h' or 'H' or 'ч' or 'Ч':
+                        hours += int.Parse(numberBuilder.ToString());
+                        numberBuilder.Clear();
+                        break;
+                    case 'm' or 'M' or 'м' or 'М':
+                        minutes += int.Parse(numberBuilder.ToString());
+                        numberBuilder.Clear();
+                        break;
+                    case 's' or 'S' or 'с' or 'С':
+                        seconds += int.Parse(numberBuilder.ToString());
+                        numberBuilder.Clear();
+                        break;
+                    default: return null;
+                }
+            }
+
+        return new TimeSpan(days, hours, minutes, seconds);
     }
 
     public static string JoinString(ref string[] args, int startIndex) {
@@ -144,7 +161,7 @@ public static class Utils {
 
     public static string GetHumanizedTimeOffset(ref TimeSpan span) {
         return span.TotalSeconds > 0
-            ? $" {span.Humanize(minUnit: TimeUnit.Second, culture: Messages.Culture)}"
+            ? $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture)}"
             : Messages.Ever;
     }
 

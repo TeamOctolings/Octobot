@@ -17,11 +17,12 @@ public class MuteCommand : Command {
         if (duration.TotalSeconds < 0) {
             Warn(Messages.DurationParseFailed);
             reason = Utils.JoinString(ref args, 1);
+        }
 
-            if (reason is "") {
-                Error(Messages.ReasonRequired, false);
-                return;
-            }
+
+        if (reason is "") {
+            Error(Messages.ReasonRequired, false);
+            return;
         }
 
         if (toMute == null) {
@@ -65,10 +66,6 @@ public class MuteCommand : Command {
         }
 
         await MuteMember(guild, author, toMute, duration, reason);
-
-        Success(
-            string.Format(Messages.FeedbackMemberMuted, toMute.Mention, Utils.GetHumanizedTimeOffset(ref duration),
-                Utils.Wrap(reason)), author.Mention, true);
     }
 
     private static async Task MuteMember(SocketGuild guild, SocketUser author, SocketGuildUser toMute,
@@ -86,8 +83,7 @@ public class MuteCommand : Command {
                         if (userRole == guild.EveryoneRole || userRole == role) continue;
                         await toMute.RemoveRoleAsync(role);
                         rolesRemoved.Add(userRole.Id);
-                    }
-                    catch (HttpException e) {
+                    } catch (HttpException e) {
                         Warn(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.Wrap(e.Reason)));
                     }
 
@@ -105,9 +101,8 @@ public class MuteCommand : Command {
             }
 
             await toMute.AddRoleAsync(role, requestOptions);
-        }
-        else {
-            if (!hasDuration) {
+        } else {
+            if (!hasDuration || duration.TotalDays > 28) {
                 Error(Messages.DurationRequiredForTimeOuts, false);
                 return;
             }
@@ -119,5 +114,11 @@ public class MuteCommand : Command {
 
             await toMute.SetTimeOutAsync(duration, requestOptions);
         }
+
+        var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
+            Utils.GetHumanizedTimeOffset(ref duration),
+            Utils.Wrap(reason));
+        Success(feedback, author.Mention, false, false);
+        await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
     }
 }
