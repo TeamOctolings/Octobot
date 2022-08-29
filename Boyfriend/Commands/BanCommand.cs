@@ -65,12 +65,10 @@ public class BanCommand : Command {
         await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
 
         if (duration.TotalSeconds > 0) {
-            async void DelayUnban() {
+            var _ = async () => {
                 await Task.Delay(duration);
                 await UnbanCommand.UnbanUser(guild, guild.CurrentUser, toBan, Messages.PunishmentExpired);
-            }
-
-            new Task(DelayUnban).Start();
+            };
         }
     }
 }

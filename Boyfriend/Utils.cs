@@ -118,6 +118,7 @@ public static class Utils {
                 }
             }
 
+        numberBuilder.Clear();
         return new TimeSpan(days, hours, minutes, seconds);
     }
 

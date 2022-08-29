@@ -12,11 +12,15 @@ public static class Boyfriend {
 
     private static readonly DiscordSocketConfig Config = new() {
         MessageCacheSize = 250,
-        GatewayIntents = GatewayIntents.All
+        GatewayIntents = GatewayIntents.All,
+        AlwaysDownloadUsers = true,
+        AlwaysResolveStickers = false,
+        AlwaysDownloadDefaultStickers = false,
+        LargeThreshold = 500
     };
 
     public static readonly DiscordSocketClient Client = new(Config);
-    private static readonly Game Activity = new("Retrospecter - Genocide", ActivityType.Listening);
+    private static readonly Game Activity = new("Toby Fox - The World Revolving", ActivityType.Listening);
 
     private static readonly Dictionary<ulong, Dictionary<string, string>> GuildConfigDictionary = new();
 

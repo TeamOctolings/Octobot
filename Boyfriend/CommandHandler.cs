@@ -22,10 +22,14 @@ public static class CommandHandler {
     public static readonly StringBuilder StackedPrivateFeedback = new();
 
 #pragma warning disable CA2211
-    public static bool ConfigWriteScheduled = false; // HOW IT CAN BE PRIVATE????
+    public static bool ConfigWriteScheduled = false; // Can't be private
 #pragma warning restore CA2211
 
+    private static bool _handlerBusy;
+
     public static async Task HandleCommand(SocketUserMessage message) {
+        while (_handlerBusy) await Task.Delay(200);
+        _handlerBusy = true;
         StackedReplyMessage.Clear();
         StackedPrivateFeedback.Clear();
         StackedPublicFeedback.Clear();
@@ -43,34 +47,42 @@ public static class CommandHandler {
         var currentLine = 0;
         foreach (var line in list) {
             currentLine++;
-            foreach (var command in Commands) {
-                var lineNoMention = MentionRegex.Replace(line, "", 1);
-                if (!command.Aliases.Contains(regex.Replace(lineNoMention, "", 1).Trim().ToLower().Split()[0]))
-                    continue;
+            await RunCommands(line, regex, context, currentLine == list.Length);
+        }
 
-                await context.Channel.TriggerTypingAsync();
+        if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfig(guild.Id);
 
-                var args = line.Split().Skip(1).ToArray();
+        var adminChannel = Utils.GetAdminLogChannel(guild.Id);
+        var systemChannel = guild.SystemChannel;
+        if (StackedPrivateFeedback.Length > 0 && adminChannel != null && adminChannel.Id != message.Channel.Id)
+            await Utils.SilentSendAsync(adminChannel, StackedPrivateFeedback.ToString());
+        if (StackedPublicFeedback.Length > 0 && systemChannel != null && systemChannel.Id != adminChannel?.Id
+            && systemChannel.Id != message.Channel.Id)
+            await Utils.SilentSendAsync(systemChannel, StackedPublicFeedback.ToString());
+        _handlerBusy = false;
+    }
 
-                if (command.ArgsLengthRequired <= args.Length)
+    private static async Task RunCommands(string line, Regex regex, SocketCommandContext context, bool shouldAwait) {
+        foreach (var command in Commands) {
+            var lineNoMention = MentionRegex.Replace(line, "", 1);
+            if (!command.Aliases.Contains(regex.Replace(lineNoMention, "", 1).Trim().ToLower().Split()[0]))
+                continue;
+
+            await context.Channel.TriggerTypingAsync();
+
+            var args = line.Split().Skip(1).ToArray();
+
+            if (command.ArgsLengthRequired <= args.Length)
+                if (shouldAwait)
                     await command.Run(context, args);
                 else
-                    StackedReplyMessage.AppendFormat(Messages.NotEnoughArguments, command.ArgsLengthRequired.ToString(),
-                        args.Length.ToString());
-
-                if (currentLine != list.Length) continue;
-                if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfig(guild.Id);
-                if (StackedReplyMessage.Length > 0)
-                    await message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
-
-                var adminChannel = Utils.GetAdminLogChannel(guild.Id);
-                var systemChannel = guild.SystemChannel;
-                if (StackedPrivateFeedback.Length > 0 && adminChannel != null && adminChannel.Id != message.Channel.Id)
-                    await Utils.SilentSendAsync(adminChannel, StackedPrivateFeedback.ToString());
-                if (StackedPublicFeedback.Length > 0 && systemChannel != null && systemChannel.Id != adminChannel?.Id
-                    && systemChannel.Id != message.Channel.Id)
-                    await Utils.SilentSendAsync(systemChannel, StackedPublicFeedback.ToString());
-            }
+                    _ = command.Run(context, args);
+            else
+                StackedReplyMessage.AppendFormat(Messages.NotEnoughArguments, command.ArgsLengthRequired.ToString(),
+                    args.Length.ToString()).AppendLine();
+            if (StackedReplyMessage.Length <= 1675 && !shouldAwait) continue;
+            await context.Message.ReplyAsync(StackedReplyMessage.ToString(), false, null, AllowedMentions.None);
+            StackedReplyMessage.Clear();
         }
     }
 

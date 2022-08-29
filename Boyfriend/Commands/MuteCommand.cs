@@ -91,12 +91,11 @@ public class MuteCommand : Command {
                 CommandHandler.ConfigWriteScheduled = true;
 
                 if (hasDuration) {
-                    async void DelayUnmute() {
-                        await Task.Delay(duration);
+                    var copy = duration;
+                    var _ = async () => {
+                        await Task.Delay(copy);
                         await UnmuteCommand.UnmuteMember(guild, guild.CurrentUser, toMute, Messages.PunishmentExpired);
-                    }
-
-                    new Task(DelayUnmute).Start();
+                    };
                 }
             }
 

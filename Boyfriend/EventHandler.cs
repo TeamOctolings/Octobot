@@ -83,7 +83,7 @@ public class EventHandler {
                                           (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))))
             return;
 
-        await CommandHandler.HandleCommand(message);
+        _ = CommandHandler.HandleCommand(message);
     }
 
     private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,
