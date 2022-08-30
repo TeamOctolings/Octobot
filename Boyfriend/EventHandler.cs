@@ -64,7 +64,7 @@ public class EventHandler {
 
         if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2) &&
             !user.GuildPermissions.MentionEveryone) {
-            await BanCommand.BanUser(guild, guild.CurrentUser, user, TimeSpan.FromMilliseconds(-1),
+            await BanCommand.BanUser(new CommandProcessor(message), user, TimeSpan.FromMilliseconds(-1),
                 Messages.AutobanReason);
             return;
         }
@@ -83,7 +83,7 @@ public class EventHandler {
                                           (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))))
             return;
 
-        _ = CommandHandler.HandleCommand(message);
+        _ = new CommandProcessor(message).HandleCommand();
     }
 
     private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,

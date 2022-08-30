@@ -96,6 +96,87 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I cannot ban users from this guild!.
+        /// </summary>
+        internal static string BotCannotBanMembers {
+            get {
+                return ResourceManager.GetString("BotCannotBanMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot ban this user!.
+        /// </summary>
+        internal static string BotCannotBanTarget {
+            get {
+                return ResourceManager.GetString("BotCannotBanTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot kick members from this guild!.
+        /// </summary>
+        internal static string BotCannotKickMembers {
+            get {
+                return ResourceManager.GetString("BotCannotKickMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot kick this member!.
+        /// </summary>
+        internal static string BotCannotKickTarget {
+            get {
+                return ResourceManager.GetString("BotCannotKickTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot manage this guild!.
+        /// </summary>
+        internal static string BotCannotManageGuild {
+            get {
+                return ResourceManager.GetString("BotCannotManageGuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot manage messages in this guild!.
+        /// </summary>
+        internal static string BotCannotManageMessages {
+            get {
+                return ResourceManager.GetString("BotCannotManageMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot moderate members in this guild!.
+        /// </summary>
+        internal static string BotCannotModerateMembers {
+            get {
+                return ResourceManager.GetString("BotCannotModerateMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot mute this member!.
+        /// </summary>
+        internal static string BotCannotMuteTarget {
+            get {
+                return ResourceManager.GetString("BotCannotMuteTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I cannot unmute this member!.
+        /// </summary>
+        internal static string BotCannotUnmuteTarget {
+            get {
+                return ResourceManager.GetString("BotCannotUnmuteTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deleted message from {0} in channel {1}: {2}.
         /// </summary>
         internal static string CachedMessageDeleted {
@@ -132,7 +213,16 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Too many messages specified!.
+        ///   Looks up a localized string similar to You need to specify an integer from {0} to {1} instead of {2}!.
+        /// </summary>
+        internal static string ClearAmountInvalid {
+            get {
+                return ResourceManager.GetString("ClearAmountInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You specified more than {0} messages!.
         /// </summary>
         internal static string ClearAmountTooLarge {
             get {
@@ -141,20 +231,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid message amount specified!.
+        ///   Looks up a localized string similar to You specified less than {0} messages!.
         /// </summary>
-        internal static string ClearInvalidAmountSpecified {
+        internal static string ClearAmountTooSmall {
             get {
-                return ResourceManager.GetString("ClearInvalidAmountSpecified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Negative message amount specified!.
-        /// </summary>
-        internal static string ClearNegativeAmount {
-            get {
-                return ResourceManager.GetString("ClearNegativeAmount", resourceCulture);
+                return ResourceManager.GetString("ClearAmountTooSmall", resourceCulture);
             }
         }
         
@@ -267,15 +348,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Couldn&apos;t find guild by message!.
-        /// </summary>
-        internal static string CouldntFindGuildByChannel {
-            get {
-                return ResourceManager.GetString("CouldntFindGuildByChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Current settings:.
         /// </summary>
         internal static string CurrentSettings {
@@ -290,15 +362,6 @@ namespace Boyfriend {
         internal static string DefaultWelcomeMessage {
             get {
                 return ResourceManager.GetString("DefaultWelcomeMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to I couldn&apos;t parse the specified duration! One of the components could be outside it&apos;s valid range (e.g. `24h` or `60m`).
-        /// </summary>
-        internal static string DurationParseFailed {
-            get {
-                return ResourceManager.GetString("DurationParseFailed", resourceCulture);
             }
         }
         
@@ -429,65 +492,20 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Members are in different guilds!.
-        /// </summary>
-        internal static string InteractionsDifferentGuilds {
-            get {
-                return ResourceManager.GetString("InteractionsDifferentGuilds", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to I cannot interact with this member!.
-        /// </summary>
-        internal static string InteractionsFailedBot {
-            get {
-                return ResourceManager.GetString("InteractionsFailedBot", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot interact with this member!.
-        /// </summary>
-        internal static string InteractionsFailedUser {
-            get {
-                return ResourceManager.GetString("InteractionsFailedUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot interact with me!.
-        /// </summary>
-        internal static string InteractionsMe {
-            get {
-                return ResourceManager.GetString("InteractionsMe", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot interact with guild owner!.
-        /// </summary>
-        internal static string InteractionsOwner {
-            get {
-                return ResourceManager.GetString("InteractionsOwner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You cannot interact with yourself!.
-        /// </summary>
-        internal static string InteractionsYourself {
-            get {
-                return ResourceManager.GetString("InteractionsYourself", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This channel does not exist!.
         /// </summary>
         internal static string InvalidChannel {
             get {
                 return ResourceManager.GetString("InvalidChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a guild member instead of {0}!.
+        /// </summary>
+        internal static string InvalidMember {
+            get {
+                return ResourceManager.GetString("InvalidMember", resourceCulture);
             }
         }
         
@@ -506,6 +524,15 @@ namespace Boyfriend {
         internal static string InvalidSettingValue {
             get {
                 return ResourceManager.GetString("InvalidSettingValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a user instead of {0}!.
+        /// </summary>
+        internal static string InvalidUser {
+            get {
+                return ResourceManager.GetString("InvalidUser", resourceCulture);
             }
         }
         
@@ -537,15 +564,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} unmuted {1} for {2}.
-        /// </summary>
-        internal static string MemberUnmuted {
-            get {
-                return ResourceManager.GetString("MemberUnmuted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ms.
         /// </summary>
         internal static string Milliseconds {
@@ -555,20 +573,92 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to specify a reason to ban this user!.
+        /// </summary>
+        internal static string MissingBanReason {
+            get {
+                return ResourceManager.GetString("MissingBanReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a reason to kick this member!.
+        /// </summary>
+        internal static string MissingKickReason {
+            get {
+                return ResourceManager.GetString("MissingKickReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a guild member!.
+        /// </summary>
+        internal static string MissingMember {
+            get {
+                return ResourceManager.GetString("MissingMember", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a reason to mute this member!.
+        /// </summary>
+        internal static string MissingMuteReason {
+            get {
+                return ResourceManager.GetString("MissingMuteReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify an integer from {0} to {1}!.
+        /// </summary>
+        internal static string MissingNumber {
+            get {
+                return ResourceManager.GetString("MissingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a setting to change!.
+        /// </summary>
+        internal static string MissingSetting {
+            get {
+                return ResourceManager.GetString("MissingSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a reason to unban this user!.
+        /// </summary>
+        internal static string MissingUnbanReason {
+            get {
+                return ResourceManager.GetString("MissingUnbanReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a reason for unmute this member!.
+        /// </summary>
+        internal static string MissingUnmuteReason {
+            get {
+                return ResourceManager.GetString("MissingUnmuteReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify a user!.
+        /// </summary>
+        internal static string MissingUser {
+            get {
+                return ResourceManager.GetString("MissingUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         internal static string No {
             get {
                 return ResourceManager.GetString("No", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not enough arguments! Needed: {0}, provided: {1}.
-        /// </summary>
-        internal static string NotEnoughArguments {
-            get {
-                return ResourceManager.GetString("NotEnoughArguments", resourceCulture);
             }
         }
         
@@ -587,15 +677,6 @@ namespace Boyfriend {
         internal static string Ready {
             get {
                 return ResourceManager.GetString("Ready", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must specify a reason!.
-        /// </summary>
-        internal static string ReasonRequired {
-            get {
-                return ResourceManager.GetString("ReasonRequired", resourceCulture);
             }
         }
         
@@ -807,34 +888,196 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message deleted in {0}, but I forgot what was there.
+        ///   Looks up a localized string similar to You cannot ban me!.
         /// </summary>
-        internal static string UncachedMessageDeleted {
+        internal static string UserCannotBanBot {
             get {
-                return ResourceManager.GetString("UncachedMessageDeleted", resourceCulture);
+                return ResourceManager.GetString("UserCannotBanBot", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message edited from {0} in channel {1}, but I forgot what was there before the edit: {2}.
+        ///   Looks up a localized string similar to You cannot ban users from this guild!.
         /// </summary>
-        internal static string UncachedMessageEdited {
+        internal static string UserCannotBanMembers {
             get {
-                return ResourceManager.GetString("UncachedMessageEdited", resourceCulture);
+                return ResourceManager.GetString("UserCannotBanMembers", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That user doesn&apos;t exist!.
+        ///   Looks up a localized string similar to You cannot ban the owner of this guild!.
         /// </summary>
-        internal static string UserDoesntExist {
+        internal static string UserCannotBanOwner {
             get {
-                return ResourceManager.GetString("UserDoesntExist", resourceCulture);
+                return ResourceManager.GetString("UserCannotBanOwner", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User not banned!.
+        ///   Looks up a localized string similar to You cannot ban this user!.
+        /// </summary>
+        internal static string UserCannotBanTarget {
+            get {
+                return ResourceManager.GetString("UserCannotBanTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot ban yourself!.
+        /// </summary>
+        internal static string UserCannotBanThemselves {
+            get {
+                return ResourceManager.GetString("UserCannotBanThemselves", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot kick me!.
+        /// </summary>
+        internal static string UserCannotKickBot {
+            get {
+                return ResourceManager.GetString("UserCannotKickBot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot kick members from this guild!.
+        /// </summary>
+        internal static string UserCannotKickMembers {
+            get {
+                return ResourceManager.GetString("UserCannotKickMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot kick the owner of this guild!.
+        /// </summary>
+        internal static string UserCannotKickOwner {
+            get {
+                return ResourceManager.GetString("UserCannotKickOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot kick this member!.
+        /// </summary>
+        internal static string UserCannotKickTarget {
+            get {
+                return ResourceManager.GetString("UserCannotKickTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot kick yourself!.
+        /// </summary>
+        internal static string UserCannotKickThemselves {
+            get {
+                return ResourceManager.GetString("UserCannotKickThemselves", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot manage this guild!.
+        /// </summary>
+        internal static string UserCannotManageGuild {
+            get {
+                return ResourceManager.GetString("UserCannotManageGuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot manage messages in this guild!.
+        /// </summary>
+        internal static string UserCannotManageMessages {
+            get {
+                return ResourceManager.GetString("UserCannotManageMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot moderate members in this guild!.
+        /// </summary>
+        internal static string UserCannotModerateMembers {
+            get {
+                return ResourceManager.GetString("UserCannotModerateMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot mute me!.
+        /// </summary>
+        internal static string UserCannotMuteBot {
+            get {
+                return ResourceManager.GetString("UserCannotMuteBot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot mute the owner of this guild!.
+        /// </summary>
+        internal static string UserCannotMuteOwner {
+            get {
+                return ResourceManager.GetString("UserCannotMuteOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot mute this member!.
+        /// </summary>
+        internal static string UserCannotMuteTarget {
+            get {
+                return ResourceManager.GetString("UserCannotMuteTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot mute yourself!.
+        /// </summary>
+        internal static string UserCannotMuteThemselves {
+            get {
+                return ResourceManager.GetString("UserCannotMuteThemselves", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ....
+        /// </summary>
+        internal static string UserCannotUnmuteBot {
+            get {
+                return ResourceManager.GetString("UserCannotUnmuteBot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t need to unmute the owner of this guild!.
+        /// </summary>
+        internal static string UserCannotUnmuteOwner {
+            get {
+                return ResourceManager.GetString("UserCannotUnmuteOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot unmute this user!.
+        /// </summary>
+        internal static string UserCannotUnmuteTarget {
+            get {
+                return ResourceManager.GetString("UserCannotUnmuteTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are muted!.
+        /// </summary>
+        internal static string UserCannotUnmuteThemselves {
+            get {
+                return ResourceManager.GetString("UserCannotUnmuteThemselves", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This user is not banned!.
         /// </summary>
         internal static string UserNotBanned {
             get {
@@ -848,15 +1091,6 @@ namespace Boyfriend {
         internal static string UserNotInGuild {
             get {
                 return ResourceManager.GetString("UserNotInGuild", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} unbanned {1} for {2}.
-        /// </summary>
-        internal static string UserUnbanned {
-            get {
-                return ResourceManager.GetString("UserUnbanned", resourceCulture);
             }
         }
         

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Discord;
 using Discord.Net;
@@ -65,7 +66,7 @@ public static class Utils {
         }
     }
 
-    public static SocketRole? GetMuteRole(ref SocketGuild guild) {
+    public static SocketRole? GetMuteRole(SocketGuild guild) {
         var id = ulong.Parse(Boyfriend.GetGuildConfig(guild.Id)["MuteRole"]);
         if (MuteRoleCache.ContainsKey(id)) return MuteRoleCache[id];
         SocketRole? role = null;
@@ -90,41 +91,6 @@ public static class Utils {
         await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
     }
 
-    public static TimeSpan? GetTimeSpan(ref string from) {
-        var chars = from.AsSpan();
-        var numberBuilder = Boyfriend.StringBuilder;
-        int days = 0, hours = 0, minutes = 0, seconds = 0;
-        foreach (var c in chars)
-            if (char.IsDigit(c)) { numberBuilder.Append(c); } else {
-                if (numberBuilder.Length == 0) return null;
-                switch (c) {
-                    case 'd' or 'D' or 'д' or 'Д':
-                        days += int.Parse(numberBuilder.ToString());
-                        numberBuilder.Clear();
-                        break;
-                    case 'h' or 'H' or 'ч' or 'Ч':
-                        hours += int.Parse(numberBuilder.ToString());
-                        numberBuilder.Clear();
-                        break;
-                    case 'm' or 'M' or 'м' or 'М':
-                        minutes += int.Parse(numberBuilder.ToString());
-                        numberBuilder.Clear();
-                        break;
-                    case 's' or 'S' or 'с' or 'С':
-                        seconds += int.Parse(numberBuilder.ToString());
-                        numberBuilder.Clear();
-                        break;
-                    default: return null;
-                }
-            }
-
-        numberBuilder.Clear();
-        return new TimeSpan(days, hours, minutes, seconds);
-    }
-
-    public static string JoinString(ref string[] args, int startIndex) {
-        return string.Join(" ", args, startIndex, args.Length - startIndex);
-    }
 
     public static RequestOptions GetRequestOptions(string reason) {
         var options = RequestOptions.Default;
@@ -139,7 +105,12 @@ public static class Utils {
 
         var toReturn =
             typeof(Messages).GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
-                ?.ToString()! ?? throw new Exception($"Could not find localized property: {propertyName}");
+                ?.ToString();
+        if (toReturn == null) {
+            Console.WriteLine($@"Could not find localized property: {propertyName}");
+            return name;
+        }
+
         ReflectionMessageCache.Add(name, toReturn);
         return toReturn;
     }
@@ -154,13 +125,7 @@ public static class Utils {
             await SilentSendAsync(systemChannel, toSend);
     }
 
-    public static void StackFeedback(ref string feedback, ref string mention, bool isPublic) {
-        var toAppend = string.Format(Messages.FeedbackFormat, mention, feedback);
-        CommandHandler.StackedPrivateFeedback.AppendLine(toAppend);
-        if (isPublic) CommandHandler.StackedPublicFeedback.AppendLine(toAppend);
-    }
-
-    public static string GetHumanizedTimeOffset(ref TimeSpan span) {
+    public static string GetHumanizedTimeOffset(TimeSpan span) {
         return span.TotalSeconds > 0
             ? $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture)}"
             : Messages.Ever;
@@ -168,5 +133,24 @@ public static class Utils {
 
     public static void SetCurrentLanguage(ulong guildId) {
         Messages.Culture = CultureInfoCache[Boyfriend.GetGuildConfig(guildId)["Lang"]];
+    }
+
+    public static void SafeAppendToBuilder(StringBuilder appendTo, string appendWhat, SocketTextChannel? channel) {
+        if (channel == null) return;
+        if (appendTo.Length + appendWhat.Length > 2000) {
+            _ = SilentSendAsync(channel, appendTo.ToString());
+            appendTo.Clear();
+        }
+
+        appendTo.AppendLine(appendWhat);
+    }
+
+    public static void SafeAppendToBuilder(StringBuilder appendTo, string appendWhat, SocketUserMessage message) {
+        if (appendTo.Length + appendWhat.Length > 2000) {
+            _ = message.ReplyAsync(appendTo.ToString(), false, null, AllowedMentions.None);
+            appendTo.Clear();
+        }
+
+        appendTo.AppendLine(appendWhat);
     }
 }

@@ -1,59 +1,39 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
 public class UnmuteCommand : Command {
     public override string[] Aliases { get; } = { "unmute", "размут" };
-    public override int ArgsLengthRequired => 2;
 
-    public override async Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser)context.User;
+    public override async Task Run(CommandProcessor cmd, string[] args) {
+        if (!cmd.HasPermission(GuildPermission.ModerateMembers)) return;
 
-        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
-        if (permissionCheckResponse is not "") {
-            Error(permissionCheckResponse, true);
-            return;
-        }
-
-        var toUnmute = Utils.ParseMember(context.Guild, args[0]);
-
-        if (toUnmute == null) {
-            Error(Messages.UserDoesntExist, false);
-            return;
-        }
-
-        var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toUnmute);
-        if (interactionCheckResponse is not "") {
-            Error(interactionCheckResponse, true);
-            return;
-        }
-
-        var reason = Utils.JoinString(ref args, 1);
-        await UnmuteMember(context.Guild, author, toUnmute, reason);
+        var toUnmute = cmd.GetMember(args, 0, "ToUnmute");
+        var reason = cmd.GetRemaining(args, 1, "UnmuteReason");
+        if (toUnmute == null || reason == null || !cmd.CanInteractWith(toUnmute, "Unmute")) return;
+        await UnmuteMember(cmd, toUnmute, reason);
     }
 
-    public static async Task UnmuteMember(SocketGuild guild, SocketGuildUser author, SocketGuildUser toUnmute,
+    public static async Task UnmuteMember(CommandProcessor cmd, SocketGuildUser toUnmute,
         string reason) {
-        var requestOptions = Utils.GetRequestOptions($"({author}) {reason}");
-        var role = Utils.GetMuteRole(ref guild);
+        var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
+        var role = Utils.GetMuteRole(cmd.Context.Guild);
 
         if (role != null && toUnmute.Roles.Contains(role)) {
-            var rolesRemoved = Boyfriend.GetRemovedRoles(guild.Id);
+            var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
 
             if (rolesRemoved.ContainsKey(toUnmute.Id)) {
                 await toUnmute.AddRolesAsync(rolesRemoved[toUnmute.Id]);
                 rolesRemoved.Remove(toUnmute.Id);
-                CommandHandler.ConfigWriteScheduled = true;
+                cmd.ConfigWriteScheduled = true;
             }
 
             await toUnmute.RemoveRoleAsync(role, requestOptions);
-        }
-        else {
+        } else {
             if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds() <
                 DateTimeOffset.Now.ToUnixTimeMilliseconds()) {
-                Error(Messages.MemberNotMuted, false);
+                cmd.Reply(Messages.MemberNotMuted, ":x: ");
                 return;
             }
 
@@ -61,7 +41,7 @@ public class UnmuteCommand : Command {
         }
 
         var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.Wrap(reason));
-        Success(feedback, author.Mention, false, false);
-        await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
+        cmd.Reply(feedback, ":loud_sound: ");
+        cmd.Audit(feedback);
     }
 }

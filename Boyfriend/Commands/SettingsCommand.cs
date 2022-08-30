@@ -1,23 +1,14 @@
 ﻿using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
 public class SettingsCommand : Command {
     public override string[] Aliases { get; } = { "settings", "config", "настройки", "конфиг" };
-    public override int ArgsLengthRequired => 0;
 
-    public override Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser)context.User;
+    public override Task Run(CommandProcessor cmd, string[] args) {
+        if (!cmd.HasPermission(GuildPermission.ManageGuild)) return Task.CompletedTask;
 
-        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ManageGuild);
-        if (permissionCheckResponse is not "") {
-            Error(permissionCheckResponse, true);
-            return Task.CompletedTask;
-        }
-
-        var guild = context.Guild;
+        var guild = cmd.Context.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
 
         if (args.Length == 0) {
@@ -48,7 +39,7 @@ public class SettingsCommand : Command {
                     .AppendFormat(format, currentValue).AppendLine();
             }
 
-            Output(ref currentSettings);
+            cmd.Reply(currentSettings.ToString(), ":gear: ");
             currentSettings.Clear();
             return Task.CompletedTask;
         }
@@ -66,19 +57,20 @@ public class SettingsCommand : Command {
         }
 
         if (!exists) {
-            Error(Messages.SettingDoesntExist, false);
+            cmd.Reply(Messages.SettingDoesntExist, ":x: ");
             return Task.CompletedTask;
         }
 
-        string value;
+        string? value;
 
         if (args.Length >= 2) {
-            value = Utils.JoinString(ref args, 1);
+            value = cmd.GetRemaining(args, 1, "Setting");
+            if (value == null) return Task.CompletedTask;
             if (selectedSetting is "EventStartedReceivers") {
                 value = value.Replace(" ", "").ToLower();
                 if (value.StartsWith(",") || value.Count(x => x == ',') > 1 ||
                     (!value.Contains("interested") && !value.Contains("role"))) {
-                    Error(Messages.InvalidSettingValue, false);
+                    cmd.Reply(Messages.InvalidSettingValue, ":x: ");
                     return Task.CompletedTask;
                 }
             }
@@ -91,7 +83,7 @@ public class SettingsCommand : Command {
                 _ => value
             };
             if (!IsBool(value)) {
-                Error(Messages.InvalidSettingValue, false);
+                cmd.Reply(Messages.InvalidSettingValue, ":x: ");
                 return Task.CompletedTask;
             }
         }
@@ -124,22 +116,23 @@ public class SettingsCommand : Command {
                 config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
         } else {
             if (value == config[selectedSetting]) {
-                Error(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue), false);
+                cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
+                    ":x: ");
                 return Task.CompletedTask;
             }
 
             if (selectedSetting is "Lang" && value is not "ru" and not "en") {
-                Error(Messages.LanguageNotSupported, false);
+                cmd.Reply(Messages.LanguageNotSupported, ":x: ");
                 return Task.CompletedTask;
             }
 
             if (selectedSetting.EndsWith("Channel") && guild.GetTextChannel(mention) == null) {
-                Error(Messages.InvalidChannel, false);
+                cmd.Reply(Messages.InvalidChannel, ":x: ");
                 return Task.CompletedTask;
             }
 
             if (selectedSetting.EndsWith("Role") && guild.GetRole(mention) == null) {
-                Error(Messages.InvalidRole, false);
+                cmd.Reply(Messages.InvalidRole, ":x: ");
                 return Task.CompletedTask;
             }
 
@@ -153,10 +146,11 @@ public class SettingsCommand : Command {
             localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
         }
 
-        CommandHandler.ConfigWriteScheduled = true;
+        cmd.ConfigWriteScheduled = true;
 
-        Success(string.Format(Messages.FeedbackSettingsUpdated, localizedSelectedSetting, formattedValue),
-            author.Mention);
+        var replyFormat = string.Format(Messages.FeedbackSettingsUpdated, localizedSelectedSetting, formattedValue);
+        cmd.Reply(replyFormat, ":control_knobs: ");
+        cmd.Audit(replyFormat, false);
         return Task.CompletedTask;
     }
 

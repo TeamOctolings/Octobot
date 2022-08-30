@@ -133,6 +133,6 @@ public static class Boyfriend {
             return guild;
         }
 
-        throw new Exception(Messages.CouldntFindGuildByChannel);
+        throw new Exception("Could not find guild by channel!");
     }
 }

@@ -1,20 +1,18 @@
-﻿using Discord.Commands;
-using Humanizer;
+﻿using Humanizer;
 
 namespace Boyfriend.Commands;
 
 public class HelpCommand : Command {
-    public override string[] Aliases { get; } = {"help", "помощь", "справка"};
-    public override int ArgsLengthRequired => 0;
+    public override string[] Aliases { get; } = { "help", "помощь", "справка" };
 
-    public override Task Run(SocketCommandContext context, string[] args) {
-        var prefix = Boyfriend.GetGuildConfig(context.Guild.Id)["Prefix"];
+    public override Task Run(CommandProcessor cmd, string[] args) {
+        var prefix = Boyfriend.GetGuildConfig(cmd.Context.Guild.Id)["Prefix"];
         var toSend = Boyfriend.StringBuilder.Append(Messages.CommandHelp);
 
-        foreach (var command in CommandHandler.Commands)
+        foreach (var command in CommandProcessor.Commands)
             toSend.Append(
                 $"\n`{prefix}{command.Aliases[0]}`: {Utils.GetMessage($"CommandDescription{command.Aliases[0].Titleize()}")}");
-        Output(ref toSend);
+        cmd.Reply(toSend.ToString(), ":page_facing_up: ");
         toSend.Clear();
 
         return Task.CompletedTask;

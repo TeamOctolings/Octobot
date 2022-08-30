@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
 
@@ -7,72 +6,45 @@ namespace Boyfriend.Commands;
 
 public class MuteCommand : Command {
     public override string[] Aliases { get; } = { "mute", "timeout", "заглушить", "мут" };
-    public override int ArgsLengthRequired => 2;
 
-    public override async Task Run(SocketCommandContext context, string[] args) {
-        var toMute = Utils.ParseMember(context.Guild, args[0]);
-        var reason = Utils.JoinString(ref args, 2);
+    public override async Task Run(CommandProcessor cmd, string[] args) {
+        var toMute = cmd.GetMember(args, 0, "ToMute");
+        if (toMute == null) return;
 
-        var duration = Utils.GetTimeSpan(ref args[1]) ?? TimeSpan.FromMilliseconds(-1);
-        if (duration.TotalSeconds < 0) {
-            Warn(Messages.DurationParseFailed);
-            reason = Utils.JoinString(ref args, 1);
-        }
-
-
-        if (reason is "") {
-            Error(Messages.ReasonRequired, false);
-            return;
-        }
-
-        if (toMute == null) {
-            Error(Messages.UserNotInGuild, false);
-            return;
-        }
-
-        var guild = context.Guild;
-        var role = Utils.GetMuteRole(ref guild);
+        var duration = CommandProcessor.GetTimeSpan(args, 1);
+        var reason = cmd.GetRemaining(args, duration.TotalSeconds < 1 ? 1 : 2, "MuteReason");
+        if (reason == null) return;
+        var role = Utils.GetMuteRole(cmd.Context.Guild);
 
         if (role != null) {
             if (toMute.Roles.Contains(role) || (toMute.TimedOutUntil != null &&
                                                 toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds() >
                                                 DateTimeOffset.Now.ToUnixTimeMilliseconds())) {
-                Error(Messages.MemberAlreadyMuted, false);
+                cmd.Reply(Messages.MemberAlreadyMuted, ":x: ");
                 return;
             }
         }
 
-        var rolesRemoved = Boyfriend.GetRemovedRoles(context.Guild.Id);
+        var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
 
         if (rolesRemoved.ContainsKey(toMute.Id)) {
             foreach (var roleId in rolesRemoved[toMute.Id]) await toMute.AddRoleAsync(roleId);
             rolesRemoved.Remove(toMute.Id);
-            CommandHandler.ConfigWriteScheduled = true;
-            Warn(Messages.RolesReturned);
+            cmd.ConfigWriteScheduled = true;
+            cmd.Reply(Messages.RolesReturned, ":warning: ");
         }
 
-        var author = (SocketGuildUser)context.User;
+        if (!cmd.HasPermission(GuildPermission.ModerateMembers) || !cmd.CanInteractWith(toMute, "Mute")) return;
 
-        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.ModerateMembers);
-        if (permissionCheckResponse is not "") {
-            Error(permissionCheckResponse, true);
-            return;
-        }
-
-        var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toMute);
-        if (interactionCheckResponse is not "") {
-            Error(interactionCheckResponse, true);
-            return;
-        }
-
-        await MuteMember(guild, author, toMute, duration, reason);
+        await MuteMember(cmd, toMute, duration, reason);
     }
 
-    private static async Task MuteMember(SocketGuild guild, SocketUser author, SocketGuildUser toMute,
+    private static async Task MuteMember(CommandProcessor cmd, SocketGuildUser toMute,
         TimeSpan duration, string reason) {
+        var guild = cmd.Context.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
-        var requestOptions = Utils.GetRequestOptions($"({author}) {reason}");
-        var role = Utils.GetMuteRole(ref guild);
+        var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
+        var role = Utils.GetMuteRole(guild);
         var hasDuration = duration.TotalSeconds > 0;
 
         if (role != null) {
@@ -84,30 +56,30 @@ public class MuteCommand : Command {
                         await toMute.RemoveRoleAsync(role);
                         rolesRemoved.Add(userRole.Id);
                     } catch (HttpException e) {
-                        Warn(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.Wrap(e.Reason)));
+                        cmd.Reply(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.Wrap(e.Reason)),
+                            ":warning: ");
                     }
 
                 Boyfriend.GetRemovedRoles(guild.Id).Add(toMute.Id, rolesRemoved.AsReadOnly());
-                CommandHandler.ConfigWriteScheduled = true;
-
-                if (hasDuration) {
-                    var copy = duration;
-                    var _ = async () => {
-                        await Task.Delay(copy);
-                        await UnmuteCommand.UnmuteMember(guild, guild.CurrentUser, toMute, Messages.PunishmentExpired);
-                    };
-                }
+                cmd.ConfigWriteScheduled = true;
             }
 
             await toMute.AddRoleAsync(role, requestOptions);
+
+            if (hasDuration) {
+                var _ = async () => {
+                    await Task.Delay(duration);
+                    await UnmuteCommand.UnmuteMember(cmd, toMute, Messages.PunishmentExpired);
+                };
+            }
         } else {
             if (!hasDuration || duration.TotalDays > 28) {
-                Error(Messages.DurationRequiredForTimeOuts, false);
+                cmd.Reply(Messages.DurationRequiredForTimeOuts, ":x: ");
                 return;
             }
 
             if (toMute.IsBot) {
-                Error(Messages.CannotTimeOutBot, false);
+                cmd.Reply(Messages.CannotTimeOutBot, ":x: ");
                 return;
             }
 
@@ -115,9 +87,9 @@ public class MuteCommand : Command {
         }
 
         var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
-            Utils.GetHumanizedTimeOffset(ref duration),
+            Utils.GetHumanizedTimeOffset(duration),
             Utils.Wrap(reason));
-        Success(feedback, author.Mention, false, false);
-        await Utils.SendFeedback(feedback, guild.Id, author.Mention, true);
+        cmd.Reply(feedback, ":mute: ");
+        cmd.Audit(feedback);
     }
 }

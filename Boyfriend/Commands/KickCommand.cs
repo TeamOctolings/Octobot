@@ -1,49 +1,31 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
 public class KickCommand : Command {
     public override string[] Aliases { get; } = { "kick", "кик", "выгнать" };
-    public override int ArgsLengthRequired => 2;
 
-    public override async Task Run(SocketCommandContext context, string[] args) {
-        var author = (SocketGuildUser)context.User;
+    public override async Task Run(CommandProcessor cmd, string[] args) {
+        var toKick = cmd.GetMember(args, 0, "ToKick");
+        if (toKick == null || !cmd.HasPermission(GuildPermission.KickMembers)) return;
 
-        var permissionCheckResponse = CommandHandler.HasPermission(ref author, GuildPermission.KickMembers);
-        if (permissionCheckResponse is not "") {
-            Error(permissionCheckResponse, true);
-            return;
-        }
+        if (!cmd.CanInteractWith(toKick, "Kick")) return;
 
-        var toKick = Utils.ParseMember(context.Guild, args[0]);
-
-        if (toKick == null) {
-            Error(Messages.UserNotInGuild, false);
-            return;
-        }
-
-        var interactionCheckResponse = CommandHandler.CanInteract(ref author, ref toKick);
-        if (interactionCheckResponse is not "") {
-            Error(interactionCheckResponse, true);
-            return;
-        }
-
-        await KickMember(context.Guild, author, toKick, Utils.JoinString(ref args, 1));
-
-        Success(
-            string.Format(Messages.FeedbackMemberKicked, toKick.Mention,
-                Utils.Wrap(Utils.JoinString(ref args, 1))), author.Mention);
+        await KickMember(cmd, toKick, cmd.GetRemaining(args, 1, "KickReason"));
     }
 
-    private static async Task KickMember(IGuild guild, SocketUser author, SocketGuildUser toKick, string reason) {
-        var authorMention = author.Mention;
-        var guildKickMessage = $"({author}) {reason}";
+    private static async Task KickMember(CommandProcessor cmd, SocketGuildUser toKick, string? reason) {
+        if (reason == null) return;
+        var guildKickMessage = $"({cmd.Context.User}) {reason}";
 
         await Utils.SendDirectMessage(toKick,
-            string.Format(Messages.YouWereKicked, authorMention, guild.Name, Utils.Wrap(reason)));
+            string.Format(Messages.YouWereKicked, cmd.Context.User.Mention, cmd.Context.Guild.Name,
+                Utils.Wrap(reason)));
 
         await toKick.KickAsync(guildKickMessage);
+        var format = string.Format(Messages.FeedbackMemberKicked, toKick.Mention, Utils.Wrap(reason));
+        cmd.Reply(format, ":police_car: ");
+        cmd.Audit(format);
     }
 }
