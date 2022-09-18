@@ -7,16 +7,17 @@ using Discord.WebSocket;
 
 namespace Boyfriend;
 
-public class CommandProcessor {
+public sealed class CommandProcessor {
     private const string Success = ":white_check_mark: ";
     private const string MissingArgument = ":keyboard: ";
     private const string InvalidArgument = ":construction: ";
     private const string NoAccess = ":no_entry_sign: ";
     private const string CantInteract = ":vertical_traffic_light: ";
 
-    public static readonly Command[] Commands = {
+    public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
+        new SelfBanCommand(),
         new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
     };
 
@@ -35,14 +36,12 @@ public class CommandProcessor {
         Context = new SocketCommandContext(Boyfriend.Client, message);
     }
 
-    public async Task HandleCommand() {
-        _stackedReplyMessage.Clear();
-        _stackedPrivateFeedback.Clear();
-        _stackedPublicFeedback.Clear();
+    public async Task HandleCommandAsync() {
         var guild = Context.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
+        var muteRole = Utils.GetMuteRole(guild);
 
-        if (GetMember().Roles.Contains(Utils.GetMuteRole(guild))) {
+        if (GetMember().Roles.Contains(muteRole)) {
             await Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
             return;
         }
@@ -54,35 +53,36 @@ public class CommandProcessor {
         }
 
         var list = Context.Message.Content.Split("\n");
-        foreach (var line in list) {
-            RunCommandOnLine(line, regex);
+        var cleanList = Context.Message.CleanContent.Split("\n");
+        for (var i = 0; i < list.Length; i++) {
+            RunCommandOnLine(list[i], cleanList[i], regex);
             if (_stackedReplyMessage.Length > 0) _ = Context.Channel.TriggerTypingAsync();
+            var member = Boyfriend.Client.GetGuild(Context.Guild.Id)
+                .GetUser(Context.User.Id); // Getting an up-to-date copy
+            if (member == null || member.Roles.Contains(muteRole)
+                               || member.TimedOutUntil.GetValueOrDefault(DateTimeOffset.UnixEpoch).ToUnixTimeSeconds() >
+                               DateTimeOffset.Now.ToUnixTimeSeconds())
+                break;
         }
 
         await Task.WhenAll(_tasks);
+        _tasks.Clear();
 
-        if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfig(guild.Id);
+        if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfigAsync(guild.Id);
 
-        if (_stackedReplyMessage.Length > 0) _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString());
-
-        var adminChannel = Utils.GetAdminLogChannel(guild.Id);
-        var systemChannel = guild.SystemChannel;
-        if (_stackedPrivateFeedback.Length > 0 && adminChannel != null && adminChannel.Id != Context.Message.Channel.Id)
-            _ = Utils.SilentSendAsync(adminChannel, _stackedPrivateFeedback.ToString());
-        if (_stackedPublicFeedback.Length > 0 && systemChannel != null && systemChannel.Id != adminChannel?.Id
-            && systemChannel.Id != Context.Message.Channel.Id)
-            _ = Utils.SilentSendAsync(systemChannel, _stackedPublicFeedback.ToString());
+        SendFeedbacks();
     }
 
-    private void RunCommandOnLine(string line, Regex regex) {
+    private void RunCommandOnLine(string line, string cleanLine, Regex regex) {
         foreach (var command in Commands) {
             var lineNoMention = regex.Replace(MentionRegex.Replace(line, "", 1), "", 1);
             if (lineNoMention == line
-                || !command.Aliases.Contains(regex.Replace(lineNoMention, "", 1).Trim().ToLower().Split()[0]))
+                || !command.Aliases.Contains(lineNoMention.Trim().ToLower().Split()[0]))
                 continue;
 
-            var args = line.Split().Skip(1).ToArray();
-            _tasks.Add(command.Run(this, args));
+            var args = line.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
+            var cleanArgs = cleanLine.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
+            _tasks.Add(command.RunAsync(this, args, cleanArgs));
         }
     }
 
@@ -94,6 +94,26 @@ public class CommandProcessor {
         var format = string.Format(Messages.FeedbackFormat, Context.User.Mention, action);
         if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, Context.Guild.SystemChannel);
         Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetAdminLogChannel(Context.Guild.Id));
+        if (_tasks.Count == 0) SendFeedbacks(false);
+    }
+
+    private void SendFeedbacks(bool reply = true) {
+        if (reply && _stackedReplyMessage.Length > 0)
+            _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString(), false, null, AllowedMentions.None);
+
+        var adminChannel = Utils.GetAdminLogChannel(Context.Guild.Id);
+        var systemChannel = Context.Guild.SystemChannel;
+        if (_stackedPrivateFeedback.Length > 0 && adminChannel != null &&
+            adminChannel.Id != Context.Message.Channel.Id) {
+            _ = Utils.SilentSendAsync(adminChannel, _stackedPrivateFeedback.ToString());
+            _stackedPrivateFeedback.Clear();
+        }
+
+        if (_stackedPublicFeedback.Length > 0 && systemChannel != null && systemChannel.Id != adminChannel?.Id
+            && systemChannel.Id != Context.Message.Channel.Id) {
+            _ = Utils.SilentSendAsync(systemChannel, _stackedPublicFeedback.ToString());
+            _stackedPublicFeedback.Clear();
+        }
     }
 
     public string? GetRemaining(string[] from, int startIndex, string? argument) {
@@ -105,7 +125,7 @@ public class CommandProcessor {
         return null;
     }
 
-    public SocketUser? GetUser(string[] args, int index, string? argument) {
+    public SocketUser? GetUser(string[] args, string[] cleanArgs, int index, string? argument) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{MissingArgument}{Messages.MissingUser}",
                 Context.Message);
@@ -115,7 +135,8 @@ public class CommandProcessor {
         var user = Utils.ParseUser(args[index]);
         if (user == null && argument != null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{InvalidArgument}{string.Format(Messages.InvalidUser, args[index])}", Context.Message);
+                $"{InvalidArgument}{string.Format(Messages.InvalidUser, Utils.Wrap(cleanArgs[index]))}",
+                Context.Message);
         return user;
     }
 
@@ -141,7 +162,7 @@ public class CommandProcessor {
         return member;
     }
 
-    public SocketGuildUser? GetMember(string[] args, int index, string? argument) {
+    public SocketGuildUser? GetMember(string[] args, string[] cleanArgs, int index, string? argument) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{MissingArgument}{Messages.MissingMember}",
                 Context.Message);
@@ -151,7 +172,8 @@ public class CommandProcessor {
         var member = Context.Guild.GetUser(Utils.ParseMention(args[index]));
         if (member == null && argument != null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{InvalidArgument}{string.Format(Messages.InvalidMember, Utils.Wrap(args[index]))}", Context.Message);
+                $"{InvalidArgument}{string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
+                Context.Message);
         return member;
     }
 
@@ -167,9 +189,12 @@ public class CommandProcessor {
         }
 
         var id = Utils.ParseMention(args[index]);
-        if (Context.Guild.GetBanAsync(id) != null) return id;
-        Utils.SafeAppendToBuilder(_stackedReplyMessage, Messages.UserNotBanned, Context.Message);
-        return null;
+        if (Context.Guild.GetBanAsync(id) == null) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage, Messages.UserNotBanned, Context.Message);
+            return null;
+        }
+
+        return id;
     }
 
     public int? GetNumberRange(string[] args, int index, int min, int max, string? argument) {

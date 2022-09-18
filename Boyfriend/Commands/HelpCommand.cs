@@ -2,10 +2,10 @@
 
 namespace Boyfriend.Commands;
 
-public class HelpCommand : Command {
-    public override string[] Aliases { get; } = { "help", "помощь", "справка" };
+public sealed class HelpCommand : ICommand {
+    public string[] Aliases { get; } = { "help", "помощь", "справка" };
 
-    public override Task Run(CommandProcessor cmd, string[] args) {
+    public Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         var prefix = Boyfriend.GetGuildConfig(cmd.Context.Guild.Id)["Prefix"];
         var toSend = Boyfriend.StringBuilder.Append(Messages.CommandHelp);
 

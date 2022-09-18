@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Boyfriend.Commands;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -53,10 +54,6 @@ public static class Utils {
     public static SocketUser? ParseUser(string mention) {
         var user = Boyfriend.Client.GetUser(ParseMention(mention));
         return user;
-    }
-
-    public static SocketGuildUser? ParseMember(SocketGuild guild, string mention) {
-        return guild.GetUser(ParseMention(mention));
     }
 
     public static async Task SendDirectMessage(SocketUser user, string toSend) {
@@ -115,7 +112,8 @@ public static class Utils {
         return toReturn;
     }
 
-    public static async Task SendFeedback(string feedback, ulong guildId, string mention, bool sendPublic = false) {
+    public static async Task
+        SendFeedbackAsync(string feedback, ulong guildId, string mention, bool sendPublic = false) {
         var adminChannel = GetAdminLogChannel(guildId);
         var systemChannel = Boyfriend.Client.GetGuild(guildId).SystemChannel;
         var toSend = string.Format(Messages.FeedbackFormat, mention, feedback);
@@ -152,5 +150,16 @@ public static class Utils {
         }
 
         appendTo.AppendLine(appendWhat);
+    }
+
+    public static async Task DelayedUnbanAsync(CommandProcessor cmd, ulong banned, string reason, TimeSpan duration) {
+        await Task.Delay(duration);
+        await UnbanCommand.UnbanUserAsync(cmd, banned, reason);
+    }
+
+    public static async Task DelayedUnmuteAsync(CommandProcessor cmd, SocketGuildUser muted, string reason,
+        TimeSpan duration) {
+        await Task.Delay(duration);
+        await UnmuteCommand.UnmuteMemberAsync(cmd, muted, reason);
     }
 }

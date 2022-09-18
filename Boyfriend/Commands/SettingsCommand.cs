@@ -2,10 +2,10 @@
 
 namespace Boyfriend.Commands;
 
-public class SettingsCommand : Command {
-    public override string[] Aliases { get; } = { "settings", "config", "настройки", "конфиг" };
+public sealed class SettingsCommand : ICommand {
+    public string[] Aliases { get; } = { "settings", "config", "настройки", "конфиг" };
 
-    public override Task Run(CommandProcessor cmd, string[] args) {
+    public Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         if (!cmd.HasPermission(GuildPermission.ManageGuild)) return Task.CompletedTask;
 
         var guild = cmd.Context.Guild;
@@ -48,7 +48,7 @@ public class SettingsCommand : Command {
 
         var exists = false;
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        // The performance impact is not worth it
+        // Too many allocations
         foreach (var setting in Boyfriend.DefaultConfig.Keys) {
             if (selectedSetting != setting.ToLower()) continue;
             selectedSetting = setting;

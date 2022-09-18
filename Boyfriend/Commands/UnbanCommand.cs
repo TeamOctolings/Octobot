@@ -2,10 +2,10 @@
 
 namespace Boyfriend.Commands;
 
-public class UnbanCommand : Command {
-    public override string[] Aliases { get; } = { "unban", "разбан" };
+public sealed class UnbanCommand : ICommand {
+    public string[] Aliases { get; } = { "unban", "разбан" };
 
-    public override async Task Run(CommandProcessor cmd, string[] args) {
+    public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         if (!cmd.HasPermission(GuildPermission.BanMembers)) return;
 
         var id = cmd.GetBan(args, 0);
@@ -13,10 +13,10 @@ public class UnbanCommand : Command {
         var reason = cmd.GetRemaining(args, 1, "UnbanReason");
         if (reason == null) return;
 
-        await UnbanUser(cmd, id.Value, reason);
+        await UnbanUserAsync(cmd, id.Value, reason);
     }
 
-    public static async Task UnbanUser(CommandProcessor cmd, ulong id, string reason) {
+    public static async Task UnbanUserAsync(CommandProcessor cmd, ulong id, string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         await cmd.Context.Guild.RemoveBanAsync(id, requestOptions);
 

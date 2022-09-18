@@ -3,19 +3,19 @@ using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
-public class UnmuteCommand : Command {
-    public override string[] Aliases { get; } = { "unmute", "размут" };
+public sealed class UnmuteCommand : ICommand {
+    public string[] Aliases { get; } = { "unmute", "размут" };
 
-    public override async Task Run(CommandProcessor cmd, string[] args) {
+    public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         if (!cmd.HasPermission(GuildPermission.ModerateMembers)) return;
 
-        var toUnmute = cmd.GetMember(args, 0, "ToUnmute");
+        var toUnmute = cmd.GetMember(args, cleanArgs, 0, "ToUnmute");
         var reason = cmd.GetRemaining(args, 1, "UnmuteReason");
         if (toUnmute == null || reason == null || !cmd.CanInteractWith(toUnmute, "Unmute")) return;
-        await UnmuteMember(cmd, toUnmute, reason);
+        await UnmuteMemberAsync(cmd, toUnmute, reason);
     }
 
-    public static async Task UnmuteMember(CommandProcessor cmd, SocketGuildUser toUnmute,
+    public static async Task UnmuteMemberAsync(CommandProcessor cmd, SocketGuildUser toUnmute,
         string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         var role = Utils.GetMuteRole(cmd.Context.Guild);
@@ -31,8 +31,8 @@ public class UnmuteCommand : Command {
 
             await toUnmute.RemoveRoleAsync(role, requestOptions);
         } else {
-            if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeMilliseconds() <
-                DateTimeOffset.Now.ToUnixTimeMilliseconds()) {
+            if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
+                DateTimeOffset.Now.ToUnixTimeSeconds()) {
                 cmd.Reply(Messages.MemberNotMuted, ":x: ");
                 return;
             }

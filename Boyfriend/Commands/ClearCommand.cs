@@ -3,15 +3,15 @@ using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
-public class ClearCommand : Command {
-    public override string[] Aliases { get; } = { "clear", "purge", "очистить", "стереть" };
+public sealed class ClearCommand : ICommand {
+    public string[] Aliases { get; } = { "clear", "purge", "очистить", "стереть" };
 
-    public override async Task Run(CommandProcessor cmd, string[] args) {
+    public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         if (cmd.Context.Channel is not SocketTextChannel channel) throw new Exception();
 
         if (!cmd.HasPermission(GuildPermission.ManageMessages)) return;
 
-        var toDelete = cmd.GetNumberRange(args, 0, 1, 200, "ClearAmount");
+        var toDelete = cmd.GetNumberRange(cleanArgs, 0, 1, 200, "ClearAmount");
         if (toDelete == null) return;
         var messages = await channel.GetMessagesAsync((int)(toDelete + 1)).FlattenAsync();
 

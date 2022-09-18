@@ -5,7 +5,7 @@ using Discord.WebSocket;
 
 namespace Boyfriend;
 
-public class EventHandler {
+public sealed class EventHandler {
     private readonly DiscordSocketClient _client = Boyfriend.Client;
 
     public void InitEvents() {
@@ -50,7 +50,7 @@ public class EventHandler {
         if (auditLogEntry.Data is MessageDeleteAuditLogData data && msg.Author.Id == data.Target.Id)
             mention = auditLogEntry.User.Mention;
 
-        await Utils.SendFeedback(
+        await Utils.SendFeedbackAsync(
             string.Format(Messages.CachedMessageDeleted, msg.Author.Mention, Utils.MentionChannel(channel.Id),
                 Utils.Wrap(msg.CleanContent)), guild.Id, mention);
     }
@@ -83,7 +83,7 @@ public class EventHandler {
                                           (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))))
             return;
 
-        _ = new CommandProcessor(message).HandleCommand();
+        _ = new CommandProcessor(message).HandleCommandAsync();
     }
 
     private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,
@@ -98,7 +98,7 @@ public class EventHandler {
 
         var isLimitedSpace = msg.CleanContent.Length + messageSocket.CleanContent.Length < 1940;
 
-        await Utils.SendFeedback(
+        await Utils.SendFeedbackAsync(
             string.Format(Messages.CachedMessageEdited, Utils.MentionChannel(channel.Id),
                 Utils.Wrap(msg.CleanContent, isLimitedSpace), Utils.Wrap(messageSocket.CleanContent, isLimitedSpace)),
             guildId, msg.Author.Mention);

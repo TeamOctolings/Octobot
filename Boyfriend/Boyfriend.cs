@@ -20,7 +20,7 @@ public static class Boyfriend {
     };
 
     public static readonly DiscordSocketClient Client = new(Config);
-    private static readonly Game Activity = new("Toby Fox - The World Revolving", ActivityType.Listening);
+    private static readonly Game Activity = new("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening);
 
     private static readonly Dictionary<ulong, Dictionary<string, string>> GuildConfigDictionary = new();
 
@@ -71,7 +71,7 @@ public static class Boyfriend {
         return Task.CompletedTask;
     }
 
-    public static async Task WriteGuildConfig(ulong id) {
+    public static async Task WriteGuildConfigAsync(ulong id) {
         var json = JsonConvert.SerializeObject(GuildConfigDictionary[id], Formatting.Indented);
         var removedRoles = JsonConvert.SerializeObject(RemovedRolesDictionary[id], Formatting.Indented);
 

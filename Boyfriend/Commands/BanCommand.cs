@@ -3,11 +3,11 @@ using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
-public class BanCommand : Command {
-    public override string[] Aliases { get; } = { "ban", "бан" };
+public sealed class BanCommand : ICommand {
+    public string[] Aliases { get; } = { "ban", "бан" };
 
-    public override async Task Run(CommandProcessor cmd, string[] args) {
-        var toBan = cmd.GetUser(args, 0, "ToBan");
+    public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
+        var toBan = cmd.GetUser(args, cleanArgs, 0, "ToBan");
         if (toBan == null || !cmd.HasPermission(GuildPermission.BanMembers)) return;
 
         var memberToBan = cmd.GetMember(toBan, null);
@@ -34,11 +34,7 @@ public class BanCommand : Command {
         cmd.Reply(feedback, ":hammer: ");
         cmd.Audit(feedback);
 
-        if (duration.TotalSeconds > 0) {
-            var _ = async () => {
-                await Task.Delay(duration);
-                await UnbanCommand.UnbanUser(cmd, toBan.Id, Messages.PunishmentExpired);
-            };
-        }
+        if (duration.TotalSeconds > 0)
+            await Task.FromResult(Utils.DelayedUnbanAsync(cmd, toBan.Id, Messages.PunishmentExpired, duration));
     }
 }

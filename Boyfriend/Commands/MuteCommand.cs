@@ -4,11 +4,11 @@ using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
-public class MuteCommand : Command {
-    public override string[] Aliases { get; } = { "mute", "timeout", "заглушить", "мут" };
+public sealed class MuteCommand : ICommand {
+    public string[] Aliases { get; } = { "mute", "timeout", "заглушить", "мут" };
 
-    public override async Task Run(CommandProcessor cmd, string[] args) {
-        var toMute = cmd.GetMember(args, 0, "ToMute");
+    public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
+        var toMute = cmd.GetMember(args, cleanArgs, 0, "ToMute");
         if (toMute == null) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);
@@ -16,13 +16,12 @@ public class MuteCommand : Command {
         if (reason == null) return;
         var role = Utils.GetMuteRole(cmd.Context.Guild);
 
-        if (role != null) {
-            if (toMute.Roles.Contains(role) || (toMute.TimedOutUntil != null &&
-                                                toMute.TimedOutUntil.Value.ToUnixTimeMilliseconds() >
-                                                DateTimeOffset.Now.ToUnixTimeMilliseconds())) {
-                cmd.Reply(Messages.MemberAlreadyMuted, ":x: ");
-                return;
-            }
+        if ((role != null && toMute.Roles.Contains(role))
+            || (toMute.TimedOutUntil != null
+                && toMute.TimedOutUntil.Value.ToUnixTimeSeconds()
+                > DateTimeOffset.Now.ToUnixTimeSeconds())) {
+            cmd.Reply(Messages.MemberAlreadyMuted, ":x: ");
+            return;
         }
 
         var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
@@ -36,10 +35,10 @@ public class MuteCommand : Command {
 
         if (!cmd.HasPermission(GuildPermission.ModerateMembers) || !cmd.CanInteractWith(toMute, "Mute")) return;
 
-        await MuteMember(cmd, toMute, duration, reason);
+        await MuteMemberAsync(cmd, toMute, duration, reason);
     }
 
-    private static async Task MuteMember(CommandProcessor cmd, SocketGuildUser toMute,
+    private static async Task MuteMemberAsync(CommandProcessor cmd, SocketGuildUser toMute,
         TimeSpan duration, string reason) {
         var guild = cmd.Context.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
@@ -66,12 +65,8 @@ public class MuteCommand : Command {
 
             await toMute.AddRoleAsync(role, requestOptions);
 
-            if (hasDuration) {
-                var _ = async () => {
-                    await Task.Delay(duration);
-                    await UnmuteCommand.UnmuteMember(cmd, toMute, Messages.PunishmentExpired);
-                };
-            }
+            if (hasDuration)
+                await Task.FromResult(Utils.DelayedUnmuteAsync(cmd, toMute, Messages.PunishmentExpired, duration));
         } else {
             if (!hasDuration || duration.TotalDays > 28) {
                 cmd.Reply(Messages.DurationRequiredForTimeOuts, ":x: ");

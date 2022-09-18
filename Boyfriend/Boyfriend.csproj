@@ -8,10 +8,19 @@
         <LangVersion>default</LangVersion>
         <Title>Boyfriend</Title>
         <Authors>l1ttle</Authors>
-        <PackageProjectUrl>https://github.com/l1ttleO/Boyfriend-CSharp</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/l1ttleO/Boyfriend-CSharp</RepositoryUrl>
+        <PackageProjectUrl>https://git.cavej376.xyz/Octol1ttle/Boyfriend-CSharp</PackageProjectUrl>
+        <RepositoryUrl>https://git.cavej376.xyz/Octol1ttle/Boyfriend-CSharp</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageVersion>1.0.1</PackageVersion>
+        <PackageLicenseUrl>https://git.cavej376.xyz/Octol1ttle/Boyfriend-CSharp/src/branch/master/LICENSE</PackageLicenseUrl>
+        <NeutralLanguage>en</NeutralLanguage>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DefineConstants/>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <PlatformTarget>x64</PlatformTarget>
+        <DebugType>none</DebugType>
     </PropertyGroup>
 
     <ItemGroup>

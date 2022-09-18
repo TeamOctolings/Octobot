@@ -1,9 +1,9 @@
 ﻿namespace Boyfriend.Commands;
 
-public class PingCommand : Command {
-    public override string[] Aliases { get; } = { "ping", "latency", "pong", "пинг", "задержка", "понг" };
+public sealed class PingCommand : ICommand {
+    public string[] Aliases { get; } = { "ping", "latency", "pong", "пинг", "задержка", "понг" };
 
-    public override Task Run(CommandProcessor cmd, string[] args) {
+    public Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         var builder = Boyfriend.StringBuilder;
 
         builder.Append(Utils.GetBeep())

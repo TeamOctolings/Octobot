@@ -3,19 +3,19 @@ using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
-public class KickCommand : Command {
-    public override string[] Aliases { get; } = { "kick", "кик", "выгнать" };
+public sealed class KickCommand : ICommand {
+    public string[] Aliases { get; } = { "kick", "кик", "выгнать" };
 
-    public override async Task Run(CommandProcessor cmd, string[] args) {
-        var toKick = cmd.GetMember(args, 0, "ToKick");
+    public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
+        var toKick = cmd.GetMember(args, cleanArgs, 0, "ToKick");
         if (toKick == null || !cmd.HasPermission(GuildPermission.KickMembers)) return;
 
         if (!cmd.CanInteractWith(toKick, "Kick")) return;
 
-        await KickMember(cmd, toKick, cmd.GetRemaining(args, 1, "KickReason"));
+        await KickMemberAsync(cmd, toKick, cmd.GetRemaining(args, 1, "KickReason"));
     }
 
-    private static async Task KickMember(CommandProcessor cmd, SocketGuildUser toKick, string? reason) {
+    private static async Task KickMemberAsync(CommandProcessor cmd, SocketGuildUser toKick, string? reason) {
         if (reason == null) return;
         var guildKickMessage = $"({cmd.Context.User}) {reason}";
 
