@@ -17,12 +17,11 @@ public sealed class CommandProcessor {
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
-        new SelfBanCommand(),
         new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
     };
 
     private static readonly Dictionary<string, Regex> RegexCache = new();
-    private static readonly Regex MentionRegex = new(Regex.Escape("<@855023234407333888>"));
+    private static readonly Regex MentionRegex = new(Regex.Escape("<@855023234407333888>"), RegexOptions.Compiled);
     private readonly StringBuilder _stackedPrivateFeedback = new();
     private readonly StringBuilder _stackedPublicFeedback = new();
     private readonly StringBuilder _stackedReplyMessage = new();
@@ -49,7 +48,7 @@ public sealed class CommandProcessor {
 
         Regex regex;
         if (RegexCache.ContainsKey(config["Prefix"])) { regex = RegexCache[config["Prefix"]]; } else {
-            regex = new Regex(Regex.Escape(config["Prefix"]));
+            regex = new Regex(Regex.Escape(config["Prefix"]), RegexOptions.Compiled | RegexOptions.IgnoreCase);
             RegexCache.Add(config["Prefix"], regex);
         }
 
@@ -273,13 +272,6 @@ public sealed class CommandProcessor {
     }
 
     public bool CanInteractWith(SocketGuildUser user, string action) {
-        if (Context.Guild.Owner.Id == Context.User.Id) return true;
-        if (Context.Guild.Owner.Id == user.Id) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Owner")}", Context.Message);
-            return false;
-        }
-
         if (Context.User.Id == user.Id) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Themselves")}", Context.Message);
@@ -292,13 +284,19 @@ public sealed class CommandProcessor {
             return false;
         }
 
+        if (Context.Guild.Owner.Id == user.Id) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Owner")}", Context.Message);
+            return false;
+        }
+
         if (Context.Guild.CurrentUser.Hierarchy <= user.Hierarchy) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{CantInteract}{Utils.GetMessage($"BotCannot{action}Target")}", Context.Message);
             return false;
         }
 
-        if (GetMember().Hierarchy > user.Hierarchy) return true;
+        if (Context.Guild.Owner.Id == Context.User.Id || GetMember().Hierarchy > user.Hierarchy) return true;
         Utils.SafeAppendToBuilder(_stackedReplyMessage,
             $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Target")}", Context.Message);
         return false;

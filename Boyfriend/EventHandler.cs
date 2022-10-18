@@ -62,28 +62,22 @@ public static class EventHandler {
                 Utils.Wrap(msg.CleanContent)), guild.Id, mention);
     }
 
-    private static async Task MessageReceivedEvent(SocketMessage messageParam) {
-        if (messageParam is not SocketUserMessage { Author: SocketGuildUser user } message) return;
+    private static Task MessageReceivedEvent(SocketMessage messageParam) {
+        if (messageParam is not SocketUserMessage { Author: SocketGuildUser user } message) return Task.CompletedTask;
 
         var guild = user.Guild;
 
         Utils.SetCurrentLanguage(guild.Id);
 
-        var prev = "";
-        var prevFailsafe = "";
-        var prevs = await message.Channel.GetMessagesAsync(3).FlattenAsync();
-        var prevsArray = prevs as IMessage[] ?? prevs.ToArray();
-
-        if (prevsArray.Length >= 3) {
-            prev = prevsArray[1].Content;
-            prevFailsafe = prevsArray[2].Content;
-        }
-
-        if (user == guild.CurrentUser || (user.IsBot &&
-                                          (message.Content.Contains(prev) || message.Content.Contains(prevFailsafe))))
-            return;
-
-        _ = new CommandProcessor(message).HandleCommandAsync();
+        _ = message.CleanContent.ToLower() switch {
+            "whoami" => message.ReplyAsync("`nobody`"),
+            "сука !!" => message.ReplyAsync("`root`"),
+            "воооо" => message.ReplyAsync("`removing /...`"),
+            "op ??" => message.ReplyAsync(
+                "некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
+            _ => new CommandProcessor(message).HandleCommandAsync()
+        };
+        return Task.CompletedTask;
     }
 
     private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,
