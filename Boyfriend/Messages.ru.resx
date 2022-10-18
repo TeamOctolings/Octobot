@@ -235,7 +235,7 @@
         <value>Глушит участника</value>
     </data>
     <data name="CommandDescriptionPing" xml:space="preserve">
-        <value>Показывает задержку до серверов Discord (не считая времени на локальные вычисления)</value>
+        <value>Показывает (неточную) задержку</value>
     </data>
     <data name="CommandDescriptionSettings" xml:space="preserve">
         <value>Позволяет менять некоторые настройки под этот сервер</value>
@@ -368,5 +368,11 @@
     </data>
     <data name="BotCannotUnmuteTarget" xml:space="preserve">
         <value>Я не могу вернуть из мута этого пользователя!</value>
+    </data>
+    <data name="CommandDescriptionCavepleaselisten" xml:space="preserve">
+        <value>Мы не поддерживаем ненависть против участников. И иногда, мы не способны забанить нарушителя.</value>
+    </data>
+    <data name="ServerBlacklisted" xml:space="preserve">
+        <value>Эта функция недоступна потому что этот сервер находится в чёрном списке.</value>
     </data>
 </root>

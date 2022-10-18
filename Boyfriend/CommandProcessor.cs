@@ -29,6 +29,7 @@ public sealed class CommandProcessor {
     private readonly List<Task> _tasks = new();
 
     public readonly SocketCommandContext Context;
+    private bool _serverBlacklisted;
 
     public bool ConfigWriteScheduled = false;
 
@@ -56,6 +57,11 @@ public sealed class CommandProcessor {
         var cleanList = Context.Message.CleanContent.Split("\n");
         for (var i = 0; i < list.Length; i++) {
             RunCommandOnLine(list[i], cleanList[i], regex);
+            if (_serverBlacklisted) {
+                await Context.Message.ReplyAsync(Messages.ServerBlacklisted);
+                return;
+            }
+
             if (_stackedReplyMessage.Length > 0) _ = Context.Channel.TriggerTypingAsync();
             var member = Boyfriend.Client.GetGuild(Context.Guild.Id)
                 .GetUser(Context.User.Id); // Getting an up-to-date copy
@@ -79,6 +85,10 @@ public sealed class CommandProcessor {
             if (lineNoMention == line
                 || !command.Aliases.Contains(lineNoMention.Trim().ToLower().Split()[0]))
                 continue;
+            if (Utils.IsServerBlacklisted(Context.Guild)) {
+                _serverBlacklisted = true;
+                return;
+            }
 
             var args = line.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
             var cleanArgs = cleanLine.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();

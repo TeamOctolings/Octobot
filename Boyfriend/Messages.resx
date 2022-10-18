@@ -244,7 +244,7 @@
         <value>Mutes a member</value>
     </data>
     <data name="CommandDescriptionPing" xml:space="preserve">
-        <value>Shows latency to Discord servers (not counting local processing time)</value>
+        <value>Shows (inaccurate) latency</value>
     </data>
     <data name="CommandDescriptionSettings" xml:space="preserve">
         <value>Allows you to change certain preferences for this guild</value>
@@ -377,5 +377,11 @@
     </data>
     <data name="UserCannotUnmuteTarget" xml:space="preserve">
         <value>You cannot unmute this user!</value>
+    </data>
+    <data name="CommandDescriptionCavepleaselisten" xml:space="preserve">
+        <value>We do not support hate towards our fellow members. And sometimes, we are not able to ban the offender.</value>
+    </data>
+    <data name="ServerBlacklisted" xml:space="preserve">
+        <value>This feature is unavailable because this guild is currently blacklisted.</value>
     </data>
 </root>

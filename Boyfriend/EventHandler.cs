@@ -1,36 +1,42 @@
-﻿using Boyfriend.Commands;
-using Discord;
+﻿using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
+using Humanizer;
 
 namespace Boyfriend;
 
-public sealed class EventHandler {
-    private readonly DiscordSocketClient _client = Boyfriend.Client;
+public static class EventHandler {
+    private static readonly DiscordSocketClient Client = Boyfriend.Client;
+    private static bool _sendReadyMessages = true;
 
-    public void InitEvents() {
-        _client.Ready += ReadyEvent;
-        _client.MessageDeleted += MessageDeletedEvent;
-        _client.MessageReceived += MessageReceivedEvent;
-        _client.MessageUpdated += MessageUpdatedEvent;
-        _client.UserJoined += UserJoinedEvent;
-        _client.GuildScheduledEventCreated += ScheduledEventCreatedEvent;
-        _client.GuildScheduledEventCancelled += ScheduledEventCancelledEvent;
-        _client.GuildScheduledEventStarted += ScheduledEventStartedEvent;
-        _client.GuildScheduledEventCompleted += ScheduledEventCompletedEvent;
+    public static void InitEvents() {
+        Client.Ready += ReadyEvent;
+        Client.MessageDeleted += MessageDeletedEvent;
+        Client.MessageReceived += MessageReceivedEvent;
+        Client.MessageUpdated += MessageUpdatedEvent;
+        Client.UserJoined += UserJoinedEvent;
+        Client.GuildScheduledEventCreated += ScheduledEventCreatedEvent;
+        Client.GuildScheduledEventCancelled += ScheduledEventCancelledEvent;
+        Client.GuildScheduledEventStarted += ScheduledEventStartedEvent;
+        Client.GuildScheduledEventCompleted += ScheduledEventCompletedEvent;
     }
 
-    private static async Task ReadyEvent() {
+    private static Task ReadyEvent() {
+        if (!_sendReadyMessages) return Task.CompletedTask;
         var i = Utils.Random.Next(3);
 
-        foreach (var guild in Boyfriend.Client.Guilds) {
+        foreach (var guild in Client.Guilds) {
             var config = Boyfriend.GetGuildConfig(guild.Id);
             var channel = guild.GetTextChannel(Convert.ToUInt64(config["BotLogChannel"]));
             Utils.SetCurrentLanguage(guild.Id);
 
-            if (config["ReceiveStartupMessages"] is not "true" || channel == null) continue;
-            await channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(i)));
+            if (config["ReceiveStartupMessages"] is not "true" || channel == null ||
+                Utils.IsServerBlacklisted(guild)) continue;
+            _ = channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(i)));
         }
+
+        _sendReadyMessages = false;
+        return Task.CompletedTask;
     }
 
     private static async Task MessageDeletedEvent(Cacheable<IMessage, ulong> message,
@@ -39,6 +45,7 @@ public sealed class EventHandler {
         if (msg is null or ISystemMessage || msg.Author.IsBot) return;
 
         var guild = Boyfriend.FindGuild(channel.Value.Id);
+        if (Utils.IsServerBlacklisted(guild)) return;
 
         Utils.SetCurrentLanguage(guild.Id);
 
@@ -61,13 +68,6 @@ public sealed class EventHandler {
         var guild = user.Guild;
 
         Utils.SetCurrentLanguage(guild.Id);
-
-        if ((message.MentionedUsers.Count > 3 || message.MentionedRoles.Count > 2) &&
-            !user.GuildPermissions.MentionEveryone) {
-            await BanCommand.BanUser(new CommandProcessor(message), user, TimeSpan.FromMilliseconds(-1),
-                Messages.AutobanReason);
-            return;
-        }
 
         var prev = "";
         var prevFailsafe = "";
@@ -92,20 +92,22 @@ public sealed class EventHandler {
 
         if (msg is null or ISystemMessage || msg.CleanContent == messageSocket.CleanContent || msg.Author.IsBot) return;
 
-        var guildId = Boyfriend.FindGuild(channel.Id).Id;
+        var guild = Boyfriend.FindGuild(channel.Id);
+        if (Utils.IsServerBlacklisted(guild)) return;
 
-        Utils.SetCurrentLanguage(guildId);
+        Utils.SetCurrentLanguage(guild.Id);
 
         var isLimitedSpace = msg.CleanContent.Length + messageSocket.CleanContent.Length < 1940;
 
         await Utils.SendFeedbackAsync(
             string.Format(Messages.CachedMessageEdited, Utils.MentionChannel(channel.Id),
                 Utils.Wrap(msg.CleanContent, isLimitedSpace), Utils.Wrap(messageSocket.CleanContent, isLimitedSpace)),
-            guildId, msg.Author.Mention);
+            guild.Id, msg.Author.Mention);
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
         var guild = user.Guild;
+        if (Utils.IsServerBlacklisted(guild)) return;
         var config = Boyfriend.GetGuildConfig(guild.Id);
 
         if (config["SendWelcomeMessages"] is "true")
@@ -118,6 +120,7 @@ public sealed class EventHandler {
 
     private static async Task ScheduledEventCreatedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
+        if (Utils.IsServerBlacklisted(guild)) return;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventCreatedChannel"]));
 
@@ -139,6 +142,7 @@ public sealed class EventHandler {
 
     private static async Task ScheduledEventCancelledEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
+        if (Utils.IsServerBlacklisted(guild)) return;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventCancelledChannel"]));
         if (channel != null)
@@ -148,6 +152,7 @@ public sealed class EventHandler {
 
     private static async Task ScheduledEventStartedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
+        if (Utils.IsServerBlacklisted(guild)) return;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventStartedChannel"]));
 
@@ -170,10 +175,11 @@ public sealed class EventHandler {
 
     private static async Task ScheduledEventCompletedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
+        if (Utils.IsServerBlacklisted(guild)) return;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = guild.GetTextChannel(Convert.ToUInt64(eventConfig["EventCompletedChannel"]));
         if (channel != null)
             await channel.SendMessageAsync(string.Format(Messages.EventCompleted, Utils.Wrap(scheduledEvent.Name),
-                Utils.Wrap(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now).Negate().ToString())));
+                Utils.Wrap(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now).Negate().Humanize())));
     }
 }

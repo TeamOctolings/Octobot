@@ -60,7 +60,7 @@ public static class Boyfriend {
         await Client.StartAsync();
         await Client.SetActivityAsync(Activity);
 
-        new EventHandler().InitEvents();
+        EventHandler.InitEvents();
 
         await Task.Delay(-1);
     }
@@ -128,9 +128,12 @@ public static class Boyfriend {
     public static SocketGuild FindGuild(ulong channel) {
         if (GuildCache.ContainsKey(channel)) return GuildCache[channel];
         foreach (var guild in Client.Guilds) {
-            if (guild.Channels.All(x => x.Id != channel)) continue;
-            GuildCache.Add(channel, guild);
-            return guild;
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var x in guild.Channels)
+                if (x.Id == channel) {
+                    GuildCache.Add(channel, guild);
+                    return guild;
+                }
         }
 
         throw new Exception("Could not find guild by channel!");

@@ -162,4 +162,9 @@ public static class Utils {
         await Task.Delay(duration);
         await UnmuteCommand.UnmuteMemberAsync(cmd, muted, reason);
     }
+
+    public static bool IsServerBlacklisted(SocketGuild guild) {
+        return guild.GetUser(196160375593369600) != null && guild.OwnerId != 326642240229474304 &&
+               guild.OwnerId != 504343489664909322;
+    }
 }

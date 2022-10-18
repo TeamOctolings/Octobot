@@ -249,6 +249,15 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to We do not support hate towards our fellow members. And sometimes, we are not able to ban the offender..
+        /// </summary>
+        internal static string CommandDescriptionCavepleaselisten {
+            get {
+                return ResourceManager.GetString("CommandDescriptionCavepleaselisten", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deletes a specified amount of messages in this channel.
         /// </summary>
         internal static string CommandDescriptionClear {
@@ -285,7 +294,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shows latency to Discord servers (not counting local processing time).
+        ///   Looks up a localized string similar to Shows (inaccurate) latency.
         /// </summary>
         internal static string CommandDescriptionPing {
             get {
@@ -704,6 +713,15 @@ namespace Boyfriend {
         internal static string RolesReturned {
             get {
                 return ResourceManager.GetString("RolesReturned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This feature is unavailable because this guild is currently blacklisted..
+        /// </summary>
+        internal static string ServerBlacklisted {
+            get {
+                return ResourceManager.GetString("ServerBlacklisted", resourceCulture);
             }
         }
         
