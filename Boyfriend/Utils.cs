@@ -88,7 +88,6 @@ public static class Utils {
         await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
     }
 
-
     public static RequestOptions GetRequestOptions(string reason) {
         var options = RequestOptions.Default;
         options.AuditLogReason = reason;
