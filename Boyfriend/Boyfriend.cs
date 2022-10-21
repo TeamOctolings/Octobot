@@ -83,7 +83,7 @@ public static class Boyfriend {
         if (!RemovedRolesDictionary.ContainsKey(id))
             RemovedRolesDictionary.Add(id, new Dictionary<ulong, ReadOnlyCollection<ulong>>());
 
-        if (GuildConfigDictionary.ContainsKey(id)) return GuildConfigDictionary[id];
+        if (GuildConfigDictionary.TryGetValue(id, out var cfg)) return cfg;
 
         var path = $"config_{id}.json";
 
@@ -110,7 +110,7 @@ public static class Boyfriend {
     }
 
     public static Dictionary<ulong, ReadOnlyCollection<ulong>> GetRemovedRoles(ulong id) {
-        if (RemovedRolesDictionary.ContainsKey(id)) return RemovedRolesDictionary[id];
+        if (RemovedRolesDictionary.TryGetValue(id, out var dict)) return dict;
 
         var path = $"removedroles_{id}.json";
 
@@ -126,7 +126,7 @@ public static class Boyfriend {
     }
 
     public static SocketGuild FindGuild(ulong channel) {
-        if (GuildCache.ContainsKey(channel)) return GuildCache[channel];
+        if (GuildCache.TryGetValue(channel, out var gld)) return gld;
         foreach (var guild in Client.Guilds) {
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var x in guild.Channels)
