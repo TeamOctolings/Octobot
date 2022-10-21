@@ -23,8 +23,8 @@ public sealed class UnmuteCommand : ICommand {
         if (role != null && toUnmute.Roles.Contains(role)) {
             var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
 
-            if (rolesRemoved.ContainsKey(toUnmute.Id)) {
-                await toUnmute.AddRolesAsync(rolesRemoved[toUnmute.Id]);
+            if (rolesRemoved.TryGetValue(toUnmute.Id, out var unmutedRemovedRoles)) {
+                await toUnmute.AddRolesAsync(unmutedRemovedRoles);
                 rolesRemoved.Remove(toUnmute.Id);
                 cmd.ConfigWriteScheduled = true;
             }

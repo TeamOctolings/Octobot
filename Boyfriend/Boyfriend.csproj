@@ -8,11 +8,11 @@
         <LangVersion>default</LangVersion>
         <Title>Boyfriend</Title>
         <Authors>l1ttle</Authors>
-        <PackageProjectUrl>https://git.cavej376.xyz/Octol1ttle/Boyfriend-CSharp</PackageProjectUrl>
-        <RepositoryUrl>https://git.cavej376.xyz/Octol1ttle/Boyfriend-CSharp</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/l1ttleO/Boyfriend-CSharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/l1ttleO/Boyfriend-CSharp</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageVersion>1.0.1</PackageVersion>
-        <PackageLicenseUrl>https://git.cavej376.xyz/Octol1ttle/Boyfriend-CSharp/src/branch/master/LICENSE</PackageLicenseUrl>
+        <PackageVersion>1.0.0</PackageVersion>
+        <PackageLicenseUrl>https://github.com/l1ttleO/Boyfriend-CSharp/blob/master/LICENSE</PackageLicenseUrl>
         <NeutralLanguage>en</NeutralLanguage>
     </PropertyGroup>
 

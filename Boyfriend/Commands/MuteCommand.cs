@@ -26,8 +26,8 @@ public sealed class MuteCommand : ICommand {
 
         var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
 
-        if (rolesRemoved.ContainsKey(toMute.Id)) {
-            foreach (var roleId in rolesRemoved[toMute.Id]) await toMute.AddRoleAsync(roleId);
+        if (rolesRemoved.TryGetValue(toMute.Id, out var mutedRemovedRoles)) {
+            foreach (var roleId in mutedRemovedRoles) await toMute.AddRoleAsync(roleId);
             rolesRemoved.Remove(toMute.Id);
             cmd.ConfigWriteScheduled = true;
             cmd.Reply(Messages.RolesReturned, ":warning: ");
