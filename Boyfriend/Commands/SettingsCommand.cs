@@ -110,10 +110,9 @@ public sealed class SettingsCommand : ICommand {
         };
 
         if (value is "reset" or "default") {
-            if (selectedSetting is "WelcomeMessage")
-                config[selectedSetting] = Messages.DefaultWelcomeMessage;
-            else
-                config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
+            config[selectedSetting] = selectedSetting is "WelcomeMessage"
+                ? Messages.DefaultWelcomeMessage
+                : Boyfriend.DefaultConfig[selectedSetting];
         } else {
             if (value == config[selectedSetting]) {
                 cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),

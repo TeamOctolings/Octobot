@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.RegularExpressions;
 using Boyfriend.Commands;
 using Discord;
 using Discord.Commands;
@@ -14,14 +13,14 @@ public sealed class CommandProcessor {
     private const string NoAccess = ":no_entry_sign: ";
     private const string CantInteract = ":vertical_traffic_light: ";
 
+    private const string Mention = "<@855023234407333888>";
+
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
         new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
     };
 
-    private static readonly Dictionary<string, Regex> RegexCache = new();
-    private static readonly Regex MentionRegex = new(Regex.Escape("<@855023234407333888>"), RegexOptions.Compiled);
     private readonly StringBuilder _stackedPrivateFeedback = new();
     private readonly StringBuilder _stackedPublicFeedback = new();
     private readonly StringBuilder _stackedReplyMessage = new();
@@ -46,16 +45,10 @@ public sealed class CommandProcessor {
             return;
         }
 
-        Regex regex;
-        if (RegexCache.ContainsKey(config["Prefix"])) { regex = RegexCache[config["Prefix"]]; } else {
-            regex = new Regex(Regex.Escape(config["Prefix"]), RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            RegexCache.Add(config["Prefix"], regex);
-        }
-
         var list = Context.Message.Content.Split("\n");
         var cleanList = Context.Message.CleanContent.Split("\n");
         for (var i = 0; i < list.Length; i++) {
-            RunCommandOnLine(list[i], cleanList[i], regex);
+            RunCommandOnLine(list[i], cleanList[i], config["Prefix"]);
             if (_serverBlacklisted) {
                 await Context.Message.ReplyAsync(Messages.ServerBlacklisted);
                 return;
@@ -78,20 +71,21 @@ public sealed class CommandProcessor {
         SendFeedbacks();
     }
 
-    private void RunCommandOnLine(string line, string cleanLine, Regex regex) {
+    private void RunCommandOnLine(string line, string cleanLine, string prefix) {
+        var prefixed = line[..prefix.Length] == prefix;
+        if (!prefixed && line[..Mention.Length] is not Mention) return;
         foreach (var command in Commands) {
-            var lineNoMention = regex.Replace(MentionRegex.Replace(line, "", 1), "", 1);
-            if (lineNoMention == line
-                || !command.Aliases.Contains(lineNoMention.Trim().ToLower().Split()[0]))
-                continue;
+            var lineNoMention = line.Remove(0, prefixed ? prefix.Length : Mention.Length);
+            if (!command.Aliases.Contains(lineNoMention.Trim().Split()[0])) continue;
             if (Utils.IsServerBlacklisted(Context.Guild)) {
                 _serverBlacklisted = true;
                 return;
             }
 
-            var args = line.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
+            var args = lineNoMention.Trim().Split().Skip(1).ToArray();
             var cleanArgs = cleanLine.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
             _tasks.Add(command.RunAsync(this, args, cleanArgs));
+            return;
         }
     }
 

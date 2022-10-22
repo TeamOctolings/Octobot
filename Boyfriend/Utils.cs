@@ -66,7 +66,7 @@ public static class Utils {
 
     public static SocketRole? GetMuteRole(SocketGuild guild) {
         var id = ulong.Parse(Boyfriend.GetGuildConfig(guild.Id)["MuteRole"]);
-        if (MuteRoleCache.ContainsKey(id)) return MuteRoleCache[id];
+        if (MuteRoleCache.TryGetValue(id, out var cachedMuteRole)) return cachedMuteRole;
         SocketRole? role = null;
         foreach (var x in guild.Roles) {
             if (x.Id != id) continue;
@@ -89,7 +89,6 @@ public static class Utils {
         await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
     }
 
-
     public static RequestOptions GetRequestOptions(string reason) {
         var options = RequestOptions.Default;
         options.AuditLogReason = reason;
@@ -99,7 +98,7 @@ public static class Utils {
     public static string GetMessage(string name) {
         var propertyName = name;
         name = $"{Messages.Culture}/{name}";
-        if (ReflectionMessageCache.ContainsKey(name)) return ReflectionMessageCache[name];
+        if (ReflectionMessageCache.TryGetValue(name, out var cachedMessage)) return cachedMessage;
 
         var toReturn =
             typeof(Messages).GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
