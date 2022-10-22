@@ -17,7 +17,8 @@ public static class Utils {
 
     private static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
         { "ru", new CultureInfo("ru-RU") },
-        { "en", new CultureInfo("en-US") }
+        { "en", new CultureInfo("en-US") },
+        { "mctaylors-ru", new CultureInfo("tt-RU") }
     };
 
     private static readonly Dictionary<ulong, SocketRole> MuteRoleCache = new();
