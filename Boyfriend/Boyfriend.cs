@@ -19,8 +19,13 @@ public static class Boyfriend {
         LargeThreshold = 500
     };
 
+    private static readonly List<Tuple<Game, TimeSpan>> ActivityList = new() {
+        Tuple.Create(new Game("C418 - Mall", ActivityType.Listening), new TimeSpan(0, 3, 18)),
+        Tuple.Create(new Game("C418 - Thirteen", ActivityType.Listening), new TimeSpan(0, 2, 57)),
+        Tuple.Create(new Game("Spotify Ads", ActivityType.Listening), new TimeSpan(0, 0, 15))
+    };
+
     public static readonly DiscordSocketClient Client = new(Config);
-    private static readonly Game Activity = new("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening);
 
     private static readonly Dictionary<ulong, Dictionary<string, string>> GuildConfigDictionary = new();
 
@@ -58,11 +63,16 @@ public static class Boyfriend {
 
         await Client.LoginAsync(TokenType.Bot, token);
         await Client.StartAsync();
-        await Client.SetActivityAsync(Activity);
 
         EventHandler.InitEvents();
 
-        await Task.Delay(-1);
+        while (true) {
+            foreach (var activity in ActivityList) {
+                await Client.SetActivityAsync(activity.Item1);
+                await Task.Delay(activity.Item2);
+            }
+        }
+        // ReSharper disable once FunctionNeverReturns
     }
 
     private static Task Log(LogMessage msg) {
@@ -124,7 +134,6 @@ public static class Boyfriend {
 
         return removedRoles;
     }
-
     public static SocketGuild FindGuild(ulong channel) {
         if (GuildCache.TryGetValue(channel, out var gld)) return gld;
         foreach (var guild in Client.Guilds) {
