@@ -120,7 +120,7 @@ public sealed class SettingsCommand : ICommand {
                 return Task.CompletedTask;
             }
 
-            if (selectedSetting is "Lang" && value is not "ru" and not "en") {
+            if (selectedSetting is "Lang" && value is not "ru" and not "en" and not "mctaylors-ru") {
                 cmd.Reply(Messages.LanguageNotSupported, ":x: ");
                 return Task.CompletedTask;
             }
