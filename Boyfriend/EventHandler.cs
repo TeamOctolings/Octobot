@@ -132,8 +132,7 @@ public static class EventHandler {
                     scheduledEvent.StartTime.ToUnixTimeSeconds().ToString(), Utils.Wrap(scheduledEvent.Description)),
                 true);
         }
-        if (eventConfig["EventEarlyNotificationOffset"] != "0")
-        {
+        if (eventConfig["EventEarlyNotificationOffset"] != "0") {
             _ = Utils.SendEarlyEventStartNotificationAsync(channel, scheduledEvent, Convert.ToInt32(eventConfig["EventEarlyNotificationOffset"]));
         }
     }
