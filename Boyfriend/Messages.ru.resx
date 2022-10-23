@@ -157,7 +157,7 @@
         <value>Начальная роль</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{1}{2} создал событие {3}! Оно пройдёт в {4} и начнётся &lt;t:{5}:R&gt;!{0}{6}</value>
+        <value>{1}{2} создал событие {3}! Оно пройдёт в {4} и начнётся &lt;t:{5}:R&gt;!{0}{6}{0}https://discord.com/events/{7}/{8}</value>
     </data>
     <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
         <value>Роль для уведомлений о создании событий</value>

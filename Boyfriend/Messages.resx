@@ -166,7 +166,7 @@
         <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{1}{2} created event {3}! It will take place in {4} and will start &lt;t:{5}:R&gt;!{0}{6}</value>
+        <value>{1}{2} created event {3}! It will take place in {4} and will start &lt;t:{5}:R&gt;!{0}{6}{0}https://discord.com/events/{7}/{8}</value>
     </data>
     <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
         <value>Role for event creation notifications</value>

@@ -129,7 +129,7 @@ public static class EventHandler {
             await Utils.SilentSendAsync(channel,
                 string.Format(Messages.EventCreated, "\n", roleMention, scheduledEvent.Creator.Mention,
                     Utils.Wrap(scheduledEvent.Name), location,
-                    scheduledEvent.StartTime.ToUnixTimeSeconds().ToString(), Utils.Wrap(scheduledEvent.Description)),
+                    scheduledEvent.StartTime.ToUnixTimeSeconds().ToString(), Utils.Wrap(scheduledEvent.Description), guild.Id, scheduledEvent.Id),
                 true);
         }
         if (eventConfig["EventEarlyNotificationOffset"] != "0") {
