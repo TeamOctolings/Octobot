@@ -411,6 +411,15 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}Event {1} will start &lt;t:{2}:R&gt;!.
+        /// </summary>
+        internal static string EventEarlyNotification {
+            get {
+                return ResourceManager.GetString("EventEarlyNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}Event {1} is starting at {2}!.
         /// </summary>
         internal static string EventStarted {
@@ -785,6 +794,15 @@ namespace Boyfriend {
         internal static string SettingsEventCreatedChannel {
             get {
                 return ResourceManager.GetString("SettingsEventCreatedChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string SettingsEventEarlyNotificationOffset {
+            get {
+                return ResourceManager.GetString("SettingsEventEarlyNotificationOffset", resourceCulture);
             }
         }
         

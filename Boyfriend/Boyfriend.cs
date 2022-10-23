@@ -49,7 +49,8 @@ public static class Boyfriend {
         { "EventCreatedChannel", "0" },
         { "EventStartedChannel", "0" },
         { "EventCancelledChannel", "0" },
-        { "EventCompletedChannel", "0" }
+        { "EventCompletedChannel", "0" },
+        { "EventEarlyNotificationOffset", "0" }
     };
 
     public static void Main() {

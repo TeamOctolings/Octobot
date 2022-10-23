@@ -167,4 +167,22 @@ public static class Utils {
         return guild.GetUser(196160375593369600) != null && guild.OwnerId != 326642240229474304 &&
                guild.OwnerId != 504343489664909322;
     }
+
+    public static async Task SendEarlyEventStartNotificationAsync(SocketTextChannel? channel, SocketGuildEvent scheduledEvent, int minuteOffset) {
+        await Task.Delay(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now).Subtract(TimeSpan.FromMinutes(minuteOffset)));
+        var guild = scheduledEvent.Guild;
+        if (guild.GetEvent(scheduledEvent.Id) is null) return;
+        var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
+
+        var receivers = eventConfig["EventStartedReceivers"];
+        var role = guild.GetRole(Convert.ToUInt64(eventConfig["EventNotifyReceiverRole"]));
+        var mentions = Boyfriend.StringBuilder;
+
+        if (receivers.Contains("role") && role != null) mentions.Append($"{role.Mention} ");
+        if (receivers.Contains("users") || receivers.Contains("interested"))
+            mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
+                (current, user) => current.Append($"{user.Mention} "));
+        await channel?.SendMessageAsync(string.Format(Messages.EventEarlyNotification, mentions, Wrap(scheduledEvent.Name), scheduledEvent.StartTime.ToUnixTimeSeconds()))!;
+        mentions.Clear();
+    }
 }
