@@ -371,4 +371,10 @@
     <data name="ServerBlacklisted" xml:space="preserve">
         <value>упс, кажется ваш сервер в черном списке, и я вам ничем помочь не смогу)</value>
     </data>
+    <data name="EventEarlyNotification" xml:space="preserve">
+        <value>{0}квест {1} начнется &lt;t:{2}:R&gt;!</value>
+    </data>
+    <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
+        <value>заранее пнуть в минутах до начала квеста</value>
+    </data>
 </root>

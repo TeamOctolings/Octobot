@@ -375,4 +375,10 @@
     <data name="ServerBlacklisted" xml:space="preserve">
         <value>Эта функция недоступна потому что этот сервер находится в чёрном списке.</value>
     </data>
+    <data name="EventEarlyNotification" xml:space="preserve">
+        <value>{0}Событие {1} начнется &lt;t:{2}:R&gt;!</value>
+    </data>
+    <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
+        <value>Офсет отправки преждевременного уведомления о начале события</value>
+    </data>
 </root>
