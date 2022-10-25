@@ -20,9 +20,13 @@ public static class Boyfriend {
     };
 
     private static readonly List<Tuple<Game, TimeSpan>> ActivityList = new() {
-        Tuple.Create(new Game("C418 - Mall", ActivityType.Listening), new TimeSpan(0, 3, 18)),
-        Tuple.Create(new Game("C418 - Thirteen", ActivityType.Listening), new TimeSpan(0, 2, 57)),
-        Tuple.Create(new Game("Spotify Ads", ActivityType.Listening), new TimeSpan(0, 0, 15))
+        Tuple.Create(new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening),
+            new TimeSpan(0, 3, 18)),
+        Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
+        Tuple.Create(new Game("Kurokotei - Scattered Faith", ActivityType.Listening), new TimeSpan(0, 8, 21)),
+        Tuple.Create(new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
+        Tuple.Create(new Game("RetroSpecter - Genocide", ActivityType.Listening), new TimeSpan(0, 5, 52)),
+        Tuple.Create(new Game("Dimrain47 - At the Speed of Light", ActivityType.Listening), new TimeSpan(0, 4, 10))
     };
 
     public static readonly DiscordSocketClient Client = new(Config);
@@ -135,6 +139,7 @@ public static class Boyfriend {
 
         return removedRoles;
     }
+
     public static SocketGuild FindGuild(ulong channel) {
         if (GuildCache.TryGetValue(channel, out var gld)) return gld;
         foreach (var guild in Client.Guilds) {
