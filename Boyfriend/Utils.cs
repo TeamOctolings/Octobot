@@ -59,8 +59,7 @@ public static class Utils {
 
     public static async Task SendDirectMessage(SocketUser user, string toSend) {
         try { await user.SendMessageAsync(toSend); } catch (HttpException e) {
-            if (e.DiscordCode != DiscordErrorCode.CannotSendMessageToUser)
-                throw;
+            if (e.DiscordCode != DiscordErrorCode.CannotSendMessageToUser) throw;
         }
     }
 
@@ -117,10 +116,8 @@ public static class Utils {
         var adminChannel = GetAdminLogChannel(guildId);
         var systemChannel = Boyfriend.Client.GetGuild(guildId).SystemChannel;
         var toSend = string.Format(Messages.FeedbackFormat, mention, feedback);
-        if (adminChannel != null)
-            await SilentSendAsync(adminChannel, toSend);
-        if (sendPublic && systemChannel != null)
-            await SilentSendAsync(systemChannel, toSend);
+        if (adminChannel != null) await SilentSendAsync(adminChannel, toSend);
+        if (sendPublic && systemChannel != null) await SilentSendAsync(systemChannel, toSend);
     }
 
     public static string GetHumanizedTimeOffset(TimeSpan span) {
@@ -163,13 +160,10 @@ public static class Utils {
         await UnmuteCommand.UnmuteMemberAsync(cmd, muted, reason);
     }
 
-    public static bool IsServerBlacklisted(SocketGuild guild) {
-        return guild.GetUser(196160375593369600) != null && guild.OwnerId != 326642240229474304 &&
-               guild.OwnerId != 504343489664909322;
-    }
-
-    public static async Task SendEarlyEventStartNotificationAsync(SocketTextChannel? channel, SocketGuildEvent scheduledEvent, int minuteOffset) {
-        await Task.Delay(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now).Subtract(TimeSpan.FromMinutes(minuteOffset)));
+    public static async Task SendEarlyEventStartNotificationAsync(SocketTextChannel? channel,
+        SocketGuildEvent scheduledEvent, int minuteOffset) {
+        await Task.Delay(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now)
+            .Subtract(TimeSpan.FromMinutes(minuteOffset)));
         var guild = scheduledEvent.Guild;
         if (guild.GetEvent(scheduledEvent.Id) is null) return;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
@@ -182,7 +176,8 @@ public static class Utils {
         if (receivers.Contains("users") || receivers.Contains("interested"))
             mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
                 (current, user) => current.Append($"{user.Mention} "));
-        await channel?.SendMessageAsync(string.Format(Messages.EventEarlyNotification, mentions, Wrap(scheduledEvent.Name), scheduledEvent.StartTime.ToUnixTimeSeconds()))!;
+        await channel?.SendMessageAsync(string.Format(Messages.EventEarlyNotification, mentions,
+            Wrap(scheduledEvent.Name), scheduledEvent.StartTime.ToUnixTimeSeconds()))!;
         mentions.Clear();
     }
 }

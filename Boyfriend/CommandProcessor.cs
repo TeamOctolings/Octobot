@@ -59,8 +59,7 @@ public sealed class CommandProcessor {
                 .GetUser(Context.User.Id); // Getting an up-to-date copy
             if (member == null || member.Roles.Contains(muteRole)
                                || member.TimedOutUntil.GetValueOrDefault(DateTimeOffset.UnixEpoch).ToUnixTimeSeconds() >
-                               DateTimeOffset.Now.ToUnixTimeSeconds())
-                break;
+                               DateTimeOffset.Now.ToUnixTimeSeconds()) break;
         }
 
         await Task.WhenAll(_tasks);
@@ -77,10 +76,6 @@ public sealed class CommandProcessor {
         foreach (var command in Commands) {
             var lineNoMention = line.Remove(0, prefixed ? prefix.Length : Mention.Length);
             if (!command.Aliases.Contains(lineNoMention.Trim().Split()[0])) continue;
-            if (Utils.IsServerBlacklisted(Context.Guild)) {
-                _serverBlacklisted = true;
-                return;
-            }
 
             var args = lineNoMention.Trim().Split().Skip(1).ToArray();
             var cleanArgs = cleanLine.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
@@ -123,8 +118,7 @@ public sealed class CommandProcessor {
         if (startIndex >= from.Length && argument != null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{MissingArgument}{Utils.GetMessage($"Missing{argument}")}", Context.Message);
-        else
-            return string.Join(" ", from, startIndex, from.Length - startIndex);
+        else return string.Join(" ", from, startIndex, from.Length - startIndex);
         return null;
     }
 
@@ -232,8 +226,7 @@ public sealed class CommandProcessor {
 
     public static TimeSpan GetTimeSpan(string[] args, int index) {
         var infinity = TimeSpan.FromMilliseconds(-1);
-        if (index >= args.Length)
-            return infinity;
+        if (index >= args.Length) return infinity;
         var chars = args[index].AsSpan();
         var numberBuilder = Boyfriend.StringBuilder;
         int days = 0, hours = 0, minutes = 0, seconds = 0;
