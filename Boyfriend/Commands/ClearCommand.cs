@@ -12,7 +12,7 @@ public sealed class ClearCommand : ICommand {
         if (!cmd.HasPermission(GuildPermission.ManageMessages)) return;
 
         var toDelete = cmd.GetNumberRange(cleanArgs, 0, 1, 200, "ClearAmount");
-        if (toDelete == null) return;
+        if (toDelete is null) return;
         var messages = await channel.GetMessagesAsync((int)(toDelete + 1)).FlattenAsync();
 
         var user = (SocketGuildUser)cmd.Context.User;

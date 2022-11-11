@@ -6,19 +6,20 @@
         <value>1.3</value>
     </resheader>
     <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
     </resheader>
     <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
     </resheader>
-        <data name="Ready" xml:space="preserve">
-        <value>{0}я родился! (C#)</value>
+    <data name="Ready" xml:space="preserve">
+        <value>{0}я родился!</value>
     </data>
     <data name="CachedMessageDeleted" xml:space="preserve">
         <value>вырезано {0} в канале {1}: {2}</value>
-    </data>
-    <data name="AutobanReason" xml:space="preserve">
-        <value>ты тут распинался сильно, иди отдохни.</value>
     </data>
     <data name="CachedMessageEdited" xml:space="preserve">
         <value>переделано {0}: {1} -&gt; {2}</value>
@@ -153,7 +154,7 @@
         <value>базовое звание</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{1}{2} приготовил новый квест {3}! он пройдёт в {4} и начнётся &lt;t:{5}:R&gt;!{0}{6}{0}https://discord.com/events/{7}/{8}</value>
+        <value>{0} приготовил новый квест {1}! он пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!\n{4}</value>
     </data>
     <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
         <value>роль для уведомлений о создании квеста</value>
@@ -184,9 +185,6 @@
     </data>
     <data name="EventCompleted" xml:space="preserve">
         <value>квест {0} завершен! все это длилось {1}</value>
-    </data>
-    <data name="FeedbackFormat" xml:space="preserve">
-        <value>*[{0}: {1}]* </value>
     </data>
     <data name="Ever" xml:space="preserve">
         <value>всегда</value>
@@ -364,12 +362,6 @@
     </data>
     <data name="BotCannotUnmuteTarget" xml:space="preserve">
         <value>я не могу его раззамутить...</value>
-    </data>
-    <data name="CommandDescriptionCavepleaselisten" xml:space="preserve">
-        <value>каве пропал.</value>
-    </data>
-    <data name="ServerBlacklisted" xml:space="preserve">
-        <value>упс, кажется ваш сервер в черном списке, и я вам ничем помочь не смогу)</value>
     </data>
     <data name="EventEarlyNotification" xml:space="preserve">
         <value>{0}квест {1} начнется &lt;t:{2}:R&gt;!</value>

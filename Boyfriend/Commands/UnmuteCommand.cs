@@ -10,9 +10,10 @@ public sealed class UnmuteCommand : ICommand {
         if (!cmd.HasPermission(GuildPermission.ModerateMembers)) return;
 
         var toUnmute = cmd.GetMember(args, cleanArgs, 0, "ToUnmute");
+        if (toUnmute is null) return;
         var reason = cmd.GetRemaining(args, 1, "UnmuteReason");
-        if (toUnmute == null || reason == null || !cmd.CanInteractWith(toUnmute, "Unmute")) return;
-        await UnmuteMemberAsync(cmd, toUnmute, reason);
+        if (reason is not null && cmd.CanInteractWith(toUnmute, "Unmute"))
+            await UnmuteMemberAsync(cmd, toUnmute, reason);
     }
 
     public static async Task UnmuteMemberAsync(CommandProcessor cmd, SocketGuildUser toUnmute,
@@ -20,7 +21,7 @@ public sealed class UnmuteCommand : ICommand {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         var role = Utils.GetMuteRole(cmd.Context.Guild);
 
-        if (role != null && toUnmute.Roles.Contains(role)) {
+        if (role is not null && toUnmute.Roles.Contains(role)) {
             var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
 
             if (rolesRemoved.TryGetValue(toUnmute.Id, out var unmutedRemovedRoles)) {
@@ -31,7 +32,7 @@ public sealed class UnmuteCommand : ICommand {
 
             await toUnmute.RemoveRoleAsync(role, requestOptions);
         } else {
-            if (toUnmute.TimedOutUntil == null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
+            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
                 DateTimeOffset.Now.ToUnixTimeSeconds()) {
                 cmd.Reply(Messages.MemberNotMuted, ":x: ");
                 return;

@@ -8,11 +8,10 @@ namespace Boyfriend;
 
 public static class Boyfriend {
     public static readonly StringBuilder StringBuilder = new();
-    private static readonly Dictionary<ulong, SocketGuild> GuildCache = new();
 
     private static readonly DiscordSocketConfig Config = new() {
         MessageCacheSize = 250,
-        GatewayIntents = GatewayIntents.All,
+        GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers,
         AlwaysDownloadUsers = true,
         AlwaysResolveStickers = false,
         AlwaysDownloadDefaultStickers = false,
@@ -37,23 +36,20 @@ public static class Boyfriend {
         new();
 
     public static readonly Dictionary<string, string> DefaultConfig = new() {
-        { "Lang", "en" },
         { "Prefix", "!" },
-        { "RemoveRolesOnMute", "false" },
-        { "SendWelcomeMessages", "true" },
+        { "Lang", "en" },
         { "ReceiveStartupMessages", "false" },
-        { "FrowningFace", "true" },
-        { "WelcomeMessage", Messages.DefaultWelcomeMessage },
-        { "EventStartedReceivers", "interested,role" },
+        { "WelcomeMessage", "default" },
+        { "SendWelcomeMessages", "true" },
+        { "BotLogChannel", "0" },
         { "StarterRole", "0" },
         { "MuteRole", "0" },
-        { "EventNotifyReceiverRole", "0" },
-        { "AdminLogChannel", "0" },
-        { "BotLogChannel", "0" },
-        { "EventCreatedChannel", "0" },
-        { "EventStartedChannel", "0" },
-        { "EventCancelledChannel", "0" },
-        { "EventCompletedChannel", "0" },
+        { "RemoveRolesOnMute", "false" },
+        { "FrowningFace", "true" },
+
+        { "EventStartedReceivers", "interested,role" },
+        { "EventNotificationRole", "0" },
+        { "EventNotificationChannel", "0" },
         { "EventEarlyNotificationOffset", "0" }
     };
 
@@ -81,8 +77,29 @@ public static class Boyfriend {
     }
 
     private static Task Log(LogMessage msg) {
-        Console.WriteLine(msg.ToString());
+        switch (msg.Severity) {
+            case LogSeverity.Critical:
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.Error.WriteLine(msg.ToString());
+                break;
+            case LogSeverity.Error:
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine(msg.ToString());
+                break;
+            case LogSeverity.Warning:
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(msg.ToString());
+                break;
+            case LogSeverity.Info:
+                Console.WriteLine(msg.ToString());
+                break;
 
+            case LogSeverity.Verbose:
+            case LogSeverity.Debug:
+            default: return Task.CompletedTask;
+        }
+
+        Console.ResetColor();
         return Task.CompletedTask;
     }
 
@@ -95,9 +112,6 @@ public static class Boyfriend {
     }
 
     public static Dictionary<string, string> GetGuildConfig(ulong id) {
-        if (!RemovedRolesDictionary.ContainsKey(id))
-            RemovedRolesDictionary.Add(id, new Dictionary<ulong, ReadOnlyCollection<ulong>>());
-
         if (GuildConfigDictionary.TryGetValue(id, out var cfg)) return cfg;
 
         var path = $"config_{id}.json";
@@ -110,13 +124,12 @@ public static class Boyfriend {
 
         if (config.Keys.Count < DefaultConfig.Keys.Count) {
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-            // Avoids a closure allocation with the config variable
+            // Conversion will result in a lot of memory allocations
             foreach (var key in DefaultConfig.Keys)
                 if (!config.ContainsKey(key))
                     config.Add(key, DefaultConfig[key]);
         } else if (config.Keys.Count > DefaultConfig.Keys.Count) {
-            foreach (var key in config.Keys.Where(key => !DefaultConfig.ContainsKey(key)))
-                config.Remove(key);
+            foreach (var key in config.Keys.Where(key => !DefaultConfig.ContainsKey(key))) config.Remove(key);
         }
 
         GuildConfigDictionary.Add(id, config);
@@ -126,10 +139,9 @@ public static class Boyfriend {
 
     public static Dictionary<ulong, ReadOnlyCollection<ulong>> GetRemovedRoles(ulong id) {
         if (RemovedRolesDictionary.TryGetValue(id, out var dict)) return dict;
-
         var path = $"removedroles_{id}.json";
 
-        if (!File.Exists(path)) File.Create(path);
+        if (!File.Exists(path)) File.Create(path).Dispose();
 
         var json = File.ReadAllText(path);
         var removedRoles = JsonConvert.DeserializeObject<Dictionary<ulong, ReadOnlyCollection<ulong>>>(json)
@@ -138,19 +150,5 @@ public static class Boyfriend {
         RemovedRolesDictionary.Add(id, removedRoles);
 
         return removedRoles;
-    }
-
-    public static SocketGuild FindGuild(ulong channel) {
-        if (GuildCache.TryGetValue(channel, out var gld)) return gld;
-        foreach (var guild in Client.Guilds) {
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var x in guild.Channels)
-                if (x.Id == channel) {
-                    GuildCache.Add(channel, guild);
-                    return guild;
-                }
-        }
-
-        throw new Exception("Could not find guild by channel!");
     }
 }

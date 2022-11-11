@@ -9,11 +9,9 @@ public sealed class UnbanCommand : ICommand {
         if (!cmd.HasPermission(GuildPermission.BanMembers)) return;
 
         var id = cmd.GetBan(args, 0);
-        if (id == null) return;
+        if (id is null) return;
         var reason = cmd.GetRemaining(args, 1, "UnbanReason");
-        if (reason == null) return;
-
-        await UnbanUserAsync(cmd, id.Value, reason);
+        if (reason is not null) await UnbanUserAsync(cmd, id.Value, reason);
     }
 
     public static async Task UnbanUserAsync(CommandProcessor cmd, ulong id, string reason) {

@@ -16,13 +16,10 @@
         </value>
     </resheader>
     <data name="Ready" xml:space="preserve">
-        <value>{0}Я запустился! (C#)</value>
+        <value>{0}Я запустился!</value>
     </data>
     <data name="CachedMessageDeleted" xml:space="preserve">
         <value>Удалено сообщение от {0} в канале {1}: {2}</value>
-    </data>
-    <data name="AutobanReason" xml:space="preserve">
-        <value>Слишком много упоминаний в одном сообщении</value>
     </data>
     <data name="CachedMessageEdited" xml:space="preserve">
         <value>Отредактировано сообщение в канале {0}: {1} -&gt; {2}</value>
@@ -157,7 +154,7 @@
         <value>Начальная роль</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{1}{2} создал событие {3}! Оно пройдёт в {4} и начнётся &lt;t:{5}:R&gt;!{0}{6}{0}https://discord.com/events/{7}/{8}</value>
+        <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!\n{4}</value>
     </data>
     <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
         <value>Роль для уведомлений о создании событий</value>
@@ -188,9 +185,6 @@
     </data>
     <data name="EventCompleted" xml:space="preserve">
         <value>Событие {0} завершено! Продолжительность: {1}</value>
-    </data>
-    <data name="FeedbackFormat" xml:space="preserve">
-        <value>*[{0}: {1}]* </value>
     </data>
     <data name="Ever" xml:space="preserve">
         <value>всегда</value>
@@ -368,12 +362,6 @@
     </data>
     <data name="BotCannotUnmuteTarget" xml:space="preserve">
         <value>Я не могу вернуть из мута этого пользователя!</value>
-    </data>
-    <data name="CommandDescriptionCavepleaselisten" xml:space="preserve">
-        <value>Мы не поддерживаем ненависть против участников. И иногда, мы не способны забанить нарушителя.</value>
-    </data>
-    <data name="ServerBlacklisted" xml:space="preserve">
-        <value>Эта функция недоступна потому что этот сервер находится в чёрном списке.</value>
     </data>
     <data name="EventEarlyNotification" xml:space="preserve">
         <value>{0}Событие {1} начнется &lt;t:{2}:R&gt;!</value>

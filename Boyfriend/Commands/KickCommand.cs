@@ -8,15 +8,14 @@ public sealed class KickCommand : ICommand {
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         var toKick = cmd.GetMember(args, cleanArgs, 0, "ToKick");
-        if (toKick == null || !cmd.HasPermission(GuildPermission.KickMembers)) return;
+        if (toKick is null || !cmd.HasPermission(GuildPermission.KickMembers)) return;
 
-        if (!cmd.CanInteractWith(toKick, "Kick")) return;
-
-        await KickMemberAsync(cmd, toKick, cmd.GetRemaining(args, 1, "KickReason"));
+        if (cmd.CanInteractWith(toKick, "Kick"))
+            await KickMemberAsync(cmd, toKick, cmd.GetRemaining(args, 1, "KickReason"));
     }
 
     private static async Task KickMemberAsync(CommandProcessor cmd, SocketGuildUser toKick, string? reason) {
-        if (reason == null) return;
+        if (reason is null) return;
         var guildKickMessage = $"({cmd.Context.User}) {reason}";
 
         await Utils.SendDirectMessage(toKick,

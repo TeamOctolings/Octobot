@@ -9,15 +9,15 @@ public sealed class MuteCommand : ICommand {
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         var toMute = cmd.GetMember(args, cleanArgs, 0, "ToMute");
-        if (toMute == null) return;
+        if (toMute is null) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);
         var reason = cmd.GetRemaining(args, duration.TotalSeconds < 1 ? 1 : 2, "MuteReason");
-        if (reason == null) return;
+        if (reason is null) return;
         var role = Utils.GetMuteRole(cmd.Context.Guild);
 
-        if ((role != null && toMute.Roles.Contains(role))
-            || (toMute.TimedOutUntil != null
+        if ((role is not null && toMute.Roles.Contains(role))
+            || (toMute.TimedOutUntil is not null
                 && toMute.TimedOutUntil.Value.ToUnixTimeSeconds()
                 > DateTimeOffset.Now.ToUnixTimeSeconds())) {
             cmd.Reply(Messages.MemberAlreadyMuted, ":x: ");
@@ -33,9 +33,8 @@ public sealed class MuteCommand : ICommand {
             cmd.Reply(Messages.RolesReturned, ":warning: ");
         }
 
-        if (!cmd.HasPermission(GuildPermission.ModerateMembers) || !cmd.CanInteractWith(toMute, "Mute")) return;
-
-        await MuteMemberAsync(cmd, toMute, duration, reason);
+        if (cmd.HasPermission(GuildPermission.ModerateMembers) && cmd.CanInteractWith(toMute, "Mute"))
+            await MuteMemberAsync(cmd, toMute, duration, reason);
     }
 
     private static async Task MuteMemberAsync(CommandProcessor cmd, SocketGuildUser toMute,
@@ -46,7 +45,7 @@ public sealed class MuteCommand : ICommand {
         var role = Utils.GetMuteRole(guild);
         var hasDuration = duration.TotalSeconds > 0;
 
-        if (role != null) {
+        if (role is not null) {
             if (config["RemoveRolesOnMute"] is "true") {
                 var rolesRemoved = new List<ulong>();
                 foreach (var userRole in toMute.Roles)

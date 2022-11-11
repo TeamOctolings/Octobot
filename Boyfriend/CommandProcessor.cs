@@ -27,7 +27,6 @@ public sealed class CommandProcessor {
     private readonly List<Task> _tasks = new();
 
     public readonly SocketCommandContext Context;
-    private bool _serverBlacklisted;
 
     public bool ConfigWriteScheduled = false;
 
@@ -39,6 +38,7 @@ public sealed class CommandProcessor {
         var guild = Context.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
         var muteRole = Utils.GetMuteRole(guild);
+        Utils.SetCurrentLanguage(guild.Id);
 
         if (GetMember().Roles.Contains(muteRole)) {
             await Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
@@ -49,15 +49,11 @@ public sealed class CommandProcessor {
         var cleanList = Context.Message.CleanContent.Split("\n");
         for (var i = 0; i < list.Length; i++) {
             RunCommandOnLine(list[i], cleanList[i], config["Prefix"]);
-            if (_serverBlacklisted) {
-                await Context.Message.ReplyAsync(Messages.ServerBlacklisted);
-                return;
-            }
 
             if (_stackedReplyMessage.Length > 0) _ = Context.Channel.TriggerTypingAsync();
             var member = Boyfriend.Client.GetGuild(Context.Guild.Id)
                 .GetUser(Context.User.Id); // Getting an up-to-date copy
-            if (member == null || member.Roles.Contains(muteRole)
+            if (member is null || member.Roles.Contains(muteRole)
                                || member.TimedOutUntil.GetValueOrDefault(DateTimeOffset.UnixEpoch).ToUnixTimeSeconds() >
                                DateTimeOffset.Now.ToUnixTimeSeconds()) break;
         }
@@ -89,25 +85,25 @@ public sealed class CommandProcessor {
     }
 
     public void Audit(string action, bool isPublic = true) {
-        var format = string.Format(Messages.FeedbackFormat, Context.User.Mention, action);
+        var format = $"*[{Context.User.Mention}: {action}]*";
         if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, Context.Guild.SystemChannel);
-        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetAdminLogChannel(Context.Guild.Id));
-        if (_tasks.Count == 0) SendFeedbacks(false);
+        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetBotLogChannel(Context.Guild.Id));
+        if (_tasks.Count is 0) SendFeedbacks(false);
     }
 
     private void SendFeedbacks(bool reply = true) {
         if (reply && _stackedReplyMessage.Length > 0)
             _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
-        var adminChannel = Utils.GetAdminLogChannel(Context.Guild.Id);
+        var adminChannel = Utils.GetBotLogChannel(Context.Guild.Id);
         var systemChannel = Context.Guild.SystemChannel;
-        if (_stackedPrivateFeedback.Length > 0 && adminChannel != null &&
+        if (_stackedPrivateFeedback.Length > 0 && adminChannel is not null &&
             adminChannel.Id != Context.Message.Channel.Id) {
             _ = Utils.SilentSendAsync(adminChannel, _stackedPrivateFeedback.ToString());
             _stackedPrivateFeedback.Clear();
         }
 
-        if (_stackedPublicFeedback.Length > 0 && systemChannel != null && systemChannel.Id != adminChannel?.Id
+        if (_stackedPublicFeedback.Length > 0 && systemChannel is not null && systemChannel.Id != adminChannel?.Id
             && systemChannel.Id != Context.Message.Channel.Id) {
             _ = Utils.SilentSendAsync(systemChannel, _stackedPublicFeedback.ToString());
             _stackedPublicFeedback.Clear();
@@ -115,7 +111,7 @@ public sealed class CommandProcessor {
     }
 
     public string? GetRemaining(string[] from, int startIndex, string? argument) {
-        if (startIndex >= from.Length && argument != null)
+        if (startIndex >= from.Length && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{MissingArgument}{Utils.GetMessage($"Missing{argument}")}", Context.Message);
         else return string.Join(" ", from, startIndex, from.Length - startIndex);
@@ -129,8 +125,8 @@ public sealed class CommandProcessor {
             return null;
         }
 
-        var user = Utils.ParseUser(args[index]);
-        if (user == null && argument != null)
+        var user = Boyfriend.Client.GetUser(Utils.ParseMention(args[index]));
+        if (user is null && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{InvalidArgument}{string.Format(Messages.InvalidUser, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
@@ -154,7 +150,7 @@ public sealed class CommandProcessor {
 
     public SocketGuildUser? GetMember(SocketUser user, string? argument) {
         var member = Context.Guild.GetUser(user.Id);
-        if (member == null && argument != null)
+        if (member is null && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $":x: {Messages.UserNotInGuild}", Context.Message);
         return member;
     }
@@ -167,7 +163,7 @@ public sealed class CommandProcessor {
         }
 
         var member = Context.Guild.GetUser(Utils.ParseMention(args[index]));
-        if (member == null && argument != null)
+        if (member is null && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{InvalidArgument}{string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
@@ -186,7 +182,7 @@ public sealed class CommandProcessor {
         }
 
         var id = Utils.ParseMention(args[index]);
-        if (Context.Guild.GetBanAsync(id) == null) {
+        if (Context.Guild.GetBanAsync(id) is null) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, Messages.UserNotBanned, Context.Message);
             return null;
         }
@@ -209,7 +205,7 @@ public sealed class CommandProcessor {
             return null;
         }
 
-        if (argument == null) return i;
+        if (argument is null) return i;
         if (i < min) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{InvalidArgument}{string.Format(Utils.GetMessage($"{argument}TooSmall"), min.ToString())}",
@@ -232,7 +228,7 @@ public sealed class CommandProcessor {
         int days = 0, hours = 0, minutes = 0, seconds = 0;
         foreach (var c in chars)
             if (char.IsDigit(c)) { numberBuilder.Append(c); } else {
-                if (numberBuilder.Length == 0) return infinity;
+                if (numberBuilder.Length is 0) return infinity;
                 switch (c) {
                     case 'd' or 'D' or 'д' or 'Д':
                         days += int.Parse(numberBuilder.ToString());

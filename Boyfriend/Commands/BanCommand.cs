@@ -8,19 +8,17 @@ public sealed class BanCommand : ICommand {
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         var toBan = cmd.GetUser(args, cleanArgs, 0, "ToBan");
-        if (toBan == null || !cmd.HasPermission(GuildPermission.BanMembers)) return;
+        if (toBan is null || !cmd.HasPermission(GuildPermission.BanMembers)) return;
 
         var memberToBan = cmd.GetMember(toBan, null);
-        if (memberToBan != null && !cmd.CanInteractWith(memberToBan, "Ban")) return;
+        if (memberToBan is not null && !cmd.CanInteractWith(memberToBan, "Ban")) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);
         var reason = cmd.GetRemaining(args, duration.TotalSeconds < 1 ? 1 : 2, "BanReason");
-        if (reason == null) return;
-
-        await BanUser(cmd, toBan, duration, reason);
+        if (reason is not null) await BanUserAsync(cmd, toBan, duration, reason);
     }
 
-    public static async Task BanUser(CommandProcessor cmd, SocketUser toBan, TimeSpan duration, string reason) {
+    private static async Task BanUserAsync(CommandProcessor cmd, SocketUser toBan, TimeSpan duration, string reason) {
         var author = cmd.Context.User;
         var guild = cmd.Context.Guild;
         await Utils.SendDirectMessage(toBan,

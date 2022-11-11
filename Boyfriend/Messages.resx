@@ -25,13 +25,10 @@
         </value>
     </resheader>
     <data name="Ready" xml:space="preserve">
-        <value>{0}I'm ready! (C#)</value>
+        <value>{0}I'm ready!</value>
     </data>
     <data name="CachedMessageDeleted" xml:space="preserve">
         <value>Deleted message from {0} in channel {1}: {2}</value>
-    </data>
-    <data name="AutobanReason" xml:space="preserve">
-        <value>Too many mentions in 1 message</value>
     </data>
     <data name="CachedMessageEdited" xml:space="preserve">
         <value>Edited message in channel {0}: {1} -&gt; {2}</value>
@@ -166,7 +163,7 @@
         <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{1}{2} created event {3}! It will take place in {4} and will start &lt;t:{5}:R&gt;!{0}{6}{0}https://discord.com/events/{7}/{8}</value>
+        <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;!\n{4}</value>
     </data>
     <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
         <value>Role for event creation notifications</value>
@@ -197,9 +194,6 @@
     </data>
     <data name="EventCompleted" xml:space="preserve">
         <value>Event {0} has completed! Duration: {1}</value>
-    </data>
-    <data name="FeedbackFormat" xml:space="preserve">
-        <value>*[{0}: {1}]*</value>
     </data>
     <data name="Ever" xml:space="preserve">
         <value>ever</value>
@@ -377,12 +371,6 @@
     </data>
     <data name="UserCannotUnmuteTarget" xml:space="preserve">
         <value>You cannot unmute this user!</value>
-    </data>
-    <data name="CommandDescriptionCavepleaselisten" xml:space="preserve">
-        <value>We do not support hate towards our fellow members. And sometimes, we are not able to ban the offender.</value>
-    </data>
-    <data name="ServerBlacklisted" xml:space="preserve">
-        <value>This feature is unavailable because this guild is currently blacklisted.</value>
     </data>
     <data name="EventEarlyNotification" xml:space="preserve">
         <value>{0}Event {1} will start &lt;t:{2}:R&gt;!</value>
