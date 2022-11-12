@@ -46,7 +46,6 @@ public static class Boyfriend {
         { "MuteRole", "0" },
         { "RemoveRolesOnMute", "false" },
         { "FrowningFace", "true" },
-
         { "EventStartedReceivers", "interested,role" },
         { "EventNotificationRole", "0" },
         { "EventNotificationChannel", "0" },
