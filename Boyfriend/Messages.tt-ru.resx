@@ -90,9 +90,6 @@
     <data name="SettingsMuteRole" xml:space="preserve">
         <value>роль замученного</value>
     </data>
-    <data name="SettingsAdminLogChannel" xml:space="preserve">
-        <value>канал админ-уведомлений</value>
-    </data>
     <data name="SettingsBotLogChannel" xml:space="preserve">
         <value>канал бот-уведомлений</value>
     </data>
@@ -156,14 +153,11 @@
     <data name="EventCreated" xml:space="preserve">
         <value>{0} приготовил новый квест {1}! он пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!\n{4}</value>
     </data>
-    <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
+    <data name="SettingsEventNotificationRole" xml:space="preserve">
         <value>роль для уведомлений о создании квеста</value>
     </data>
-    <data name="SettingsEventCreatedChannel" xml:space="preserve">
-        <value>канал для уведомлений о создании квеста</value>
-    </data>
-    <data name="SettingsEventStartedChannel" xml:space="preserve">
-        <value>канал для уведомлений о начале квеста</value>
+    <data name="SettingsEventNotificationChannel" xml:space="preserve">
+        <value>канал для уведомлений о квестах</value>
     </data>
     <data name="SettingsEventStartedReceivers" xml:space="preserve">
         <value>получатели уведомлений о начале квеста</value>
@@ -176,12 +170,6 @@
     </data>
     <data name="EventCancelled" xml:space="preserve">
         <value>квест {0} отменен!{1}</value>
-    </data>
-    <data name="SettingsEventCancelledChannel" xml:space="preserve">
-        <value>канал для уведомлений о отмене событий</value>
-    </data>
-    <data name="SettingsEventCompletedChannel" xml:space="preserve">
-        <value>канал для уведомлений о завершении квеста</value>
     </data>
     <data name="EventCompleted" xml:space="preserve">
         <value>квест {0} завершен! все это длилось {1}</value>

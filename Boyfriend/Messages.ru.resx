@@ -90,9 +90,6 @@
     <data name="SettingsMuteRole" xml:space="preserve">
         <value>Роль мута</value>
     </data>
-    <data name="SettingsAdminLogChannel" xml:space="preserve">
-        <value>Канал админ-уведомлений</value>
-    </data>
     <data name="SettingsBotLogChannel" xml:space="preserve">
         <value>Канал бот-уведомлений</value>
     </data>
@@ -156,14 +153,11 @@
     <data name="EventCreated" xml:space="preserve">
         <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!\n{4}</value>
     </data>
-    <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
+    <data name="SettingsEventNotificationRole" xml:space="preserve">
         <value>Роль для уведомлений о создании событий</value>
     </data>
-    <data name="SettingsEventCreatedChannel" xml:space="preserve">
-        <value>Канал для уведомлений о создании событий</value>
-    </data>
-    <data name="SettingsEventStartedChannel" xml:space="preserve">
-        <value>Канал для уведомлений о начале событий</value>
+    <data name="SettingsEventNotificationChannel" xml:space="preserve">
+        <value>Канал для уведомлений о событиях</value>
     </data>
     <data name="SettingsEventStartedReceivers" xml:space="preserve">
         <value>Получатели уведомлений о начале событий</value>
@@ -176,12 +170,6 @@
     </data>
     <data name="EventCancelled" xml:space="preserve">
         <value>Событие {0} отменено!{1}</value>
-    </data>
-    <data name="SettingsEventCancelledChannel" xml:space="preserve">
-        <value>Канал для уведомлений о отмене событий</value>
-    </data>
-    <data name="SettingsEventCompletedChannel" xml:space="preserve">
-        <value>Канал для уведомлений о завершении событий</value>
     </data>
     <data name="EventCompleted" xml:space="preserve">
         <value>Событие {0} завершено! Продолжительность: {1}</value>

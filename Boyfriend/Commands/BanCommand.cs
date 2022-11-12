@@ -10,7 +10,7 @@ public sealed class BanCommand : ICommand {
         var toBan = cmd.GetUser(args, cleanArgs, 0, "ToBan");
         if (toBan is null || !cmd.HasPermission(GuildPermission.BanMembers)) return;
 
-        var memberToBan = cmd.GetMember(toBan, null);
+        var memberToBan = cmd.GetMember(toBan);
         if (memberToBan is not null && !cmd.CanInteractWith(memberToBan, "Ban")) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);

@@ -717,47 +717,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Admin log channel.
-        /// </summary>
-        internal static string SettingsAdminLogChannel {
-            get {
-                return ResourceManager.GetString("SettingsAdminLogChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Bot log channel.
         /// </summary>
         internal static string SettingsBotLogChannel {
             get {
                 return ResourceManager.GetString("SettingsBotLogChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Channel for event cancellation notifications.
-        /// </summary>
-        internal static string SettingsEventCancelledChannel {
-            get {
-                return ResourceManager.GetString("SettingsEventCancelledChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Channel for event completion notifications.
-        /// </summary>
-        internal static string SettingsEventCompletedChannel {
-            get {
-                return ResourceManager.GetString("SettingsEventCompletedChannel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Channel for event creation notifications.
-        /// </summary>
-        internal static string SettingsEventCreatedChannel {
-            get {
-                return ResourceManager.GetString("SettingsEventCreatedChannel", resourceCulture);
             }
         }
         
@@ -771,20 +735,20 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Role for event creation notifications.
+        ///   Looks up a localized string similar to Channel for event notifications.
         /// </summary>
-        internal static string SettingsEventNotifyReceiverRole {
+        internal static string SettingsEventNotificationChannel {
             get {
-                return ResourceManager.GetString("SettingsEventNotifyReceiverRole", resourceCulture);
+                return ResourceManager.GetString("SettingsEventNotificationChannel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Channel for event start notifications.
+        ///   Looks up a localized string similar to Role for event creation notifications.
         /// </summary>
-        internal static string SettingsEventStartedChannel {
+        internal static string SettingsEventNotificationRole {
             get {
-                return ResourceManager.GetString("SettingsEventStartedChannel", resourceCulture);
+                return ResourceManager.GetString("SettingsEventNotificationRole", resourceCulture);
             }
         }
         

@@ -41,7 +41,7 @@ public sealed class CommandProcessor {
         Utils.SetCurrentLanguage(guild.Id);
 
         if (GetMember().Roles.Contains(muteRole)) {
-            await Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
+            _ = Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
             return;
         }
 
@@ -51,11 +51,6 @@ public sealed class CommandProcessor {
             RunCommandOnLine(list[i], cleanList[i], config["Prefix"]);
 
             if (_stackedReplyMessage.Length > 0) _ = Context.Channel.TriggerTypingAsync();
-            var member = Boyfriend.Client.GetGuild(Context.Guild.Id)
-                .GetUser(Context.User.Id); // Getting an up-to-date copy
-            if (member is null || member.Roles.Contains(muteRole)
-                               || member.TimedOutUntil.GetValueOrDefault(DateTimeOffset.UnixEpoch).ToUnixTimeSeconds() >
-                               DateTimeOffset.Now.ToUnixTimeSeconds()) break;
         }
 
         await Task.WhenAll(_tasks);
@@ -67,8 +62,8 @@ public sealed class CommandProcessor {
     }
 
     private void RunCommandOnLine(string line, string cleanLine, string prefix) {
-        var prefixed = line[..prefix.Length] == prefix;
-        if (!prefixed && line[..Mention.Length] is not Mention) return;
+        var prefixed = line.StartsWith(prefix);
+        if (!prefixed && !line.StartsWith(Mention)) return;
         foreach (var command in Commands) {
             var lineNoMention = line.Remove(0, prefixed ? prefix.Length : Mention.Length);
             if (!command.Aliases.Contains(lineNoMention.Trim().Split()[0])) continue;
@@ -141,18 +136,15 @@ public sealed class CommandProcessor {
         }
 
         if (Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
-            || Context.Guild.Owner.Id == Context.User.Id) return true;
+            || Context.Guild.OwnerId == Context.User.Id) return true;
 
         Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{NoAccess}{Utils.GetMessage($"UserCannot{permission}")}",
             Context.Message);
         return false;
     }
 
-    public SocketGuildUser? GetMember(SocketUser user, string? argument) {
-        var member = Context.Guild.GetUser(user.Id);
-        if (member is null && argument is not null)
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $":x: {Messages.UserNotInGuild}", Context.Message);
-        return member;
+    public SocketGuildUser? GetMember(SocketUser user) {
+        return Context.Guild.GetUser(user.Id);
     }
 
     public SocketGuildUser? GetMember(string[] args, string[] cleanArgs, int index, string? argument) {

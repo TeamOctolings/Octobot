@@ -16,7 +16,7 @@ public sealed class SettingsCommand : ICommand {
 
             foreach (var setting in Boyfriend.DefaultConfig) {
                 var format = "{0}";
-                var currentValue = config[setting.Key];
+                var currentValue = config[setting.Key] is "default" ? Messages.DefaultWelcomeMessage : config[setting.Key];
 
                 if (setting.Key.EndsWith("Channel")) {
                     if (guild.GetTextChannel(ulong.Parse(currentValue)) is not null) format = "<#{0}>";

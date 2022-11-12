@@ -102,9 +102,6 @@
     <data name="SettingsMuteRole" xml:space="preserve">
         <value>Mute role</value>
     </data>
-    <data name="SettingsAdminLogChannel" xml:space="preserve">
-        <value>Admin log channel</value>
-    </data>
     <data name="SettingsBotLogChannel" xml:space="preserve">
         <value>Bot log channel</value>
     </data>
@@ -165,14 +162,11 @@
     <data name="EventCreated" xml:space="preserve">
         <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;!\n{4}</value>
     </data>
-    <data name="SettingsEventNotifyReceiverRole" xml:space="preserve">
+    <data name="SettingsEventNotificationRole" xml:space="preserve">
         <value>Role for event creation notifications</value>
     </data>
-    <data name="SettingsEventCreatedChannel" xml:space="preserve">
-        <value>Channel for event creation notifications</value>
-    </data>
-    <data name="SettingsEventStartedChannel" xml:space="preserve">
-        <value>Channel for event start notifications</value>
+    <data name="SettingsEventNotificationChannel" xml:space="preserve">
+        <value>Channel for event notifications</value>
     </data>
     <data name="SettingsEventStartedReceivers" xml:space="preserve">
         <value>Event start notifications receivers</value>
@@ -185,12 +179,6 @@
     </data>
     <data name="EventCancelled" xml:space="preserve">
         <value>Event {0} is cancelled!{1}</value>
-    </data>
-    <data name="SettingsEventCancelledChannel" xml:space="preserve">
-        <value>Channel for event cancellation notifications</value>
-    </data>
-    <data name="SettingsEventCompletedChannel" xml:space="preserve">
-        <value>Channel for event completion notifications</value>
     </data>
     <data name="EventCompleted" xml:space="preserve">
         <value>Event {0} has completed! Duration: {1}</value>

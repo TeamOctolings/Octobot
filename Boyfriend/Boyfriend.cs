@@ -11,7 +11,7 @@ public static class Boyfriend {
 
     private static readonly DiscordSocketConfig Config = new() {
         MessageCacheSize = 250,
-        GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers,
+        GatewayIntents = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers) & ~GatewayIntents.GuildInvites,
         AlwaysDownloadUsers = true,
         AlwaysResolveStickers = false,
         AlwaysDownloadDefaultStickers = false,
@@ -103,11 +103,11 @@ public static class Boyfriend {
     }
 
     public static async Task WriteGuildConfigAsync(ulong id) {
-        var json = JsonConvert.SerializeObject(GuildConfigDictionary[id], Formatting.Indented);
-        var removedRoles = JsonConvert.SerializeObject(RemovedRolesDictionary[id], Formatting.Indented);
+        await File.WriteAllTextAsync($"config_{id}.json", JsonConvert.SerializeObject(GuildConfigDictionary[id], Formatting.Indented));
 
-        await File.WriteAllTextAsync($"config_{id}.json", json);
-        await File.WriteAllTextAsync($"removedroles_{id}.json", removedRoles);
+        if (RemovedRolesDictionary.TryGetValue(id, out var removedRoles))
+            await File.WriteAllTextAsync($"removedroles_{id}.json",
+                JsonConvert.SerializeObject(removedRoles, Formatting.Indented));
     }
 
     public static Dictionary<string, string> GetGuildConfig(ulong id) {
