@@ -97,9 +97,9 @@ public static class EventHandler {
 
         if (config["SendWelcomeMessages"] is "true")
             await Utils.SilentSendAsync(guild.SystemChannel,
-                config["WelcomeMessage"] is "default"
+                string.Format(config["WelcomeMessage"] is "default"
                     ? Messages.DefaultWelcomeMessage
-                    : string.Format(config["WelcomeMessage"], user.Mention, guild.Name));
+                    : config["WelcomeMessage"], user.Mention, guild.Name));
 
         if (config["StarterRole"] is not "0") await user.AddRoleAsync(ulong.Parse(config["StarterRole"]));
     }
@@ -113,7 +113,7 @@ public static class EventHandler {
             var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
             var mentions = role is not null
                 ? $"{role.Mention} {scheduledEvent.Creator.Mention}"
-                : "{scheduledEvent.Creator.Mention}";
+                : $"{scheduledEvent.Creator.Mention}";
 
             var location = Utils.Wrap(scheduledEvent.Location) ?? Utils.MentionChannel(scheduledEvent.Channel.Id);
             var descAndLink
