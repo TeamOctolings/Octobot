@@ -74,10 +74,15 @@ public static class Utils {
     }
 
     public static async Task SilentSendAsync(SocketTextChannel? channel, string text, bool allowRoles = false) {
-        if (channel is null || text.Length is 0 or > 2000)
-            throw new Exception($"Message length is out of range: {text.Length}");
+        try {
+            if (channel is null || text.Length is 0 or > 2000)
+                throw new Exception($"Message length is out of range: {text.Length}");
 
-        await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
+            await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
+        } catch (Exception e) {
+            await Boyfriend.Log(new LogMessage(LogSeverity.Error, nameof(Utils),
+                "Exception while silently sending message", e));
+        }
     }
 
     public static RequestOptions GetRequestOptions(string reason) {
@@ -154,23 +159,28 @@ public static class Utils {
 
     public static async Task SendEarlyEventStartNotificationAsync(SocketTextChannel? channel,
         SocketGuildEvent scheduledEvent, int minuteOffset) {
-        await Task.Delay(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now)
-            .Subtract(TimeSpan.FromMinutes(minuteOffset)));
-        var guild = scheduledEvent.Guild;
-        if (guild.GetEvent(scheduledEvent.Id) is null) return;
-        var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
+        try {
+            await Task.Delay(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now)
+                .Subtract(TimeSpan.FromMinutes(minuteOffset)));
+            var guild = scheduledEvent.Guild;
+            if (guild.GetEvent(scheduledEvent.Id) is null) return;
+            var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
 
-        var receivers = eventConfig["EventStartedReceivers"];
-        var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
-        var mentions = Boyfriend.StringBuilder;
+            var receivers = eventConfig["EventStartedReceivers"];
+            var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
+            var mentions = Boyfriend.StringBuilder;
 
-        if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
-        if (receivers.Contains("users") || receivers.Contains("interested"))
-            mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
-                (current, user) => current.Append($"{user.Mention} "));
-        await channel?.SendMessageAsync(string.Format(Messages.EventEarlyNotification, mentions,
-            Wrap(scheduledEvent.Name), scheduledEvent.StartTime.ToUnixTimeSeconds().ToString()))!;
-        mentions.Clear();
+            if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
+            if (receivers.Contains("users") || receivers.Contains("interested"))
+                mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
+                    (current, user) => current.Append($"{user.Mention} "));
+            await channel?.SendMessageAsync(string.Format(Messages.EventEarlyNotification, mentions,
+                Wrap(scheduledEvent.Name), scheduledEvent.StartTime.ToUnixTimeSeconds().ToString()))!;
+            mentions.Clear();
+        } catch (Exception e) {
+            await Boyfriend.Log(new LogMessage(LogSeverity.Error, nameof(Utils),
+                "Exception while sending early event start notification", e));
+        }
     }
 
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {

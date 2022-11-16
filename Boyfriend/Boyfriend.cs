@@ -11,7 +11,9 @@ public static class Boyfriend {
 
     private static readonly DiscordSocketConfig Config = new() {
         MessageCacheSize = 250,
-        GatewayIntents = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers) & ~GatewayIntents.GuildInvites,
+        GatewayIntents
+            = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers) &
+              ~GatewayIntents.GuildInvites,
         AlwaysDownloadUsers = true,
         AlwaysResolveStickers = false,
         AlwaysDownloadDefaultStickers = false,
@@ -59,7 +61,7 @@ public static class Boyfriend {
     private static async Task Init() {
         var token = (await File.ReadAllTextAsync("token.txt")).Trim();
 
-        Client.Log += Log;
+        Client.Log += x => Log(x);
 
         await Client.LoginAsync(TokenType.Bot, token);
         await Client.StartAsync();
@@ -75,7 +77,7 @@ public static class Boyfriend {
         // ReSharper disable once FunctionNeverReturns
     }
 
-    private static Task Log(LogMessage msg) {
+    public static Task Log(LogMessage msg) {
         switch (msg.Severity) {
             case LogSeverity.Critical:
                 Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -103,7 +105,8 @@ public static class Boyfriend {
     }
 
     public static async Task WriteGuildConfigAsync(ulong id) {
-        await File.WriteAllTextAsync($"config_{id}.json", JsonConvert.SerializeObject(GuildConfigDictionary[id], Formatting.Indented));
+        await File.WriteAllTextAsync($"config_{id}.json",
+            JsonConvert.SerializeObject(GuildConfigDictionary[id], Formatting.Indented));
 
         if (RemovedRolesDictionary.TryGetValue(id, out var removedRoles))
             await File.WriteAllTextAsync($"removedroles_{id}.json",

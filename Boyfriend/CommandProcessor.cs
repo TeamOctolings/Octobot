@@ -47,13 +47,15 @@ public sealed class CommandProcessor {
 
         var list = Context.Message.Content.Split("\n");
         var cleanList = Context.Message.CleanContent.Split("\n");
-        for (var i = 0; i < list.Length; i++) {
-            RunCommandOnLine(list[i], cleanList[i], config["Prefix"]);
+        for (var i = 0; i < list.Length; i++)
+            _tasks.Add(RunCommandOnLine(list[i], cleanList[i], config["Prefix"]));
 
-            if (_stackedReplyMessage.Length > 0) _ = Context.Channel.TriggerTypingAsync();
+        try { Task.WaitAll(_tasks.ToArray()); } catch (AggregateException e) {
+            foreach (var ex in e.InnerExceptions)
+                await Boyfriend.Log(new LogMessage(LogSeverity.Error, nameof(CommandProcessor),
+                    "Exception while executing commands", ex));
         }
 
-        await Task.WhenAll(_tasks);
         _tasks.Clear();
 
         if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfigAsync(guild.Id);
@@ -61,7 +63,7 @@ public sealed class CommandProcessor {
         SendFeedbacks();
     }
 
-    private void RunCommandOnLine(string line, string cleanLine, string prefix) {
+    private async Task RunCommandOnLine(string line, string cleanLine, string prefix) {
         var prefixed = line.StartsWith(prefix);
         if (!prefixed && !line.StartsWith(Mention)) return;
         foreach (var command in Commands) {
@@ -70,7 +72,8 @@ public sealed class CommandProcessor {
 
             var args = lineNoMention.Trim().Split().Skip(1).ToArray();
             var cleanArgs = cleanLine.Split().Skip(lineNoMention.StartsWith(" ") ? 2 : 1).ToArray();
-            _tasks.Add(command.RunAsync(this, args, cleanArgs));
+            await command.RunAsync(this, args, cleanArgs);
+            if (_stackedReplyMessage.Length > 0) _ = Context.Channel.TriggerTypingAsync();
             return;
         }
     }
