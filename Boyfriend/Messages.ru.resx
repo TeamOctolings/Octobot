@@ -151,7 +151,7 @@
         <value>Начальная роль</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!\n{4}</value>
+        <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!{4}</value>
     </data>
     <data name="SettingsEventNotificationRole" xml:space="preserve">
         <value>Роль для уведомлений о создании событий</value>

@@ -119,7 +119,7 @@ public static class EventHandler {
 
             var location = Utils.Wrap(scheduledEvent.Location) ?? Utils.MentionChannel(scheduledEvent.Channel.Id);
             var descAndLink
-                = $"{Utils.Wrap(scheduledEvent.Description)}\nhttps://discord.com/events/{guild.Id}/{scheduledEvent.Id}";
+                = $"\n{Utils.Wrap(scheduledEvent.Description)}\nhttps://discord.com/events/{guild.Id}/{scheduledEvent.Id}";
 
             await Utils.SilentSendAsync(channel,
                 string.Format(Messages.EventCreated, mentions,

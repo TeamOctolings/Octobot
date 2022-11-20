@@ -384,7 +384,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;!\n{4}.
+        ///   Looks up a localized string similar to {0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;! \n {4}.
         /// </summary>
         internal static string EventCreated {
             get {

@@ -160,7 +160,7 @@
         <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>
     </data>
     <data name="EventCreated" xml:space="preserve">
-        <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;!\n{4}</value>
+        <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;! \n {4}</value>
     </data>
     <data name="SettingsEventNotificationRole" xml:space="preserve">
         <value>Role for event creation notifications</value>
