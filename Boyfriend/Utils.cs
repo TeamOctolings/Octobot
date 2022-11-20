@@ -184,6 +184,6 @@ public static class Utils {
     }
 
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
-        return guild.GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(guild.Id)["EventCreatedChannel"]));
+        return guild.GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(guild.Id)["EventNotificationChannel"]));
     }
 }
