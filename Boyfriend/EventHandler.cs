@@ -110,6 +110,7 @@ public static class EventHandler {
         var guild = scheduledEvent.Guild;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = Utils.GetEventNotificationChannel(guild);
+        Utils.SetCurrentLanguage(guild.Id);
 
         if (channel is not null) {
             var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
@@ -137,6 +138,7 @@ public static class EventHandler {
         var guild = scheduledEvent.Guild;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = Utils.GetEventNotificationChannel(guild);
+        Utils.SetCurrentLanguage(guild.Id);
         if (channel is not null)
             await channel.SendMessageAsync(string.Format(Messages.EventCancelled, Utils.Wrap(scheduledEvent.Name),
                 eventConfig["FrowningFace"] is "true" ? $" {Messages.SettingsFrowningFace}" : ""));
@@ -146,6 +148,7 @@ public static class EventHandler {
         var guild = scheduledEvent.Guild;
         var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
         var channel = Utils.GetEventNotificationChannel(guild);
+        Utils.SetCurrentLanguage(guild.Id);
 
         if (channel is not null) {
             var receivers = eventConfig["EventStartedReceivers"];
@@ -167,6 +170,7 @@ public static class EventHandler {
     private static async Task ScheduledEventCompletedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
         var channel = Utils.GetEventNotificationChannel(guild);
+        Utils.SetCurrentLanguage(guild.Id);
         if (channel is not null)
             await channel.SendMessageAsync(string.Format(Messages.EventCompleted, Utils.Wrap(scheduledEvent.Name),
                 Utils.GetHumanizedTimeOffset(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));

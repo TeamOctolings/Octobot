@@ -148,12 +148,14 @@ public static class Utils {
 
     public static async Task DelayedUnbanAsync(CommandProcessor cmd, ulong banned, string reason, TimeSpan duration) {
         await Task.Delay(duration);
+        SetCurrentLanguage(cmd.Context.Guild.Id);
         await UnbanCommand.UnbanUserAsync(cmd, banned, reason);
     }
 
     public static async Task DelayedUnmuteAsync(CommandProcessor cmd, SocketGuildUser muted, string reason,
         TimeSpan duration) {
         await Task.Delay(duration);
+        SetCurrentLanguage(cmd.Context.Guild.Id);
         await UnmuteCommand.UnmuteMemberAsync(cmd, muted, reason);
     }
 
@@ -165,6 +167,7 @@ public static class Utils {
             var guild = scheduledEvent.Guild;
             if (guild.GetEvent(scheduledEvent.Id) is null) return;
             var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
+            SetCurrentLanguage(guild.Id);
 
             var receivers = eventConfig["EventStartedReceivers"];
             var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
