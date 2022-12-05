@@ -13,7 +13,7 @@ public sealed class CommandProcessor {
     private const string NoAccess = ":no_entry_sign: ";
     private const string CantInteract = ":vertical_traffic_light: ";
 
-    private readonly string Mention = $"<@{Boyfriend.Client.CurrentUser.Id}>";
+    private static readonly string Mention = $"<@{Boyfriend.Client.CurrentUser.Id}>";
 
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
