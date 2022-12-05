@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Boyfriend.Commands;
 using Discord;
 using Discord.Commands;
@@ -13,7 +13,7 @@ public sealed class CommandProcessor {
     private const string NoAccess = ":no_entry_sign: ";
     private const string CantInteract = ":vertical_traffic_light: ";
 
-    private const string Mention = "<@855023234407333888>";
+    private static readonly string Mention = $"<@{Boyfriend.Client.CurrentUser.Id}>";
 
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
