@@ -7,12 +7,6 @@ using Discord.WebSocket;
 namespace Boyfriend;
 
 public sealed class CommandProcessor {
-    private const string Success = ":white_check_mark: ";
-    private const string MissingArgument = ":keyboard: ";
-    private const string InvalidArgument = ":construction: ";
-    private const string NoAccess = ":no_entry_sign: ";
-    private const string CantInteract = ":vertical_traffic_light: ";
-
     private static readonly string Mention = $"<@{Boyfriend.Client.CurrentUser.Id}>";
 
     public static readonly ICommand[] Commands = {
@@ -79,7 +73,7 @@ public sealed class CommandProcessor {
     }
 
     public void Reply(string response, string? customEmoji = null) {
-        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{customEmoji ?? Success}{response}", Context.Message);
+        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{customEmoji ?? Prefixes.Success} {response}", Context.Message);
     }
 
     public void Audit(string action, bool isPublic = true) {
@@ -111,14 +105,14 @@ public sealed class CommandProcessor {
     public string? GetRemaining(string[] from, int startIndex, string? argument) {
         if (startIndex >= from.Length && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{MissingArgument}{Utils.GetMessage($"Missing{argument}")}", Context.Message);
+                $"{Prefixes.MissingArgument} {Utils.GetMessage($"Missing{argument}")}", Context.Message);
         else return string.Join(" ", from, startIndex, from.Length - startIndex);
         return null;
     }
 
     public SocketUser? GetUser(string[] args, string[] cleanArgs, int index, string? argument) {
         if (index >= args.Length) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{MissingArgument}{Messages.MissingUser}",
+            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{Prefixes.MissingArgument} {Messages.MissingUser}",
                 Context.Message);
             return null;
         }
@@ -126,14 +120,14 @@ public sealed class CommandProcessor {
         var user = Boyfriend.Client.GetUser(Utils.ParseMention(args[index]));
         if (user is null && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{InvalidArgument}{string.Format(Messages.InvalidUser, Utils.Wrap(cleanArgs[index]))}",
+                $"{Prefixes.InvalidArgument} {string.Format(Messages.InvalidUser, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
         return user;
     }
 
     public bool HasPermission(GuildPermission permission) {
         if (!Context.Guild.CurrentUser.GuildPermissions.Has(permission)) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{NoAccess}{Utils.GetMessage($"BotCannot{permission}")}",
+            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{Prefixes.NoAccess} {Utils.GetMessage($"BotCannot{permission}")}",
                 Context.Message);
             return false;
         }
@@ -141,7 +135,7 @@ public sealed class CommandProcessor {
         if (Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
             || Context.Guild.OwnerId == Context.User.Id) return true;
 
-        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{NoAccess}{Utils.GetMessage($"UserCannot{permission}")}",
+        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{Prefixes.NoAccess} {Utils.GetMessage($"UserCannot{permission}")}",
             Context.Message);
         return false;
     }
@@ -152,7 +146,7 @@ public sealed class CommandProcessor {
 
     public SocketGuildUser? GetMember(string[] args, string[] cleanArgs, int index, string? argument) {
         if (index >= args.Length) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{MissingArgument}{Messages.MissingMember}",
+            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{Prefixes.MissingArgument} {Messages.MissingMember}",
                 Context.Message);
             return null;
         }
@@ -160,7 +154,7 @@ public sealed class CommandProcessor {
         var member = Context.Guild.GetUser(Utils.ParseMention(args[index]));
         if (member is null && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{InvalidArgument}{string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
+                $"{Prefixes.InvalidArgument} {string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
         return member;
     }
@@ -171,7 +165,7 @@ public sealed class CommandProcessor {
 
     public ulong? GetBan(string[] args, int index) {
         if (index >= args.Length) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{MissingArgument}{Messages.MissingUser}",
+            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{Prefixes.MissingArgument} {Messages.MissingUser}",
                 Context.Message);
             return null;
         }
@@ -188,14 +182,14 @@ public sealed class CommandProcessor {
     public int? GetNumberRange(string[] args, int index, int min, int max, string? argument) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{MissingArgument}{string.Format(Messages.MissingNumber, min.ToString(), max.ToString())}",
+                $"{Prefixes.MissingArgument} {string.Format(Messages.MissingNumber, min.ToString(), max.ToString())}",
                 Context.Message);
             return null;
         }
 
         if (!int.TryParse(args[index], out var i)) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{InvalidArgument}{string.Format(Utils.GetMessage($"{argument}Invalid"), min.ToString(), max.ToString(), Utils.Wrap(args[index]))}",
+                $"{Prefixes.InvalidArgument} {string.Format(Utils.GetMessage($"{argument}Invalid"), min.ToString(), max.ToString(), Utils.Wrap(args[index]))}",
                 Context.Message);
             return null;
         }
@@ -203,14 +197,14 @@ public sealed class CommandProcessor {
         if (argument is null) return i;
         if (i < min) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{InvalidArgument}{string.Format(Utils.GetMessage($"{argument}TooSmall"), min.ToString())}",
+                $"{Prefixes.InvalidArgument} {string.Format(Utils.GetMessage($"{argument}TooSmall"), min.ToString())}",
                 Context.Message);
             return null;
         }
 
         if (i <= max) return i;
         Utils.SafeAppendToBuilder(_stackedReplyMessage,
-            $"{InvalidArgument}{string.Format(Utils.GetMessage($"{argument}TooLarge"), max.ToString())}",
+            $"{Prefixes.InvalidArgument} {string.Format(Utils.GetMessage($"{argument}TooLarge"), max.ToString())}",
             Context.Message);
         return null;
     }
@@ -252,31 +246,31 @@ public sealed class CommandProcessor {
     public bool CanInteractWith(SocketGuildUser user, string action) {
         if (Context.User.Id == user.Id) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Themselves")}", Context.Message);
+                $"{Prefixes.CantInteract} {Utils.GetMessage($"UserCannot{action}Themselves")}", Context.Message);
             return false;
         }
 
         if (Context.Guild.CurrentUser.Id == user.Id) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Bot")}", Context.Message);
+                $"{Prefixes.CantInteract} {Utils.GetMessage($"UserCannot{action}Bot")}", Context.Message);
             return false;
         }
 
         if (Context.Guild.Owner.Id == user.Id) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Owner")}", Context.Message);
+                $"{Prefixes.CantInteract} {Utils.GetMessage($"UserCannot{action}Owner")}", Context.Message);
             return false;
         }
 
         if (Context.Guild.CurrentUser.Hierarchy <= user.Hierarchy) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{CantInteract}{Utils.GetMessage($"BotCannot{action}Target")}", Context.Message);
+                $"{Prefixes.CantInteract} {Utils.GetMessage($"BotCannot{action}Target")}", Context.Message);
             return false;
         }
 
         if (Context.Guild.Owner.Id == Context.User.Id || GetMember().Hierarchy > user.Hierarchy) return true;
         Utils.SafeAppendToBuilder(_stackedReplyMessage,
-            $"{CantInteract}{Utils.GetMessage($"UserCannot{action}Target")}", Context.Message);
+            $"{Prefixes.CantInteract} {Utils.GetMessage($"UserCannot{action}Target")}", Context.Message);
         return false;
     }
 }

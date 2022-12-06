@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
@@ -29,7 +29,7 @@ public sealed class BanCommand : ICommand {
 
         var feedback = string.Format(Messages.FeedbackUserBanned, toBan.Mention,
             Utils.GetHumanizedTimeOffset(duration), Utils.Wrap(reason));
-        cmd.Reply(feedback, ":hammer: ");
+        cmd.Reply(feedback, Prefixes.Banned);
         cmd.Audit(feedback);
 
         if (duration.TotalSeconds > 0)

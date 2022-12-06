@@ -1,4 +1,4 @@
-﻿namespace Boyfriend.Commands;
+namespace Boyfriend.Commands;
 
 public sealed class PingCommand : ICommand {
     public string[] Aliases { get; } = { "ping", "latency", "pong", "пинг", "задержка", "понг" };
@@ -10,7 +10,7 @@ public sealed class PingCommand : ICommand {
             .Append(Math.Abs(DateTimeOffset.Now.Subtract(cmd.Context.Message.Timestamp).TotalMilliseconds))
             .Append(Messages.Milliseconds);
 
-        cmd.Reply(builder.ToString(), ":signal_strength: ");
+        cmd.Reply(builder.ToString(), Prefixes.Ping);
         builder.Clear();
 
         return Task.CompletedTask;

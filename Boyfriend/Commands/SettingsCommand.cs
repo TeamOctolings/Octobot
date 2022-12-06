@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 
 namespace Boyfriend.Commands;
 
@@ -33,7 +33,7 @@ public sealed class SettingsCommand : ICommand {
                     .AppendFormat(format, currentValue).AppendLine();
             }
 
-            cmd.Reply(currentSettings.ToString(), ":gear: ");
+            cmd.Reply(currentSettings.ToString(), Prefixes.Settings);
             currentSettings.Clear();
             return Task.CompletedTask;
         }
@@ -51,7 +51,7 @@ public sealed class SettingsCommand : ICommand {
         }
 
         if (!exists) {
-            cmd.Reply(Messages.SettingDoesntExist, ":x: ");
+            cmd.Reply(Messages.SettingDoesntExist, Prefixes.Error);
             return Task.CompletedTask;
         }
 
@@ -64,7 +64,7 @@ public sealed class SettingsCommand : ICommand {
                 value = value.Replace(" ", "").ToLower();
                 if (value.StartsWith(",") || value.Count(x => x is ',') > 1 ||
                     (!value.Contains("interested") && !value.Contains("users") && !value.Contains("role"))) {
-                    cmd.Reply(Messages.InvalidSettingValue, ":x: ");
+                    cmd.Reply(Messages.InvalidSettingValue, Prefixes.Error);
                     return Task.CompletedTask;
                 }
             }
@@ -77,7 +77,7 @@ public sealed class SettingsCommand : ICommand {
                 _ => value
             };
             if (!IsBool(value)) {
-                cmd.Reply(Messages.InvalidSettingValue, ":x: ");
+                cmd.Reply(Messages.InvalidSettingValue, Prefixes.Error);
                 return Task.CompletedTask;
             }
         }
@@ -106,22 +106,22 @@ public sealed class SettingsCommand : ICommand {
         } else {
             if (value == config[selectedSetting]) {
                 cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
-                    ":x: ");
+                    Prefixes.Error);
                 return Task.CompletedTask;
             }
 
             if (selectedSetting is "Lang" && !Utils.CultureInfoCache.ContainsKey(value)) {
-                cmd.Reply(Messages.LanguageNotSupported, ":x: ");
+                cmd.Reply(Messages.LanguageNotSupported, Prefixes.Error);
                 return Task.CompletedTask;
             }
 
             if (selectedSetting.EndsWith("Channel") && guild.GetTextChannel(mention) is null) {
-                cmd.Reply(Messages.InvalidChannel, ":x: ");
+                cmd.Reply(Messages.InvalidChannel, Prefixes.Error);
                 return Task.CompletedTask;
             }
 
             if (selectedSetting.EndsWith("Role") && guild.GetRole(mention) is null) {
-                cmd.Reply(Messages.InvalidRole, ":x: ");
+                cmd.Reply(Messages.InvalidRole, Prefixes.Error);
                 return Task.CompletedTask;
             }
 
@@ -138,7 +138,7 @@ public sealed class SettingsCommand : ICommand {
         cmd.ConfigWriteScheduled = true;
 
         var replyFormat = string.Format(Messages.FeedbackSettingsUpdated, localizedSelectedSetting, formattedValue);
-        cmd.Reply(replyFormat, ":control_knobs: ");
+        cmd.Reply(replyFormat, Prefixes.SettingsSet);
         cmd.Audit(replyFormat, false);
         return Task.CompletedTask;
     }

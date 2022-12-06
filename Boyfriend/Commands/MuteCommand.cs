@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Net;
 using Discord.WebSocket;
 
@@ -20,7 +20,7 @@ public sealed class MuteCommand : ICommand {
             || (toMute.TimedOutUntil is not null
                 && toMute.TimedOutUntil.Value.ToUnixTimeSeconds()
                 > DateTimeOffset.Now.ToUnixTimeSeconds())) {
-            cmd.Reply(Messages.MemberAlreadyMuted, ":x: ");
+            cmd.Reply(Messages.MemberAlreadyMuted, Prefixes.Error);
             return;
         }
 
@@ -30,7 +30,7 @@ public sealed class MuteCommand : ICommand {
             foreach (var roleId in mutedRemovedRoles) await toMute.AddRoleAsync(roleId);
             rolesRemoved.Remove(toMute.Id);
             cmd.ConfigWriteScheduled = true;
-            cmd.Reply(Messages.RolesReturned, ":warning: ");
+            cmd.Reply(Messages.RolesReturned, Prefixes.Warning);
         }
 
         if (cmd.HasPermission(GuildPermission.ModerateMembers) && cmd.CanInteractWith(toMute, "Mute"))
@@ -55,7 +55,7 @@ public sealed class MuteCommand : ICommand {
                         rolesRemoved.Add(userRole.Id);
                     } catch (HttpException e) {
                         cmd.Reply(string.Format(Messages.RoleRemovalFailed, $"<@&{userRole}>", Utils.Wrap(e.Reason)),
-                            ":warning: ");
+                            Prefixes.Warning);
                     }
 
                 Boyfriend.GetRemovedRoles(guild.Id).Add(toMute.Id, rolesRemoved.AsReadOnly());
@@ -68,12 +68,12 @@ public sealed class MuteCommand : ICommand {
                 await Task.FromResult(Utils.DelayedUnmuteAsync(cmd, toMute, Messages.PunishmentExpired, duration));
         } else {
             if (!hasDuration || duration.TotalDays > 28) {
-                cmd.Reply(Messages.DurationRequiredForTimeOuts, ":x: ");
+                cmd.Reply(Messages.DurationRequiredForTimeOuts, Prefixes.Error);
                 return;
             }
 
             if (toMute.IsBot) {
-                cmd.Reply(Messages.CannotTimeOutBot, ":x: ");
+                cmd.Reply(Messages.CannotTimeOutBot, Prefixes.Error);
                 return;
             }
 
@@ -83,7 +83,7 @@ public sealed class MuteCommand : ICommand {
         var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
             Utils.GetHumanizedTimeOffset(duration),
             Utils.Wrap(reason));
-        cmd.Reply(feedback, ":mute: ");
+        cmd.Reply(feedback, Prefixes.Muted);
         cmd.Audit(feedback);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Humanizer;
+using Humanizer;
 
 namespace Boyfriend.Commands;
 
@@ -12,7 +12,7 @@ public sealed class HelpCommand : ICommand {
         foreach (var command in CommandProcessor.Commands)
             toSend.Append(
                 $"\n`{prefix}{command.Aliases[0]}`: {Utils.GetMessage($"CommandDescription{command.Aliases[0].Titleize()}")}");
-        cmd.Reply(toSend.ToString(), ":page_facing_up: ");
+        cmd.Reply(toSend.ToString(), Prefixes.Help);
         toSend.Clear();
 
         return Task.CompletedTask;
