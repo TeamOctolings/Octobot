@@ -127,7 +127,7 @@ public sealed class CommandProcessor {
 
     public bool HasPermission(GuildPermission permission) {
         if (!Context.Guild.CurrentUser.GuildPermissions.Has(permission)) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.NoAccess} {Utils.GetMessage($"BotCannot{permission}")}",
+            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"BotCannot{permission}")}",
                 Context.Message);
             return false;
         }
@@ -135,7 +135,7 @@ public sealed class CommandProcessor {
         if (Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
             || Context.Guild.OwnerId == Context.User.Id) return true;
 
-        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.NoAccess} {Utils.GetMessage($"UserCannot{permission}")}",
+        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"UserCannot{permission}")}",
             Context.Message);
         return false;
     }

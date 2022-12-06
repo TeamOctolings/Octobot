@@ -33,7 +33,7 @@ public sealed class SettingsCommand : ICommand {
                     .AppendFormat(format, currentValue).AppendLine();
             }
 
-            cmd.Reply(currentSettings.ToString(), ReplyEmojis.Settings);
+            cmd.Reply(currentSettings.ToString(), ReplyEmojis.SettingsList);
             currentSettings.Clear();
             return Task.CompletedTask;
         }
