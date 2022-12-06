@@ -29,7 +29,7 @@ public sealed class BanCommand : ICommand {
 
         var feedback = string.Format(Messages.FeedbackUserBanned, toBan.Mention,
             Utils.GetHumanizedTimeOffset(duration), Utils.Wrap(reason));
-        cmd.Reply(feedback, Prefixes.Banned);
+        cmd.Reply(feedback, ReplyEmojis.Banned);
         cmd.Audit(feedback);
 
         if (duration.TotalSeconds > 0)

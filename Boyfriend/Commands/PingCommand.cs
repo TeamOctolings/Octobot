@@ -10,7 +10,7 @@ public sealed class PingCommand : ICommand {
             .Append(Math.Abs(DateTimeOffset.Now.Subtract(cmd.Context.Message.Timestamp).TotalMilliseconds))
             .Append(Messages.Milliseconds);
 
-        cmd.Reply(builder.ToString(), Prefixes.Ping);
+        cmd.Reply(builder.ToString(), ReplyEmojis.Ping);
         builder.Clear();
 
         return Task.CompletedTask;

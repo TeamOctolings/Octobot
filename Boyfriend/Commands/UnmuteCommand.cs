@@ -34,7 +34,7 @@ public sealed class UnmuteCommand : ICommand {
         } else {
             if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
                 DateTimeOffset.Now.ToUnixTimeSeconds()) {
-                cmd.Reply(Messages.MemberNotMuted, Prefixes.Error);
+                cmd.Reply(Messages.MemberNotMuted, ReplyEmojis.Error);
                 return;
             }
 
@@ -42,7 +42,7 @@ public sealed class UnmuteCommand : ICommand {
         }
 
         var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.Wrap(reason));
-        cmd.Reply(feedback, Prefixes.Unmuted);
+        cmd.Reply(feedback, ReplyEmojis.Unmuted);
         cmd.Audit(feedback);
     }
 }

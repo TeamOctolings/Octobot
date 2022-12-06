@@ -24,7 +24,7 @@ public sealed class KickCommand : ICommand {
 
         await toKick.KickAsync(guildKickMessage);
         var format = string.Format(Messages.FeedbackMemberKicked, toKick.Mention, Utils.Wrap(reason));
-        cmd.Reply(format, Prefixes.Kicked);
+        cmd.Reply(format, ReplyEmojis.Kicked);
         cmd.Audit(format);
     }
 }
