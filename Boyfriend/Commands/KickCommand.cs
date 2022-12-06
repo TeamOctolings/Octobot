@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
@@ -24,7 +24,7 @@ public sealed class KickCommand : ICommand {
 
         await toKick.KickAsync(guildKickMessage);
         var format = string.Format(Messages.FeedbackMemberKicked, toKick.Mention, Utils.Wrap(reason));
-        cmd.Reply(format, ":police_car: ");
+        cmd.Reply(format, ReplyEmojis.Kicked);
         cmd.Audit(format);
     }
 }
