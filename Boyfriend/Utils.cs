@@ -11,7 +11,7 @@ using Humanizer.Localisation;
 
 namespace Boyfriend;
 
-public static class Utils {
+public static partial class Utils {
     private static readonly Dictionary<string, string> ReflectionMessageCache = new();
 
     public static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
@@ -48,7 +48,7 @@ public static class Utils {
     }
 
     public static ulong ParseMention(string mention) {
-        return ulong.TryParse(Regex.Replace(mention, "[^0-9]", ""), out var id) ? id : 0;
+        return ulong.TryParse(NumbersOnlyRegex().Replace(mention, ""), out var id) ? id : 0;
     }
 
     public static async Task SendDirectMessage(SocketUser user, string toSend) {
@@ -70,7 +70,7 @@ public static class Utils {
     }
 
     public static void RemoveMuteRoleFromCache(ulong id) {
-        if (MuteRoleCache.ContainsKey(id)) MuteRoleCache.Remove(id);
+        MuteRoleCache.Remove(id);
     }
 
     public static async Task SilentSendAsync(SocketTextChannel? channel, string text, bool allowRoles = false) {
@@ -189,4 +189,7 @@ public static class Utils {
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
         return guild.GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(guild.Id)["EventNotificationChannel"]));
     }
+
+    [GeneratedRegex("[^0-9]")]
+    private static partial Regex NumbersOnlyRegex();
 }

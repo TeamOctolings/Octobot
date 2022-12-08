@@ -21,7 +21,8 @@ public static class Boyfriend {
     };
 
     private static readonly List<Tuple<Game, TimeSpan>> ActivityList = new() {
-        Tuple.Create(new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening), new TimeSpan(0, 3, 18)),
+        Tuple.Create(new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening),
+            new TimeSpan(0, 3, 18)),
         Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
         Tuple.Create(new Game("Kurokotei - Scattered Faith", ActivityType.Listening), new TimeSpan(0, 8, 21)),
         Tuple.Create(new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
@@ -67,13 +68,11 @@ public static class Boyfriend {
 
         EventHandler.InitEvents();
 
-        while (true) {
+        while (ActivityList.Count > 0)
             foreach (var activity in ActivityList) {
                 await Client.SetActivityAsync(activity.Item1);
                 await Task.Delay(activity.Item2);
             }
-        }
-        // ReSharper disable once FunctionNeverReturns
     }
 
     public static Task Log(LogMessage msg) {
@@ -153,3 +152,4 @@ public static class Boyfriend {
         return removedRoles;
     }
 }
+
