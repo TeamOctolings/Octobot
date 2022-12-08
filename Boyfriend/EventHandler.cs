@@ -62,7 +62,7 @@ public static class EventHandler {
             Utils.Wrap(msg.CleanContent)), guild.Id, mention);
     }
 
-    private static Task MessageReceivedEvent(SocketMessage messageParam) {
+    private static Task MessageReceivedEvent(IDeletable messageParam) {
         if (messageParam is not SocketUserMessage message) return Task.CompletedTask;
 
         _ = message.CleanContent.ToLower() switch {
@@ -75,7 +75,7 @@ public static class EventHandler {
         return Task.CompletedTask;
     }
 
-    private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, SocketMessage messageSocket,
+    private static async Task MessageUpdatedEvent(Cacheable<IMessage, ulong> messageCached, IMessage messageSocket,
         ISocketMessageChannel channel) {
         var msg = messageCached.Value;
         if (channel is not SocketGuildChannel gChannel || msg is null or ISystemMessage ||
@@ -175,3 +175,4 @@ public static class EventHandler {
                 Utils.GetHumanizedTimeOffset(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));
     }
 }
+
