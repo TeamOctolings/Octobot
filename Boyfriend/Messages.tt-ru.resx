@@ -196,7 +196,7 @@
     <value>канал бот-уведомлений</value>
   </data>
   <data name="LanguageNotSupported" xml:space="preserve">
-    <value>такого языка нету, ты шо</value>
+    <value>такого языка нету, ты шо, есть только такие:</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>да</value>
