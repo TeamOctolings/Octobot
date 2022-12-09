@@ -33,9 +33,7 @@ jobs:
       with:
         solutionPath: ./Boyfriend-CSharp.sln
         exclude: |
-          **Messages.**
-          **.g.cs
-          **.editorconfig
-          **.AssemblyInfo.cs
+          **Messages.**.resx
+          **Messages.Designer.cs
         ignoreIssueType: InvertIf
         solutionWideAnalysis: true
