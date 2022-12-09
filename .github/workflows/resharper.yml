@@ -32,8 +32,5 @@ jobs:
       uses: muno92/resharper_inspectcode@1.6.0
       with:
         solutionPath: ./Boyfriend-CSharp.sln
-        exclude: |
-          **Messages.**.resx
-          **Messages.Designer.cs
         ignoreIssueType: InvertIf
         solutionWideAnalysis: true
