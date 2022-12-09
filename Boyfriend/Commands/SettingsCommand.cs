@@ -113,7 +113,7 @@ public sealed class SettingsCommand : ICommand {
             if (selectedSetting is "Lang" && !Utils.CultureInfoCache.ContainsKey(value)) {
                 var langNotSupported = Boyfriend.StringBuilder.Append($"{Messages.LanguageNotSupported} ");
                 foreach (var lang in Utils.CultureInfoCache) langNotSupported.Append($"`{lang.Key}`, ");
-                langNotSupported.Remove(langNotSupported.Length-2, 2);
+                langNotSupported.Remove(langNotSupported.Length - 2, 2);
                 cmd.Reply(langNotSupported.ToString(), ReplyEmojis.Error);
                 langNotSupported.Clear();
                 return Task.CompletedTask;
