@@ -25,9 +25,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    #- name: Setup .NET Core SDK
-    #  uses: actions/setup-dotnet@v3.0.3
-
     - name: Restore dependencies and tools
       run: dotnet restore
 
@@ -36,5 +33,9 @@ jobs:
       with:
         solutionPath: ./Boyfriend-CSharp.sln
         exclude: |
-          **Messages.Designer.cs
+          **Messages.**
+          **.g.cs
+          **.editorconfig
+          **.AssemblyInfo.cs
+        ignoreIssueType: InvertIf
         solutionWideAnalysis: true

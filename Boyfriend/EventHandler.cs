@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Discord;
+﻿using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
 
@@ -9,17 +8,16 @@ public static class EventHandler {
     private static readonly DiscordSocketClient Client = Boyfriend.Client;
     private static bool _sendReadyMessages = true;
 
-    [SuppressMessage("ReSharper", "ConvertClosureToMethodGroup")]
     public static void InitEvents() {
-        Client.Ready += () => ReadyEvent();
-        Client.MessageDeleted += (x, y) => MessageDeletedEvent(x, y);
-        Client.MessageReceived += x => MessageReceivedEvent(x);
-        Client.MessageUpdated += (x, y, z) => MessageUpdatedEvent(x, y, z);
-        Client.UserJoined += x => UserJoinedEvent(x);
-        Client.GuildScheduledEventCreated += x => ScheduledEventCreatedEvent(x);
-        Client.GuildScheduledEventCancelled += x => ScheduledEventCancelledEvent(x);
-        Client.GuildScheduledEventStarted += x => ScheduledEventStartedEvent(x);
-        Client.GuildScheduledEventCompleted += x => ScheduledEventCompletedEvent(x);
+        Client.Ready += ReadyEvent;
+        Client.MessageDeleted += MessageDeletedEvent;
+        Client.MessageReceived += MessageReceivedEvent;
+        Client.MessageUpdated += MessageUpdatedEvent;
+        Client.UserJoined += UserJoinedEvent;
+        Client.GuildScheduledEventCreated += ScheduledEventCreatedEvent;
+        Client.GuildScheduledEventCancelled += ScheduledEventCancelledEvent;
+        Client.GuildScheduledEventStarted += ScheduledEventStartedEvent;
+        Client.GuildScheduledEventCompleted += ScheduledEventCompletedEvent;
     }
 
     private static Task ReadyEvent() {
@@ -176,4 +174,3 @@ public static class EventHandler {
                 Utils.GetHumanizedTimeOffset(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));
     }
 }
-

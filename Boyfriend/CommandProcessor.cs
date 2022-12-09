@@ -73,7 +73,8 @@ public sealed class CommandProcessor {
     }
 
     public void Reply(string response, string? customEmoji = null) {
-        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{customEmoji ?? ReplyEmojis.Success} {response}", Context.Message);
+        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{customEmoji ?? ReplyEmojis.Success} {response}",
+            Context.Message);
     }
 
     public void Audit(string action, bool isPublic = true) {
@@ -127,17 +128,21 @@ public sealed class CommandProcessor {
 
     public bool HasPermission(GuildPermission permission) {
         if (!Context.Guild.CurrentUser.GuildPermissions.Has(permission)) {
-            Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"BotCannot{permission}")}",
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"BotCannot{permission}")}",
                 Context.Message);
             return false;
         }
 
-        if (Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
-            || Context.Guild.OwnerId == Context.User.Id) return true;
+        if (!Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
+            && Context.Guild.OwnerId != Context.User.Id) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"UserCannot{permission}")}",
+                Context.Message);
+            return false;
+        }
 
-        Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"UserCannot{permission}")}",
-            Context.Message);
-        return false;
+        return true;
     }
 
     public SocketGuildUser? GetMember(SocketUser user) {
@@ -202,11 +207,14 @@ public sealed class CommandProcessor {
             return null;
         }
 
-        if (i <= max) return i;
-        Utils.SafeAppendToBuilder(_stackedReplyMessage,
-            $"{ReplyEmojis.InvalidArgument} {string.Format(Utils.GetMessage($"{argument}TooLarge"), max.ToString())}",
-            Context.Message);
-        return null;
+        if (i > max) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{ReplyEmojis.InvalidArgument} {string.Format(Utils.GetMessage($"{argument}TooLarge"), max.ToString())}",
+                Context.Message);
+            return null;
+        }
+
+        return i;
     }
 
     public static TimeSpan GetTimeSpan(string[] args, int index) {
@@ -268,9 +276,12 @@ public sealed class CommandProcessor {
             return false;
         }
 
-        if (Context.Guild.Owner.Id == Context.User.Id || GetMember().Hierarchy > user.Hierarchy) return true;
-        Utils.SafeAppendToBuilder(_stackedReplyMessage,
-            $"{ReplyEmojis.CantInteract} {Utils.GetMessage($"UserCannot{action}Target")}", Context.Message);
-        return false;
+        if (Context.Guild.Owner.Id != Context.User.Id && GetMember().Hierarchy <= user.Hierarchy) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{ReplyEmojis.CantInteract} {Utils.GetMessage($"UserCannot{action}Target")}", Context.Message);
+            return false;
+        }
+
+        return true;
     }
 }
