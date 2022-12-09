@@ -60,7 +60,7 @@ public static class Boyfriend {
     private static async Task Init() {
         var token = (await File.ReadAllTextAsync("token.txt")).Trim();
 
-        Client.Log += x => Log(x);
+        Client.Log += Log;
 
         await Client.LoginAsync(TokenType.Bot, token);
         await Client.StartAsync();
@@ -151,4 +151,3 @@ public static class Boyfriend {
         return removedRoles;
     }
 }
-
