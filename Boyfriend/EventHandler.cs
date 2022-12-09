@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -69,8 +69,7 @@ public static class EventHandler {
             "whoami" => message.ReplyAsync("`nobody`"),
             "сука !!" => message.ReplyAsync("`root`"),
             "воооо" => message.ReplyAsync("`removing /...`"),
-            "op ??" => message.ReplyAsync(
-                "некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
+            "op ??" => message.ReplyAsync("некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
             _ => new CommandProcessor(message).HandleCommandAsync()
         };
         return Task.CompletedTask;
