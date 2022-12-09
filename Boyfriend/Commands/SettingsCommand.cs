@@ -1,6 +1,4 @@
 using Discord;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace Boyfriend.Commands;
 
