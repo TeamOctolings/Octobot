@@ -1,4 +1,5 @@
-![Boyfriend](https://user-images.githubusercontent.com/95250141/206785237-e3074c8b-07a1-45cd-9ca9-71e48e80b267.png)
+![Boyfriend-CSharp-Dark](https://user-images.githubusercontent.com/95250141/206895339-ef5510c8-8b30-4887-b89c-5dc14a24b18a.png#gh-dark-mode-only)
+![Boyfriend-CSharp-Light](https://user-images.githubusercontent.com/95250141/206895340-3415d97d-91fd-4fb6-8c17-4e1bf340e1df.png#gh-light-mode-only)
 
 ![GitHub License](https://img.shields.io/github/license/l1ttleO/Boyfriend-CSharp)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/l1ttleO/Boyfriend-CSharp/ReSharper)
