@@ -274,7 +274,7 @@
     <value>Event {0} is cancelled!{1}</value>
   </data>
   <data name="EventCompleted" xml:space="preserve">
-    <value>Event {0} has completed! Duration: {1}</value>
+      <value>Event {0} has completed! Duration:{1}</value>
   </data>
   <data name="Ever" xml:space="preserve">
     <value>ever</value>

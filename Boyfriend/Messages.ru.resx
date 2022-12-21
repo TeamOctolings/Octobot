@@ -274,7 +274,7 @@
     <value>Событие {0} отменено!{1}</value>
   </data>
   <data name="EventCompleted" xml:space="preserve">
-    <value>Событие {0} завершено! Продолжительность: {1}</value>
+      <value>Событие {0} завершено! Продолжительность:{1}</value>
   </data>
   <data name="Ever" xml:space="preserve">
     <value>всегда</value>

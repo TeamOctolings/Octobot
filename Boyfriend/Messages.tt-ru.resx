@@ -274,7 +274,7 @@
     <value>квест {0} отменен!{1}</value>
   </data>
   <data name="EventCompleted" xml:space="preserve">
-    <value>квест {0} завершен! все это длилось {1}</value>
+      <value>квест {0} завершен! все это длилось{1}</value>
   </data>
   <data name="Ever" xml:space="preserve">
     <value>всегда</value>

@@ -21,12 +21,13 @@ public static class Boyfriend {
     };
 
     private static readonly List<Tuple<Game, TimeSpan>> ActivityList = new() {
-        Tuple.Create(new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening), new TimeSpan(0, 3, 40)),
+        Tuple.Create(new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening),
+            new TimeSpan(0, 3, 40)),
         Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
         Tuple.Create(new Game("Kurokotei - Scattered Faith", ActivityType.Listening), new TimeSpan(0, 8, 21)),
         Tuple.Create(new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
         Tuple.Create(new Game("RetroSpecter - Genocide", ActivityType.Listening), new TimeSpan(0, 5, 52)),
-        Tuple.Create(new Game("Dimrain47 - At the Speed of Light", ActivityType.Listening), new TimeSpan(0, 4, 10))
+        Tuple.Create(new Game("beatMARIO - Night of Knights", ActivityType.Listening), new TimeSpan(0, 4, 10))
     };
 
     public static readonly DiscordSocketClient Client = new(Config);

@@ -119,7 +119,7 @@ public static partial class Utils {
 
     public static string GetHumanizedTimeOffset(TimeSpan span) {
         return span.TotalSeconds > 0
-            ? $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture)}"
+            ? $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture.Name.Contains("RU") ? CultureInfoCache["ru"] : Messages.Culture)}"
             : Messages.Ever;
     }
 
