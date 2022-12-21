@@ -100,8 +100,9 @@ public struct GuildData {
         if (guild.MemberCount > MemberData.Count)
             foreach (var member in guild.Users) {
                 if (MemberData.TryGetValue(member.Id, out var memberData)) {
-                    if (memberData is { IsInGuild: false, BannedUntil: > -1 } &&
-                        DateTimeOffset.Now.ToUnixTimeSeconds() - memberData.LeftAt.Last() >
+                    if (memberData is { IsInGuild: false } &&
+                        DateTimeOffset.Now.ToUnixTimeSeconds() -
+                        Math.Max(memberData.LeftAt.Last(), memberData.BannedUntil) >
                         60 * 60 * 24 * 30) {
                         File.Delete($"{id}/MemberData/{memberData.Id}.json");
                         MemberData.Remove(memberData.Id);
