@@ -1,8 +1,6 @@
-using System.Collections.ObjectModel;
 using System.Text;
 using Discord;
 using Discord.WebSocket;
-using Newtonsoft.Json;
 
 namespace Boyfriend;
 
@@ -31,28 +29,6 @@ public static class Boyfriend {
     };
 
     public static readonly DiscordSocketClient Client = new(Config);
-
-    private static readonly Dictionary<ulong, Dictionary<string, string>> GuildConfigDictionary = new();
-
-    private static readonly Dictionary<ulong, Dictionary<ulong, ReadOnlyCollection<ulong>>> RemovedRolesDictionary =
-        new();
-
-    public static readonly Dictionary<string, string> DefaultConfig = new() {
-        { "Prefix", "!" },
-        { "Lang", "en" },
-        { "ReceiveStartupMessages", "false" },
-        { "WelcomeMessage", "default" },
-        { "SendWelcomeMessages", "true" },
-        { "BotLogChannel", "0" },
-        { "StarterRole", "0" },
-        { "MuteRole", "0" },
-        { "RemoveRolesOnMute", "false" },
-        { "FrowningFace", "true" },
-        { "EventStartedReceivers", "interested,role" },
-        { "EventNotificationRole", "0" },
-        { "EventNotificationChannel", "0" },
-        { "EventEarlyNotificationOffset", "0" }
-    };
 
     public static void Main() {
         Init().GetAwaiter().GetResult();
@@ -102,42 +78,7 @@ public static class Boyfriend {
         return Task.CompletedTask;
     }
 
-    public static async Task WriteGuildConfigAsync(ulong id) {
-        await File.WriteAllTextAsync($"config_{id}.json",
-            JsonConvert.SerializeObject(GuildConfigDictionary[id], Formatting.Indented));
-
-        if (RemovedRolesDictionary.TryGetValue(id, out var removedRoles))
-            await File.WriteAllTextAsync($"removedroles_{id}.json",
-                JsonConvert.SerializeObject(removedRoles, Formatting.Indented));
-    }
-
-    public static Dictionary<string, string> GetGuildConfig(ulong id) {
-        if (GuildConfigDictionary.TryGetValue(id, out var cfg)) return cfg;
-
-        var path = $"config_{id}.json";
-
-        if (!File.Exists(path)) File.Create(path).Dispose();
-
-        var json = File.ReadAllText(path);
-        var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(json)
-                     ?? new Dictionary<string, string>();
-
-        if (config.Keys.Count < DefaultConfig.Keys.Count) {
-            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-            // Conversion will result in a lot of memory allocations
-            foreach (var key in DefaultConfig.Keys)
-                if (!config.ContainsKey(key))
-                    config.Add(key, DefaultConfig[key]);
-        } else if (config.Keys.Count > DefaultConfig.Keys.Count) {
-            foreach (var key in config.Keys.Where(key => !DefaultConfig.ContainsKey(key))) config.Remove(key);
-        }
-
-        GuildConfigDictionary.Add(id, config);
-
-        return config;
-    }
-
-    public static Dictionary<ulong, ReadOnlyCollection<ulong>> GetRemovedRoles(ulong id) {
+    /*public static Dictionary<ulong, ReadOnlyCollection<ulong>> GetRemovedRoles(ulong id) {
         if (RemovedRolesDictionary.TryGetValue(id, out var dict)) return dict;
         var path = $"removedroles_{id}.json";
 
@@ -150,5 +91,5 @@ public static class Boyfriend {
         RemovedRolesDictionary.Add(id, removedRoles);
 
         return removedRoles;
-    }
+    }*/
 }

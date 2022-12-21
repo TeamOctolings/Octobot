@@ -1,3 +1,4 @@
+using Boyfriend.Data;
 using Discord;
 
 namespace Boyfriend.Commands;
@@ -14,9 +15,11 @@ public sealed class SettingsCommand : ICommand {
         if (args.Length is 0) {
             var currentSettings = Boyfriend.StringBuilder.AppendLine(Messages.CurrentSettings);
 
-            foreach (var setting in Boyfriend.DefaultConfig) {
+            foreach (var setting in GuildData.DefaultConfiguration) {
                 var format = "{0}";
-                var currentValue = config[setting.Key] is "default" ? Messages.DefaultWelcomeMessage : config[setting.Key];
+                var currentValue = config[setting.Key] is "default"
+                    ? Messages.DefaultWelcomeMessage
+                    : config[setting.Key];
 
                 if (setting.Key.EndsWith("Channel")) {
                     if (guild.GetTextChannel(ulong.Parse(currentValue)) is not null) format = "<#{0}>";
@@ -43,7 +46,7 @@ public sealed class SettingsCommand : ICommand {
         var exists = false;
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         // Too many allocations
-        foreach (var setting in Boyfriend.DefaultConfig.Keys) {
+        foreach (var setting in GuildData.DefaultConfiguration.Keys) {
             if (selectedSetting != setting.ToLower()) continue;
             selectedSetting = setting;
             exists = true;
@@ -70,7 +73,7 @@ public sealed class SettingsCommand : ICommand {
             }
         } else { value = "reset"; }
 
-        if (IsBool(Boyfriend.DefaultConfig[selectedSetting]) && !IsBool(value)) {
+        if (IsBool(GuildData.DefaultConfiguration[selectedSetting]) && !IsBool(value)) {
             value = value switch {
                 "y" or "yes" or "д" or "да" => "true",
                 "n" or "no" or "н" or "нет" => "false",
@@ -95,14 +98,14 @@ public sealed class SettingsCommand : ICommand {
 
         var formattedValue = selectedSetting switch {
             "WelcomeMessage" => Utils.Wrap(Messages.DefaultWelcomeMessage),
-            "EventStartedReceivers" => Utils.Wrap(Boyfriend.DefaultConfig[selectedSetting])!,
+            "EventStartedReceivers" => Utils.Wrap(GuildData.DefaultConfiguration[selectedSetting])!,
             _ => value is "reset" or "default" ? Messages.SettingNotDefined
                 : IsBool(value) ? YesOrNo(value is "true")
                 : string.Format(formatting, value)
         };
 
         if (value is "reset" or "default") {
-            config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
+            config[selectedSetting] = GuildData.DefaultConfiguration[selectedSetting];
         } else {
             if (value == config[selectedSetting]) {
                 cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
@@ -155,3 +158,4 @@ public sealed class SettingsCommand : ICommand {
         return value is "true" or "false";
     }
 }
+

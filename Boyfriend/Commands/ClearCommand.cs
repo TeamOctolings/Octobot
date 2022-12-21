@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Diagnostics;
+using Discord;
 using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
@@ -7,7 +8,7 @@ public sealed class ClearCommand : ICommand {
     public string[] Aliases { get; } = { "clear", "purge", "очистить", "стереть" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
-        if (cmd.Context.Channel is not SocketTextChannel channel) throw new Exception();
+        if (cmd.Context.Channel is not SocketTextChannel channel) throw new UnreachableException();
 
         if (!cmd.HasPermission(GuildPermission.ManageMessages)) return;
 
@@ -21,3 +22,4 @@ public sealed class ClearCommand : ICommand {
         cmd.Audit(string.Format(Messages.FeedbackMessagesCleared, (toDelete + 1).ToString()));
     }
 }
+

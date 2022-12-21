@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,13 +13,13 @@ using Humanizer.Localisation;
 namespace Boyfriend;
 
 public static partial class Utils {
-    private static readonly Dictionary<string, string> ReflectionMessageCache = new();
-
     public static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
         { "ru", new CultureInfo("ru-RU") },
         { "en", new CultureInfo("en-US") },
         { "mctaylors-ru", new CultureInfo("tt-RU") }
     };
+
+    private static readonly Dictionary<string, string> ReflectionMessageCache = new();
 
     private static readonly Dictionary<ulong, SocketRole> MuteRoleCache = new();
 
@@ -76,7 +77,7 @@ public static partial class Utils {
     public static async Task SilentSendAsync(SocketTextChannel? channel, string text, bool allowRoles = false) {
         try {
             if (channel is null || text.Length is 0 or > 2000)
-                throw new Exception($"Message length is out of range: {text.Length}");
+                throw new UnreachableException($"Message length is out of range: {text.Length}");
 
             await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
         } catch (Exception e) {
@@ -193,3 +194,4 @@ public static partial class Utils {
     [GeneratedRegex("[^0-9]")]
     private static partial Regex NumbersOnlyRegex();
 }
+

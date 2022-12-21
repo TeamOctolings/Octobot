@@ -14,6 +14,7 @@ public static class EventHandler {
         Client.MessageReceived += MessageReceivedEvent;
         Client.MessageUpdated += MessageUpdatedEvent;
         Client.UserJoined += UserJoinedEvent;
+        Client.UserLeft += UserLeftEvent;
         Client.GuildScheduledEventCreated += ScheduledEventCreatedEvent;
         Client.GuildScheduledEventCancelled += ScheduledEventCancelledEvent;
         Client.GuildScheduledEventStarted += ScheduledEventStartedEvent;
@@ -67,7 +68,8 @@ public static class EventHandler {
             "whoami" => message.ReplyAsync("`nobody`"),
             "сука !!" => message.ReplyAsync("`root`"),
             "воооо" => message.ReplyAsync("`removing /...`"),
-            "op ??" => message.ReplyAsync("некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
+            "op ??" => message.ReplyAsync(
+                "некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
             _ => new CommandProcessor(message).HandleCommandAsync()
         };
         return Task.CompletedTask;
@@ -90,6 +92,20 @@ public static class EventHandler {
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
+        var guild = user.Guild;
+        var config = Boyfriend.GetGuildConfig(guild.Id);
+        Utils.SetCurrentLanguage(guild.Id);
+
+        if (config["SendWelcomeMessages"] is "true")
+            await Utils.SilentSendAsync(guild.SystemChannel,
+                string.Format(config["WelcomeMessage"] is "default"
+                    ? Messages.DefaultWelcomeMessage
+                    : config["WelcomeMessage"], user.Mention, guild.Name));
+
+        if (config["StarterRole"] is not "0") await user.AddRoleAsync(ulong.Parse(config["StarterRole"]));
+    }
+
+    private static async Task UserLeftEvent(SocketGuildUser user) {
         var guild = user.Guild;
         var config = Boyfriend.GetGuildConfig(guild.Id);
         Utils.SetCurrentLanguage(guild.Id);
