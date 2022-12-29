@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Boyfriend.Commands;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -20,8 +19,6 @@ public static partial class Utils {
     };
 
     private static readonly Dictionary<string, string> ReflectionMessageCache = new();
-
-    private static readonly Dictionary<ulong, SocketRole> MuteRoleCache = new();
 
     private static readonly AllowedMentions AllowRoles = new() {
         AllowedTypes = AllowedMentionTypes.Roles
@@ -56,22 +53,6 @@ public static partial class Utils {
         try { await user.SendMessageAsync(toSend); } catch (HttpException e) {
             if (e.DiscordCode is not DiscordErrorCode.CannotSendMessageToUser) throw;
         }
-    }
-
-    public static SocketRole? GetMuteRole(SocketGuild guild) {
-        var id = ulong.Parse(Boyfriend.GetGuildConfig(guild.Id)["MuteRole"]);
-        if (MuteRoleCache.TryGetValue(id, out var cachedMuteRole)) return cachedMuteRole;
-        foreach (var x in guild.Roles) {
-            if (x.Id != id) continue;
-            MuteRoleCache.Add(id, x);
-            return x;
-        }
-
-        return null;
-    }
-
-    public static void RemoveMuteRoleFromCache(ulong id) {
-        MuteRoleCache.Remove(id);
     }
 
     public static async Task SilentSendAsync(SocketTextChannel? channel, string text, bool allowRoles = false) {
@@ -147,46 +128,6 @@ public static partial class Utils {
         appendTo.AppendLine(appendWhat);
     }
 
-    public static async Task DelayedUnbanAsync(CommandProcessor cmd, ulong banned, string reason, TimeSpan duration) {
-        await Task.Delay(duration);
-        SetCurrentLanguage(cmd.Context.Guild.Id);
-        await UnbanCommand.UnbanUserAsync(cmd, banned, reason);
-    }
-
-    public static async Task DelayedUnmuteAsync(CommandProcessor cmd, SocketGuildUser muted, string reason,
-        TimeSpan duration) {
-        await Task.Delay(duration);
-        SetCurrentLanguage(cmd.Context.Guild.Id);
-        await UnmuteCommand.UnmuteMemberAsync(cmd, muted, reason);
-    }
-
-    public static async Task SendEarlyEventStartNotificationAsync(SocketTextChannel? channel,
-        SocketGuildEvent scheduledEvent, int minuteOffset) {
-        try {
-            await Task.Delay(scheduledEvent.StartTime.Subtract(DateTimeOffset.Now)
-                .Subtract(TimeSpan.FromMinutes(minuteOffset)));
-            var guild = scheduledEvent.Guild;
-            if (guild.GetEvent(scheduledEvent.Id) is null) return;
-            var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
-            SetCurrentLanguage(guild.Id);
-
-            var receivers = eventConfig["EventStartedReceivers"];
-            var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
-            var mentions = Boyfriend.StringBuilder;
-
-            if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
-            if (receivers.Contains("users") || receivers.Contains("interested"))
-                mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
-                    (current, user) => current.Append($"{user.Mention} "));
-            await channel?.SendMessageAsync(string.Format(Messages.EventEarlyNotification, mentions,
-                Wrap(scheduledEvent.Name), scheduledEvent.StartTime.ToUnixTimeSeconds().ToString()))!;
-            mentions.Clear();
-        } catch (Exception e) {
-            await Boyfriend.Log(new LogMessage(LogSeverity.Error, nameof(Utils),
-                "Exception while sending early event start notification", e));
-        }
-    }
-
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
         return guild.GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(guild.Id)["EventNotificationChannel"]));
     }
@@ -194,4 +135,3 @@ public static partial class Utils {
     [GeneratedRegex("[^0-9]")]
     private static partial Regex NumbersOnlyRegex();
 }
-

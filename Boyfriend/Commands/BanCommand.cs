@@ -1,3 +1,4 @@
+using Boyfriend.Data;
 using Discord;
 using Discord.WebSocket;
 
@@ -32,7 +33,7 @@ public sealed class BanCommand : ICommand {
         cmd.Reply(feedback, ReplyEmojis.Banned);
         cmd.Audit(feedback);
 
-        if (duration.TotalSeconds > 0)
-            await Task.FromResult(Utils.DelayedUnbanAsync(cmd, toBan.Id, Messages.PunishmentExpired, duration));
+        GuildData.FromSocketGuild(guild).MemberData[toBan.Id].BannedUntil
+            = DateTimeOffset.Now.Add(duration).ToUnixTimeSeconds();
     }
 }

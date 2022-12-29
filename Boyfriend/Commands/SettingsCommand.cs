@@ -10,7 +10,8 @@ public sealed class SettingsCommand : ICommand {
         if (!cmd.HasPermission(GuildPermission.ManageGuild)) return Task.CompletedTask;
 
         var guild = cmd.Context.Guild;
-        var config = Boyfriend.GetGuildConfig(guild.Id);
+        var data = GuildData.FromSocketGuild(guild);
+        var config = data.Preferences;
 
         if (args.Length is 0) {
             var currentSettings = Boyfriend.StringBuilder.AppendLine(Messages.CurrentSettings);
@@ -132,7 +133,7 @@ public sealed class SettingsCommand : ICommand {
                 return Task.CompletedTask;
             }
 
-            if (selectedSetting is "MuteRole") Utils.RemoveMuteRoleFromCache(ulong.Parse(config[selectedSetting]));
+            if (selectedSetting is "MuteRole") data.MuteRole = guild.GetRole(mention);
 
             config[selectedSetting] = value;
         }
@@ -158,4 +159,3 @@ public sealed class SettingsCommand : ICommand {
         return value is "true" or "false";
     }
 }
-

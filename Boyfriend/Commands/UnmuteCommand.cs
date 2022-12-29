@@ -1,3 +1,4 @@
+using Boyfriend.Data;
 using Discord;
 using Discord.WebSocket;
 
@@ -19,18 +20,10 @@ public sealed class UnmuteCommand : ICommand {
     public static async Task UnmuteMemberAsync(CommandProcessor cmd, SocketGuildUser toUnmute,
         string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
-        var role = Utils.GetMuteRole(cmd.Context.Guild);
+        var role = GuildData.FromSocketGuild(cmd.Context.Guild).MuteRole;
 
         if (role is not null && toUnmute.Roles.Contains(role)) {
-            var rolesRemoved = Boyfriend.GetRemovedRoles(cmd.Context.Guild.Id);
-
-            if (rolesRemoved.TryGetValue(toUnmute.Id, out var unmutedRemovedRoles)) {
-                await toUnmute.AddRolesAsync(unmutedRemovedRoles);
-                rolesRemoved.Remove(toUnmute.Id);
-                cmd.ConfigWriteScheduled = true;
-            }
-
-            await toUnmute.RemoveRoleAsync(role, requestOptions);
+            // TODO: Return roles
         } else {
             if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
                 DateTimeOffset.Now.ToUnixTimeSeconds()) {
