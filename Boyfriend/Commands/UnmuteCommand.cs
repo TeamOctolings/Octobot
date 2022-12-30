@@ -20,10 +20,12 @@ public sealed class UnmuteCommand : ICommand {
     public static async Task UnmuteMemberAsync(CommandProcessor cmd, SocketGuildUser toUnmute,
         string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
-        var role = GuildData.FromSocketGuild(cmd.Context.Guild).MuteRole;
+        var data = GuildData.FromSocketGuild(cmd.Context.Guild);
+        var role = data.MuteRole;
 
         if (role is not null && toUnmute.Roles.Contains(role)) {
-            // TODO: Return roles
+            await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
+            await toUnmute.RemoveRoleAsync(role, requestOptions);
         } else {
             if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
                 DateTimeOffset.Now.ToUnixTimeSeconds()) {
@@ -31,7 +33,7 @@ public sealed class UnmuteCommand : ICommand {
                 return;
             }
 
-            await toUnmute.RemoveTimeOutAsync();
+            await toUnmute.RemoveTimeOutAsync(requestOptions);
         }
 
         var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.Wrap(reason));

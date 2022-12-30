@@ -1,5 +1,6 @@
 using System.Text;
 using Boyfriend.Commands;
+using Boyfriend.Data;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -12,7 +13,8 @@ public sealed class CommandProcessor {
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
-        new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
+        new SettingsCommand(), new UnbanCommand(), new UnmuteCommand(),
+        new RemindCommand()
     };
 
     private readonly StringBuilder _stackedPrivateFeedback = new();
@@ -30,11 +32,10 @@ public sealed class CommandProcessor {
 
     public async Task HandleCommandAsync() {
         var guild = Context.Guild;
-        var config = Boyfriend.GetGuildConfig(guild.Id);
-        var muteRole = Utils.GetMuteRole(guild);
-        Utils.SetCurrentLanguage(guild.Id);
+        var data = GuildData.FromSocketGuild(guild);
+        Utils.SetCurrentLanguage(guild);
 
-        if (GetMember().Roles.Contains(muteRole)) {
+        if (GetMember().Roles.Contains(data.MuteRole)) {
             _ = Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
             return;
         }
@@ -42,7 +43,7 @@ public sealed class CommandProcessor {
         var list = Context.Message.Content.Split("\n");
         var cleanList = Context.Message.CleanContent.Split("\n");
         for (var i = 0; i < list.Length; i++)
-            _tasks.Add(RunCommandOnLine(list[i], cleanList[i], config["Prefix"]));
+            _tasks.Add(RunCommandOnLine(list[i], cleanList[i], data.Preferences["Prefix"]));
 
         try { Task.WaitAll(_tasks.ToArray()); } catch (AggregateException e) {
             foreach (var ex in e.InnerExceptions)
@@ -52,7 +53,7 @@ public sealed class CommandProcessor {
 
         _tasks.Clear();
 
-        if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfigAsync(guild.Id);
+        if (ConfigWriteScheduled) await data.Save(true);
 
         SendFeedbacks();
     }
@@ -80,7 +81,7 @@ public sealed class CommandProcessor {
     public void Audit(string action, bool isPublic = true) {
         var format = $"*[{Context.User.Mention}: {action}]*";
         if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, Context.Guild.SystemChannel);
-        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetBotLogChannel(Context.Guild.Id));
+        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetBotLogChannel(Context.Guild));
         if (_tasks.Count is 0) SendFeedbacks(false);
     }
 
@@ -88,7 +89,7 @@ public sealed class CommandProcessor {
         if (reply && _stackedReplyMessage.Length > 0)
             _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
-        var adminChannel = Utils.GetBotLogChannel(Context.Guild.Id);
+        var adminChannel = Utils.GetBotLogChannel(Context.Guild);
         var systemChannel = Context.Guild.SystemChannel;
         if (_stackedPrivateFeedback.Length > 0 && adminChannel is not null &&
             adminChannel.Id != Context.Message.Channel.Id) {

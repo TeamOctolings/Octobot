@@ -5,7 +5,7 @@ using Discord.WebSocket;
 namespace Boyfriend.Data;
 
 public record GuildData {
-    public static readonly Dictionary<string, string> DefaultConfiguration = new() {
+    public static readonly Dictionary<string, string> DefaultPreferences = new() {
         { "Prefix", "!" },
         { "Lang", "en" },
         { "ReceiveStartupMessages", "false" },
@@ -21,6 +21,7 @@ public record GuildData {
         { "EventNotificationRole", "0" },
         { "EventNotificationChannel", "0" },
         { "EventEarlyNotificationOffset", "0" }
+        // TODO: { "AutoStartEvents", "false" }
     };
 
     private static readonly Dictionary<ulong, GuildData> GuildDataDictionary = new();
@@ -36,52 +37,49 @@ public record GuildData {
     [SuppressMessage("Performance", "CA1853:Unnecessary call to \'Dictionary.ContainsKey(key)\'")]
     // https://github.com/dotnet/roslyn-analyzers/issues/6377
     private GuildData(SocketGuild guild) {
-        var id = guild.Id;
-        if (!Directory.Exists($"{id}")) Directory.CreateDirectory($"{id}");
-        if (!Directory.Exists($"{id}/MemberData")) Directory.CreateDirectory($"{id}/MemberData");
-        if (!File.Exists($"{id}/Configuration.json")) File.Create($"{id}/Configuration.json").Dispose();
+        if (!Directory.Exists($"{_id}")) Directory.CreateDirectory($"{_id}");
+        if (!Directory.Exists($"{_id}/MemberData")) Directory.CreateDirectory($"{_id}/MemberData");
+        if (!File.Exists($"{_id}/Configuration.json")) File.Create($"{_id}/Configuration.json").Dispose();
         Preferences
-            = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText($"{id}/Configuration.json")) ??
+            = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText($"{_id}/Configuration.json")) ??
               new Dictionary<string, string>();
 
         // ReSharper disable twice ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        if (Preferences.Keys.Count < DefaultConfiguration.Keys.Count)
-            foreach (var key in DefaultConfiguration.Keys)
+        if (Preferences.Keys.Count < DefaultPreferences.Keys.Count)
+            foreach (var key in DefaultPreferences.Keys)
                 if (!Preferences.ContainsKey(key))
-                    Preferences.Add(key, DefaultConfiguration[key]);
-        if (Preferences.Keys.Count > DefaultConfiguration.Keys.Count)
+                    Preferences.Add(key, DefaultPreferences[key]);
+        if (Preferences.Keys.Count > DefaultPreferences.Keys.Count)
             foreach (var key in Preferences.Keys)
-                if (!DefaultConfiguration.ContainsKey(key))
+                if (!DefaultPreferences.ContainsKey(key))
                     Preferences.Remove(key);
         Preferences.TrimExcess();
 
         MemberData = new Dictionary<ulong, MemberData>();
-        foreach (var data in Directory.GetFiles($"{id}/MemberData")) {
-            var deserialised = JsonSerializer.Deserialize<MemberData>(File.ReadAllText($"{id}/MemberData/{data}.json"));
+        foreach (var data in Directory.GetFiles($"{_id}/MemberData")) {
+            var deserialised
+                = JsonSerializer.Deserialize<MemberData>(File.ReadAllText($"{_id}/MemberData/{data}.json"));
             MemberData.Add(deserialised!.Id, deserialised);
         }
 
-        if (guild.MemberCount > MemberData.Count)
-            foreach (var member in guild.Users) {
-                if (MemberData.TryGetValue(member.Id, out var memberData)) {
-                    if (!memberData.IsInGuild &&
-                        DateTimeOffset.Now.ToUnixTimeSeconds() -
-                        Math.Max(memberData.LeftAt.Last(), memberData.BannedUntil) >
-                        60 * 60 * 24 * 30) {
-                        File.Delete($"{id}/MemberData/{memberData.Id}.json");
-                        MemberData.Remove(memberData.Id);
-                    }
 
-                    continue;
+        foreach (var member in guild.Users) {
+            if (MemberData.TryGetValue(member.Id, out var memberData)) {
+                if (!memberData.IsInGuild &&
+                    DateTimeOffset.Now.ToUnixTimeSeconds() -
+                    Math.Max(memberData.LeftAt.Last(), memberData.BannedUntil) >
+                    60 * 60 * 24 * 30) {
+                    File.Delete($"{_id}/MemberData/{memberData.Id}.json");
+                    MemberData.Remove(memberData.Id);
                 }
 
-                var data = new MemberData(member);
-                MemberData.Add(member.Id, data);
-                File.WriteAllText($"{id}/MemberData/{data.Id}.json",
-                    JsonSerializer.Serialize(data));
+                continue;
             }
 
-        GuildDataDictionary.Add(id, this);
+            MemberData.Add(member.Id, new MemberData(member));
+        }
+
+        MemberData.TrimExcess();
     }
 
     public SocketRole? MuteRole {
@@ -97,5 +95,15 @@ public record GuildData {
         };
         GuildDataDictionary.Add(guild.Id, newData);
         return newData;
+    }
+
+    public async Task Save(bool saveMemberData) {
+        Preferences.TrimExcess();
+        await File.WriteAllTextAsync($"{_id}/Configuration.json",
+            JsonSerializer.Serialize(Preferences));
+        if (saveMemberData)
+            foreach (var data in MemberData.Values)
+                await File.WriteAllTextAsync($"{_id}/MemberData/{data.Id}.json",
+                    JsonSerializer.Serialize(data));
     }
 }

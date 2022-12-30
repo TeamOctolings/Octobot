@@ -36,7 +36,8 @@ public sealed class MuteCommand : ICommand {
         var hasDuration = duration.TotalSeconds > 0;
 
         if (role is not null) {
-            if (data.Preferences["RemoveRolesOnMute"] is "true") await toMute.RemoveRolesAsync(toMute.Roles);
+            if (data.Preferences["RemoveRolesOnMute"] is "true")
+                await toMute.RemoveRolesAsync(toMute.Roles, requestOptions);
 
             await toMute.AddRoleAsync(role, requestOptions);
 

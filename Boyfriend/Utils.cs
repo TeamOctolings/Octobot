@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Boyfriend.Data;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
@@ -28,9 +29,8 @@ public static partial class Utils {
         return GetMessage($"Beep{(i < 0 ? Random.Shared.Next(3) + 1 : ++i)}");
     }
 
-    public static SocketTextChannel? GetBotLogChannel(ulong id) {
-        return Boyfriend.Client.GetGuild(id)
-            .GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(id)["BotLogChannel"]));
+    public static SocketTextChannel? GetBotLogChannel(SocketGuild guild) {
+        return guild.GetTextChannel(ParseMention(GuildData.FromSocketGuild(guild).Preferences["BotLogChannel"]));
     }
 
     public static string? Wrap(string? original, bool limitedSpace = false) {
@@ -91,22 +91,22 @@ public static partial class Utils {
     }
 
     public static async Task
-        SendFeedbackAsync(string feedback, ulong guildId, string mention, bool sendPublic = false) {
-        var adminChannel = GetBotLogChannel(guildId);
-        var systemChannel = Boyfriend.Client.GetGuild(guildId).SystemChannel;
+        SendFeedbackAsync(string feedback, SocketGuild guild, string mention, bool sendPublic = false) {
+        var adminChannel = GetBotLogChannel(guild);
+        var systemChannel = guild.SystemChannel;
         var toSend = $"*[{mention}: {feedback}]*";
         if (adminChannel is not null) await SilentSendAsync(adminChannel, toSend);
         if (sendPublic && systemChannel is not null) await SilentSendAsync(systemChannel, toSend);
     }
 
     public static string GetHumanizedTimeOffset(TimeSpan span) {
-        return span.TotalSeconds > 0
-            ? $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture.Name.Contains("RU") ? CultureInfoCache["ru"] : Messages.Culture)}"
-            : Messages.Ever;
+        return span.TotalSeconds < 1
+            ? Messages.Ever
+            : $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture.Name.Contains("RU") ? CultureInfoCache["ru"] : Messages.Culture)}";
     }
 
-    public static void SetCurrentLanguage(ulong guildId) {
-        Messages.Culture = CultureInfoCache[Boyfriend.GetGuildConfig(guildId)["Lang"]];
+    public static void SetCurrentLanguage(SocketGuild guild) {
+        Messages.Culture = CultureInfoCache[GuildData.FromSocketGuild(guild).Preferences["Lang"]];
     }
 
     public static void SafeAppendToBuilder(StringBuilder appendTo, string appendWhat, SocketTextChannel? channel) {
@@ -129,7 +129,8 @@ public static partial class Utils {
     }
 
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
-        return guild.GetTextChannel(ParseMention(Boyfriend.GetGuildConfig(guild.Id)["EventNotificationChannel"]));
+        return guild.GetTextChannel(ParseMention(GuildData.FromSocketGuild(guild)
+            .Preferences["EventNotificationChannel"]));
     }
 
     [GeneratedRegex("[^0-9]")]

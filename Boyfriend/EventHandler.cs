@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using Boyfriend.Data;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -26,9 +28,9 @@ public static class EventHandler {
         var i = Random.Shared.Next(3);
 
         foreach (var guild in Client.Guilds) {
-            var config = Boyfriend.GetGuildConfig(guild.Id);
+            var config = GuildData.FromSocketGuild(guild).Preferences;
             var channel = guild.GetTextChannel(Utils.ParseMention(config["BotLogChannel"]));
-            Utils.SetCurrentLanguage(guild.Id);
+            Utils.SetCurrentLanguage(guild);
 
             if (config["ReceiveStartupMessages"] is not "true" || channel is null) continue;
             _ = channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(i)));
@@ -46,7 +48,7 @@ public static class EventHandler {
 
         var guild = gChannel.Guild;
 
-        Utils.SetCurrentLanguage(guild.Id);
+        Utils.SetCurrentLanguage(guild);
 
         var mention = msg.Author.Mention;
 
@@ -58,7 +60,7 @@ public static class EventHandler {
 
         await Utils.SendFeedbackAsync(string.Format(Messages.CachedMessageDeleted, msg.Author.Mention,
             Utils.MentionChannel(channel.Id),
-            Utils.Wrap(msg.CleanContent)), guild.Id, mention);
+            Utils.Wrap(msg.CleanContent)), guild, mention);
     }
 
     private static Task MessageReceivedEvent(IDeletable messageParam) {
@@ -82,19 +84,20 @@ public static class EventHandler {
             msg.CleanContent == messageSocket.CleanContent || msg.Author.IsBot) return;
 
         var guild = gChannel.Guild;
-        Utils.SetCurrentLanguage(guild.Id);
+        Utils.SetCurrentLanguage(guild);
 
         var isLimitedSpace = msg.CleanContent.Length + messageSocket.CleanContent.Length < 1940;
 
         await Utils.SendFeedbackAsync(string.Format(Messages.CachedMessageEdited, Utils.MentionChannel(channel.Id),
                 Utils.Wrap(msg.CleanContent, isLimitedSpace), Utils.Wrap(messageSocket.CleanContent, isLimitedSpace)),
-            guild.Id, msg.Author.Mention);
+            guild, msg.Author.Mention);
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
         var guild = user.Guild;
-        var config = Boyfriend.GetGuildConfig(guild.Id);
-        Utils.SetCurrentLanguage(guild.Id);
+        var data = GuildData.FromSocketGuild(guild);
+        var config = data.Preferences;
+        Utils.SetCurrentLanguage(guild);
 
         if (config["SendWelcomeMessages"] is "true")
             await Utils.SilentSendAsync(guild.SystemChannel,
@@ -103,27 +106,42 @@ public static class EventHandler {
                     : config["WelcomeMessage"], user.Mention, guild.Name));
 
         if (config["StarterRole"] is not "0") await user.AddRoleAsync(ulong.Parse(config["StarterRole"]));
+
+        if (!data.MemberData.ContainsKey(user.Id)) data.MemberData.Add(user.Id, new MemberData(user));
+        var memberData = data.MemberData[user.Id];
+        memberData.IsInGuild = true;
+        memberData.BannedUntil = 0;
+        if (memberData.LeftAt.Count > 0) {
+            if (memberData.JoinedAt.Contains(user.JoinedAt!.Value.ToUnixTimeSeconds()))
+                throw new UnreachableException();
+            memberData.JoinedAt.Add(user.JoinedAt!.Value.ToUnixTimeSeconds());
+        }
+
+        if (memberData.MutedUntil < DateTimeOffset.Now.ToUnixTimeSeconds()) {
+            if (data.MuteRole is not null)
+                await user.AddRoleAsync(data.MuteRole);
+            else
+                await user.SetTimeOutAsync(
+                    TimeSpan.FromSeconds(DateTimeOffset.Now.ToUnixTimeSeconds() - memberData.MutedUntil));
+
+            if (config["RemoveRolesOnMute"] is "false" && config["ReturnRolesOnRejoin"] is "true")
+                await user.AddRolesAsync(memberData.Roles);
+        } else if (config["ReturnRolesOnRejoin"] is "true") { await user.AddRolesAsync(memberData.Roles); }
     }
 
-    private static async Task UserLeftEvent(SocketGuildUser user) {
-        var guild = user.Guild;
-        var config = Boyfriend.GetGuildConfig(guild.Id);
-        Utils.SetCurrentLanguage(guild.Id);
-
-        if (config["SendWelcomeMessages"] is "true")
-            await Utils.SilentSendAsync(guild.SystemChannel,
-                string.Format(config["WelcomeMessage"] is "default"
-                    ? Messages.DefaultWelcomeMessage
-                    : config["WelcomeMessage"], user.Mention, guild.Name));
-
-        if (config["StarterRole"] is not "0") await user.AddRoleAsync(ulong.Parse(config["StarterRole"]));
+    private static Task UserLeftEvent(SocketGuild guild, SocketUser user) {
+        var data = GuildData.FromSocketGuild(guild).MemberData[user.Id];
+        data.IsInGuild = false;
+        data.LeftAt.Add(DateTimeOffset.Now.ToUnixTimeSeconds());
+        return Task.CompletedTask;
     }
 
+    // TODO: store data about event (early) notifications
     private static async Task ScheduledEventCreatedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
-        var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
+        var eventConfig = GuildData.FromSocketGuild(guild).Preferences;
         var channel = Utils.GetEventNotificationChannel(guild);
-        Utils.SetCurrentLanguage(guild.Id);
+        Utils.SetCurrentLanguage(guild);
 
         if (channel is not null) {
             var role = guild.GetRole(ulong.Parse(eventConfig["EventNotificationRole"]));
@@ -141,17 +159,13 @@ public static class EventHandler {
                     scheduledEvent.StartTime.ToUnixTimeSeconds().ToString(), descAndLink),
                 true);
         }
-
-        if (eventConfig["EventEarlyNotificationOffset"] is not "0")
-            _ = Utils.SendEarlyEventStartNotificationAsync(channel, scheduledEvent,
-                int.Parse(eventConfig["EventEarlyNotificationOffset"]));
     }
 
     private static async Task ScheduledEventCancelledEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
-        var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
+        var eventConfig = GuildData.FromSocketGuild(guild).Preferences;
         var channel = Utils.GetEventNotificationChannel(guild);
-        Utils.SetCurrentLanguage(guild.Id);
+        Utils.SetCurrentLanguage(guild);
         if (channel is not null)
             await channel.SendMessageAsync(string.Format(Messages.EventCancelled, Utils.Wrap(scheduledEvent.Name),
                 eventConfig["FrowningFace"] is "true" ? $" {Messages.SettingsFrowningFace}" : ""));
@@ -159,9 +173,9 @@ public static class EventHandler {
 
     private static async Task ScheduledEventStartedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
-        var eventConfig = Boyfriend.GetGuildConfig(guild.Id);
+        var eventConfig = GuildData.FromSocketGuild(guild).Preferences;
         var channel = Utils.GetEventNotificationChannel(guild);
-        Utils.SetCurrentLanguage(guild.Id);
+        Utils.SetCurrentLanguage(guild);
 
         if (channel is not null) {
             var receivers = eventConfig["EventStartedReceivers"];
@@ -183,7 +197,7 @@ public static class EventHandler {
     private static async Task ScheduledEventCompletedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
         var channel = Utils.GetEventNotificationChannel(guild);
-        Utils.SetCurrentLanguage(guild.Id);
+        Utils.SetCurrentLanguage(guild);
         if (channel is not null)
             await channel.SendMessageAsync(string.Format(Messages.EventCompleted, Utils.Wrap(scheduledEvent.Name),
                 Utils.GetHumanizedTimeOffset(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));

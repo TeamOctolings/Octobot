@@ -16,7 +16,7 @@ public sealed class SettingsCommand : ICommand {
         if (args.Length is 0) {
             var currentSettings = Boyfriend.StringBuilder.AppendLine(Messages.CurrentSettings);
 
-            foreach (var setting in GuildData.DefaultConfiguration) {
+            foreach (var setting in GuildData.DefaultPreferences) {
                 var format = "{0}";
                 var currentValue = config[setting.Key] is "default"
                     ? Messages.DefaultWelcomeMessage
@@ -47,7 +47,7 @@ public sealed class SettingsCommand : ICommand {
         var exists = false;
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         // Too many allocations
-        foreach (var setting in GuildData.DefaultConfiguration.Keys) {
+        foreach (var setting in GuildData.DefaultPreferences.Keys) {
             if (selectedSetting != setting.ToLower()) continue;
             selectedSetting = setting;
             exists = true;
@@ -74,7 +74,7 @@ public sealed class SettingsCommand : ICommand {
             }
         } else { value = "reset"; }
 
-        if (IsBool(GuildData.DefaultConfiguration[selectedSetting]) && !IsBool(value)) {
+        if (IsBool(GuildData.DefaultPreferences[selectedSetting]) && !IsBool(value)) {
             value = value switch {
                 "y" or "yes" or "д" or "да" => "true",
                 "n" or "no" or "н" or "нет" => "false",
@@ -99,14 +99,14 @@ public sealed class SettingsCommand : ICommand {
 
         var formattedValue = selectedSetting switch {
             "WelcomeMessage" => Utils.Wrap(Messages.DefaultWelcomeMessage),
-            "EventStartedReceivers" => Utils.Wrap(GuildData.DefaultConfiguration[selectedSetting])!,
+            "EventStartedReceivers" => Utils.Wrap(GuildData.DefaultPreferences[selectedSetting])!,
             _ => value is "reset" or "default" ? Messages.SettingNotDefined
                 : IsBool(value) ? YesOrNo(value is "true")
                 : string.Format(formatting, value)
         };
 
         if (value is "reset" or "default") {
-            config[selectedSetting] = GuildData.DefaultConfiguration[selectedSetting];
+            config[selectedSetting] = GuildData.DefaultPreferences[selectedSetting];
         } else {
             if (value == config[selectedSetting]) {
                 cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
@@ -139,7 +139,7 @@ public sealed class SettingsCommand : ICommand {
         }
 
         if (selectedSetting is "Lang") {
-            Utils.SetCurrentLanguage(guild.Id);
+            Utils.SetCurrentLanguage(guild);
             localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
         }
 

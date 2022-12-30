@@ -28,12 +28,14 @@ public sealed class BanCommand : ICommand {
         var guildBanMessage = $"({author}) {reason}";
         await guild.AddBanAsync(toBan, 0, guildBanMessage);
 
+        var memberData = GuildData.FromSocketGuild(guild).MemberData[toBan.Id];
+        memberData.BannedUntil
+            = duration.TotalSeconds < 1 ? -1 : DateTimeOffset.Now.Add(duration).ToUnixTimeSeconds();
+        memberData.Roles.Clear();
+
         var feedback = string.Format(Messages.FeedbackUserBanned, toBan.Mention,
             Utils.GetHumanizedTimeOffset(duration), Utils.Wrap(reason));
         cmd.Reply(feedback, ReplyEmojis.Banned);
         cmd.Audit(feedback);
-
-        GuildData.FromSocketGuild(guild).MemberData[toBan.Id].BannedUntil
-            = DateTimeOffset.Now.Add(duration).ToUnixTimeSeconds();
     }
 }
