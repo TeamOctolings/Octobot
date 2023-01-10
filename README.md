@@ -2,7 +2,7 @@
 ![Boyfriend-CSharp-Light](https://user-images.githubusercontent.com/95250141/206895340-3415d97d-91fd-4fb6-8c17-4e1bf340e1df.png#gh-light-mode-only)
 
 ![GitHub License](https://img.shields.io/github/license/l1ttleO/Boyfriend-CSharp)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/l1ttleO/Boyfriend-CSharp/ReSharper)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/l1ttleO/Boyfriend-CSharp/.github/workflows/resharper.yml?branch=master)
 ![GitHub last commit](https://img.shields.io/github/last-commit/l1ttleO/Boyfriend-CSharp)
 
 ## Building
