@@ -1050,7 +1050,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to I could not find this user in any guild I&apos;m a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago (TODO).
         /// </summary>
         internal static string UserNotFound {
             get {

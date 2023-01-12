@@ -457,6 +457,6 @@
     <value>Early event start notification offset</value>
   </data>
     <data name="UserNotFound" xml:space="preserve">
-      <value/>
-  </data>
+        <value>I could not find this user in any guild I'm a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago (TODO)</value>
+    </data>
 </root>

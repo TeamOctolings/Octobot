@@ -135,7 +135,7 @@ public sealed class CommandProcessor {
             return null;
         }
 
-        return Tuple.Create(mention, (SocketUser?)Boyfriend.Client.GetUser(mention));
+        return Tuple.Create(mention, Boyfriend.Client.GetUser(mention))!;
     }
 
     public bool HasPermission(GuildPermission permission) {

@@ -49,11 +49,6 @@ public static partial class Utils {
         return ulong.TryParse(NumbersOnlyRegex().Replace(mention, ""), out var id) ? id : 0;
     }
 
-    public static async Task SendDirectMessage(ulong id, string toSend) {
-        if (await Boyfriend.Client.GetUserAsync(id) is SocketUser user)
-            await SendDirectMessage(user, toSend);
-    }
-
     public static async Task SendDirectMessage(SocketUser user, string toSend) {
         try { await user.SendMessageAsync(toSend); } catch (HttpException e) {
             if (e.DiscordCode is not DiscordErrorCode.CannotSendMessageToUser) throw;
