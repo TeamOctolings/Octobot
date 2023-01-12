@@ -112,19 +112,30 @@ public sealed class CommandProcessor {
         return null;
     }
 
-    public SocketUser? GetUser(string[] args, string[] cleanArgs, int index, string? argument) {
+    public Tuple<ulong, SocketUser?>? GetUser(string[] args, string[] cleanArgs, int index) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.MissingArgument} {Messages.MissingUser}",
                 Context.Message);
             return null;
         }
 
-        var user = Boyfriend.Client.GetUser(Utils.ParseMention(args[index]));
-        if (user is null && argument is not null)
+        var mention = Utils.ParseMention(args[index]);
+        if (mention is 0) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{ReplyEmojis.InvalidArgument} {string.Format(Messages.InvalidUser, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
-        return user;
+            return null;
+        }
+
+        var exists = Utils.UserExists(mention);
+        if (!exists) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{ReplyEmojis.Error} {string.Format(Messages.UserNotFound, Utils.Wrap(cleanArgs[index]))}",
+                Context.Message);
+            return null;
+        }
+
+        return Tuple.Create(mention, (SocketUser?)Boyfriend.Client.GetUser(mention));
     }
 
     public bool HasPermission(GuildPermission permission) {
@@ -135,7 +146,7 @@ public sealed class CommandProcessor {
             return false;
         }
 
-        if (!Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
+        if (!GetMember().GuildPermissions.Has(permission)
             && Context.Guild.OwnerId != Context.User.Id) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"UserCannot{permission}")}",
@@ -146,8 +157,12 @@ public sealed class CommandProcessor {
         return true;
     }
 
-    public SocketGuildUser? GetMember(SocketUser user) {
-        return Context.Guild.GetUser(user.Id);
+    private SocketGuildUser GetMember() {
+        return GetMember(Context.User.Id)!;
+    }
+
+    public SocketGuildUser? GetMember(ulong id) {
+        return Context.Guild.GetUser(id);
     }
 
     public SocketGuildUser? GetMember(string[] args, string[] cleanArgs, int index, string? argument) {
@@ -163,10 +178,6 @@ public sealed class CommandProcessor {
                 $"{ReplyEmojis.InvalidArgument} {string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
         return member;
-    }
-
-    private SocketGuildUser GetMember() {
-        return Context.Guild.GetUser(Context.User.Id);
     }
 
     public ulong? GetBan(string[] args, int index) {

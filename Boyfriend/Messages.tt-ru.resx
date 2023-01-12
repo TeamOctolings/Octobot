@@ -222,9 +222,6 @@
   <data name="FeedbackUserBanned" xml:space="preserve">
     <value>забанен {0} на{1}: {2}</value>
   </data>
-  <data name="UserNotInGuild" xml:space="preserve">
-    <value>шизик не на этом сервере</value>
-  </data>
   <data name="SettingDoesntExist" xml:space="preserve">
     <value>такой прикол не существует</value>
   </data>

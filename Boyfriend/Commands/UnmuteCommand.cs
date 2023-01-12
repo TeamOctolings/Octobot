@@ -27,8 +27,7 @@ public sealed class UnmuteCommand : ICommand {
             await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
             await toUnmute.RemoveRoleAsync(role, requestOptions);
         } else {
-            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value.ToUnixTimeSeconds() <
-                DateTimeOffset.Now.ToUnixTimeSeconds()) {
+            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value < DateTimeOffset.Now) {
                 cmd.Reply(Messages.MemberNotMuted, ReplyEmojis.Error);
                 return;
             }

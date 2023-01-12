@@ -19,8 +19,8 @@ public sealed class MuteCommand : ICommand {
 
         if ((role is not null && toMute.Roles.Contains(role))
             || (toMute.TimedOutUntil is not null
-                && toMute.TimedOutUntil.Value.ToUnixTimeSeconds()
-                > DateTimeOffset.Now.ToUnixTimeSeconds())) {
+                && toMute.TimedOutUntil.Value
+                > DateTimeOffset.Now)) {
             cmd.Reply(Messages.MemberAlreadyMuted, ReplyEmojis.Error);
             return;
         }
@@ -41,7 +41,7 @@ public sealed class MuteCommand : ICommand {
 
             await toMute.AddRoleAsync(role, requestOptions);
 
-            data.MemberData[toMute.Id].MutedUntil = DateTimeOffset.Now.Add(duration).ToUnixTimeSeconds();
+            data.MemberData[toMute.Id].MutedUntil = DateTimeOffset.Now.Add(duration);
         } else {
             if (!hasDuration || duration.TotalDays > 28) {
                 cmd.Reply(Messages.DurationRequiredForTimeOuts, ReplyEmojis.Error);

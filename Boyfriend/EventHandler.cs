@@ -110,19 +110,18 @@ public static class EventHandler {
         if (!data.MemberData.ContainsKey(user.Id)) data.MemberData.Add(user.Id, new MemberData(user));
         var memberData = data.MemberData[user.Id];
         memberData.IsInGuild = true;
-        memberData.BannedUntil = 0;
+        memberData.BannedUntil = DateTimeOffset.MinValue;
         if (memberData.LeftAt.Count > 0) {
-            if (memberData.JoinedAt.Contains(user.JoinedAt!.Value.ToUnixTimeSeconds()))
+            if (memberData.JoinedAt.Contains(user.JoinedAt!.Value))
                 throw new UnreachableException();
-            memberData.JoinedAt.Add(user.JoinedAt!.Value.ToUnixTimeSeconds());
+            memberData.JoinedAt.Add(user.JoinedAt!.Value);
         }
 
-        if (memberData.MutedUntil < DateTimeOffset.Now.ToUnixTimeSeconds()) {
+        if (memberData.MutedUntil < DateTimeOffset.Now) {
             if (data.MuteRole is not null)
                 await user.AddRoleAsync(data.MuteRole);
             else
-                await user.SetTimeOutAsync(
-                    TimeSpan.FromSeconds(DateTimeOffset.Now.ToUnixTimeSeconds() - memberData.MutedUntil));
+                await user.SetTimeOutAsync(DateTimeOffset.Now - memberData.MutedUntil);
 
             if (config["RemoveRolesOnMute"] is "false" && config["ReturnRolesOnRejoin"] is "true")
                 await user.AddRolesAsync(memberData.Roles);
@@ -132,11 +131,10 @@ public static class EventHandler {
     private static Task UserLeftEvent(SocketGuild guild, SocketUser user) {
         var data = GuildData.FromSocketGuild(guild).MemberData[user.Id];
         data.IsInGuild = false;
-        data.LeftAt.Add(DateTimeOffset.Now.ToUnixTimeSeconds());
+        data.LeftAt.Add(DateTimeOffset.Now);
         return Task.CompletedTask;
     }
 
-    // TODO: store data about event (early) notifications
     private static async Task ScheduledEventCreatedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
         var eventConfig = GuildData.FromSocketGuild(guild).Preferences;

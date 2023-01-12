@@ -8,10 +8,10 @@ public sealed class BanCommand : ICommand {
     public string[] Aliases { get; } = { "ban", "бан" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
-        var toBan = cmd.GetUser(args, cleanArgs, 0, "ToBan");
+        var toBan = cmd.GetUser(args, cleanArgs, 0);
         if (toBan is null || !cmd.HasPermission(GuildPermission.BanMembers)) return;
 
-        var memberToBan = cmd.GetMember(toBan);
+        var memberToBan = cmd.GetMember(toBan.Item1);
         if (memberToBan is not null && !cmd.CanInteractWith(memberToBan, "Ban")) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);
@@ -19,21 +19,23 @@ public sealed class BanCommand : ICommand {
         if (reason is not null) await BanUserAsync(cmd, toBan, duration, reason);
     }
 
-    private static async Task BanUserAsync(CommandProcessor cmd, SocketUser toBan, TimeSpan duration, string reason) {
+    private static async Task BanUserAsync(CommandProcessor cmd, Tuple<ulong, SocketUser?> toBan, TimeSpan duration,
+        string reason) {
         var author = cmd.Context.User;
         var guild = cmd.Context.Guild;
-        await Utils.SendDirectMessage(toBan,
-            string.Format(Messages.YouWereBanned, author.Mention, guild.Name, Utils.Wrap(reason)));
+        if (toBan.Item2 is not null)
+            await Utils.SendDirectMessage(toBan.Item2,
+                string.Format(Messages.YouWereBanned, author.Mention, guild.Name, Utils.Wrap(reason)));
 
         var guildBanMessage = $"({author}) {reason}";
-        await guild.AddBanAsync(toBan, 0, guildBanMessage);
+        await guild.AddBanAsync(toBan.Item1, 0, guildBanMessage);
 
-        var memberData = GuildData.FromSocketGuild(guild).MemberData[toBan.Id];
+        var memberData = GuildData.FromSocketGuild(guild).MemberData[toBan.Item1];
         memberData.BannedUntil
-            = duration.TotalSeconds < 1 ? -1 : DateTimeOffset.Now.Add(duration).ToUnixTimeSeconds();
+            = duration.TotalSeconds < 1 ? DateTimeOffset.MaxValue : DateTimeOffset.Now.Add(duration);
         memberData.Roles.Clear();
 
-        var feedback = string.Format(Messages.FeedbackUserBanned, toBan.Mention,
+        var feedback = string.Format(Messages.FeedbackUserBanned, $"<@{toBan.Item1.ToString()}>",
             Utils.GetHumanizedTimeOffset(duration), Utils.Wrap(reason));
         cmd.Reply(feedback, ReplyEmojis.Banned);
         cmd.Audit(feedback);

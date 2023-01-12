@@ -222,9 +222,6 @@
   <data name="FeedbackUserBanned" xml:space="preserve">
     <value>Забанен {0} на{1}: {2}</value>
   </data>
-  <data name="UserNotInGuild" xml:space="preserve">
-    <value>Указанный пользователь не является участником этого сервера!</value>
-  </data>
   <data name="SettingDoesntExist" xml:space="preserve">
     <value>Такая настройка не существует!</value>
   </data>

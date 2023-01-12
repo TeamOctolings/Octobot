@@ -49,6 +49,11 @@ public static partial class Utils {
         return ulong.TryParse(NumbersOnlyRegex().Replace(mention, ""), out var id) ? id : 0;
     }
 
+    public static async Task SendDirectMessage(ulong id, string toSend) {
+        if (await Boyfriend.Client.GetUserAsync(id) is SocketUser user)
+            await SendDirectMessage(user, toSend);
+    }
+
     public static async Task SendDirectMessage(SocketUser user, string toSend) {
         try { await user.SendMessageAsync(toSend); } catch (HttpException e) {
             if (e.DiscordCode is not DiscordErrorCode.CannotSendMessageToUser) throw;
@@ -131,6 +136,14 @@ public static partial class Utils {
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
         return guild.GetTextChannel(ParseMention(GuildData.FromSocketGuild(guild)
             .Preferences["EventNotificationChannel"]));
+    }
+
+    public static bool UserExists(ulong id) {
+        return Boyfriend.Client.GetUser(id) is not null || UserInMemberData(id);
+    }
+
+    private static bool UserInMemberData(ulong id) {
+        return GuildData.GuildDataDictionary.Values.Any(gData => gData.MemberData.Values.Any(mData => mData.Id == id));
     }
 
     [GeneratedRegex("[^0-9]")]

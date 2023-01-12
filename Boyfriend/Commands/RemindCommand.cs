@@ -10,7 +10,7 @@ public sealed class RemindCommand : ICommand {
         var reminderText = cmd.GetRemaining(args, 1, "ReminderText");
         if (reminderText is not null)
             GuildData.FromSocketGuild(cmd.Context.Guild).MemberData[cmd.Context.User.Id].Reminders.Add(new Reminder {
-                RemindAt = DateTimeOffset.Now.Add(remindIn).ToUnixTimeSeconds(),
+                RemindAt = DateTimeOffset.Now.Add(remindIn),
                 ReminderText = reminderText
             });
 

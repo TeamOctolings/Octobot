@@ -24,7 +24,7 @@ public record GuildData {
         // TODO: { "AutoStartEvents", "false" }
     };
 
-    private static readonly Dictionary<ulong, GuildData> GuildDataDictionary = new();
+    public static readonly Dictionary<ulong, GuildData> GuildDataDictionary = new();
 
     public readonly Dictionary<ulong, MemberData> MemberData;
 
@@ -44,15 +44,12 @@ public record GuildData {
             = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText($"{_id}/Configuration.json")) ??
               new Dictionary<string, string>();
 
-        // ReSharper disable twice ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         if (Preferences.Keys.Count < DefaultPreferences.Keys.Count)
-            foreach (var key in DefaultPreferences.Keys)
-                if (!Preferences.ContainsKey(key))
-                    Preferences.Add(key, DefaultPreferences[key]);
+            foreach (var key in DefaultPreferences.Keys.Where(key => !Preferences.ContainsKey(key)))
+                Preferences.Add(key, DefaultPreferences[key]);
         if (Preferences.Keys.Count > DefaultPreferences.Keys.Count)
-            foreach (var key in Preferences.Keys)
-                if (!DefaultPreferences.ContainsKey(key))
-                    Preferences.Remove(key);
+            foreach (var key in Preferences.Keys.Where(key => !DefaultPreferences.ContainsKey(key)))
+                Preferences.Remove(key);
         Preferences.TrimExcess();
 
         MemberData = new Dictionary<ulong, MemberData>();
@@ -67,7 +64,7 @@ public record GuildData {
             if (MemberData.TryGetValue(member.Id, out var memberData)) {
                 if (!memberData.IsInGuild &&
                     DateTimeOffset.Now.ToUnixTimeSeconds() -
-                    Math.Max(memberData.LeftAt.Last(), memberData.BannedUntil) >
+                    Math.Max(memberData.LeftAt.Last().ToUnixTimeSeconds(), memberData.BannedUntil.ToUnixTimeSeconds()) >
                     60 * 60 * 24 * 30) {
                     File.Delete($"{_id}/MemberData/{memberData.Id}.json");
                     MemberData.Remove(memberData.Id);
@@ -83,8 +80,11 @@ public record GuildData {
     }
 
     public SocketRole? MuteRole {
-        get => _cachedMuteRole ??= Boyfriend.Client.GetGuild(_id).Roles
-            .Single(x => x.Id == ulong.Parse(Preferences["MuteRole"]));
+        get {
+            if (Preferences["MuteRole"] is "0") return null;
+            return _cachedMuteRole ??= Boyfriend.Client.GetGuild(_id).Roles
+                .Single(x => x.Id == ulong.Parse(Preferences["MuteRole"]));
+        }
         set => _cachedMuteRole = value;
     }
 

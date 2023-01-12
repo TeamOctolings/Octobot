@@ -1050,11 +1050,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified user is not a member of this server!.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string UserNotInGuild {
+        internal static string UserNotFound {
             get {
-                return ResourceManager.GetString("UserNotInGuild", resourceCulture);
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
         

@@ -1,6 +1,6 @@
 ﻿namespace Boyfriend.Data;
 
 public struct Reminder {
-    public long RemindAt;
+    public DateTimeOffset RemindAt;
     public string ReminderText;
 }
