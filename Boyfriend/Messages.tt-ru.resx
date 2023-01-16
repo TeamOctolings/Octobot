@@ -246,10 +246,7 @@
   <data name="CannotTimeOutBot" xml:space="preserve">
     <value>я не могу замутить ботов, сделай что нибудь</value>
   </data>
-  <data name="SettingsStarterRole" xml:space="preserve">
-    <value>базовое звание</value>
-  </data>
-  <data name="EventCreated" xml:space="preserve">
+    <data name="EventCreated" xml:space="preserve">
     <value>{0} приготовил новый квест {1}! он пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!{4}</value>
   </data>
   <data name="SettingsEventNotificationRole" xml:space="preserve">
@@ -459,4 +456,7 @@
     <data name="UserNotFound" xml:space="preserve">
       <value>TODO</value>
   </data>
+    <data name="StarterRoleDeleted" xml:space="preserve">
+        <value>TODO</value>
+    </data>
 </root>

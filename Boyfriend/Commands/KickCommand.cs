@@ -23,7 +23,7 @@ public sealed class KickCommand : ICommand {
             string.Format(Messages.YouWereKicked, cmd.Context.User.Mention, cmd.Context.Guild.Name,
                 Utils.Wrap(reason)));
 
-        GuildData.FromSocketGuild(cmd.Context.Guild).MemberData[toKick.Id].Roles.Clear();
+        GuildData.Get(cmd.Context.Guild).MemberData[toKick.Id].Roles.Clear();
 
         await toKick.KickAsync(guildKickMessage);
         var format = string.Format(Messages.FeedbackMemberKicked, toKick.Mention, Utils.Wrap(reason));

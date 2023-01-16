@@ -29,10 +29,6 @@ public static partial class Utils {
         return GetMessage($"Beep{(i < 0 ? Random.Shared.Next(3) + 1 : ++i)}");
     }
 
-    public static SocketTextChannel? GetBotLogChannel(SocketGuild guild) {
-        return guild.GetTextChannel(ParseMention(GuildData.FromSocketGuild(guild).Preferences["BotLogChannel"]));
-    }
-
     public static string? Wrap(string? original, bool limitedSpace = false) {
         if (original is null) return null;
         var maxChars = limitedSpace ? 970 : 1940;
@@ -92,8 +88,9 @@ public static partial class Utils {
 
     public static async Task
         SendFeedbackAsync(string feedback, SocketGuild guild, string mention, bool sendPublic = false) {
-        var adminChannel = GetBotLogChannel(guild);
-        var systemChannel = guild.SystemChannel;
+        var data = GuildData.Get(guild);
+        var adminChannel = data.PrivateFeedbackChannel;
+        var systemChannel = data.PublicFeedbackChannel;
         var toSend = $"*[{mention}: {feedback}]*";
         if (adminChannel is not null) await SilentSendAsync(adminChannel, toSend);
         if (sendPublic && systemChannel is not null) await SilentSendAsync(systemChannel, toSend);
@@ -106,7 +103,7 @@ public static partial class Utils {
     }
 
     public static void SetCurrentLanguage(SocketGuild guild) {
-        Messages.Culture = CultureInfoCache[GuildData.FromSocketGuild(guild).Preferences["Lang"]];
+        Messages.Culture = CultureInfoCache[GuildData.Get(guild).Preferences["Lang"]];
     }
 
     public static void SafeAppendToBuilder(StringBuilder appendTo, string appendWhat, SocketTextChannel? channel) {
@@ -129,7 +126,7 @@ public static partial class Utils {
     }
 
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
-        return guild.GetTextChannel(ParseMention(GuildData.FromSocketGuild(guild)
+        return guild.GetTextChannel(ParseMention(GuildData.Get(guild)
             .Preferences["EventNotificationChannel"]));
     }
 
@@ -139,6 +136,24 @@ public static partial class Utils {
 
     private static bool UserInMemberData(ulong id) {
         return GuildData.GuildDataDictionary.Values.Any(gData => gData.MemberData.Values.Any(mData => mData.Id == id));
+    }
+
+    public static async Task<bool> UnmuteMemberAsync(GuildData data, string modDiscrim, SocketGuildUser toUnmute,
+        string reason) {
+        var requestOptions = GetRequestOptions($"({modDiscrim}) {reason}");
+        var role = data.MuteRole;
+
+        if (role is not null) {
+            if (!toUnmute.Roles.Contains(role)) return false;
+            await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
+            await toUnmute.RemoveRoleAsync(role, requestOptions);
+        } else {
+            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value < DateTimeOffset.Now) return false;
+
+            await toUnmute.RemoveTimeOutAsync(requestOptions);
+        }
+
+        return true;
     }
 
     [GeneratedRegex("[^0-9]")]

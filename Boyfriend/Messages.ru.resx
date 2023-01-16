@@ -246,10 +246,7 @@
   <data name="CannotTimeOutBot" xml:space="preserve">
     <value>Я не могу использовать тайм-ауты на других ботах! Попробуй указать роль мута в настройках</value>
   </data>
-  <data name="SettingsStarterRole" xml:space="preserve">
-    <value>Начальная роль</value>
-  </data>
-  <data name="EventCreated" xml:space="preserve">
+    <data name="EventCreated" xml:space="preserve">
     <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!{4}</value>
   </data>
   <data name="SettingsEventNotificationRole" xml:space="preserve">
@@ -459,4 +456,7 @@
     <data name="UserNotFound" xml:space="preserve">
       <value>Я не смог найти этого пользователя ни в одном из серверов, в которых я есть. Проверь правильность ID и нахождение пользователя на этом сервере максимум 30 дней назад (TODO)</value>
   </data>
+    <data name="StarterRoleDeleted" xml:space="preserve">
+        <value>Начальная роль была удалена! Пожалуйста сбрасывай роли или каналы перед тем как их удалить</value>
+    </data>
 </root>

@@ -189,10 +189,7 @@
   <data name="SettingsSendWelcomeMessages" xml:space="preserve">
     <value>Send welcome messages</value>
   </data>
-  <data name="SettingsStarterRole" xml:space="preserve">
-    <value>Starter role</value>
-  </data>
-  <data name="SettingsMuteRole" xml:space="preserve">
+    <data name="SettingsMuteRole" xml:space="preserve">
     <value>Mute role</value>
   </data>
   <data name="SettingsBotLogChannel" xml:space="preserve">
@@ -458,5 +455,8 @@
   </data>
     <data name="UserNotFound" xml:space="preserve">
         <value>I could not find this user in any guild I'm a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago (TODO)</value>
+    </data>
+    <data name="StarterRoleDeleted" xml:space="preserve">
+        <value>The starter role was deleted! Please unset roles or channels from settings before deleting them</value>
     </data>
 </root>

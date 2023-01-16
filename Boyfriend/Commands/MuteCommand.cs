@@ -14,7 +14,7 @@ public sealed class MuteCommand : ICommand {
         var duration = CommandProcessor.GetTimeSpan(args, 1);
         var reason = cmd.GetRemaining(args, duration.TotalSeconds < 1 ? 1 : 2, "MuteReason");
         if (reason is null) return;
-        var guildData = GuildData.FromSocketGuild(cmd.Context.Guild);
+        var guildData = GuildData.Get(cmd.Context.Guild);
         var role = guildData.MuteRole;
 
         if ((role is not null && toMute.Roles.Contains(role))

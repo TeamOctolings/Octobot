@@ -28,7 +28,7 @@ public static class EventHandler {
         var i = Random.Shared.Next(3);
 
         foreach (var guild in Client.Guilds) {
-            var config = GuildData.FromSocketGuild(guild).Preferences;
+            var config = GuildData.Get(guild).Preferences;
             var channel = guild.GetTextChannel(Utils.ParseMention(config["BotLogChannel"]));
             Utils.SetCurrentLanguage(guild);
 
@@ -55,7 +55,8 @@ public static class EventHandler {
         await Task.Delay(500);
 
         var auditLogEntry = (await guild.GetAuditLogsAsync(1).FlattenAsync()).First();
-        if (auditLogEntry.Data is MessageDeleteAuditLogData data && msg.Author.Id == data.Target.Id)
+        if (auditLogEntry.CreatedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromSeconds(1)) &&
+            auditLogEntry.Data is MessageDeleteAuditLogData data && msg.Author.Id == data.Target.Id)
             mention = auditLogEntry.User.Mention;
 
         await Utils.SendFeedbackAsync(string.Format(Messages.CachedMessageDeleted, msg.Author.Mention,
@@ -95,12 +96,12 @@ public static class EventHandler {
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
         var guild = user.Guild;
-        var data = GuildData.FromSocketGuild(guild);
+        var data = GuildData.Get(guild);
         var config = data.Preferences;
         Utils.SetCurrentLanguage(guild);
 
         if (config["SendWelcomeMessages"] is "true")
-            await Utils.SilentSendAsync(guild.SystemChannel,
+            await Utils.SilentSendAsync(data.PublicFeedbackChannel,
                 string.Format(config["WelcomeMessage"] is "default"
                     ? Messages.DefaultWelcomeMessage
                     : config["WelcomeMessage"], user.Mention, guild.Name));
@@ -129,7 +130,7 @@ public static class EventHandler {
     }
 
     private static Task UserLeftEvent(SocketGuild guild, SocketUser user) {
-        var data = GuildData.FromSocketGuild(guild).MemberData[user.Id];
+        var data = GuildData.Get(guild).MemberData[user.Id];
         data.IsInGuild = false;
         data.LeftAt.Add(DateTimeOffset.Now);
         return Task.CompletedTask;
@@ -137,7 +138,7 @@ public static class EventHandler {
 
     private static async Task ScheduledEventCreatedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
-        var eventConfig = GuildData.FromSocketGuild(guild).Preferences;
+        var eventConfig = GuildData.Get(guild).Preferences;
         var channel = Utils.GetEventNotificationChannel(guild);
         Utils.SetCurrentLanguage(guild);
 
@@ -161,7 +162,7 @@ public static class EventHandler {
 
     private static async Task ScheduledEventCancelledEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
-        var eventConfig = GuildData.FromSocketGuild(guild).Preferences;
+        var eventConfig = GuildData.Get(guild).Preferences;
         var channel = Utils.GetEventNotificationChannel(guild);
         Utils.SetCurrentLanguage(guild);
         if (channel is not null)
@@ -171,7 +172,7 @@ public static class EventHandler {
 
     private static async Task ScheduledEventStartedEvent(SocketGuildEvent scheduledEvent) {
         var guild = scheduledEvent.Guild;
-        var eventConfig = GuildData.FromSocketGuild(guild).Preferences;
+        var eventConfig = GuildData.Get(guild).Preferences;
         var channel = Utils.GetEventNotificationChannel(guild);
         Utils.SetCurrentLanguage(guild);
 
@@ -182,8 +183,9 @@ public static class EventHandler {
 
             if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
             if (receivers.Contains("users") || receivers.Contains("interested"))
-                mentions = (await scheduledEvent.GetUsersAsync(15)).Aggregate(mentions,
-                    (current, user) => current.Append($"{user.Mention} "));
+                mentions = (await scheduledEvent.GetUsersAsync(15))
+                    .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
+                    .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
 
             await channel.SendMessageAsync(string.Format(Messages.EventStarted, mentions,
                 Utils.Wrap(scheduledEvent.Name),

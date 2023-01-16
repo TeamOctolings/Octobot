@@ -834,20 +834,20 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Starter role.
-        /// </summary>
-        internal static string SettingsStarterRole {
-            get {
-                return ResourceManager.GetString("SettingsStarterRole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Welcome message.
         /// </summary>
         internal static string SettingsWelcomeMessage {
             get {
                 return ResourceManager.GetString("SettingsWelcomeMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The starter role was deleted! Please unset roles or channels from settings before deleting them.
+        /// </summary>
+        internal static string StarterRoleDeleted {
+            get {
+                return ResourceManager.GetString("StarterRoleDeleted", resourceCulture);
             }
         }
         

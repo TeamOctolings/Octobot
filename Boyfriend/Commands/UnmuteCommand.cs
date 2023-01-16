@@ -17,22 +17,14 @@ public sealed class UnmuteCommand : ICommand {
             await UnmuteMemberAsync(cmd, toUnmute, reason);
     }
 
-    public static async Task UnmuteMemberAsync(CommandProcessor cmd, SocketGuildUser toUnmute,
+    private static async Task UnmuteMemberAsync(CommandProcessor cmd, SocketGuildUser toUnmute,
         string reason) {
-        var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
-        var data = GuildData.FromSocketGuild(cmd.Context.Guild);
-        var role = data.MuteRole;
+        var isMuted = await Utils.UnmuteMemberAsync(GuildData.Get(cmd.Context.Guild), cmd.Context.User.ToString(),
+            toUnmute, reason);
 
-        if (role is not null && toUnmute.Roles.Contains(role)) {
-            await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
-            await toUnmute.RemoveRoleAsync(role, requestOptions);
-        } else {
-            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value < DateTimeOffset.Now) {
-                cmd.Reply(Messages.MemberNotMuted, ReplyEmojis.Error);
-                return;
-            }
-
-            await toUnmute.RemoveTimeOutAsync(requestOptions);
+        if (!isMuted) {
+            cmd.Reply(Messages.MemberNotMuted, ReplyEmojis.Error);
+            return;
         }
 
         var feedback = string.Format(Messages.FeedbackMemberUnmuted, toUnmute.Mention, Utils.Wrap(reason));

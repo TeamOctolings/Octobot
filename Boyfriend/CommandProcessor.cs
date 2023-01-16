@@ -32,7 +32,7 @@ public sealed class CommandProcessor {
 
     public async Task HandleCommandAsync() {
         var guild = Context.Guild;
-        var data = GuildData.FromSocketGuild(guild);
+        var data = GuildData.Get(guild);
         Utils.SetCurrentLanguage(guild);
 
         if (GetMember().Roles.Contains(data.MuteRole)) {
@@ -80,8 +80,9 @@ public sealed class CommandProcessor {
 
     public void Audit(string action, bool isPublic = true) {
         var format = $"*[{Context.User.Mention}: {action}]*";
-        if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, Context.Guild.SystemChannel);
-        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetBotLogChannel(Context.Guild));
+        var data = GuildData.Get(Context.Guild);
+        if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, data.PublicFeedbackChannel);
+        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, data.PrivateFeedbackChannel);
         if (_tasks.Count is 0) SendFeedbacks(false);
     }
 
@@ -89,8 +90,9 @@ public sealed class CommandProcessor {
         if (reply && _stackedReplyMessage.Length > 0)
             _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
-        var adminChannel = Utils.GetBotLogChannel(Context.Guild);
-        var systemChannel = Context.Guild.SystemChannel;
+        var data = GuildData.Get(Context.Guild);
+        var adminChannel = data.PublicFeedbackChannel;
+        var systemChannel = data.PrivateFeedbackChannel;
         if (_stackedPrivateFeedback.Length > 0 && adminChannel is not null &&
             adminChannel.Id != Context.Message.Channel.Id) {
             _ = Utils.SilentSendAsync(adminChannel, _stackedPrivateFeedback.ToString());

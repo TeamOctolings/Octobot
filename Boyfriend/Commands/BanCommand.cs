@@ -30,7 +30,7 @@ public sealed class BanCommand : ICommand {
         var guildBanMessage = $"({author}) {reason}";
         await guild.AddBanAsync(toBan.Item1, 0, guildBanMessage);
 
-        var memberData = GuildData.FromSocketGuild(guild).MemberData[toBan.Item1];
+        var memberData = GuildData.Get(guild).MemberData[toBan.Item1];
         memberData.BannedUntil
             = duration.TotalSeconds < 1 ? DateTimeOffset.MaxValue : DateTimeOffset.Now.Add(duration);
         memberData.Roles.Clear();

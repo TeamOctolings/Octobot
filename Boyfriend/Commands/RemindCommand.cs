@@ -7,11 +7,12 @@ public sealed class RemindCommand : ICommand {
 
     public Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         var remindIn = CommandProcessor.GetTimeSpan(args, 0);
-        var reminderText = cmd.GetRemaining(args, 1, "ReminderText");
+        var reminderText = cmd.GetRemaining(cleanArgs, 1, "ReminderText");
         if (reminderText is not null)
-            GuildData.FromSocketGuild(cmd.Context.Guild).MemberData[cmd.Context.User.Id].Reminders.Add(new Reminder {
+            GuildData.Get(cmd.Context.Guild).MemberData[cmd.Context.User.Id].Reminders.Add(new Reminder {
                 RemindAt = DateTimeOffset.Now.Add(remindIn),
-                ReminderText = reminderText
+                ReminderText = reminderText,
+                ReminderChannel = cmd.Context.Channel.Id
             });
 
         return Task.CompletedTask;

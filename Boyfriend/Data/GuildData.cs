@@ -20,28 +20,37 @@ public record GuildData {
         { "EventStartedReceivers", "interested,role" },
         { "EventNotificationRole", "0" },
         { "EventNotificationChannel", "0" },
-        { "EventEarlyNotificationOffset", "0" }
-        // TODO: { "AutoStartEvents", "false" }
+        { "EventEarlyNotificationOffset", "0" },
+        { "AutoStartEvents", "false" }
     };
 
     public static readonly Dictionary<ulong, GuildData> GuildDataDictionary = new();
+
+    private readonly string _configurationFile;
+
+    public readonly List<ulong> EarlyNotifications = new();
 
     public readonly Dictionary<ulong, MemberData> MemberData;
 
     public readonly Dictionary<string, string> Preferences;
 
     private SocketRole? _cachedMuteRole;
+    private SocketTextChannel? _cachedPrivateFeedbackChannel;
+    private SocketTextChannel? _cachedPublicFeedbackChannel;
 
     private ulong _id;
 
     [SuppressMessage("Performance", "CA1853:Unnecessary call to \'Dictionary.ContainsKey(key)\'")]
     // https://github.com/dotnet/roslyn-analyzers/issues/6377
     private GuildData(SocketGuild guild) {
-        if (!Directory.Exists($"{_id}")) Directory.CreateDirectory($"{_id}");
-        if (!Directory.Exists($"{_id}/MemberData")) Directory.CreateDirectory($"{_id}/MemberData");
-        if (!File.Exists($"{_id}/Configuration.json")) File.Create($"{_id}/Configuration.json").Dispose();
+        var idString = $"{_id}";
+        var memberDataDir = $"{_id}/MemberData";
+        _configurationFile = $"{_id}/Configuration.json";
+        if (!Directory.Exists(idString)) Directory.CreateDirectory(idString);
+        if (!Directory.Exists(memberDataDir)) Directory.CreateDirectory(memberDataDir);
+        if (!File.Exists(_configurationFile)) File.Create(_configurationFile).Dispose();
         Preferences
-            = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText($"{_id}/Configuration.json")) ??
+            = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(_configurationFile)) ??
               new Dictionary<string, string>();
 
         if (Preferences.Keys.Count < DefaultPreferences.Keys.Count)
@@ -53,7 +62,7 @@ public record GuildData {
         Preferences.TrimExcess();
 
         MemberData = new Dictionary<ulong, MemberData>();
-        foreach (var data in Directory.GetFiles($"{_id}/MemberData")) {
+        foreach (var data in Directory.GetFiles(memberDataDir)) {
             var deserialised
                 = JsonSerializer.Deserialize<MemberData>(File.ReadAllText($"{_id}/MemberData/{data}.json"));
             MemberData.Add(deserialised!.Id, deserialised);
@@ -88,7 +97,25 @@ public record GuildData {
         set => _cachedMuteRole = value;
     }
 
-    public static GuildData FromSocketGuild(SocketGuild guild) {
+    public SocketTextChannel? PublicFeedbackChannel {
+        get {
+            if (Preferences["PublicFeedbackChannel"] is "0") return null;
+            return _cachedPublicFeedbackChannel ??= Boyfriend.Client.GetGuild(_id).TextChannels
+                .Single(x => x.Id == ulong.Parse(Preferences["PublicFeedbackChannel"]));
+        }
+        set => _cachedPublicFeedbackChannel = value;
+    }
+
+    public SocketTextChannel? PrivateFeedbackChannel {
+        get {
+            if (Preferences["PublicFeedbackChannel"] is "0") return null;
+            return _cachedPrivateFeedbackChannel ??= Boyfriend.Client.GetGuild(_id).TextChannels
+                .Single(x => x.Id == ulong.Parse(Preferences["PrivateFeedbackChannel"]));
+        }
+        set => _cachedPrivateFeedbackChannel = value;
+    }
+
+    public static GuildData Get(SocketGuild guild) {
         if (GuildDataDictionary.TryGetValue(guild.Id, out var stored)) return stored;
         var newData = new GuildData(guild) {
             _id = guild.Id
@@ -99,7 +126,7 @@ public record GuildData {
 
     public async Task Save(bool saveMemberData) {
         Preferences.TrimExcess();
-        await File.WriteAllTextAsync($"{_id}/Configuration.json",
+        await File.WriteAllTextAsync(_configurationFile,
             JsonSerializer.Serialize(Preferences));
         if (saveMemberData)
             foreach (var data in MemberData.Values)

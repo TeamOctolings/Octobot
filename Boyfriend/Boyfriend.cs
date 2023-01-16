@@ -1,6 +1,10 @@
 using System.Text;
+using System.Timers;
+using Boyfriend.Data;
 using Discord;
+using Discord.Rest;
 using Discord.WebSocket;
+using Timer = System.Timers.Timer;
 
 namespace Boyfriend;
 
@@ -18,7 +22,10 @@ public static class Boyfriend {
         LargeThreshold = 500
     };
 
-    private static readonly List<Tuple<Game, TimeSpan>> ActivityList = new() {
+    private static DateTimeOffset _nextSongAt = DateTimeOffset.MinValue;
+    private static uint _nextSongIndex;
+
+    private static readonly Tuple<Game, TimeSpan>[] ActivityList = {
         Tuple.Create(new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening),
             new TimeSpan(0, 3, 40)),
         Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
@@ -30,11 +37,13 @@ public static class Boyfriend {
 
     public static readonly DiscordSocketClient Client = new(Config);
 
+    private static readonly List<Task> GuildTickTasks = new();
+
     public static void Main() {
-        Init().GetAwaiter().GetResult();
+        InitAsync().GetAwaiter().GetResult();
     }
 
-    private static async Task Init() {
+    private static async Task InitAsync() {
         var token = (await File.ReadAllTextAsync("token.txt")).Trim();
 
         Client.Log += Log;
@@ -44,11 +53,32 @@ public static class Boyfriend {
 
         EventHandler.InitEvents();
 
-        while (ActivityList.Count > 0)
-            foreach (var activity in ActivityList) {
-                await Client.SetActivityAsync(activity.Item1);
-                await Task.Delay(activity.Item2);
+        var timer = new Timer();
+        timer.Interval = 1000;
+        timer.AutoReset = true;
+        timer.Elapsed += TickAllGuildsAsync;
+        timer.Start();
+
+        while (ActivityList.Length > 0)
+            if (DateTimeOffset.Now >= _nextSongAt) {
+                var nextSong = ActivityList[_nextSongIndex];
+                await Client.SetActivityAsync(nextSong.Item1);
+                _nextSongAt = DateTimeOffset.Now.Add(nextSong.Item2);
+                _nextSongIndex++;
+                if (_nextSongIndex >= ActivityList.Length) _nextSongIndex = 0;
             }
+    }
+
+    private static async void TickAllGuildsAsync(object? sender, ElapsedEventArgs e) {
+        foreach (var guild in Client.Guilds) GuildTickTasks.Add(TickGuildAsync(guild));
+
+        try { Task.WaitAll(GuildTickTasks.ToArray()); } catch (AggregateException ex) {
+            foreach (var exc in ex.InnerExceptions)
+                await Log(new LogMessage(LogSeverity.Error, nameof(CommandProcessor),
+                    "Exception while executing commands", exc));
+        }
+
+        GuildTickTasks.Clear();
     }
 
     public static Task Log(LogMessage msg) {
@@ -78,18 +108,51 @@ public static class Boyfriend {
         return Task.CompletedTask;
     }
 
-    /*public static Dictionary<ulong, ReadOnlyCollection<ulong>> GetRemovedRoles(ulong id) {
-        if (RemovedRolesDictionary.TryGetValue(id, out var dict)) return dict;
-        var path = $"removedroles_{id}.json";
+    private static async Task TickGuildAsync(SocketGuild guild) {
+        var data = GuildData.Get(guild);
+        var config = data.Preferences;
+        _ = int.TryParse(config["EventEarlyNotificationOffset"], out var offset);
+        foreach (var schEvent in guild.Events)
+            if (config["AutoStartEvents"] is "true" && DateTimeOffset.Now >= schEvent.StartTime) {
+                await schEvent.StartAsync();
+            } else if (!data.EarlyNotifications.Contains(schEvent.Id) &&
+                       DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
+                var receivers = config["EventStartedReceivers"];
+                var role = guild.GetRole(ulong.Parse(config["EventNotificationRole"]));
+                var mentions = StringBuilder;
 
-        if (!File.Exists(path)) File.Create(path).Dispose();
+                if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
+                if (receivers.Contains("users") || receivers.Contains("interested"))
+                    mentions = (await schEvent.GetUsersAsync(15))
+                        .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
+                        .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
 
-        var json = File.ReadAllText(path);
-        var removedRoles = JsonConvert.DeserializeObject<Dictionary<ulong, ReadOnlyCollection<ulong>>>(json)
-                           ?? new Dictionary<ulong, ReadOnlyCollection<ulong>>();
+                await Utils.GetEventNotificationChannel(guild)?.SendMessageAsync(string.Format(Messages.EventStarted,
+                    mentions,
+                    Utils.Wrap(schEvent.Name),
+                    Utils.Wrap(schEvent.Location) ?? Utils.MentionChannel(schEvent.Channel.Id)))!;
+                mentions.Clear();
+                data.EarlyNotifications.Add(schEvent.Id);
+            }
 
-        RemovedRolesDictionary.Add(id, removedRoles);
+        foreach (var mData in data.MemberData.Values) {
+            if (DateTimeOffset.Now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
 
-        return removedRoles;
-    }*/
+            if (mData.IsInGuild) {
+                if (DateTimeOffset.Now >= mData.MutedUntil)
+                    await Utils.UnmuteMemberAsync(data, Client.CurrentUser.ToString(), guild.GetUser(mData.Id),
+                        Messages.PunishmentExpired);
+
+                foreach (var reminder in mData.Reminders) {
+                    var channel = guild.GetTextChannel(reminder.ReminderChannel);
+                    if (channel is null) {
+                        await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
+                        continue;
+                    }
+
+                    await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
+                }
+            }
+        }
+    }
 }

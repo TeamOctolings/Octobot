@@ -10,7 +10,7 @@ public sealed class SettingsCommand : ICommand {
         if (!cmd.HasPermission(GuildPermission.ManageGuild)) return Task.CompletedTask;
 
         var guild = cmd.Context.Guild;
-        var data = GuildData.FromSocketGuild(guild);
+        var data = GuildData.Get(guild);
         var config = data.Preferences;
 
         if (args.Length is 0) {
@@ -45,10 +45,7 @@ public sealed class SettingsCommand : ICommand {
         var selectedSetting = args[0].ToLower();
 
         var exists = false;
-        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        // Too many allocations
-        foreach (var setting in GuildData.DefaultPreferences.Keys) {
-            if (selectedSetting != setting.ToLower()) continue;
+        foreach (var setting in GuildData.DefaultPreferences.Keys.Where(x => x.ToLower() == selectedSetting)) {
             selectedSetting = setting;
             exists = true;
             break;
@@ -130,6 +127,11 @@ public sealed class SettingsCommand : ICommand {
 
             if (selectedSetting.EndsWith("Role") && guild.GetRole(mention) is null) {
                 cmd.Reply(Messages.InvalidRole, ReplyEmojis.Error);
+                return Task.CompletedTask;
+            }
+
+            if (selectedSetting.EndsWith("Offset") && !int.TryParse(value, out _)) {
+                cmd.Reply(Messages.InvalidSettingValue, ReplyEmojis.Error);
                 return Task.CompletedTask;
             }
 
