@@ -57,6 +57,7 @@ public static class Boyfriend {
         timer.Interval = 1000;
         timer.AutoReset = true;
         timer.Elapsed += TickAllGuildsAsync;
+        if (ActivityList.Length is 0) timer.Dispose(); // CodeQL moment
         timer.Start();
 
         while (ActivityList.Length > 0)
@@ -143,7 +144,7 @@ public static class Boyfriend {
                     await Utils.UnmuteMemberAsync(data, Client.CurrentUser.ToString(), guild.GetUser(mData.Id),
                         Messages.PunishmentExpired);
 
-                foreach (var reminder in mData.Reminders) {
+                foreach (var reminder in mData.Reminders.Where(rem => DateTimeOffset.Now >= rem.RemindAt)) {
                     var channel = guild.GetTextChannel(reminder.ReminderChannel);
                     if (channel is null) {
                         await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
@@ -151,6 +152,8 @@ public static class Boyfriend {
                     }
 
                     await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
+
+                    mData.Reminders.Remove(reminder);
                 }
             }
         }

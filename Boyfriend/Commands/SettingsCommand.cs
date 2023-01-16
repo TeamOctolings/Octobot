@@ -135,7 +135,17 @@ public sealed class SettingsCommand : ICommand {
                 return Task.CompletedTask;
             }
 
-            if (selectedSetting is "MuteRole") data.MuteRole = guild.GetRole(mention);
+            switch (selectedSetting) {
+                case "MuteRole":
+                    data.MuteRole = guild.GetRole(mention);
+                    break;
+                case "PublicFeedbackChannel":
+                    data.PublicFeedbackChannel = guild.GetTextChannel(mention);
+                    break;
+                case "PrivateFeedbackChannel":
+                    data.PrivateFeedbackChannel = guild.GetTextChannel(mention);
+                    break;
+            }
 
             config[selectedSetting] = value;
         }

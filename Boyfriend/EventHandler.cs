@@ -17,10 +17,16 @@ public static class EventHandler {
         Client.MessageUpdated += MessageUpdatedEvent;
         Client.UserJoined += UserJoinedEvent;
         Client.UserLeft += UserLeftEvent;
+        Client.GuildMemberUpdated += RolesUpdatedEvent;
         Client.GuildScheduledEventCreated += ScheduledEventCreatedEvent;
         Client.GuildScheduledEventCancelled += ScheduledEventCancelledEvent;
         Client.GuildScheduledEventStarted += ScheduledEventStartedEvent;
         Client.GuildScheduledEventCompleted += ScheduledEventCompletedEvent;
+    }
+
+    private static Task RolesUpdatedEvent(Cacheable<SocketGuildUser, ulong> oldUser, SocketGuildUser newUser) {
+        GuildData.Get(newUser.Guild).MemberData[newUser.Id].Roles = ((IGuildUser)newUser).RoleIds.ToList();
+        return Task.CompletedTask;
     }
 
     private static Task ReadyEvent() {
