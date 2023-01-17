@@ -135,43 +135,43 @@
   <data name="Beep2" xml:space="preserve">
     <value>Боп! </value>
   </data>
-  <data name="Beep3" xml:space="preserve">
+    <data name="Beep3" xml:space="preserve">
     <value>Бип! </value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
+    <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>У меня недостаточно прав для выполнения этой команды!</value>
   </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
+    <data name="CommandNoPermissionUser" xml:space="preserve">
     <value>У тебя недостаточно прав для выполнения этой команды!</value>
   </data>
-  <data name="YouWereBanned" xml:space="preserve">
-    <value>Тебя забанил {0} на сервере {1} за {2}</value>
-  </data>
-  <data name="PunishmentExpired" xml:space="preserve">
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>Тебя забанил {0} на сервере `{1}` за {2}</value>
+    </data>
+    <data name="PunishmentExpired" xml:space="preserve">
     <value>Время наказания истекло</value>
   </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
+    <data name="ClearAmountTooSmall" xml:space="preserve">
     <value>Указано менее {0} сообщений!</value>
   </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
+    <data name="ClearAmountTooLarge" xml:space="preserve">
     <value>Указано более {0} сообщений!</value>
   </data>
-  <data name="CommandHelp" xml:space="preserve">
+    <data name="CommandHelp" xml:space="preserve">
     <value>Справка по командам:</value>
   </data>
-  <data name="YouWereKicked" xml:space="preserve">
-    <value>Тебя кикнул {0} на сервере {1} за {2}</value>
-  </data>
-  <data name="Milliseconds" xml:space="preserve">
+    <data name="YouWereKicked" xml:space="preserve">
+        <value>Тебя кикнул {0} на сервере `{1}` за {2}</value>
+    </data>
+    <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
+    <data name="MemberAlreadyMuted" xml:space="preserve">
     <value>Участник уже заглушен!</value>
   </data>
-  <data name="ChannelNotSpecified" xml:space="preserve">
+    <data name="ChannelNotSpecified" xml:space="preserve">
     <value>Не указан</value>
   </data>
-  <data name="RoleNotSpecified" xml:space="preserve">
+    <data name="RoleNotSpecified" xml:space="preserve">
     <value>Не указана</value>
   </data>
   <data name="CurrentSettings" xml:space="preserve">
@@ -192,10 +192,7 @@
   <data name="SettingsMuteRole" xml:space="preserve">
     <value>Роль мута</value>
   </data>
-  <data name="SettingsBotLogChannel" xml:space="preserve">
-    <value>Канал бот-уведомлений</value>
-  </data>
-  <data name="LanguageNotSupported" xml:space="preserve">
+    <data name="LanguageNotSupported" xml:space="preserve">
     <value>Язык не поддерживается! Поддерживаемые языки:</value>
   </data>
   <data name="Yes" xml:space="preserve">
@@ -327,28 +324,28 @@
   <data name="MissingNumber" xml:space="preserve">
     <value>Надо указать целое число от {0} до {1}!</value>
   </data>
-  <data name="MissingUser" xml:space="preserve">
+    <data name="MissingUser" xml:space="preserve">
     <value>Надо указать пользователя!</value>
   </data>
-  <data name="InvalidUser" xml:space="preserve">
+    <data name="InvalidUser" xml:space="preserve">
     <value>Надо указать пользователя вместо {0}!</value>
   </data>
-  <data name="MissingMember" xml:space="preserve">
+    <data name="MissingMember" xml:space="preserve">
     <value>Надо указать участника сервера!</value>
   </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>Надо указать участника сервера вместо {0}!</value>
-  </data>
-  <data name="UserCannotBanMembers" xml:space="preserve">
+    <data name="InvalidMember" xml:space="preserve">
+        <value>Тебе надо указать участника этого сервера!</value>
+    </data>
+    <data name="UserCannotBanMembers" xml:space="preserve">
     <value>Ты не можешь банить пользователей на этом сервере!</value>
   </data>
-  <data name="UserCannotManageMessages" xml:space="preserve">
+    <data name="UserCannotManageMessages" xml:space="preserve">
     <value>Ты не можешь управлять сообщениями этого сервера!</value>
   </data>
-  <data name="UserCannotKickMembers" xml:space="preserve">
+    <data name="UserCannotKickMembers" xml:space="preserve">
     <value>Ты не можешь выгонять участников с этого сервера!</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
+    <data name="UserCannotModerateMembers" xml:space="preserve">
     <value>Ты не можешь модерировать участников этого сервера!</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
@@ -458,5 +455,23 @@
     </data>
     <data name="SettingsStarterRole" xml:space="preserve">
         <value>Начальная роль</value>
+    </data>
+    <data name="CommandDescriptionRemind" xml:space="preserve">
+        <value>Добавляет напоминание</value>
+    </data>
+    <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
+        <value>Канал для публичных уведомлений</value>
+    </data>
+    <data name="SettingsPrivateFeedbackChannel" xml:space="preserve">
+        <value>Канал для приватных уведомлений</value>
+    </data>
+    <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
+        <value>Возвращать роли при перезаходе</value>
+    </data>
+    <data name="SettingsAutoStartEvents" xml:space="preserve">
+        <value>Автоматически начинать события</value>
+    </data>
+    <data name="MissingReminderText" xml:space="preserve">
+        <value>Тебе нужно указать текст напоминания!</value>
     </data>
 </root>

@@ -3,12 +3,12 @@
 namespace Boyfriend.Data;
 
 public record MemberData {
-    public DateTimeOffset BannedUntil;
+    public DateTimeOffset? BannedUntil;
     public ulong Id;
     public bool IsInGuild;
     public List<DateTimeOffset> JoinedAt;
     public List<DateTimeOffset> LeftAt;
-    public DateTimeOffset MutedUntil;
+    public DateTimeOffset? MutedUntil;
     public List<Reminder> Reminders;
     public List<ulong> Roles;
 
@@ -19,7 +19,5 @@ public record MemberData {
         LeftAt = new List<DateTimeOffset>();
         Roles = user.RoleIds.ToList();
         Reminders = new List<Reminder>();
-        MutedUntil = DateTimeOffset.MinValue;
-        BannedUntil = DateTimeOffset.MinValue;
     }
 }

@@ -34,8 +34,9 @@ public static class EventHandler {
         var i = Random.Shared.Next(3);
 
         foreach (var guild in Client.Guilds) {
-            var config = GuildData.Get(guild).Preferences;
-            var channel = guild.GetTextChannel(Utils.ParseMention(config["BotLogChannel"]));
+            var data = GuildData.Get(guild);
+            var config = data.Preferences;
+            var channel = data.PrivateFeedbackChannel;
             Utils.SetCurrentLanguage(guild);
 
             if (config["ReceiveStartupMessages"] is not "true" || channel is null) continue;
@@ -101,12 +102,13 @@ public static class EventHandler {
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
+        if (user.IsBot) return;
         var guild = user.Guild;
         var data = GuildData.Get(guild);
         var config = data.Preferences;
         Utils.SetCurrentLanguage(guild);
 
-        if (config["SendWelcomeMessages"] is "true")
+        if (config["SendWelcomeMessages"] is "true" && data.PublicFeedbackChannel is not null)
             await Utils.SilentSendAsync(data.PublicFeedbackChannel,
                 string.Format(config["WelcomeMessage"] is "default"
                     ? Messages.DefaultWelcomeMessage
@@ -117,7 +119,7 @@ public static class EventHandler {
         if (!data.MemberData.ContainsKey(user.Id)) data.MemberData.Add(user.Id, new MemberData(user));
         var memberData = data.MemberData[user.Id];
         memberData.IsInGuild = true;
-        memberData.BannedUntil = DateTimeOffset.MinValue;
+        memberData.BannedUntil = null;
         if (memberData.LeftAt.Count > 0) {
             if (memberData.JoinedAt.Contains(user.JoinedAt!.Value))
                 throw new UnreachableException();
@@ -127,9 +129,6 @@ public static class EventHandler {
         if (memberData.MutedUntil < DateTimeOffset.Now) {
             if (data.MuteRole is not null)
                 await user.AddRoleAsync(data.MuteRole);
-            else
-                await user.SetTimeOutAsync(DateTimeOffset.Now - memberData.MutedUntil);
-
             if (config["RemoveRolesOnMute"] is "false" && config["ReturnRolesOnRejoin"] is "true")
                 await user.AddRolesAsync(memberData.Roles);
         } else if (config["ReturnRolesOnRejoin"] is "true") { await user.AddRolesAsync(memberData.Roles); }

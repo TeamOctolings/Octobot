@@ -147,6 +147,7 @@ public static partial class Utils {
             if (!toUnmute.Roles.Contains(role)) return false;
             await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
             await toUnmute.RemoveRoleAsync(role, requestOptions);
+            data.MemberData[toUnmute.Id].MutedUntil = null;
         } else {
             if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value < DateTimeOffset.Now) return false;
 

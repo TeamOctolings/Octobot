@@ -6,6 +6,7 @@ public sealed class RemindCommand : ICommand {
     public string[] Aliases { get; } = { "remind", "reminder", "remindme", "напомни", "напомнить", "напоминание" };
 
     public Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
+        // TODO: actually make this good
         var remindIn = CommandProcessor.GetTimeSpan(args, 0);
         var reminderText = cmd.GetRemaining(cleanArgs, 1, "ReminderText");
         if (reminderText is not null)
@@ -14,6 +15,8 @@ public sealed class RemindCommand : ICommand {
                 ReminderText = reminderText,
                 ReminderChannel = cmd.Context.Channel.Id
             });
+
+        cmd.ConfigWriteScheduled = true;
 
         return Task.CompletedTask;
     }

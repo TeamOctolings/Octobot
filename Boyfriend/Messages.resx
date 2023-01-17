@@ -135,43 +135,43 @@
   <data name="Beep2" xml:space="preserve">
     <value>Bop! </value>
   </data>
-  <data name="Beep3" xml:space="preserve">
+    <data name="Beep3" xml:space="preserve">
     <value>Beep! </value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
+    <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>I do not have permission to execute this command!</value>
   </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
+    <data name="CommandNoPermissionUser" xml:space="preserve">
     <value>You do not have permission to execute this command!</value>
   </data>
-  <data name="YouWereBanned" xml:space="preserve">
-    <value>You were banned by {0} in guild {1} for {2}</value>
-  </data>
-  <data name="PunishmentExpired" xml:space="preserve">
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>You were banned by {0} in guild `{1}` for {2}</value>
+    </data>
+    <data name="PunishmentExpired" xml:space="preserve">
     <value>Punishment expired</value>
   </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
+    <data name="ClearAmountTooSmall" xml:space="preserve">
     <value>You specified less than {0} messages!</value>
   </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
+    <data name="ClearAmountTooLarge" xml:space="preserve">
     <value>You specified more than {0} messages!</value>
   </data>
-  <data name="CommandHelp" xml:space="preserve">
+    <data name="CommandHelp" xml:space="preserve">
     <value>Command help:</value>
   </data>
-  <data name="YouWereKicked" xml:space="preserve">
-    <value>You were kicked by {0} in guild {1} for {2}</value>
-  </data>
-  <data name="Milliseconds" xml:space="preserve">
+    <data name="YouWereKicked" xml:space="preserve">
+        <value>You were kicked by {0} in guild `{1}` for {2}</value>
+    </data>
+    <data name="Milliseconds" xml:space="preserve">
     <value>ms</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
+    <data name="MemberAlreadyMuted" xml:space="preserve">
     <value>Member is already muted!</value>
   </data>
-  <data name="ChannelNotSpecified" xml:space="preserve">
+    <data name="ChannelNotSpecified" xml:space="preserve">
     <value>Not specified</value>
   </data>
-  <data name="RoleNotSpecified" xml:space="preserve">
+    <data name="RoleNotSpecified" xml:space="preserve">
     <value>Not specified</value>
   </data>
   <data name="CurrentSettings" xml:space="preserve">
@@ -192,10 +192,7 @@
     <data name="SettingsMuteRole" xml:space="preserve">
     <value>Mute role</value>
   </data>
-  <data name="SettingsBotLogChannel" xml:space="preserve">
-    <value>Bot log channel</value>
-  </data>
-  <data name="LanguageNotSupported" xml:space="preserve">
+    <data name="LanguageNotSupported" xml:space="preserve">
     <value>Language not supported! Supported languages:</value>
   </data>
   <data name="Yes" xml:space="preserve">
@@ -327,28 +324,28 @@
   <data name="MissingNumber" xml:space="preserve">
     <value>You need to specify an integer from {0} to {1}!</value>
   </data>
-  <data name="MissingUser" xml:space="preserve">
+    <data name="MissingUser" xml:space="preserve">
     <value>You need to specify a user!</value>
   </data>
-  <data name="InvalidUser" xml:space="preserve">
+    <data name="InvalidUser" xml:space="preserve">
     <value>You need to specify a user instead of {0}!</value>
   </data>
-  <data name="MissingMember" xml:space="preserve">
+    <data name="MissingMember" xml:space="preserve">
     <value>You need to specify a guild member!</value>
   </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>You need to specify a guild member instead of {0}!</value>
-  </data>
-  <data name="UserCannotBanMembers" xml:space="preserve">
+    <data name="InvalidMember" xml:space="preserve">
+        <value>You did not specify a member of this guild!</value>
+    </data>
+    <data name="UserCannotBanMembers" xml:space="preserve">
     <value>You cannot ban users from this guild!</value>
   </data>
-  <data name="UserCannotManageMessages" xml:space="preserve">
+    <data name="UserCannotManageMessages" xml:space="preserve">
     <value>You cannot manage messages in this guild!</value>
   </data>
-  <data name="UserCannotKickMembers" xml:space="preserve">
+    <data name="UserCannotKickMembers" xml:space="preserve">
     <value>You cannot kick members from this guild!</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
+    <data name="UserCannotModerateMembers" xml:space="preserve">
     <value>You cannot moderate members in this guild!</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
@@ -458,5 +455,23 @@
     </data>
     <data name="SettingsStarterRole" xml:space="preserve">
         <value>Starter role</value>
+    </data>
+    <data name="CommandDescriptionRemind" xml:space="preserve">
+        <value>Adds a reminder</value>
+    </data>
+    <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
+        <value>Channel for public notifications</value>
+    </data>
+    <data name="SettingsPrivateFeedbackChannel" xml:space="preserve">
+        <value>Channel for private notifications</value>
+    </data>
+    <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
+        <value>Return roles on rejoin</value>
+    </data>
+    <data name="SettingsAutoStartEvents" xml:space="preserve">
+        <value>Automatically start scheduled events</value>
+    </data>
+    <data name="MissingReminderText" xml:space="preserve">
+        <value>You need to specify reminder text!</value>
     </data>
 </root>

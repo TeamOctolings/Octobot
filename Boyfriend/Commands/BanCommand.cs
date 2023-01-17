@@ -35,6 +35,8 @@ public sealed class BanCommand : ICommand {
             = duration.TotalSeconds < 1 ? DateTimeOffset.MaxValue : DateTimeOffset.Now.Add(duration);
         memberData.Roles.Clear();
 
+        cmd.ConfigWriteScheduled = true;
+
         var feedback = string.Format(Messages.FeedbackUserBanned, $"<@{toBan.Item1.ToString()}>",
             Utils.GetHumanizedTimeOffset(duration), Utils.Wrap(reason));
         cmd.Reply(feedback, ReplyEmojis.Banned);

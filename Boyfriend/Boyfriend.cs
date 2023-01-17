@@ -16,7 +16,6 @@ public static class Boyfriend {
         GatewayIntents
             = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers) &
               ~GatewayIntents.GuildInvites,
-        AlwaysDownloadUsers = true,
         AlwaysResolveStickers = false,
         AlwaysDownloadDefaultStickers = false,
         LargeThreshold = 500
@@ -112,6 +111,7 @@ public static class Boyfriend {
     private static async Task TickGuildAsync(SocketGuild guild) {
         var data = GuildData.Get(guild);
         var config = data.Preferences;
+        var saveData = false;
         _ = int.TryParse(config["EventEarlyNotificationOffset"], out var offset);
         foreach (var schEvent in guild.Events)
             if (config["AutoStartEvents"] is "true" && DateTimeOffset.Now >= schEvent.StartTime) {
@@ -140,22 +140,30 @@ public static class Boyfriend {
             if (DateTimeOffset.Now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
 
             if (mData.IsInGuild) {
-                if (DateTimeOffset.Now >= mData.MutedUntil)
+                if (DateTimeOffset.Now >= mData.MutedUntil) {
                     await Utils.UnmuteMemberAsync(data, Client.CurrentUser.ToString(), guild.GetUser(mData.Id),
                         Messages.PunishmentExpired);
+                    saveData = true;
+                }
 
-                foreach (var reminder in mData.Reminders.Where(rem => DateTimeOffset.Now >= rem.RemindAt)) {
-                    var channel = guild.GetTextChannel(reminder.ReminderChannel);
-                    if (channel is null) {
-                        await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
-                        continue;
+                for (var i = mData.Reminders.Count - 1; i >= 0; i--) {
+                    var reminder = mData.Reminders[i];
+                    if (DateTimeOffset.Now >= reminder.RemindAt) {
+                        var channel = guild.GetTextChannel(reminder.ReminderChannel);
+                        if (channel is null) {
+                            await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
+                            continue;
+                        }
+
+                        await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
+                        mData.Reminders.RemoveAt(i);
+
+                        saveData = true;
                     }
-
-                    await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
-
-                    mData.Reminders.Remove(reminder);
                 }
             }
         }
+
+        if (saveData) data.Save(true).Wait();
     }
 }

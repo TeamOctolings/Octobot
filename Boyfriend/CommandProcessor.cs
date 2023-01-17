@@ -167,7 +167,7 @@ public sealed class CommandProcessor {
         return Context.Guild.GetUser(id);
     }
 
-    public SocketGuildUser? GetMember(string[] args, string[] cleanArgs, int index, string? argument) {
+    public SocketGuildUser? GetMember(string[] args, int index, string? argument) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.MissingArgument} {Messages.MissingMember}",
                 Context.Message);
@@ -177,7 +177,7 @@ public sealed class CommandProcessor {
         var member = Context.Guild.GetUser(Utils.ParseMention(args[index]));
         if (member is null && argument is not null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{ReplyEmojis.InvalidArgument} {string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
+                $"{ReplyEmojis.InvalidArgument} {Messages.InvalidMember}",
                 Context.Message);
         return member;
     }

@@ -8,7 +8,7 @@ public sealed class MuteCommand : ICommand {
     public string[] Aliases { get; } = { "mute", "timeout", "заглушить", "мут" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
-        var toMute = cmd.GetMember(args, cleanArgs, 0, "ToMute");
+        var toMute = cmd.GetMember(args, 0, "ToMute");
         if (toMute is null) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);
@@ -40,8 +40,6 @@ public sealed class MuteCommand : ICommand {
                 await toMute.RemoveRolesAsync(toMute.Roles, requestOptions);
 
             await toMute.AddRoleAsync(role, requestOptions);
-
-            data.MemberData[toMute.Id].MutedUntil = DateTimeOffset.Now.Add(duration);
         } else {
             if (!hasDuration || duration.TotalDays > 28) {
                 cmd.Reply(Messages.DurationRequiredForTimeOuts, ReplyEmojis.Error);
@@ -55,6 +53,9 @@ public sealed class MuteCommand : ICommand {
 
             await toMute.SetTimeOutAsync(duration, requestOptions);
         }
+
+        data.MemberData[toMute.Id].MutedUntil = DateTimeOffset.Now.Add(duration);
+        cmd.ConfigWriteScheduled = true;
 
         var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
             Utils.GetHumanizedTimeOffset(duration),

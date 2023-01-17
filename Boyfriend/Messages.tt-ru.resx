@@ -135,43 +135,43 @@
   <data name="Beep2" xml:space="preserve">
     <value>брох! </value>
   </data>
-  <data name="Beep3" xml:space="preserve">
+    <data name="Beep3" xml:space="preserve">
     <value>брух! </value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
+    <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>у меня прав нету, сделай что нибудь.</value>
   </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
+    <data name="CommandNoPermissionUser" xml:space="preserve">
     <value>у тебя прав нету, твои проблемы.</value>
   </data>
-  <data name="YouWereBanned" xml:space="preserve">
-    <value>здарова, тебя крч забанил {0} на сервере {1} за {2}</value>
-  </data>
-  <data name="PunishmentExpired" xml:space="preserve">
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>здарова, тебя крч забанил {0} на сервере `{1}` за {2}</value>
+    </data>
+    <data name="PunishmentExpired" xml:space="preserve">
     <value>время бана закончиловсь</value>
   </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
+    <data name="ClearAmountTooSmall" xml:space="preserve">
     <value>ты выбрал менее {0} сообщений</value>
   </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
+    <data name="ClearAmountTooLarge" xml:space="preserve">
     <value>ты выбрал более {0} сообщений</value>
   </data>
-  <data name="CommandHelp" xml:space="preserve">
+    <data name="CommandHelp" xml:space="preserve">
     <value>туториал по приколам:</value>
   </data>
-  <data name="YouWereKicked" xml:space="preserve">
-    <value>здарова, тебя крч кикнул {0} на сервере {1} за {2}</value>
-  </data>
-  <data name="Milliseconds" xml:space="preserve">
+    <data name="YouWereKicked" xml:space="preserve">
+        <value>здарова, тебя крч кикнул {0} на сервере `{1}` за {2}</value>
+    </data>
+    <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
+    <data name="MemberAlreadyMuted" xml:space="preserve">
     <value>шизоид уже замучен!</value>
   </data>
-  <data name="ChannelNotSpecified" xml:space="preserve">
+    <data name="ChannelNotSpecified" xml:space="preserve">
     <value>*тут ничего нет*</value>
   </data>
-  <data name="RoleNotSpecified" xml:space="preserve">
+    <data name="RoleNotSpecified" xml:space="preserve">
     <value>*тут ничего нет*</value>
   </data>
   <data name="CurrentSettings" xml:space="preserve">
@@ -192,10 +192,7 @@
   <data name="SettingsMuteRole" xml:space="preserve">
     <value>роль замученного</value>
   </data>
-  <data name="SettingsBotLogChannel" xml:space="preserve">
-    <value>канал бот-уведомлений</value>
-  </data>
-  <data name="LanguageNotSupported" xml:space="preserve">
+    <data name="LanguageNotSupported" xml:space="preserve">
     <value>такого языка нету, ты шо, есть только такие:</value>
   </data>
   <data name="Yes" xml:space="preserve">
@@ -327,28 +324,28 @@
   <data name="MissingNumber" xml:space="preserve">
     <value>укажи целое число от {0} до {1}</value>
   </data>
-  <data name="MissingUser" xml:space="preserve">
+    <data name="MissingUser" xml:space="preserve">
     <value>укажи самого шизика</value>
   </data>
-  <data name="InvalidUser" xml:space="preserve">
+    <data name="InvalidUser" xml:space="preserve">
     <value>надо указать юзверя вместо {0}!</value>
   </data>
-  <data name="MissingMember" xml:space="preserve">
+    <data name="MissingMember" xml:space="preserve">
     <value>укажи самого шизика</value>
   </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>укажи шизоида сервера вместо {0}!</value>
-  </data>
-  <data name="UserCannotBanMembers" xml:space="preserve">
+    <data name="InvalidMember" xml:space="preserve">
+        <value>укажи шизоида сервера!</value>
+    </data>
+    <data name="UserCannotBanMembers" xml:space="preserve">
     <value>бан</value>
   </data>
-  <data name="UserCannotManageMessages" xml:space="preserve">
+    <data name="UserCannotManageMessages" xml:space="preserve">
     <value>тебе нельзя иметь власть над сообщениями шизоидов</value>
   </data>
-  <data name="UserCannotKickMembers" xml:space="preserve">
+    <data name="UserCannotKickMembers" xml:space="preserve">
     <value>кик шизиков нельзя</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
+    <data name="UserCannotModerateMembers" xml:space="preserve">
     <value>тебе нельзя управлять шизоидами</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
@@ -458,5 +455,23 @@
     </data>
     <data name="SettingsStarterRole" xml:space="preserve">
         <value>базовое звание</value>
+    </data>
+    <data name="CommandDescriptionRemind" xml:space="preserve">
+        <value>TODO</value>
+    </data>
+    <data name="SettingsPrivateFeedbackChannel" xml:space="preserve">
+        <value>TODO</value>
+    </data>
+    <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
+        <value>TODO</value>
+    </data>
+    <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
+        <value>TODO</value>
+    </data>
+    <data name="SettingsAutoStartEvents" xml:space="preserve">
+        <value>TODO</value>
+    </data>
+    <data name="MissingReminderText" xml:space="preserve">
+        <value>TODO</value>
     </data>
 </root>

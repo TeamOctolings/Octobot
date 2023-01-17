@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Discord.WebSocket;
 
@@ -24,9 +25,16 @@ public record GuildData {
         { "AutoStartEvents", "false" }
     };
 
-    public static readonly Dictionary<ulong, GuildData> GuildDataDictionary = new();
+    public static readonly ConcurrentDictionary<ulong, GuildData> GuildDataDictionary = new();
+
+    private static readonly JsonSerializerOptions Options = new() {
+        IncludeFields = true,
+        WriteIndented = true
+    };
 
     private readonly string _configurationFile;
+
+    private readonly ulong _id;
 
     public readonly List<ulong> EarlyNotifications = new();
 
@@ -38,17 +46,16 @@ public record GuildData {
     private SocketTextChannel? _cachedPrivateFeedbackChannel;
     private SocketTextChannel? _cachedPublicFeedbackChannel;
 
-    private ulong _id;
-
     [SuppressMessage("Performance", "CA1853:Unnecessary call to \'Dictionary.ContainsKey(key)\'")]
     // https://github.com/dotnet/roslyn-analyzers/issues/6377
     private GuildData(SocketGuild guild) {
+        _id = guild.Id;
         var idString = $"{_id}";
         var memberDataDir = $"{_id}/MemberData";
         _configurationFile = $"{_id}/Configuration.json";
         if (!Directory.Exists(idString)) Directory.CreateDirectory(idString);
         if (!Directory.Exists(memberDataDir)) Directory.CreateDirectory(memberDataDir);
-        if (!File.Exists(_configurationFile)) File.Create(_configurationFile).Dispose();
+        if (!File.Exists(_configurationFile)) File.WriteAllText(_configurationFile, "{}");
         Preferences
             = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(_configurationFile)) ??
               new Dictionary<string, string>();
@@ -64,16 +71,17 @@ public record GuildData {
         MemberData = new Dictionary<ulong, MemberData>();
         foreach (var data in Directory.GetFiles(memberDataDir)) {
             var deserialised
-                = JsonSerializer.Deserialize<MemberData>(File.ReadAllText($"{_id}/MemberData/{data}.json"));
+                = JsonSerializer.Deserialize<MemberData>(File.ReadAllText(data), Options);
             MemberData.Add(deserialised!.Id, deserialised);
         }
 
-
-        foreach (var member in guild.Users) {
+        guild.DownloadUsersAsync().Wait();
+        foreach (var member in guild.Users.Where(user => !user.IsBot)) {
             if (MemberData.TryGetValue(member.Id, out var memberData)) {
                 if (!memberData.IsInGuild &&
                     DateTimeOffset.Now.ToUnixTimeSeconds() -
-                    Math.Max(memberData.LeftAt.Last().ToUnixTimeSeconds(), memberData.BannedUntil.ToUnixTimeSeconds()) >
+                    Math.Max(memberData.LeftAt.Last().ToUnixTimeSeconds(),
+                        memberData.BannedUntil?.ToUnixTimeSeconds() ?? 0) >
                     60 * 60 * 24 * 30) {
                     File.Delete($"{_id}/MemberData/{memberData.Id}.json");
                     MemberData.Remove(memberData.Id);
@@ -117,10 +125,8 @@ public record GuildData {
 
     public static GuildData Get(SocketGuild guild) {
         if (GuildDataDictionary.TryGetValue(guild.Id, out var stored)) return stored;
-        var newData = new GuildData(guild) {
-            _id = guild.Id
-        };
-        GuildDataDictionary.Add(guild.Id, newData);
+        var newData = new GuildData(guild);
+        while (!GuildDataDictionary.ContainsKey(guild.Id)) GuildDataDictionary.TryAdd(guild.Id, newData);
         return newData;
     }
 
@@ -131,6 +137,6 @@ public record GuildData {
         if (saveMemberData)
             foreach (var data in MemberData.Values)
                 await File.WriteAllTextAsync($"{_id}/MemberData/{data.Id}.json",
-                    JsonSerializer.Serialize(data));
+                    JsonSerializer.Serialize(data, Options));
     }
 }
