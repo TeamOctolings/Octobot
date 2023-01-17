@@ -454,9 +454,9 @@
     <value>Early event start notification offset</value>
   </data>
     <data name="UserNotFound" xml:space="preserve">
-        <value>I could not find this user in any guild I'm a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago (TODO)</value>
+        <value>I could not find this user in any guild I'm a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago</value>
     </data>
-    <data name="StarterRoleDeleted" xml:space="preserve">
-        <value>The starter role was deleted! Please unset roles or channels from settings before deleting them</value>
+    <data name="SettingsStarterRole" xml:space="preserve">
+        <value>Starter role</value>
     </data>
 </root>

@@ -454,9 +454,9 @@
     <value>заранее пнуть в минутах до начала квеста</value>
   </data>
     <data name="UserNotFound" xml:space="preserve">
-      <value>TODO</value>
-  </data>
-    <data name="StarterRoleDeleted" xml:space="preserve">
-        <value>TODO</value>
+        <value>у нас такого шизоида нету, проверь, валиден ли ID уважаемого (я забываю о шизоидах если они ливнули минимум месяц назад)</value>
+    </data>
+    <data name="SettingsStarterRole" xml:space="preserve">
+        <value>базовое звание</value>
     </data>
 </root>
