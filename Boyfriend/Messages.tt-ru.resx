@@ -448,21 +448,21 @@
         <value>базовое звание</value>
     </data>
     <data name="CommandDescriptionRemind" xml:space="preserve">
-        <value>TODO</value>
+        <value>крафтит напоминалку</value>
     </data>
     <data name="SettingsPrivateFeedbackChannel" xml:space="preserve">
-        <value>TODO</value>
+        <value>канал для секретных уведомлений</value>
     </data>
     <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
-        <value>TODO</value>
+        <value>канал для не секретных уведомлений</value>
     </data>
     <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
-        <value>TODO</value>
+        <value>вернуть звания при переподключении в дурку</value>
     </data>
     <data name="SettingsAutoStartEvents" xml:space="preserve">
-        <value>TODO</value>
+        <value>автоматом стартить квесты</value>
     </data>
     <data name="MissingReminderText" xml:space="preserve">
-        <value>TODO</value>
+        <value>для крафта напоминалки нужен текст</value>
     </data>
 </root>
