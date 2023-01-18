@@ -1,64 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
+    <!--
+      Microsoft ResX Schema
 
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -135,43 +135,43 @@
   <data name="Beep2" xml:space="preserve">
     <value>Боп! </value>
   </data>
-  <data name="Beep3" xml:space="preserve">
+    <data name="Beep3" xml:space="preserve">
     <value>Бип! </value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
+    <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>У меня недостаточно прав для выполнения этой команды!</value>
   </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
+    <data name="CommandNoPermissionUser" xml:space="preserve">
     <value>У тебя недостаточно прав для выполнения этой команды!</value>
   </data>
-  <data name="YouWereBanned" xml:space="preserve">
-    <value>Тебя забанил {0} на сервере {1} за {2}</value>
-  </data>
-  <data name="PunishmentExpired" xml:space="preserve">
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>Тебя забанил {0} на сервере `{1}` за {2}</value>
+    </data>
+    <data name="PunishmentExpired" xml:space="preserve">
     <value>Время наказания истекло</value>
   </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
+    <data name="ClearAmountTooSmall" xml:space="preserve">
     <value>Указано менее {0} сообщений!</value>
   </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
+    <data name="ClearAmountTooLarge" xml:space="preserve">
     <value>Указано более {0} сообщений!</value>
   </data>
-  <data name="CommandHelp" xml:space="preserve">
+    <data name="CommandHelp" xml:space="preserve">
     <value>Справка по командам:</value>
   </data>
-  <data name="YouWereKicked" xml:space="preserve">
-    <value>Тебя кикнул {0} на сервере {1} за {2}</value>
-  </data>
-  <data name="Milliseconds" xml:space="preserve">
+    <data name="YouWereKicked" xml:space="preserve">
+        <value>Тебя кикнул {0} на сервере `{1}` за {2}</value>
+    </data>
+    <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
+    <data name="MemberAlreadyMuted" xml:space="preserve">
     <value>Участник уже заглушен!</value>
   </data>
-  <data name="ChannelNotSpecified" xml:space="preserve">
+    <data name="ChannelNotSpecified" xml:space="preserve">
     <value>Не указан</value>
   </data>
-  <data name="RoleNotSpecified" xml:space="preserve">
+    <data name="RoleNotSpecified" xml:space="preserve">
     <value>Не указана</value>
   </data>
   <data name="CurrentSettings" xml:space="preserve">
@@ -192,10 +192,7 @@
   <data name="SettingsMuteRole" xml:space="preserve">
     <value>Роль мута</value>
   </data>
-  <data name="SettingsBotLogChannel" xml:space="preserve">
-    <value>Канал бот-уведомлений</value>
-  </data>
-  <data name="LanguageNotSupported" xml:space="preserve">
+    <data name="LanguageNotSupported" xml:space="preserve">
     <value>Язык не поддерживается! Поддерживаемые языки:</value>
   </data>
   <data name="Yes" xml:space="preserve">
@@ -210,10 +207,7 @@
   <data name="MemberNotMuted" xml:space="preserve">
     <value>Участник не заглушен!</value>
   </data>
-  <data name="RolesReturned" xml:space="preserve">
-    <value>Кто-то убрал роль мута самостоятельно! Я вернул все роли, которые забрал при муте</value>
-  </data>
-  <data name="SettingsWelcomeMessage" xml:space="preserve">
+    <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>Приветствие</value>
   </data>
   <data name="ClearAmountInvalid" xml:space="preserve">
@@ -221,9 +215,6 @@
   </data>
   <data name="FeedbackUserBanned" xml:space="preserve">
     <value>Забанен {0} на{1}: {2}</value>
-  </data>
-  <data name="UserNotInGuild" xml:space="preserve">
-    <value>Указанный пользователь не является участником этого сервера!</value>
   </data>
   <data name="SettingDoesntExist" xml:space="preserve">
     <value>Такая настройка не существует!</value>
@@ -240,19 +231,13 @@
   <data name="InvalidChannel" xml:space="preserve">
     <value>Этот канал не существует!</value>
   </data>
-  <data name="RoleRemovalFailed" xml:space="preserve">
-    <value>Я не смог забрать роль {0} в связи с ошибкой! {1}</value>
-  </data>
-  <data name="DurationRequiredForTimeOuts" xml:space="preserve">
+    <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>Я не могу заглушить кого-то на более чем 28 дней, используя тайм-ауты! Или укажи продолжительность менее 28 дней, или установи роль мута в настройках</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
     <value>Я не могу использовать тайм-ауты на других ботах! Попробуй указать роль мута в настройках</value>
   </data>
-  <data name="SettingsStarterRole" xml:space="preserve">
-    <value>Начальная роль</value>
-  </data>
-  <data name="EventCreated" xml:space="preserve">
+    <data name="EventCreated" xml:space="preserve">
     <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!{4}</value>
   </data>
   <data name="SettingsEventNotificationRole" xml:space="preserve">
@@ -333,28 +318,28 @@
   <data name="MissingNumber" xml:space="preserve">
     <value>Надо указать целое число от {0} до {1}!</value>
   </data>
-  <data name="MissingUser" xml:space="preserve">
+    <data name="MissingUser" xml:space="preserve">
     <value>Надо указать пользователя!</value>
   </data>
-  <data name="InvalidUser" xml:space="preserve">
+    <data name="InvalidUser" xml:space="preserve">
     <value>Надо указать пользователя вместо {0}!</value>
   </data>
-  <data name="MissingMember" xml:space="preserve">
+    <data name="MissingMember" xml:space="preserve">
     <value>Надо указать участника сервера!</value>
   </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>Надо указать участника сервера вместо {0}!</value>
-  </data>
-  <data name="UserCannotBanMembers" xml:space="preserve">
+    <data name="InvalidMember" xml:space="preserve">
+        <value>Тебе надо указать участника этого сервера!</value>
+    </data>
+    <data name="UserCannotBanMembers" xml:space="preserve">
     <value>Ты не можешь банить пользователей на этом сервере!</value>
   </data>
-  <data name="UserCannotManageMessages" xml:space="preserve">
+    <data name="UserCannotManageMessages" xml:space="preserve">
     <value>Ты не можешь управлять сообщениями этого сервера!</value>
   </data>
-  <data name="UserCannotKickMembers" xml:space="preserve">
+    <data name="UserCannotKickMembers" xml:space="preserve">
     <value>Ты не можешь выгонять участников с этого сервера!</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
+    <data name="UserCannotModerateMembers" xml:space="preserve">
     <value>Ты не можешь модерировать участников этого сервера!</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
@@ -384,10 +369,7 @@
   <data name="MissingMuteReason" xml:space="preserve">
     <value>Надо указать причину для мута этого участника!</value>
   </data>
-  <data name="MissingSetting" xml:space="preserve">
-    <value>Надо указать настройку, которую нужно изменить!</value>
-  </data>
-  <data name="MissingUnbanReason" xml:space="preserve">
+    <data name="MissingUnbanReason" xml:space="preserve">
     <value>Надо указать причину для разбана этого пользователя!</value>
   </data>
   <data name="MissingUnmuteReason" xml:space="preserve">
@@ -450,13 +432,37 @@
   <data name="UserCannotUnmuteTarget" xml:space="preserve">
     <value>Ты не можешь вернуть из мута этого пользователя!</value>
   </data>
-  <data name="BotCannotUnmuteTarget" xml:space="preserve">
+    <data name="BotCannotUnmuteTarget" xml:space="preserve">
     <value>Я не могу вернуть из мута этого пользователя!</value>
   </data>
-  <data name="EventEarlyNotification" xml:space="preserve">
+    <data name="EventEarlyNotification" xml:space="preserve">
     <value>{0}Событие {1} начнется &lt;t:{2}:R&gt;!</value>
   </data>
-  <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
+    <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
     <value>Офсет отправки преждевременного уведомления о начале события</value>
   </data>
+    <data name="UserNotFound" xml:space="preserve">
+        <value>Я не смог найти этого пользователя ни в одном из серверов, в которых я есть. Проверь правильность ID и нахождение пользователя на этом сервере максимум 30 дней назад</value>
+    </data>
+    <data name="SettingsStarterRole" xml:space="preserve">
+        <value>Начальная роль</value>
+    </data>
+    <data name="CommandDescriptionRemind" xml:space="preserve">
+        <value>Добавляет напоминание</value>
+    </data>
+    <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
+        <value>Канал для публичных уведомлений</value>
+    </data>
+    <data name="SettingsPrivateFeedbackChannel" xml:space="preserve">
+        <value>Канал для приватных уведомлений</value>
+    </data>
+    <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
+        <value>Возвращать роли при перезаходе</value>
+    </data>
+    <data name="SettingsAutoStartEvents" xml:space="preserve">
+        <value>Автоматически начинать события</value>
+    </data>
+    <data name="MissingReminderText" xml:space="preserve">
+        <value>Тебе нужно указать текст напоминания!</value>
+    </data>
 </root>

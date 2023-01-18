@@ -14,7 +14,7 @@ public sealed class UnbanCommand : ICommand {
         if (reason is not null) await UnbanUserAsync(cmd, id.Value, reason);
     }
 
-    public static async Task UnbanUserAsync(CommandProcessor cmd, ulong id, string reason) {
+    private static async Task UnbanUserAsync(CommandProcessor cmd, ulong id, string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         await cmd.Context.Guild.RemoveBanAsync(id, requestOptions);
 

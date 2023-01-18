@@ -1,5 +1,6 @@
 using System.Text;
 using Boyfriend.Commands;
+using Boyfriend.Data;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -12,7 +13,8 @@ public sealed class CommandProcessor {
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
-        new SettingsCommand(), new UnbanCommand(), new UnmuteCommand()
+        new SettingsCommand(), new UnbanCommand(), new UnmuteCommand(),
+        new RemindCommand()
     };
 
     private readonly StringBuilder _stackedPrivateFeedback = new();
@@ -30,19 +32,18 @@ public sealed class CommandProcessor {
 
     public async Task HandleCommandAsync() {
         var guild = Context.Guild;
-        var config = Boyfriend.GetGuildConfig(guild.Id);
-        var muteRole = Utils.GetMuteRole(guild);
-        Utils.SetCurrentLanguage(guild.Id);
+        var data = GuildData.Get(guild);
+        Utils.SetCurrentLanguage(guild);
 
-        if (GetMember().Roles.Contains(muteRole)) {
-            _ = Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
+        if (GetMember().Roles.Contains(data.MuteRole)) {
+            _ = Context.Message.DeleteAsync();
             return;
         }
 
         var list = Context.Message.Content.Split("\n");
         var cleanList = Context.Message.CleanContent.Split("\n");
         for (var i = 0; i < list.Length; i++)
-            _tasks.Add(RunCommandOnLine(list[i], cleanList[i], config["Prefix"]));
+            _tasks.Add(RunCommandOnLine(list[i], cleanList[i], data.Preferences["Prefix"]));
 
         try { Task.WaitAll(_tasks.ToArray()); } catch (AggregateException e) {
             foreach (var ex in e.InnerExceptions)
@@ -52,7 +53,7 @@ public sealed class CommandProcessor {
 
         _tasks.Clear();
 
-        if (ConfigWriteScheduled) await Boyfriend.WriteGuildConfigAsync(guild.Id);
+        if (ConfigWriteScheduled) await data.Save(true);
 
         SendFeedbacks();
     }
@@ -79,8 +80,9 @@ public sealed class CommandProcessor {
 
     public void Audit(string action, bool isPublic = true) {
         var format = $"*[{Context.User.Mention}: {action}]*";
-        if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, Context.Guild.SystemChannel);
-        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, Utils.GetBotLogChannel(Context.Guild.Id));
+        var data = GuildData.Get(Context.Guild);
+        if (isPublic) Utils.SafeAppendToBuilder(_stackedPublicFeedback, format, data.PublicFeedbackChannel);
+        Utils.SafeAppendToBuilder(_stackedPrivateFeedback, format, data.PrivateFeedbackChannel);
         if (_tasks.Count is 0) SendFeedbacks(false);
     }
 
@@ -88,8 +90,9 @@ public sealed class CommandProcessor {
         if (reply && _stackedReplyMessage.Length > 0)
             _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
-        var adminChannel = Utils.GetBotLogChannel(Context.Guild.Id);
-        var systemChannel = Context.Guild.SystemChannel;
+        var data = GuildData.Get(Context.Guild);
+        var adminChannel = data.PublicFeedbackChannel;
+        var systemChannel = data.PrivateFeedbackChannel;
         if (_stackedPrivateFeedback.Length > 0 && adminChannel is not null &&
             adminChannel.Id != Context.Message.Channel.Id) {
             _ = Utils.SilentSendAsync(adminChannel, _stackedPrivateFeedback.ToString());
@@ -111,19 +114,30 @@ public sealed class CommandProcessor {
         return null;
     }
 
-    public SocketUser? GetUser(string[] args, string[] cleanArgs, int index, string? argument) {
+    public Tuple<ulong, SocketUser?>? GetUser(string[] args, string[] cleanArgs, int index) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.MissingArgument} {Messages.MissingUser}",
                 Context.Message);
             return null;
         }
 
-        var user = Boyfriend.Client.GetUser(Utils.ParseMention(args[index]));
-        if (user is null && argument is not null)
+        var mention = Utils.ParseMention(args[index]);
+        if (mention is 0) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{ReplyEmojis.InvalidArgument} {string.Format(Messages.InvalidUser, Utils.Wrap(cleanArgs[index]))}",
                 Context.Message);
-        return user;
+            return null;
+        }
+
+        var exists = Utils.UserExists(mention);
+        if (!exists) {
+            Utils.SafeAppendToBuilder(_stackedReplyMessage,
+                $"{ReplyEmojis.Error} {string.Format(Messages.UserNotFound, Utils.Wrap(cleanArgs[index]))}",
+                Context.Message);
+            return null;
+        }
+
+        return Tuple.Create(mention, Boyfriend.Client.GetUser(mention))!;
     }
 
     public bool HasPermission(GuildPermission permission) {
@@ -134,7 +148,7 @@ public sealed class CommandProcessor {
             return false;
         }
 
-        if (!Context.Guild.GetUser(Context.User.Id).GuildPermissions.Has(permission)
+        if (!GetMember().GuildPermissions.Has(permission)
             && Context.Guild.OwnerId != Context.User.Id) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{ReplyEmojis.NoPermission} {Utils.GetMessage($"UserCannot{permission}")}",
@@ -145,11 +159,15 @@ public sealed class CommandProcessor {
         return true;
     }
 
-    public SocketGuildUser? GetMember(SocketUser user) {
-        return Context.Guild.GetUser(user.Id);
+    private SocketGuildUser GetMember() {
+        return GetMember(Context.User.Id)!;
     }
 
-    public SocketGuildUser? GetMember(string[] args, string[] cleanArgs, int index, string? argument) {
+    public SocketGuildUser? GetMember(ulong id) {
+        return Context.Guild.GetUser(id);
+    }
+
+    public SocketGuildUser? GetMember(string[] args, int index) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.MissingArgument} {Messages.MissingMember}",
                 Context.Message);
@@ -157,15 +175,11 @@ public sealed class CommandProcessor {
         }
 
         var member = Context.Guild.GetUser(Utils.ParseMention(args[index]));
-        if (member is null && argument is not null)
+        if (member is null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
-                $"{ReplyEmojis.InvalidArgument} {string.Format(Messages.InvalidMember, Utils.Wrap(cleanArgs[index]))}",
+                $"{ReplyEmojis.InvalidArgument} {Messages.InvalidMember}",
                 Context.Message);
         return member;
-    }
-
-    private SocketGuildUser GetMember() {
-        return Context.Guild.GetUser(Context.User.Id);
     }
 
     public ulong? GetBan(string[] args, int index) {
