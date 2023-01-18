@@ -10,7 +10,7 @@ public sealed class UnmuteCommand : ICommand {
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         if (!cmd.HasPermission(GuildPermission.ModerateMembers)) return;
 
-        var toUnmute = cmd.GetMember(args, 0, "ToUnmute");
+        var toUnmute = cmd.GetMember(args, 0);
         if (toUnmute is null) return;
         var reason = cmd.GetRemaining(args, 1, "UnmuteReason");
         if (reason is not null && cmd.CanInteractWith(toUnmute, "Unmute"))

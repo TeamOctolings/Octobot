@@ -8,7 +8,7 @@ public sealed class KickCommand : ICommand {
     public string[] Aliases { get; } = { "kick", "кик", "выгнать" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
-        var toKick = cmd.GetMember(args, 0, "ToKick");
+        var toKick = cmd.GetMember(args, 0);
         if (toKick is null || !cmd.HasPermission(GuildPermission.KickMembers)) return;
 
         if (cmd.CanInteractWith(toKick, "Kick"))

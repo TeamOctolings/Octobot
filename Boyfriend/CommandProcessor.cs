@@ -167,7 +167,7 @@ public sealed class CommandProcessor {
         return Context.Guild.GetUser(id);
     }
 
-    public SocketGuildUser? GetMember(string[] args, int index, string? argument) {
+    public SocketGuildUser? GetMember(string[] args, int index) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(_stackedReplyMessage, $"{ReplyEmojis.MissingArgument} {Messages.MissingMember}",
                 Context.Message);

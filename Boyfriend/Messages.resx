@@ -207,10 +207,7 @@
   <data name="MemberNotMuted" xml:space="preserve">
     <value>Member not muted!</value>
   </data>
-  <data name="RolesReturned" xml:space="preserve">
-    <value>Someone removed the mute role manually! I added back all roles that I removed during the mute</value>
-  </data>
-  <data name="SettingsWelcomeMessage" xml:space="preserve">
+    <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>Welcome message</value>
   </data>
   <data name="ClearAmountInvalid" xml:space="preserve">
@@ -234,10 +231,7 @@
   <data name="InvalidChannel" xml:space="preserve">
     <value>This channel does not exist!</value>
   </data>
-  <data name="RoleRemovalFailed" xml:space="preserve">
-    <value>I couldn't remove role {0} because of an error! {1}</value>
-  </data>
-  <data name="DurationRequiredForTimeOuts" xml:space="preserve">
+    <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>I cannot mute someone for more than 28 days using timeouts! Either specify a duration shorter than 28 days, or set a mute role in settings</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
@@ -381,10 +375,7 @@
   <data name="MissingUnmuteReason" xml:space="preserve">
     <value>You need to specify a reason for unmute this member!</value>
   </data>
-  <data name="MissingSetting" xml:space="preserve">
-    <value>You need to specify a setting to change!</value>
-  </data>
-  <data name="UserCannotBanOwner" xml:space="preserve">
+    <data name="UserCannotBanOwner" xml:space="preserve">
     <value>You cannot ban the owner of this guild!</value>
   </data>
   <data name="UserCannotBanThemselves" xml:space="preserve">

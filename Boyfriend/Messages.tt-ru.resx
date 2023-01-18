@@ -207,10 +207,7 @@
   <data name="MemberNotMuted" xml:space="preserve">
     <value>шизоид не замучен!</value>
   </data>
-  <data name="RolesReturned" xml:space="preserve">
-    <value>кто-то решил поумничать и обошел роль мута. я ее вернул.</value>
-  </data>
-  <data name="SettingsWelcomeMessage" xml:space="preserve">
+    <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>приветствие</value>
   </data>
   <data name="ClearAmountInvalid" xml:space="preserve">
@@ -234,10 +231,7 @@
   <data name="InvalidChannel" xml:space="preserve">
     <value>этого канала нету, ты шо</value>
   </data>
-  <data name="RoleRemovalFailed" xml:space="preserve">
-    <value>я не украл звание {0} в связи с ошибкой! {1}</value>
-  </data>
-  <data name="DurationRequiredForTimeOuts" xml:space="preserve">
+    <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>ты шо, мутить больше чем на 28 дней таймаут не разрешает, вот настроишь роль мута, тогда поговорим</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
@@ -375,10 +369,7 @@
   <data name="MissingMuteReason" xml:space="preserve">
     <value>укажи зачем мутить шизика</value>
   </data>
-  <data name="MissingSetting" xml:space="preserve">
-    <value>укажи настройку которую менять нужно</value>
-  </data>
-  <data name="MissingUnbanReason" xml:space="preserve">
+    <data name="MissingUnbanReason" xml:space="preserve">
     <value>укажи зачем раззабанивать шизика</value>
   </data>
   <data name="MissingUnmuteReason" xml:space="preserve">

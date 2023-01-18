@@ -627,15 +627,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to specify a setting to change!.
-        /// </summary>
-        internal static string MissingSetting {
-            get {
-                return ResourceManager.GetString("MissingSetting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You need to specify a reason to unban this user!.
         /// </summary>
         internal static string MissingUnbanReason {
@@ -695,24 +686,6 @@ namespace Boyfriend {
         internal static string RoleNotSpecified {
             get {
                 return ResourceManager.GetString("RoleNotSpecified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to I couldn&apos;t remove role {0} because of an error! {1}.
-        /// </summary>
-        internal static string RoleRemovalFailed {
-            get {
-                return ResourceManager.GetString("RoleRemovalFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Someone removed the mute role manually! I added back all roles that I removed during the mute.
-        /// </summary>
-        internal static string RolesReturned {
-            get {
-                return ResourceManager.GetString("RolesReturned", resourceCulture);
             }
         }
         

@@ -8,7 +8,7 @@ public sealed class MuteCommand : ICommand {
     public string[] Aliases { get; } = { "mute", "timeout", "заглушить", "мут" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
-        var toMute = cmd.GetMember(args, 0, "ToMute");
+        var toMute = cmd.GetMember(args, 0);
         if (toMute is null) return;
 
         var duration = CommandProcessor.GetTimeSpan(args, 1);

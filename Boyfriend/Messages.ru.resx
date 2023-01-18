@@ -207,10 +207,7 @@
   <data name="MemberNotMuted" xml:space="preserve">
     <value>Участник не заглушен!</value>
   </data>
-  <data name="RolesReturned" xml:space="preserve">
-    <value>Кто-то убрал роль мута самостоятельно! Я вернул все роли, которые забрал при муте</value>
-  </data>
-  <data name="SettingsWelcomeMessage" xml:space="preserve">
+    <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>Приветствие</value>
   </data>
   <data name="ClearAmountInvalid" xml:space="preserve">
@@ -234,10 +231,7 @@
   <data name="InvalidChannel" xml:space="preserve">
     <value>Этот канал не существует!</value>
   </data>
-  <data name="RoleRemovalFailed" xml:space="preserve">
-    <value>Я не смог забрать роль {0} в связи с ошибкой! {1}</value>
-  </data>
-  <data name="DurationRequiredForTimeOuts" xml:space="preserve">
+    <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>Я не могу заглушить кого-то на более чем 28 дней, используя тайм-ауты! Или укажи продолжительность менее 28 дней, или установи роль мута в настройках</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
@@ -375,10 +369,7 @@
   <data name="MissingMuteReason" xml:space="preserve">
     <value>Надо указать причину для мута этого участника!</value>
   </data>
-  <data name="MissingSetting" xml:space="preserve">
-    <value>Надо указать настройку, которую нужно изменить!</value>
-  </data>
-  <data name="MissingUnbanReason" xml:space="preserve">
+    <data name="MissingUnbanReason" xml:space="preserve">
     <value>Надо указать причину для разбана этого пользователя!</value>
   </data>
   <data name="MissingUnmuteReason" xml:space="preserve">

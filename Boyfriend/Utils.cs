@@ -158,13 +158,6 @@ public static partial class Utils {
         return true;
     }
 
-    public static async Task ReturnRolesAsync(SocketGuildUser user, List<ulong> roles) {
-        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        foreach (var role in roles)
-            if (role != user.Guild.Id)
-                await user.AddRoleAsync(role);
-    }
-
     [GeneratedRegex("[^0-9]")]
     private static partial Regex NumbersOnlyRegex();
 }
