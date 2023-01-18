@@ -14,8 +14,8 @@ public static class Boyfriend {
     private static readonly DiscordSocketConfig Config = new() {
         MessageCacheSize = 250,
         GatewayIntents
-            = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers) &
-              ~GatewayIntents.GuildInvites,
+            = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers)
+              & ~GatewayIntents.GuildInvites,
         AlwaysDownloadUsers = true,
         AlwaysResolveStickers = false,
         AlwaysDownloadDefaultStickers = false,
@@ -23,10 +23,11 @@ public static class Boyfriend {
     };
 
     private static DateTimeOffset _nextSongAt = DateTimeOffset.MinValue;
-    private static uint _nextSongIndex;
+    private static uint           _nextSongIndex;
 
     private static readonly Tuple<Game, TimeSpan>[] ActivityList = {
-        Tuple.Create(new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening),
+        Tuple.Create(
+            new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening),
             new TimeSpan(0, 3, 40)),
         Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
         Tuple.Create(new Game("Kurokotei - Scattered Faith", ActivityType.Listening), new TimeSpan(0, 8, 21)),
@@ -75,8 +76,10 @@ public static class Boyfriend {
 
         try { Task.WaitAll(GuildTickTasks.ToArray()); } catch (AggregateException ex) {
             foreach (var exc in ex.InnerExceptions)
-                await Log(new LogMessage(LogSeverity.Error, nameof(Boyfriend),
-                    "Exception while ticking guilds", exc));
+                await Log(
+                    new LogMessage(
+                        LogSeverity.Error, nameof(Boyfriend),
+                        "Exception while ticking guilds", exc));
         }
 
         GuildTickTasks.Clear();
@@ -115,10 +118,13 @@ public static class Boyfriend {
         var saveData = false;
         _ = int.TryParse(config["EventEarlyNotificationOffset"], out var offset);
         foreach (var schEvent in guild.Events)
-            if (schEvent.Status is GuildScheduledEventStatus.Scheduled && config["AutoStartEvents"] is "true" &&
-                DateTimeOffset.Now >= schEvent.StartTime) { await schEvent.StartAsync(); } else if
-                (!data.EarlyNotifications.Contains(schEvent.Id) &&
-                 DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
+            if (schEvent.Status is GuildScheduledEventStatus.Scheduled
+                && config["AutoStartEvents"] is "true"
+                && DateTimeOffset
+                   .Now
+                >= schEvent.StartTime) await schEvent.StartAsync();
+            else if (!data.EarlyNotifications.Contains(schEvent.Id)
+                     && DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
                 data.EarlyNotifications.Add(schEvent.Id);
                 var receivers = config["EventStartedReceivers"];
                 var role = guild.GetRole(ulong.Parse(config["EventNotificationRole"]));
@@ -127,42 +133,43 @@ public static class Boyfriend {
                 if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
                 if (receivers.Contains("users") || receivers.Contains("interested"))
                     mentions = (await schEvent.GetUsersAsync(15))
-                        .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
-                        .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
+                              .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
+                              .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
 
-                await Utils.GetEventNotificationChannel(guild)?.SendMessageAsync(string.Format(
-                    Messages.EventEarlyNotification,
-                    mentions,
-                    Utils.Wrap(schEvent.Name),
-                    schEvent.StartTime.ToUnixTimeSeconds().ToString()))!;
+                await Utils.GetEventNotificationChannel(guild)?.SendMessageAsync(
+                    string.Format(
+                        Messages.EventEarlyNotification,
+                        mentions,
+                        Utils.Wrap(schEvent.Name),
+                        schEvent.StartTime.ToUnixTimeSeconds().ToString()))!;
                 mentions.Clear();
             }
 
         foreach (var mData in data.MemberData.Values) {
             if (DateTimeOffset.Now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
+            if (!mData.IsInGuild) continue;
 
-            if (mData.IsInGuild) {
-                if (DateTimeOffset.Now >= mData.MutedUntil) {
-                    await Utils.UnmuteMemberAsync(data, Client.CurrentUser.ToString(), guild.GetUser(mData.Id),
-                        Messages.PunishmentExpired);
-                    saveData = true;
+            if (DateTimeOffset.Now >= mData.MutedUntil) {
+                await Utils.UnmuteMemberAsync(
+                    data, Client.CurrentUser.ToString(), guild.GetUser(mData.Id),
+                    Messages.PunishmentExpired);
+                saveData = true;
+            }
+
+            for (var i = mData.Reminders.Count - 1; i >= 0; i--) {
+                var reminder = mData.Reminders[i];
+                if (DateTimeOffset.Now < reminder.RemindAt) continue;
+
+                var channel = guild.GetTextChannel(reminder.ReminderChannel);
+                if (channel is null) {
+                    await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
+                    continue;
                 }
 
-                for (var i = mData.Reminders.Count - 1; i >= 0; i--) {
-                    var reminder = mData.Reminders[i];
-                    if (DateTimeOffset.Now >= reminder.RemindAt) {
-                        var channel = guild.GetTextChannel(reminder.ReminderChannel);
-                        if (channel is null) {
-                            await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
-                            continue;
-                        }
+                await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
+                mData.Reminders.RemoveAt(i);
 
-                        await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
-                        mData.Reminders.RemoveAt(i);
-
-                        saveData = true;
-                    }
-                }
+                saveData = true;
             }
         }
 
