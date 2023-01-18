@@ -18,7 +18,7 @@ updates:
       - "type: dependencies"
 
   - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/Boyfriend" # Location of package manifests
+    directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
     allow:

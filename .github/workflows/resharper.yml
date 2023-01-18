@@ -31,6 +31,6 @@ jobs:
     - name: ReSharper CLI InspectCode
       uses: muno92/resharper_inspectcode@1.6.6
       with:
-        solutionPath: ./Boyfriend-CSharp.sln
+        solutionPath: ./Boyfriend.sln
         ignoreIssueType: InvertIf
         solutionWideAnalysis: true
