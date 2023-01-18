@@ -36,7 +36,7 @@ public sealed class CommandProcessor {
         Utils.SetCurrentLanguage(guild);
 
         if (GetMember().Roles.Contains(data.MuteRole)) {
-            _ = Context.Message.ReplyAsync(Messages.UserCannotUnmuteThemselves);
+            _ = Context.Message.DeleteAsync();
             return;
         }
 
@@ -175,7 +175,7 @@ public sealed class CommandProcessor {
         }
 
         var member = Context.Guild.GetUser(Utils.ParseMention(args[index]));
-        if (member is null && argument is not null)
+        if (member is null)
             Utils.SafeAppendToBuilder(_stackedReplyMessage,
                 $"{ReplyEmojis.InvalidArgument} {Messages.InvalidMember}",
                 Context.Message);

@@ -96,7 +96,7 @@ public static partial class Utils {
         if (sendPublic && systemChannel is not null) await SilentSendAsync(systemChannel, toSend);
     }
 
-    public static string GetHumanizedTimeOffset(TimeSpan span) {
+    public static string GetHumanizedTimeSpan(TimeSpan span) {
         return span.TotalSeconds < 1
             ? Messages.Ever
             : $" {span.Humanize(2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month, culture: Messages.Culture.Name.Contains("RU") ? CultureInfoCache["ru"] : Messages.Culture)}";
@@ -145,7 +145,8 @@ public static partial class Utils {
 
         if (role is not null) {
             if (!toUnmute.Roles.Contains(role)) return false;
-            await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
+            if (data.Preferences["RemoveRolesOnMute"] is "true")
+                await toUnmute.AddRolesAsync(data.MemberData[toUnmute.Id].Roles, requestOptions);
             await toUnmute.RemoveRoleAsync(role, requestOptions);
             data.MemberData[toUnmute.Id].MutedUntil = null;
         } else {
@@ -155,6 +156,13 @@ public static partial class Utils {
         }
 
         return true;
+    }
+
+    public static async Task ReturnRolesAsync(SocketGuildUser user, List<ulong> roles) {
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var role in roles)
+            if (role != user.Guild.Id)
+                await user.AddRoleAsync(role);
     }
 
     [GeneratedRegex("[^0-9]")]

@@ -38,7 +38,7 @@ public sealed class BanCommand : ICommand {
         cmd.ConfigWriteScheduled = true;
 
         var feedback = string.Format(Messages.FeedbackUserBanned, $"<@{toBan.Item1.ToString()}>",
-            Utils.GetHumanizedTimeOffset(duration), Utils.Wrap(reason));
+            Utils.GetHumanizedTimeSpan(duration), Utils.Wrap(reason));
         cmd.Reply(feedback, ReplyEmojis.Banned);
         cmd.Audit(feedback);
     }

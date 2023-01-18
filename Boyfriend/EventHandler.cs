@@ -25,7 +25,9 @@ public static class EventHandler {
     }
 
     private static Task RolesUpdatedEvent(Cacheable<SocketGuildUser, ulong> oldUser, SocketGuildUser newUser) {
-        GuildData.Get(newUser.Guild).MemberData[newUser.Id].Roles = ((IGuildUser)newUser).RoleIds.ToList();
+        var data = GuildData.Get(newUser.Guild).MemberData[newUser.Id];
+        data.Roles = ((IGuildUser)newUser).RoleIds.ToList();
+        data.Roles.Remove(newUser.Guild.Id);
         return Task.CompletedTask;
     }
 
@@ -205,6 +207,6 @@ public static class EventHandler {
         Utils.SetCurrentLanguage(guild);
         if (channel is not null)
             await channel.SendMessageAsync(string.Format(Messages.EventCompleted, Utils.Wrap(scheduledEvent.Name),
-                Utils.GetHumanizedTimeOffset(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));
+                Utils.GetHumanizedTimeSpan(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));
     }
 }

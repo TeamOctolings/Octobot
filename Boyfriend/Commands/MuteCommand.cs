@@ -58,7 +58,7 @@ public sealed class MuteCommand : ICommand {
         cmd.ConfigWriteScheduled = true;
 
         var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
-            Utils.GetHumanizedTimeOffset(duration),
+            Utils.GetHumanizedTimeSpan(duration),
             Utils.Wrap(reason));
         cmd.Reply(feedback, ReplyEmojis.Muted);
         cmd.Audit(feedback);

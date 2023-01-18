@@ -16,6 +16,7 @@ public static class Boyfriend {
         GatewayIntents
             = (GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers) &
               ~GatewayIntents.GuildInvites,
+        AlwaysDownloadUsers = true,
         AlwaysResolveStickers = false,
         AlwaysDownloadDefaultStickers = false,
         LargeThreshold = 500
@@ -74,8 +75,8 @@ public static class Boyfriend {
 
         try { Task.WaitAll(GuildTickTasks.ToArray()); } catch (AggregateException ex) {
             foreach (var exc in ex.InnerExceptions)
-                await Log(new LogMessage(LogSeverity.Error, nameof(CommandProcessor),
-                    "Exception while executing commands", exc));
+                await Log(new LogMessage(LogSeverity.Error, nameof(Boyfriend),
+                    "Exception while ticking guilds", exc));
         }
 
         GuildTickTasks.Clear();
@@ -114,10 +115,11 @@ public static class Boyfriend {
         var saveData = false;
         _ = int.TryParse(config["EventEarlyNotificationOffset"], out var offset);
         foreach (var schEvent in guild.Events)
-            if (config["AutoStartEvents"] is "true" && DateTimeOffset.Now >= schEvent.StartTime) {
-                await schEvent.StartAsync();
-            } else if (!data.EarlyNotifications.Contains(schEvent.Id) &&
-                       DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
+            if (schEvent.Status is GuildScheduledEventStatus.Scheduled && config["AutoStartEvents"] is "true" &&
+                DateTimeOffset.Now >= schEvent.StartTime) { await schEvent.StartAsync(); } else if
+                (!data.EarlyNotifications.Contains(schEvent.Id) &&
+                 DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
+                data.EarlyNotifications.Add(schEvent.Id);
                 var receivers = config["EventStartedReceivers"];
                 var role = guild.GetRole(ulong.Parse(config["EventNotificationRole"]));
                 var mentions = StringBuilder;
@@ -128,12 +130,12 @@ public static class Boyfriend {
                         .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
                         .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
 
-                await Utils.GetEventNotificationChannel(guild)?.SendMessageAsync(string.Format(Messages.EventStarted,
+                await Utils.GetEventNotificationChannel(guild)?.SendMessageAsync(string.Format(
+                    Messages.EventEarlyNotification,
                     mentions,
                     Utils.Wrap(schEvent.Name),
-                    Utils.Wrap(schEvent.Location) ?? Utils.MentionChannel(schEvent.Channel.Id)))!;
+                    schEvent.StartTime.ToUnixTimeSeconds().ToString()))!;
                 mentions.Clear();
-                data.EarlyNotifications.Add(schEvent.Id);
             }
 
         foreach (var mData in data.MemberData.Values) {
