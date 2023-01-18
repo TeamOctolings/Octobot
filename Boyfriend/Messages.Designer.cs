@@ -285,6 +285,15 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adds a reminder.
+        /// </summary>
+        internal static string CommandDescriptionRemind {
+            get {
+                return ResourceManager.GetString("CommandDescriptionRemind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Allows you to change certain preferences for this guild.
         /// </summary>
         internal static string CommandDescriptionSettings {
@@ -492,7 +501,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to specify a guild member instead of {0}!.
+        ///   Looks up a localized string similar to You did not specify a member of this guild!.
         /// </summary>
         internal static string InvalidMember {
             get {
@@ -609,11 +618,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to specify a setting to change!.
+        ///   Looks up a localized string similar to You need to specify reminder text!.
         /// </summary>
-        internal static string MissingSetting {
+        internal static string MissingReminderText {
             get {
-                return ResourceManager.GetString("MissingSetting", resourceCulture);
+                return ResourceManager.GetString("MissingReminderText", resourceCulture);
             }
         }
         
@@ -681,24 +690,6 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I couldn&apos;t remove role {0} because of an error! {1}.
-        /// </summary>
-        internal static string RoleRemovalFailed {
-            get {
-                return ResourceManager.GetString("RoleRemovalFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Someone removed the mute role manually! I added back all roles that I removed during the mute.
-        /// </summary>
-        internal static string RolesReturned {
-            get {
-                return ResourceManager.GetString("RolesReturned", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to That setting doesn&apos;t exist!.
         /// </summary>
         internal static string SettingDoesntExist {
@@ -717,11 +708,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bot log channel.
+        ///   Looks up a localized string similar to Automatically start scheduled events.
         /// </summary>
-        internal static string SettingsBotLogChannel {
+        internal static string SettingsAutoStartEvents {
             get {
-                return ResourceManager.GetString("SettingsBotLogChannel", resourceCulture);
+                return ResourceManager.GetString("SettingsAutoStartEvents", resourceCulture);
             }
         }
         
@@ -807,6 +798,24 @@ namespace Boyfriend {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Channel for private notifications.
+        /// </summary>
+        internal static string SettingsPrivateFeedbackChannel {
+            get {
+                return ResourceManager.GetString("SettingsPrivateFeedbackChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channel for public notifications.
+        /// </summary>
+        internal static string SettingsPublicFeedbackChannel {
+            get {
+                return ResourceManager.GetString("SettingsPublicFeedbackChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Receive startup messages.
         /// </summary>
         internal static string SettingsReceiveStartupMessages {
@@ -821,6 +830,15 @@ namespace Boyfriend {
         internal static string SettingsRemoveRolesOnMute {
             get {
                 return ResourceManager.GetString("SettingsRemoveRolesOnMute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return roles on rejoin.
+        /// </summary>
+        internal static string SettingsReturnRolesOnRejoin {
+            get {
+                return ResourceManager.GetString("SettingsReturnRolesOnRejoin", resourceCulture);
             }
         }
         
@@ -1050,11 +1068,11 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified user is not a member of this server!.
+        ///   Looks up a localized string similar to I could not find this user in any guild I&apos;m a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago.
         /// </summary>
-        internal static string UserNotInGuild {
+        internal static string UserNotFound {
             get {
-                return ResourceManager.GetString("UserNotInGuild", resourceCulture);
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
         
@@ -1068,7 +1086,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You were banned by {0} in guild {1} for {2}.
+        ///   Looks up a localized string similar to You were banned by {0} in guild `{1}` for {2}.
         /// </summary>
         internal static string YouWereBanned {
             get {
@@ -1077,7 +1095,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You were kicked by {0} in guild {1} for {2}.
+        ///   Looks up a localized string similar to You were kicked by {0} in guild `{1}` for {2}.
         /// </summary>
         internal static string YouWereKicked {
             get {

@@ -1,3 +1,4 @@
+using Boyfriend.Data;
 using Discord;
 using Discord.WebSocket;
 
@@ -7,7 +8,7 @@ public sealed class KickCommand : ICommand {
     public string[] Aliases { get; } = { "kick", "кик", "выгнать" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
-        var toKick = cmd.GetMember(args, cleanArgs, 0, "ToKick");
+        var toKick = cmd.GetMember(args, 0);
         if (toKick is null || !cmd.HasPermission(GuildPermission.KickMembers)) return;
 
         if (cmd.CanInteractWith(toKick, "Kick"))
@@ -21,6 +22,9 @@ public sealed class KickCommand : ICommand {
         await Utils.SendDirectMessage(toKick,
             string.Format(Messages.YouWereKicked, cmd.Context.User.Mention, cmd.Context.Guild.Name,
                 Utils.Wrap(reason)));
+
+        GuildData.Get(cmd.Context.Guild).MemberData[toKick.Id].Roles.Clear();
+        cmd.ConfigWriteScheduled = true;
 
         await toKick.KickAsync(guildKickMessage);
         var format = string.Format(Messages.FeedbackMemberKicked, toKick.Mention, Utils.Wrap(reason));

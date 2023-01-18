@@ -2,7 +2,6 @@ namespace Boyfriend;
 
 public static class ReplyEmojis {
     public const string Success = ":white_check_mark:";
-    public const string Warning = ":warning:";
     public const string Error = ":x:";
     public const string MissingArgument = ":keyboard:";
     public const string InvalidArgument = ":construction:";

@@ -13,7 +13,9 @@ updates:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
     assignees:
-      - "l1ttleO"
+      - "Octol1ttle"
+    labels:
+      - "type: dependencies"
 
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/Boyfriend" # Location of package manifests
@@ -24,4 +26,6 @@ updates:
       - dependency-type: "all"
     # Add assignees
     assignees:
-      - "l1ttleO"
+      - "Octol1ttle"
+    labels:
+      - "type: dependencies"

@@ -1,3 +1,4 @@
+using Boyfriend.Data;
 using Discord;
 
 namespace Boyfriend.Commands;
@@ -9,14 +10,17 @@ public sealed class SettingsCommand : ICommand {
         if (!cmd.HasPermission(GuildPermission.ManageGuild)) return Task.CompletedTask;
 
         var guild = cmd.Context.Guild;
-        var config = Boyfriend.GetGuildConfig(guild.Id);
+        var data = GuildData.Get(guild);
+        var config = data.Preferences;
 
         if (args.Length is 0) {
             var currentSettings = Boyfriend.StringBuilder.AppendLine(Messages.CurrentSettings);
 
-            foreach (var setting in Boyfriend.DefaultConfig) {
+            foreach (var setting in GuildData.DefaultPreferences) {
                 var format = "{0}";
-                var currentValue = config[setting.Key] is "default" ? Messages.DefaultWelcomeMessage : config[setting.Key];
+                var currentValue = config[setting.Key] is "default"
+                    ? Messages.DefaultWelcomeMessage
+                    : config[setting.Key];
 
                 if (setting.Key.EndsWith("Channel")) {
                     if (guild.GetTextChannel(ulong.Parse(currentValue)) is not null) format = "<#{0}>";
@@ -41,10 +45,7 @@ public sealed class SettingsCommand : ICommand {
         var selectedSetting = args[0].ToLower();
 
         var exists = false;
-        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        // Too many allocations
-        foreach (var setting in Boyfriend.DefaultConfig.Keys) {
-            if (selectedSetting != setting.ToLower()) continue;
+        foreach (var setting in GuildData.DefaultPreferences.Keys.Where(x => x.ToLower() == selectedSetting)) {
             selectedSetting = setting;
             exists = true;
             break;
@@ -70,7 +71,7 @@ public sealed class SettingsCommand : ICommand {
             }
         } else { value = "reset"; }
 
-        if (IsBool(Boyfriend.DefaultConfig[selectedSetting]) && !IsBool(value)) {
+        if (IsBool(GuildData.DefaultPreferences[selectedSetting]) && !IsBool(value)) {
             value = value switch {
                 "y" or "yes" or "д" or "да" => "true",
                 "n" or "no" or "н" or "нет" => "false",
@@ -95,14 +96,14 @@ public sealed class SettingsCommand : ICommand {
 
         var formattedValue = selectedSetting switch {
             "WelcomeMessage" => Utils.Wrap(Messages.DefaultWelcomeMessage),
-            "EventStartedReceivers" => Utils.Wrap(Boyfriend.DefaultConfig[selectedSetting])!,
+            "EventStartedReceivers" => Utils.Wrap(GuildData.DefaultPreferences[selectedSetting])!,
             _ => value is "reset" or "default" ? Messages.SettingNotDefined
                 : IsBool(value) ? YesOrNo(value is "true")
                 : string.Format(formatting, value)
         };
 
         if (value is "reset" or "default") {
-            config[selectedSetting] = Boyfriend.DefaultConfig[selectedSetting];
+            config[selectedSetting] = GuildData.DefaultPreferences[selectedSetting];
         } else {
             if (value == config[selectedSetting]) {
                 cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
@@ -129,13 +130,28 @@ public sealed class SettingsCommand : ICommand {
                 return Task.CompletedTask;
             }
 
-            if (selectedSetting is "MuteRole") Utils.RemoveMuteRoleFromCache(ulong.Parse(config[selectedSetting]));
+            if (selectedSetting.EndsWith("Offset") && !int.TryParse(value, out _)) {
+                cmd.Reply(Messages.InvalidSettingValue, ReplyEmojis.Error);
+                return Task.CompletedTask;
+            }
+
+            switch (selectedSetting) {
+                case "MuteRole":
+                    data.MuteRole = guild.GetRole(mention);
+                    break;
+                case "PublicFeedbackChannel":
+                    data.PublicFeedbackChannel = guild.GetTextChannel(mention);
+                    break;
+                case "PrivateFeedbackChannel":
+                    data.PrivateFeedbackChannel = guild.GetTextChannel(mention);
+                    break;
+            }
 
             config[selectedSetting] = value;
         }
 
         if (selectedSetting is "Lang") {
-            Utils.SetCurrentLanguage(guild.Id);
+            Utils.SetCurrentLanguage(guild);
             localizedSelectedSetting = Utils.GetMessage($"Settings{selectedSetting}");
         }
 
