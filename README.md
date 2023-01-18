@@ -8,8 +8,8 @@
 ## Building
 To build Boyfriend, you need to clone this repo and compile it with [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0).
 ```
-git clone https://github.com/l1ttleO/Boyfriend-CSharp
-cd Boyfriend-CSharp
+git clone https://github.com/TeamOctolings/Boyfriend
+cd Boyfriend
 dotnet build
 ```
 
