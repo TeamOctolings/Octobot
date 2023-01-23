@@ -99,19 +99,20 @@ public record GuildData {
         get {
             if (Preferences["MuteRole"] is "0") return null;
             return _cachedMuteRole ??= Boyfriend.Client.GetGuild(_id).Roles
-                                                .Single(x => x.Id == ulong.Parse(Preferences["MuteRole"]));
+                .Single(x => x.Id == ulong.Parse(Preferences["MuteRole"]));
         }
         set => _cachedMuteRole = value;
     }
 
-    public SocketTextChannel? PublicFeedbackChannel => Boyfriend.Client.GetGuild(_id)
-                                                                .GetTextChannel(
-                                                                     ulong.Parse(Preferences["PublicFeedbackChannel"]));
+    public SocketTextChannel? PublicFeedbackChannel
+        => Boyfriend.Client.GetGuild(_id)
+            .GetTextChannel(
+                ulong.Parse(Preferences["PublicFeedbackChannel"]));
 
     public SocketTextChannel? PrivateFeedbackChannel => Boyfriend.Client.GetGuild(_id)
-                                                                 .GetTextChannel(
-                                                                      ulong.Parse(
-                                                                          Preferences["PrivateFeedbackChannel"]));
+        .GetTextChannel(
+            ulong.Parse(
+                Preferences["PrivateFeedbackChannel"]));
 
     public static GuildData Get(SocketGuild guild) {
         if (GuildDataDictionary.TryGetValue(guild.Id, out var stored)) return stored;

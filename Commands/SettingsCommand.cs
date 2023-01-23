@@ -34,7 +34,7 @@ public sealed class SettingsCommand : ICommand {
                 }
 
                 currentSettings.Append($"{Utils.GetMessage($"Settings{setting.Key}")} (`{setting.Key}`): ")
-                               .AppendFormat(format, currentValue).AppendLine();
+                    .AppendFormat(format, currentValue).AppendLine();
             }
 
             cmd.Reply(currentSettings.ToString(), ReplyEmojis.SettingsList);

@@ -17,14 +17,14 @@ public static class EventHandler {
         Client.MessageUpdated += MessageUpdatedEvent;
         Client.UserJoined += UserJoinedEvent;
         Client.UserLeft += UserLeftEvent;
-        Client.GuildMemberUpdated += RolesUpdatedEvent;
+        Client.GuildMemberUpdated += MemberRolesUpdatedEvent;
         Client.GuildScheduledEventCreated += ScheduledEventCreatedEvent;
         Client.GuildScheduledEventCancelled += ScheduledEventCancelledEvent;
         Client.GuildScheduledEventStarted += ScheduledEventStartedEvent;
         Client.GuildScheduledEventCompleted += ScheduledEventCompletedEvent;
     }
 
-    private static Task RolesUpdatedEvent(Cacheable<SocketGuildUser, ulong> oldUser, SocketGuildUser newUser) {
+    private static Task MemberRolesUpdatedEvent(Cacheable<SocketGuildUser, ulong> oldUser, SocketGuildUser newUser) {
         var data = GuildData.Get(newUser.Guild).MemberData[newUser.Id];
         data.Roles = ((IGuildUser)newUser).RoleIds.ToList();
         data.Roles.Remove(newUser.Guild.Id);
@@ -207,8 +207,8 @@ public static class EventHandler {
         if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
         if (receivers.Contains("users") || receivers.Contains("interested"))
             mentions = (await scheduledEvent.GetUsersAsync(15))
-                      .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
-                      .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
+                .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
+                .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
 
         await channel.SendMessageAsync(
             string.Format(

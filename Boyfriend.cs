@@ -121,7 +121,7 @@ public static class Boyfriend {
             if (schEvent.Status is GuildScheduledEventStatus.Scheduled
                 && config["AutoStartEvents"] is "true"
                 && DateTimeOffset
-                   .Now
+                    .Now
                 >= schEvent.StartTime) await schEvent.StartAsync();
             else if (!data.EarlyNotifications.Contains(schEvent.Id)
                      && DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
@@ -133,8 +133,8 @@ public static class Boyfriend {
                 if (receivers.Contains("role") && role is not null) mentions.Append($"{role.Mention} ");
                 if (receivers.Contains("users") || receivers.Contains("interested"))
                     mentions = (await schEvent.GetUsersAsync(15))
-                              .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
-                              .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
+                        .Where(user => role is null || !((RestGuildUser)user).RoleIds.Contains(role.Id))
+                        .Aggregate(mentions, (current, user) => current.Append($"{user.Mention} "));
 
                 await Utils.GetEventNotificationChannel(guild)?.SendMessageAsync(
                     string.Format(
@@ -145,13 +145,16 @@ public static class Boyfriend {
                 mentions.Clear();
             }
 
+        _ = ulong.TryParse(config["StarterRole"], out var starterRoleId);
         foreach (var mData in data.MemberData.Values) {
+            var user = guild.GetUser(mData.Id);
             if (DateTimeOffset.Now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
             if (!mData.IsInGuild) continue;
+            if (!mData.Roles.Contains(starterRoleId)) _ = user.AddRoleAsync(starterRoleId);
 
             if (DateTimeOffset.Now >= mData.MutedUntil) {
                 await Utils.UnmuteMemberAsync(
-                    data, Client.CurrentUser.ToString(), guild.GetUser(mData.Id),
+                    data, Client.CurrentUser.ToString(), user,
                     Messages.PunishmentExpired);
                 saveData = true;
             }
@@ -161,18 +164,16 @@ public static class Boyfriend {
                 if (DateTimeOffset.Now < reminder.RemindAt) continue;
 
                 var channel = guild.GetTextChannel(reminder.ReminderChannel);
-                if (channel is null) {
-                    await Utils.SendDirectMessage(Client.GetUser(mData.Id), reminder.ReminderText);
-                    continue;
-                }
+                if (channel is not null)
+                    await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
+                else
+                    await Utils.SendDirectMessage(user, reminder.ReminderText);
 
-                await channel.SendMessageAsync($"<@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}");
                 mData.Reminders.RemoveAt(i);
-
                 saveData = true;
             }
         }
 
-        if (saveData) data.Save(true).Wait();
+        if (saveData) await data.Save(true);
     }
 }
