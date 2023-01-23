@@ -34,7 +34,7 @@ public sealed class SettingsCommand : ICommand {
                 }
 
                 currentSettings.Append($"{Utils.GetMessage($"Settings{setting.Key}")} (`{setting.Key}`): ")
-                    .AppendFormat(format, currentValue).AppendLine();
+                               .AppendFormat(format, currentValue).AppendLine();
             }
 
             cmd.Reply(currentSettings.ToString(), ReplyEmojis.SettingsList);
@@ -63,8 +63,9 @@ public sealed class SettingsCommand : ICommand {
             if (value is null) return Task.CompletedTask;
             if (selectedSetting is "EventStartedReceivers") {
                 value = value.Replace(" ", "").ToLower();
-                if (value.StartsWith(",") || value.Count(x => x is ',') > 1 ||
-                    (!value.Contains("interested") && !value.Contains("users") && !value.Contains("role"))) {
+                if (value.StartsWith(",")
+                    || value.Count(x => x is ',') > 1
+                    || (!value.Contains("interested") && !value.Contains("users") && !value.Contains("role"))) {
                     cmd.Reply(Messages.InvalidSettingValue, ReplyEmojis.Error);
                     return Task.CompletedTask;
                 }
@@ -73,9 +74,7 @@ public sealed class SettingsCommand : ICommand {
 
         if (IsBool(GuildData.DefaultPreferences[selectedSetting]) && !IsBool(value)) {
             value = value switch {
-                "y" or "yes" or "д" or "да" => "true",
-                "n" or "no" or "н" or "нет" => "false",
-                _ => value
+                "y" or "yes" or "д" or "да" => "true", "n" or "no" or "н" or "нет" => "false", _ => value
             };
             if (!IsBool(value)) {
                 cmd.Reply(Messages.InvalidSettingValue, ReplyEmojis.Error);
@@ -95,7 +94,7 @@ public sealed class SettingsCommand : ICommand {
         }
 
         var formattedValue = selectedSetting switch {
-            "WelcomeMessage" => Utils.Wrap(Messages.DefaultWelcomeMessage),
+            "WelcomeMessage"        => Utils.Wrap(Messages.DefaultWelcomeMessage),
             "EventStartedReceivers" => Utils.Wrap(GuildData.DefaultPreferences[selectedSetting])!,
             _ => value is "reset" or "default" ? Messages.SettingNotDefined
                 : IsBool(value) ? YesOrNo(value is "true")
@@ -106,7 +105,8 @@ public sealed class SettingsCommand : ICommand {
             config[selectedSetting] = GuildData.DefaultPreferences[selectedSetting];
         } else {
             if (value == config[selectedSetting]) {
-                cmd.Reply(string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
+                cmd.Reply(
+                    string.Format(Messages.SettingsNothingChanged, localizedSelectedSetting, formattedValue),
                     ReplyEmojis.Error);
                 return Task.CompletedTask;
             }
@@ -135,17 +135,8 @@ public sealed class SettingsCommand : ICommand {
                 return Task.CompletedTask;
             }
 
-            switch (selectedSetting) {
-                case "MuteRole":
-                    data.MuteRole = guild.GetRole(mention);
-                    break;
-                case "PublicFeedbackChannel":
-                    data.PublicFeedbackChannel = guild.GetTextChannel(mention);
-                    break;
-                case "PrivateFeedbackChannel":
-                    data.PrivateFeedbackChannel = guild.GetTextChannel(mention);
-                    break;
-            }
+            if (selectedSetting is "MuteRole")
+                data.MuteRole = guild.GetRole(mention);
 
             config[selectedSetting] = value;
         }

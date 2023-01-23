@@ -43,8 +43,6 @@ public record GuildData {
     public readonly Dictionary<string, string> Preferences;
 
     private SocketRole? _cachedMuteRole;
-    private SocketTextChannel? _cachedPrivateFeedbackChannel;
-    private SocketTextChannel? _cachedPublicFeedbackChannel;
 
     [SuppressMessage("Performance", "CA1853:Unnecessary call to \'Dictionary.ContainsKey(key)\'")]
     // https://github.com/dotnet/roslyn-analyzers/issues/6377
@@ -57,8 +55,8 @@ public record GuildData {
         if (!Directory.Exists(memberDataDir)) Directory.CreateDirectory(memberDataDir);
         if (!File.Exists(_configurationFile)) File.WriteAllText(_configurationFile, "{}");
         Preferences
-            = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(_configurationFile)) ??
-              new Dictionary<string, string>();
+            = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(_configurationFile))
+              ?? new Dictionary<string, string>();
 
         if (Preferences.Keys.Count < DefaultPreferences.Keys.Count)
             foreach (var key in DefaultPreferences.Keys.Where(key => !Preferences.ContainsKey(key)))
@@ -78,11 +76,12 @@ public record GuildData {
         guild.DownloadUsersAsync().Wait();
         foreach (var member in guild.Users.Where(user => !user.IsBot)) {
             if (MemberData.TryGetValue(member.Id, out var memberData)) {
-                if (!memberData.IsInGuild &&
-                    DateTimeOffset.Now.ToUnixTimeSeconds() -
-                    Math.Max(memberData.LeftAt.Last().ToUnixTimeSeconds(),
-                        memberData.BannedUntil?.ToUnixTimeSeconds() ?? 0) >
-                    60 * 60 * 24 * 30) {
+                if (!memberData.IsInGuild
+                    && DateTimeOffset.Now.ToUnixTimeSeconds()
+                    - Math.Max(
+                        memberData.LeftAt.Last().ToUnixTimeSeconds(),
+                        memberData.BannedUntil?.ToUnixTimeSeconds() ?? 0)
+                    > 60 * 60 * 24 * 30) {
                     File.Delete($"{_id}/MemberData/{memberData.Id}.json");
                     MemberData.Remove(memberData.Id);
                 }
@@ -100,28 +99,19 @@ public record GuildData {
         get {
             if (Preferences["MuteRole"] is "0") return null;
             return _cachedMuteRole ??= Boyfriend.Client.GetGuild(_id).Roles
-                .Single(x => x.Id == ulong.Parse(Preferences["MuteRole"]));
+                                                .Single(x => x.Id == ulong.Parse(Preferences["MuteRole"]));
         }
         set => _cachedMuteRole = value;
     }
 
-    public SocketTextChannel? PublicFeedbackChannel {
-        get {
-            if (Preferences["PublicFeedbackChannel"] is "0") return null;
-            return _cachedPublicFeedbackChannel ??= Boyfriend.Client.GetGuild(_id).TextChannels
-                .Single(x => x.Id == ulong.Parse(Preferences["PublicFeedbackChannel"]));
-        }
-        set => _cachedPublicFeedbackChannel = value;
-    }
+    public SocketTextChannel? PublicFeedbackChannel => Boyfriend.Client.GetGuild(_id)
+                                                                .GetTextChannel(
+                                                                     ulong.Parse(Preferences["PublicFeedbackChannel"]));
 
-    public SocketTextChannel? PrivateFeedbackChannel {
-        get {
-            if (Preferences["PublicFeedbackChannel"] is "0") return null;
-            return _cachedPrivateFeedbackChannel ??= Boyfriend.Client.GetGuild(_id).TextChannels
-                .Single(x => x.Id == ulong.Parse(Preferences["PrivateFeedbackChannel"]));
-        }
-        set => _cachedPrivateFeedbackChannel = value;
-    }
+    public SocketTextChannel? PrivateFeedbackChannel => Boyfriend.Client.GetGuild(_id)
+                                                                 .GetTextChannel(
+                                                                      ulong.Parse(
+                                                                          Preferences["PrivateFeedbackChannel"]));
 
     public static GuildData Get(SocketGuild guild) {
         if (GuildDataDictionary.TryGetValue(guild.Id, out var stored)) return stored;
@@ -132,11 +122,13 @@ public record GuildData {
 
     public async Task Save(bool saveMemberData) {
         Preferences.TrimExcess();
-        await File.WriteAllTextAsync(_configurationFile,
+        await File.WriteAllTextAsync(
+            _configurationFile,
             JsonSerializer.Serialize(Preferences));
         if (saveMemberData)
             foreach (var data in MemberData.Values)
-                await File.WriteAllTextAsync($"{_id}/MemberData/{data.Id}.json",
+                await File.WriteAllTextAsync(
+                    $"{_id}/MemberData/{data.Id}.json",
                     JsonSerializer.Serialize(data, Options));
     }
 }
