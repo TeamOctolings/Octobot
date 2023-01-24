@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using Discord;
 using Discord.WebSocket;
 
 namespace Boyfriend.Data;
@@ -84,6 +85,11 @@ public record GuildData {
                     > 60 * 60 * 24 * 30) {
                     File.Delete($"{_id}/MemberData/{memberData.Id}.json");
                     MemberData.Remove(memberData.Id);
+                }
+
+                if (memberData.MutedUntil is null) {
+                    memberData.Roles = ((IGuildUser)member).RoleIds.ToList();
+                    memberData.Roles.Remove(guild.Id);
                 }
 
                 continue;

@@ -141,7 +141,7 @@ public static class EventHandler {
         }
 
         if (memberData.MutedUntil < DateTimeOffset.Now) {
-            if (data.MuteRole is not null)
+            if (data.MuteRole is not null && !user.TimedOutUntil.HasValue)
                 await user.AddRoleAsync(data.MuteRole);
             if (config["RemoveRolesOnMute"] is "false" && config["ReturnRolesOnRejoin"] is "true")
                 await user.AddRolesAsync(memberData.Roles);
@@ -149,6 +149,7 @@ public static class EventHandler {
     }
 
     private static Task UserLeftEvent(SocketGuild guild, SocketUser user) {
+        if (user.IsBot) return Task.CompletedTask;
         var data = GuildData.Get(guild).MemberData[user.Id];
         data.IsInGuild = false;
         data.LeftAt.Add(DateTimeOffset.Now);
