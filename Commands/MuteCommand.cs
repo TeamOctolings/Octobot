@@ -29,7 +29,7 @@ public sealed class MuteCommand : ICommand {
             await MuteMemberAsync(cmd, toMute, duration, guildData, reason);
     }
 
-    private static async Task MuteMemberAsync(CommandProcessor cmd, SocketGuildUser toMute,
+    private static async Task MuteMemberAsync(CommandProcessor cmd, IGuildUser toMute,
         TimeSpan duration, GuildData data, string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         var role = data.MuteRole;
