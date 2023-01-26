@@ -34,10 +34,11 @@ public sealed class MuteCommand : ICommand {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         var role = data.MuteRole;
         var hasDuration = duration.TotalSeconds > 0;
+        var memberData = data.MemberData[toMute.Id];
 
         if (role is not null) {
             if (data.Preferences["RemoveRolesOnMute"] is "true")
-                await toMute.RemoveRolesAsync(toMute.Roles, requestOptions);
+                await toMute.RemoveRolesAsync(memberData.Roles, requestOptions);
 
             await toMute.AddRoleAsync(role, requestOptions);
         } else {
@@ -54,7 +55,7 @@ public sealed class MuteCommand : ICommand {
             await toMute.SetTimeOutAsync(duration, requestOptions);
         }
 
-        data.MemberData[toMute.Id].MutedUntil = DateTimeOffset.Now.Add(duration);
+        memberData.MutedUntil = DateTimeOffset.Now.Add(duration);
         cmd.ConfigWriteScheduled = true;
 
         var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
