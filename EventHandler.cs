@@ -87,6 +87,7 @@ public static class EventHandler {
             "воооо"   => message.ReplyAsync("`removing /...`"),
             "op ??" => message.ReplyAsync(
                 "некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
+            "++++" => message.ReplyAsync("#"),
             _ => new CommandProcessor(message).HandleCommandAsync()
         };
         return Task.CompletedTask;
