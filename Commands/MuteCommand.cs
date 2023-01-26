@@ -1,6 +1,5 @@
 using Boyfriend.Data;
 using Discord;
-using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
