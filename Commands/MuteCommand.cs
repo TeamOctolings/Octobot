@@ -28,16 +28,20 @@ public sealed class MuteCommand : ICommand {
             await MuteMemberAsync(cmd, toMute, duration, guildData, reason);
     }
 
-    private static async Task MuteMemberAsync(CommandProcessor cmd, IGuildUser toMute,
-        TimeSpan duration, GuildData data, string reason) {
+    private static async Task MuteMemberAsync(
+        CommandProcessor cmd,      IGuildUser toMute,
+        TimeSpan         duration, GuildData  data, string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         var role = data.MuteRole;
         var hasDuration = duration.TotalSeconds > 0;
         var memberData = data.MemberData[toMute.Id];
 
         if (role is not null) {
-            if (data.Preferences["RemoveRolesOnMute"] is "true")
+            if (data.Preferences["RemoveRolesOnMute"] is "true") {
+                memberData.Roles = toMute.RoleIds.ToList();
+                memberData.Roles.Remove(cmd.Context.Guild.Id);
                 await toMute.RemoveRolesAsync(memberData.Roles, requestOptions);
+            }
 
             await toMute.AddRoleAsync(role, requestOptions);
         } else {
@@ -57,7 +61,8 @@ public sealed class MuteCommand : ICommand {
         memberData.MutedUntil = DateTimeOffset.Now.Add(duration);
         cmd.ConfigWriteScheduled = true;
 
-        var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
+        var feedback = string.Format(
+            Messages.FeedbackMemberMuted, toMute.Mention,
             Utils.GetHumanizedTimeSpan(duration),
             Utils.Wrap(reason));
         cmd.Reply(feedback, ReplyEmojis.Muted);
