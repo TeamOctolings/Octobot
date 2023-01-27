@@ -88,7 +88,7 @@ public static class EventHandler {
             "op ??" => message.ReplyAsync(
                 "некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
             "++++" => message.ReplyAsync("#"),
-            _ => new CommandProcessor(message).HandleCommandAsync()
+            _      => new CommandProcessor(message).HandleCommandAsync()
         };
         return Task.CompletedTask;
     }
@@ -128,8 +128,6 @@ public static class EventHandler {
                     config["WelcomeMessage"] is "default"
                         ? Messages.DefaultWelcomeMessage
                         : config["WelcomeMessage"], user.Mention, guild.Name));
-
-        if (config["StarterRole"] is not "0") await user.AddRoleAsync(ulong.Parse(config["StarterRole"]));
 
         if (!data.MemberData.ContainsKey(user.Id)) data.MemberData.Add(user.Id, new MemberData(user));
         var memberData = data.MemberData[user.Id];

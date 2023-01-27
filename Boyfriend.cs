@@ -150,7 +150,7 @@ public static class Boyfriend {
             var user = guild.GetUser(mData.Id);
             if (DateTimeOffset.Now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
             if (!mData.IsInGuild) continue;
-            if (!mData.Roles.Contains(starterRoleId)) _ = user.AddRoleAsync(starterRoleId);
+            if (!mData.Roles.Contains(starterRoleId) && mData.MutedUntil is null) _ = user.AddRoleAsync(starterRoleId);
 
             if (DateTimeOffset.Now >= mData.MutedUntil) {
                 await Utils.UnmuteMemberAsync(
