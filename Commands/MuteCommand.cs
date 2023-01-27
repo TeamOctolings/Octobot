@@ -1,6 +1,5 @@
 using Boyfriend.Data;
 using Discord;
-using Discord.WebSocket;
 
 namespace Boyfriend.Commands;
 
@@ -29,15 +28,16 @@ public sealed class MuteCommand : ICommand {
             await MuteMemberAsync(cmd, toMute, duration, guildData, reason);
     }
 
-    private static async Task MuteMemberAsync(CommandProcessor cmd, SocketGuildUser toMute,
+    private static async Task MuteMemberAsync(CommandProcessor cmd, IGuildUser toMute,
         TimeSpan duration, GuildData data, string reason) {
         var requestOptions = Utils.GetRequestOptions($"({cmd.Context.User}) {reason}");
         var role = data.MuteRole;
         var hasDuration = duration.TotalSeconds > 0;
+        var memberData = data.MemberData[toMute.Id];
 
         if (role is not null) {
             if (data.Preferences["RemoveRolesOnMute"] is "true")
-                await toMute.RemoveRolesAsync(toMute.Roles, requestOptions);
+                await toMute.RemoveRolesAsync(memberData.Roles, requestOptions);
 
             await toMute.AddRoleAsync(role, requestOptions);
         } else {
@@ -54,7 +54,7 @@ public sealed class MuteCommand : ICommand {
             await toMute.SetTimeOutAsync(duration, requestOptions);
         }
 
-        data.MemberData[toMute.Id].MutedUntil = DateTimeOffset.Now.Add(duration);
+        memberData.MutedUntil = DateTimeOffset.Now.Add(duration);
         cmd.ConfigWriteScheduled = true;
 
         var feedback = string.Format(Messages.FeedbackMemberMuted, toMute.Mention,
