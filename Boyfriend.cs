@@ -23,7 +23,7 @@ public static class Boyfriend {
     };
 
     private static DateTimeOffset _nextSongAt = DateTimeOffset.MinValue;
-    private static uint           _nextSongIndex;
+    private static uint _nextSongIndex;
 
     private static readonly Tuple<Game, TimeSpan>[] ActivityList = {
         Tuple.Create(
@@ -72,6 +72,8 @@ public static class Boyfriend {
     }
 
     private static async void TickAllGuildsAsync(object? sender, ElapsedEventArgs e) {
+        if (GuildTickTasks.Count is not 0) return;
+
         foreach (var guild in Client.Guilds) GuildTickTasks.Add(TickGuildAsync(guild));
 
         try { Task.WaitAll(GuildTickTasks.ToArray()); } catch (AggregateException ex) {

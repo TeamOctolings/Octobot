@@ -58,7 +58,6 @@ resharper_indent_nested_usings_stmt                             = true
 resharper_indent_nested_while_stmt                              = true
 resharper_indent_preprocessor_if                                = usual_indent
 resharper_indent_preprocessor_other                             = usual_indent
-resharper_int_align_fields                                      = true
 resharper_int_align_methods                                     = true
 resharper_int_align_parameters                                  = true
 resharper_int_align_properties                                  = true
