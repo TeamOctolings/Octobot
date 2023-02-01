@@ -16,7 +16,7 @@ public sealed class RemindCommand : ICommand {
                     ReminderText = reminderText,
                     ReminderChannel = cmd.Context.Channel.Id
                 });
-            var feedback = string.Format(Messages.FeedbackReminderAdded, DateTimeOffset.Now.Add(remindIn).ToUnixTimeSeconds().ToString());
+            var feedback = string.Format(Messages.FeedbackReminderAdded, DateTimeOffset.Now.Add(remindIn).ToUnixTimeSeconds());
             cmd.Reply(feedback, ReplyEmojis.Success);
             cmd.Audit(feedback);
         }
