@@ -465,4 +465,7 @@
     <data name="MissingReminderText" xml:space="preserve">
         <value>для крафта напоминалки нужен текст</value>
     </data>
+    <data name="FeedbackReminderAdded" xml:space="preserve">
+        <value>вас понял, упоминание будет &lt;t:{0}:f&gt;</value>
+    </data>
 </root>

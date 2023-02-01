@@ -465,4 +465,7 @@
     <data name="MissingReminderText" xml:space="preserve">
         <value>You need to specify reminder text!</value>
     </data>
+    <data name="FeedbackReminderAdded" xml:space="preserve">
+        <value>OK, I'll mention you on &lt;t:{0}:f&gt;</value>
+    </data>
 </root>

@@ -465,4 +465,7 @@
     <data name="MissingReminderText" xml:space="preserve">
         <value>Тебе нужно указать текст напоминания!</value>
     </data>
+    <data name="FeedbackReminderAdded" xml:space="preserve">
+        <value>Хорошо, я упомяну тебя &lt;t:{0}:f&gt;</value>
+    </data>
 </root>
