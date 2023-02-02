@@ -18,9 +18,9 @@ public sealed class CommandProcessor {
     };
 
     private readonly StringBuilder _stackedPrivateFeedback = new();
-    private readonly StringBuilder _stackedPublicFeedback  = new();
-    private readonly StringBuilder _stackedReplyMessage    = new();
-    private readonly List<Task>    _tasks                  = new();
+    private readonly StringBuilder _stackedPublicFeedback = new();
+    private readonly StringBuilder _stackedReplyMessage = new();
+    private readonly List<Task> _tasks = new();
 
     public readonly SocketCommandContext Context;
 
@@ -34,11 +34,6 @@ public sealed class CommandProcessor {
         var guild = Context.Guild;
         var data = GuildData.Get(guild);
         Utils.SetCurrentLanguage(guild);
-
-        if (GetMember().Roles.Contains(data.MuteRole)) {
-            _ = Context.Message.DeleteAsync();
-            return;
-        }
 
         var list = Context.Message.Content.Split("\n");
         var cleanList = Context.Message.CleanContent.Split("\n");
