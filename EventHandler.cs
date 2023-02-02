@@ -39,12 +39,13 @@ public static class EventHandler {
         var i = Random.Shared.Next(3);
 
         foreach (var guild in Client.Guilds) {
+            Boyfriend.Log(new LogMessage(LogSeverity.Info, nameof(EventHandler), $"Guild \"{guild.Name}\" is READY"));
             var data = GuildData.Get(guild);
             var config = data.Preferences;
             var channel = data.PrivateFeedbackChannel;
-            Utils.SetCurrentLanguage(guild);
-
             if (config["ReceiveStartupMessages"] is not "true" || channel is null) continue;
+
+            Utils.SetCurrentLanguage(guild);
             _ = channel.SendMessageAsync(string.Format(Messages.Ready, Utils.GetBeep(i)));
         }
 
@@ -118,7 +119,6 @@ public static class EventHandler {
     }
 
     private static async Task UserJoinedEvent(SocketGuildUser user) {
-        if (user.IsBot) return;
         var guild = user.Guild;
         var data = GuildData.Get(guild);
         var config = data.Preferences;
@@ -142,16 +142,14 @@ public static class EventHandler {
             memberData.JoinedAt.Add(user.JoinedAt!.Value);
         }
 
-        if (memberData.MutedUntil < DateTimeOffset.Now) {
-            if (data.MuteRole is not null && !user.TimedOutUntil.HasValue)
-                await user.AddRoleAsync(data.MuteRole);
+        if (DateTimeOffset.Now < memberData.MutedUntil) {
+            await user.AddRoleAsync(data.MuteRole);
             if (config["RemoveRolesOnMute"] is "false" && config["ReturnRolesOnRejoin"] is "true")
                 await user.AddRolesAsync(memberData.Roles);
         } else if (config["ReturnRolesOnRejoin"] is "true") { await user.AddRolesAsync(memberData.Roles); }
     }
 
     private static Task UserLeftEvent(SocketGuild guild, SocketUser user) {
-        if (user.IsBot) return Task.CompletedTask;
         var data = GuildData.Get(guild).MemberData[user.Id];
         data.IsInGuild = false;
         data.LeftAt.Add(DateTimeOffset.Now);

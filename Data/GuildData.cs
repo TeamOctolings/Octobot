@@ -48,6 +48,7 @@ public record GuildData {
     [SuppressMessage("Performance", "CA1853:Unnecessary call to \'Dictionary.ContainsKey(key)\'")]
     // https://github.com/dotnet/roslyn-analyzers/issues/6377
     private GuildData(SocketGuild guild) {
+        var downloaderTask = guild.DownloadUsersAsync();
         _id = guild.Id;
         var idString = $"{_id}";
         var memberDataDir = $"{_id}/MemberData";
@@ -74,7 +75,8 @@ public record GuildData {
             MemberData.Add(deserialised!.Id, deserialised);
         }
 
-        foreach (var member in guild.Users.Where(user => !user.IsBot)) {
+        downloaderTask.Wait();
+        foreach (var member in guild.Users) {
             if (MemberData.TryGetValue(member.Id, out var memberData)) {
                 if (!memberData.IsInGuild
                     && DateTimeOffset.Now.ToUnixTimeSeconds()
