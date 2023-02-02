@@ -74,7 +74,6 @@ public record GuildData {
             MemberData.Add(deserialised!.Id, deserialised);
         }
 
-        guild.DownloadUsersAsync().Wait();
         foreach (var member in guild.Users.Where(user => !user.IsBot)) {
             if (MemberData.TryGetValue(member.Id, out var memberData)) {
                 if (!memberData.IsInGuild
