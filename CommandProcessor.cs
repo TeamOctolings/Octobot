@@ -86,7 +86,8 @@ public sealed class CommandProcessor {
     }
 
     private void SendFeedbacks(bool reply = true) {
-        if (reply && _stackedReplyMessage.Length > 0)
+        var hasReply = _stackedReplyMessage.Length > 0;
+        if (reply && hasReply)
             _ = Context.Message.ReplyAsync(_stackedReplyMessage.ToString(), false, null, AllowedMentions.None);
 
         var data = GuildData.Get(Context.Guild);
@@ -94,7 +95,7 @@ public sealed class CommandProcessor {
         var systemChannel = data.PublicFeedbackChannel;
         if (_stackedPrivateFeedback.Length > 0
             && adminChannel is not null
-            && adminChannel.Id != Context.Message.Channel.Id) {
+            && (adminChannel.Id != Context.Message.Channel.Id || !hasReply)) {
             _ = Utils.SilentSendAsync(adminChannel, _stackedPrivateFeedback.ToString());
             _stackedPrivateFeedback.Clear();
         }
@@ -102,7 +103,7 @@ public sealed class CommandProcessor {
         if (_stackedPublicFeedback.Length > 0
             && systemChannel is not null
             && systemChannel.Id != adminChannel?.Id
-            && systemChannel.Id != Context.Message.Channel.Id) {
+            && (systemChannel.Id != Context.Message.Channel.Id || !hasReply)) {
             _ = Utils.SilentSendAsync(systemChannel, _stackedPublicFeedback.ToString());
             _stackedPublicFeedback.Clear();
         }

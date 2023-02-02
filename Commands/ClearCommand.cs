@@ -17,9 +17,14 @@ public sealed class ClearCommand : ICommand {
         var messages = await channel.GetMessagesAsync((int)(toDelete + 1)).FlattenAsync();
 
         var user = (SocketGuildUser)cmd.Context.User;
-        await channel.DeleteMessagesAsync(messages, Utils.GetRequestOptions(user.ToString()!));
+        var msgArray = messages.ToArray();
+        await channel.DeleteMessagesAsync(msgArray, Utils.GetRequestOptions(user.ToString()!));
 
-        cmd.Audit(string.Format(Messages.FeedbackMessagesCleared, (toDelete + 1).ToString(),
-            Utils.MentionChannel(channel.Id)));
+        foreach (var msg in msgArray.Where(m => !m.Author.IsBot))
+            cmd.Audit(
+                string.Format(
+                    Messages.CachedMessageDeleted, msg.Author.Mention,
+                    Utils.MentionChannel(channel.Id),
+                    Utils.Wrap(msg.CleanContent)));
     }
 }
