@@ -30,9 +30,10 @@ public static class Boyfriend {
             new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening),
             new TimeSpan(0, 3, 40)),
         Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
-        Tuple.Create(new Game("Kurokotei - Scattered Faith", ActivityType.Listening), new TimeSpan(0, 8, 21)),
+        Tuple.Create(
+            new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening), new TimeSpan(0, 3, 18)),
         Tuple.Create(new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
-        Tuple.Create(new Game("RetroSpecter - Genocide", ActivityType.Listening), new TimeSpan(0, 5, 52)),
+        Tuple.Create(new Game("RetroSpecter - Overtime", ActivityType.Listening), new TimeSpan(0, 4, 33)),
         Tuple.Create(new Game("beatMARIO - Night of Knights", ActivityType.Listening), new TimeSpan(0, 4, 10))
     };
 
@@ -61,20 +62,22 @@ public static class Boyfriend {
         if (ActivityList.Length is 0) timer.Dispose(); // CodeQL moment
         timer.Start();
 
-        while (ActivityList.Length > 0)
-            if (DateTimeOffset.Now >= _nextSongAt) {
-                var nextSong = ActivityList[_nextSongIndex];
-                await Client.SetActivityAsync(nextSong.Item1);
-                _nextSongAt = DateTimeOffset.Now.Add(nextSong.Item2);
-                _nextSongIndex++;
-                if (_nextSongIndex >= ActivityList.Length) _nextSongIndex = 0;
-            }
+        await Task.Delay(-1);
     }
 
     private static async void TickAllGuildsAsync(object? sender, ElapsedEventArgs e) {
         if (GuildTickTasks.Count is not 0) return;
 
-        foreach (var guild in Client.Guilds) GuildTickTasks.Add(TickGuildAsync(guild));
+        var now = DateTimeOffset.Now;
+        foreach (var guild in Client.Guilds) GuildTickTasks.Add(TickGuildAsync(guild, now));
+
+        if (now >= _nextSongAt) {
+            var nextSong = ActivityList[_nextSongIndex];
+            await Client.SetActivityAsync(nextSong.Item1);
+            _nextSongAt = now.Add(nextSong.Item2);
+            _nextSongIndex++;
+            if (_nextSongIndex >= ActivityList.Length) _nextSongIndex = 0;
+        }
 
         try { Task.WaitAll(GuildTickTasks.ToArray()); } catch (AggregateException ex) {
             foreach (var exc in ex.InnerExceptions)
@@ -114,7 +117,7 @@ public static class Boyfriend {
         return Task.CompletedTask;
     }
 
-    private static async Task TickGuildAsync(SocketGuild guild) {
+    private static async Task TickGuildAsync(SocketGuild guild, DateTimeOffset now) {
         var data = GuildData.Get(guild);
         var config = data.Preferences;
         var saveData = false;
@@ -126,7 +129,7 @@ public static class Boyfriend {
                     .Now
                 >= schEvent.StartTime) await schEvent.StartAsync();
             else if (!data.EarlyNotifications.Contains(schEvent.Id)
-                     && DateTimeOffset.Now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
+                     && now >= schEvent.StartTime.Subtract(new TimeSpan(0, offset, 0))) {
                 data.EarlyNotifications.Add(schEvent.Id);
                 var receivers = config["EventStartedReceivers"];
                 var role = guild.GetRole(ulong.Parse(config["EventNotificationRole"]));
@@ -150,11 +153,11 @@ public static class Boyfriend {
         _ = ulong.TryParse(config["StarterRole"], out var starterRoleId);
         foreach (var mData in data.MemberData.Values) {
             var user = guild.GetUser(mData.Id);
-            if (DateTimeOffset.Now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
+            if (now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
             if (!mData.IsInGuild) continue;
             if (!mData.Roles.Contains(starterRoleId) && mData.MutedUntil is null) _ = user.AddRoleAsync(starterRoleId);
 
-            if (DateTimeOffset.Now >= mData.MutedUntil) {
+            if (now >= mData.MutedUntil) {
                 await Utils.UnmuteMemberAsync(
                     data, Client.CurrentUser.ToString(), user,
                     Messages.PunishmentExpired);
@@ -163,7 +166,7 @@ public static class Boyfriend {
 
             for (var i = mData.Reminders.Count - 1; i >= 0; i--) {
                 var reminder = mData.Reminders[i];
-                if (DateTimeOffset.Now < reminder.RemindAt) continue;
+                if (now < reminder.RemindAt) continue;
 
                 var channel = guild.GetTextChannel(reminder.ReminderChannel);
                 if (channel is not null)
