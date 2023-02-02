@@ -37,6 +37,7 @@ public sealed class MuteCommand : ICommand {
         var memberData = data.MemberData[toMute.Id];
 
         if (role is not null) {
+            memberData.MutedUntil = DateTimeOffset.Now.Add(duration);
             if (data.Preferences["RemoveRolesOnMute"] is "true") {
                 memberData.Roles = toMute.RoleIds.ToList();
                 memberData.Roles.Remove(cmd.Context.Guild.Id);
@@ -58,7 +59,6 @@ public sealed class MuteCommand : ICommand {
             await toMute.SetTimeOutAsync(duration, requestOptions);
         }
 
-        memberData.MutedUntil = DateTimeOffset.Now.Add(duration);
         cmd.ConfigWriteScheduled = true;
 
         var feedback = string.Format(

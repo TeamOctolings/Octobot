@@ -7,8 +7,8 @@ using Discord.WebSocket;
 namespace Boyfriend;
 
 public static class EventHandler {
-    private static readonly DiscordSocketClient Client             = Boyfriend.Client;
-    private static          bool                _sendReadyMessages = true;
+    private static readonly DiscordSocketClient Client = Boyfriend.Client;
+    private static bool _sendReadyMessages = true;
 
     public static void InitEvents() {
         Client.Ready += ReadyEvent;
@@ -26,8 +26,11 @@ public static class EventHandler {
 
     private static Task MemberRolesUpdatedEvent(Cacheable<SocketGuildUser, ulong> oldUser, SocketGuildUser newUser) {
         var data = GuildData.Get(newUser.Guild).MemberData[newUser.Id];
-        data.Roles = ((IGuildUser)newUser).RoleIds.ToList();
-        data.Roles.Remove(newUser.Guild.Id);
+        if (data.MutedUntil is null) {
+            data.Roles = ((IGuildUser)newUser).RoleIds.ToList();
+            data.Roles.Remove(newUser.Guild.Id);
+        }
+
         return Task.CompletedTask;
     }
 
