@@ -459,13 +459,16 @@
     <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
         <value>вернуть звания при переподключении в дурку</value>
     </data>
-    <data name="SettingsAutoStartEvents" xml:space="preserve">
+  <data name="SettingsAutoStartEvents" xml:space="preserve">
         <value>автоматом стартить квесты</value>
     </data>
-    <data name="MissingReminderText" xml:space="preserve">
+  <data name="MissingReminderText" xml:space="preserve">
         <value>для крафта напоминалки нужен текст</value>
     </data>
-    <data name="FeedbackReminderAdded" xml:space="preserve">
+  <data name="FeedbackReminderAdded" xml:space="preserve">
         <value>вас понял, упоминание будет &lt;t:{0}:f&gt;</value>
+    </data>
+  <data name="InvalidRemindIn" xml:space="preserve">
+        <value>шизоид у меня на часах такого нету</value>
     </data>
 </root>

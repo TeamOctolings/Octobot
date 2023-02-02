@@ -328,7 +328,7 @@
     <value>You need to specify a guild member!</value>
   </data>
     <data name="InvalidMember" xml:space="preserve">
-        <value>You did not specify a member of this guild!</value>
+        <value>You need to specify a member of this guild!</value>
     </data>
     <data name="UserCannotBanMembers" xml:space="preserve">
     <value>You cannot ban users from this guild!</value>
@@ -467,5 +467,8 @@
     </data>
     <data name="FeedbackReminderAdded" xml:space="preserve">
         <value>OK, I'll mention you on &lt;t:{0}:f&gt;</value>
+    </data>
+    <data name="InvalidRemindIn" xml:space="preserve">
+        <value>You need to specify when I should send you the reminder!</value>
     </data>
 </root>

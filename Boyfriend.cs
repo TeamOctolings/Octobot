@@ -150,12 +150,13 @@ public static class Boyfriend {
                 mentions.Clear();
             }
 
-        _ = ulong.TryParse(config["StarterRole"], out var starterRoleId);
         foreach (var mData in data.MemberData.Values) {
             var user = guild.GetUser(mData.Id);
             if (now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
             if (!mData.IsInGuild) continue;
-            if (!mData.Roles.Contains(starterRoleId) && mData.MutedUntil is null) _ = user.AddRoleAsync(starterRoleId);
+            if (mData.MutedUntil is null
+                && ulong.TryParse(config["StarterRole"], out var starterRoleId)
+                && !mData.Roles.Contains(starterRoleId)) _ = user.AddRoleAsync(starterRoleId);
 
             if (now >= mData.MutedUntil) {
                 await Utils.UnmuteMemberAsync(

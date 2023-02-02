@@ -1111,5 +1111,14 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackReminderAdded", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to You need to specify when I should send you the reminder!.
+        /// </summary>
+        internal static string InvalidRemindIn {
+            get {
+                return ResourceManager.GetString("InvalidRemindIn", resourceCulture);
+            }
+        }
     }
 }

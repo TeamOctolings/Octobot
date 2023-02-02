@@ -9,6 +9,7 @@ namespace Boyfriend;
 
 public sealed class CommandProcessor {
     private static readonly string Mention = $"<@{Boyfriend.Client.CurrentUser.Id}>";
+    private static readonly TimeSpan Infinity = TimeSpan.FromMilliseconds(-1);
 
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
@@ -246,14 +247,13 @@ public sealed class CommandProcessor {
     }
 
     public static TimeSpan GetTimeSpan(string[] args, int index) {
-        var infinity = TimeSpan.FromMilliseconds(-1);
-        if (index >= args.Length) return infinity;
+        if (index >= args.Length) return Infinity;
         var chars = args[index].AsSpan();
         var numberBuilder = Boyfriend.StringBuilder;
         int days = 0, hours = 0, minutes = 0, seconds = 0;
         foreach (var c in chars)
             if (char.IsDigit(c)) { numberBuilder.Append(c); } else {
-                if (numberBuilder.Length is 0) return infinity;
+                if (numberBuilder.Length is 0) return Infinity;
                 switch (c) {
                     case 'd' or 'D' or 'д' or 'Д':
                         days += int.Parse(numberBuilder.ToString());
@@ -271,7 +271,7 @@ public sealed class CommandProcessor {
                         seconds += int.Parse(numberBuilder.ToString());
                         numberBuilder.Clear();
                         break;
-                    default: return infinity;
+                    default: return Infinity;
                 }
             }
 

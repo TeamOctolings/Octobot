@@ -328,7 +328,7 @@
     <value>Надо указать участника сервера!</value>
   </data>
     <data name="InvalidMember" xml:space="preserve">
-        <value>Тебе надо указать участника этого сервера!</value>
+        <value>Надо указать участника этого сервера!</value>
     </data>
     <data name="UserCannotBanMembers" xml:space="preserve">
     <value>Ты не можешь банить пользователей на этом сервере!</value>
@@ -459,13 +459,16 @@
     <data name="SettingsReturnRolesOnRejoin" xml:space="preserve">
         <value>Возвращать роли при перезаходе</value>
     </data>
-    <data name="SettingsAutoStartEvents" xml:space="preserve">
+  <data name="SettingsAutoStartEvents" xml:space="preserve">
         <value>Автоматически начинать события</value>
     </data>
-    <data name="MissingReminderText" xml:space="preserve">
+  <data name="MissingReminderText" xml:space="preserve">
         <value>Тебе нужно указать текст напоминания!</value>
     </data>
-    <data name="FeedbackReminderAdded" xml:space="preserve">
+  <data name="FeedbackReminderAdded" xml:space="preserve">
         <value>Хорошо, я упомяну тебя &lt;t:{0}:f&gt;</value>
+    </data>
+  <data name="InvalidRemindIn" xml:space="preserve">
+        <value>Нужно указать время, через которое придёт напоминание!</value>
     </data>
 </root>
