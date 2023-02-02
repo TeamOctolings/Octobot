@@ -9,8 +9,8 @@
 
 namespace Boyfriend {
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -22,15 +22,15 @@ namespace Boyfriend {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Messages {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Messages() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -44,7 +44,7 @@ namespace Boyfriend {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -58,7 +58,7 @@ namespace Boyfriend {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Bah! .
         /// </summary>
@@ -67,7 +67,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Beep1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Bop! .
         /// </summary>
@@ -76,7 +76,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Beep2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Beep! .
         /// </summary>
@@ -85,7 +85,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Beep3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot ban users from this guild!.
         /// </summary>
@@ -94,7 +94,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotBanMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot ban this user!.
         /// </summary>
@@ -103,7 +103,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotBanTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot kick members from this guild!.
         /// </summary>
@@ -112,7 +112,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotKickMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot kick this member!.
         /// </summary>
@@ -121,7 +121,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotKickTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot manage this guild!.
         /// </summary>
@@ -130,7 +130,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotManageGuild", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot manage messages in this guild!.
         /// </summary>
@@ -139,7 +139,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotManageMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot moderate members in this guild!.
         /// </summary>
@@ -148,7 +148,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotModerateMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot mute this member!.
         /// </summary>
@@ -157,7 +157,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotMuteTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot unmute this member!.
         /// </summary>
@@ -166,7 +166,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("BotCannotUnmuteTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Deleted message from {0} in channel {1}: {2}.
         /// </summary>
@@ -175,7 +175,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CachedMessageDeleted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edited message in channel {0}: {1} -&gt; {2}.
         /// </summary>
@@ -184,7 +184,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CachedMessageEdited", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot use time-outs on other bots! Try to set a mute role in settings.
         /// </summary>
@@ -193,7 +193,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CannotTimeOutBot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not specified.
         /// </summary>
@@ -202,7 +202,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ChannelNotSpecified", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify an integer from {0} to {1} instead of {2}!.
         /// </summary>
@@ -211,7 +211,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ClearAmountInvalid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You specified more than {0} messages!.
         /// </summary>
@@ -220,7 +220,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ClearAmountTooLarge", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You specified less than {0} messages!.
         /// </summary>
@@ -229,7 +229,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ClearAmountTooSmall", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Bans a user.
         /// </summary>
@@ -238,7 +238,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionBan", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Deletes a specified amount of messages in this channel.
         /// </summary>
@@ -247,7 +247,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionClear", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shows this message.
         /// </summary>
@@ -256,7 +256,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionHelp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Kicks a member.
         /// </summary>
@@ -265,7 +265,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionKick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mutes a member.
         /// </summary>
@@ -274,7 +274,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionMute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shows (inaccurate) latency.
         /// </summary>
@@ -283,7 +283,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionPing", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adds a reminder.
         /// </summary>
@@ -292,7 +292,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionRemind", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Allows you to change certain preferences for this guild.
         /// </summary>
@@ -301,7 +301,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unbans a user.
         /// </summary>
@@ -310,7 +310,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionUnban", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unmutes a member.
         /// </summary>
@@ -319,7 +319,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandDescriptionUnmute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Command help:.
         /// </summary>
@@ -328,7 +328,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandHelp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I do not have permission to execute this command!.
         /// </summary>
@@ -337,7 +337,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandNoPermissionBot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You do not have permission to execute this command!.
         /// </summary>
@@ -346,7 +346,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CommandNoPermissionUser", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Current settings:.
         /// </summary>
@@ -355,7 +355,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("CurrentSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0}, welcome to {1}.
         /// </summary>
@@ -364,7 +364,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("DefaultWelcomeMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I cannot mute someone for more than 28 days using timeouts! Either specify a duration shorter than 28 days, or set a mute role in settings.
         /// </summary>
@@ -373,7 +373,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("DurationRequiredForTimeOuts", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Event {0} is cancelled!{1}.
         /// </summary>
@@ -382,7 +382,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("EventCancelled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Event {0} has completed! Duration:{1}.
         /// </summary>
@@ -391,7 +391,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("EventCompleted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;! \n {4}.
         /// </summary>
@@ -400,7 +400,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("EventCreated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0}Event {1} will start &lt;t:{2}:R&gt;!.
         /// </summary>
@@ -409,7 +409,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("EventEarlyNotification", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0}Event {1} is starting at {2}!.
         /// </summary>
@@ -418,7 +418,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("EventStarted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ever.
         /// </summary>
@@ -427,7 +427,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Ever", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Kicked {0}: {1}.
         /// </summary>
@@ -436,7 +436,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackMemberKicked", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Muted {0} for{1}: {2}.
         /// </summary>
@@ -445,7 +445,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackMemberMuted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unmuted {0}: {1}.
         /// </summary>
@@ -454,7 +454,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackMemberUnmuted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Deleted {0} messages in {1}.
         /// </summary>
@@ -463,7 +463,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackMessagesCleared", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Value of setting `{0}` is now set to {1}.
         /// </summary>
@@ -472,7 +472,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackSettingsUpdated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Banned {0} for{1}: {2}.
         /// </summary>
@@ -481,7 +481,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackUserBanned", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unbanned {0}: {1}.
         /// </summary>
@@ -490,7 +490,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("FeedbackUserUnbanned", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This channel does not exist!.
         /// </summary>
@@ -499,7 +499,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("InvalidChannel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You did not specify a member of this guild!.
         /// </summary>
@@ -508,7 +508,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("InvalidMember", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This role does not exist!.
         /// </summary>
@@ -517,7 +517,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("InvalidRole", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid setting value specified!.
         /// </summary>
@@ -526,7 +526,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("InvalidSettingValue", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a user instead of {0}!.
         /// </summary>
@@ -535,7 +535,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("InvalidUser", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Language not supported! Supported languages:.
         /// </summary>
@@ -544,7 +544,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("LanguageNotSupported", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Member is already muted!.
         /// </summary>
@@ -553,7 +553,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MemberAlreadyMuted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Member not muted!.
         /// </summary>
@@ -562,7 +562,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MemberNotMuted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ms.
         /// </summary>
@@ -571,7 +571,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Milliseconds", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a reason to ban this user!.
         /// </summary>
@@ -580,7 +580,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingBanReason", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a reason to kick this member!.
         /// </summary>
@@ -589,7 +589,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingKickReason", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a guild member!.
         /// </summary>
@@ -598,7 +598,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingMember", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a reason to mute this member!.
         /// </summary>
@@ -607,7 +607,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingMuteReason", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify an integer from {0} to {1}!.
         /// </summary>
@@ -616,7 +616,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingNumber", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify reminder text!.
         /// </summary>
@@ -625,7 +625,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingReminderText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a reason to unban this user!.
         /// </summary>
@@ -634,7 +634,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingUnbanReason", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a reason for unmute this member!.
         /// </summary>
@@ -643,7 +643,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingUnmuteReason", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You need to specify a user!.
         /// </summary>
@@ -652,7 +652,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("MissingUser", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
@@ -661,7 +661,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("No", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Punishment expired.
         /// </summary>
@@ -670,7 +670,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("PunishmentExpired", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0}I&apos;m ready!.
         /// </summary>
@@ -679,7 +679,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Ready", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not specified.
         /// </summary>
@@ -688,7 +688,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("RoleNotSpecified", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to That setting doesn&apos;t exist!.
         /// </summary>
@@ -697,7 +697,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingDoesntExist", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not specified.
         /// </summary>
@@ -706,7 +706,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingNotDefined", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatically start scheduled events.
         /// </summary>
@@ -715,7 +715,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsAutoStartEvents", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Early event start notification offset.
         /// </summary>
@@ -724,7 +724,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsEventEarlyNotificationOffset", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Channel for event notifications.
         /// </summary>
@@ -733,7 +733,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsEventNotificationChannel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Role for event creation notifications.
         /// </summary>
@@ -742,7 +742,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsEventNotificationRole", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Event start notifications receivers.
         /// </summary>
@@ -751,7 +751,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsEventStartedReceivers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to :(.
         /// </summary>
@@ -760,7 +760,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsFrowningFace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
@@ -769,7 +769,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsLang", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mute role.
         /// </summary>
@@ -778,7 +778,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsMuteRole", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Nothing changed! `{0}` is already set to {1}.
         /// </summary>
@@ -787,7 +787,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsNothingChanged", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Prefix.
         /// </summary>
@@ -796,7 +796,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsPrefix", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Channel for private notifications.
         /// </summary>
@@ -805,7 +805,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsPrivateFeedbackChannel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Channel for public notifications.
         /// </summary>
@@ -814,7 +814,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsPublicFeedbackChannel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Receive startup messages.
         /// </summary>
@@ -823,7 +823,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsReceiveStartupMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Remove roles on mute.
         /// </summary>
@@ -832,7 +832,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsRemoveRolesOnMute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Return roles on rejoin.
         /// </summary>
@@ -841,7 +841,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsReturnRolesOnRejoin", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Send welcome messages.
         /// </summary>
@@ -850,7 +850,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsSendWelcomeMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Starter role.
         /// </summary>
@@ -859,7 +859,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsStarterRole", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Welcome message.
         /// </summary>
@@ -868,7 +868,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingsWelcomeMessage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot ban me!.
         /// </summary>
@@ -877,7 +877,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotBanBot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot ban users from this guild!.
         /// </summary>
@@ -886,7 +886,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotBanMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot ban the owner of this guild!.
         /// </summary>
@@ -895,7 +895,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotBanOwner", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot ban this user!.
         /// </summary>
@@ -904,7 +904,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotBanTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot ban yourself!.
         /// </summary>
@@ -913,7 +913,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotBanThemselves", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot kick me!.
         /// </summary>
@@ -922,7 +922,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotKickBot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot kick members from this guild!.
         /// </summary>
@@ -931,7 +931,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotKickMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot kick the owner of this guild!.
         /// </summary>
@@ -940,7 +940,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotKickOwner", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot kick this member!.
         /// </summary>
@@ -949,7 +949,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotKickTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot kick yourself!.
         /// </summary>
@@ -958,7 +958,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotKickThemselves", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot manage this guild!.
         /// </summary>
@@ -967,7 +967,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotManageGuild", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot manage messages in this guild!.
         /// </summary>
@@ -976,7 +976,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotManageMessages", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot moderate members in this guild!.
         /// </summary>
@@ -985,7 +985,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotModerateMembers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot mute me!.
         /// </summary>
@@ -994,7 +994,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotMuteBot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot mute the owner of this guild!.
         /// </summary>
@@ -1003,7 +1003,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotMuteOwner", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot mute this member!.
         /// </summary>
@@ -1012,7 +1012,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotMuteTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot mute yourself!.
         /// </summary>
@@ -1021,7 +1021,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotMuteThemselves", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ....
         /// </summary>
@@ -1030,7 +1030,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotUnmuteBot", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You don&apos;t need to unmute the owner of this guild!.
         /// </summary>
@@ -1039,7 +1039,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotUnmuteOwner", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You cannot unmute this user!.
         /// </summary>
@@ -1048,7 +1048,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotUnmuteTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You are muted!.
         /// </summary>
@@ -1057,7 +1057,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserCannotUnmuteThemselves", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This user is not banned!.
         /// </summary>
@@ -1066,7 +1066,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserNotBanned", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I could not find this user in any guild I&apos;m a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago.
         /// </summary>
@@ -1075,7 +1075,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
@@ -1084,7 +1084,7 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You were banned by {0} in guild `{1}` for {2}.
         /// </summary>
@@ -1093,13 +1093,22 @@ namespace Boyfriend {
                 return ResourceManager.GetString("YouWereBanned", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You were kicked by {0} in guild `{1}` for {2}.
         /// </summary>
         internal static string YouWereKicked {
             get {
                 return ResourceManager.GetString("YouWereKicked", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to OK, I'll mention you on &lt;t:{0}:f&gt;.
+        /// </summary>
+        internal static string FeedbackReminderAdded {
+            get {
+                return ResourceManager.GetString("FeedbackReminderAdded", resourceCulture);
             }
         }
     }
