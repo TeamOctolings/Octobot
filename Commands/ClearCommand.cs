@@ -25,6 +25,6 @@ public sealed class ClearCommand : ICommand {
                 string.Format(
                     Messages.CachedMessageDeleted, msg.Author.Mention,
                     Utils.MentionChannel(channel.Id),
-                    Utils.Wrap(msg.CleanContent)));
+                    Utils.Wrap(msg.CleanContent)), false);
     }
 }
