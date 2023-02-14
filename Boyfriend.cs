@@ -31,18 +31,14 @@ public static class Boyfriend {
         (new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening), new TimeSpan(0, 3, 18)),
         (new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
         (new Game("RetroSpecter - Overtime", ActivityType.Listening), new TimeSpan(0, 4, 33)),
-        (new Game("beatMARIO - Night of Knights", ActivityType.Listening), new TimeSpan(0, 4, 10))
+        (new Game("SOOOO - Happppy song", ActivityType.Listening), new TimeSpan(0, 5, 24))
     };
 
     public static readonly DiscordSocketClient Client = new(Config);
 
     private static readonly List<Task> GuildTickTasks = new();
 
-    public static void Main() {
-        InitAsync().GetAwaiter().GetResult();
-    }
-
-    private static async Task InitAsync() {
+    private static async Task Main() {
         var token = (await File.ReadAllTextAsync("token.txt")).Trim();
 
         Client.Log += Log;
@@ -149,7 +145,8 @@ public static class Boyfriend {
 
         foreach (var mData in data.MemberData.Values) {
             var user = guild.GetUser(mData.Id);
-            if (now >= mData.BannedUntil) _ = guild.RemoveBanAsync(mData.Id);
+            if (now >= mData.BannedUntil && await guild.GetBanAsync(mData.Id) is not null)
+                _ = guild.RemoveBanAsync(mData.Id);
             if (!mData.IsInGuild) continue;
             if (mData.MutedUntil is null
                 && ulong.TryParse(config["StarterRole"], out var starterRoleId)

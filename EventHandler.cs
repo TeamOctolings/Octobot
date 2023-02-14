@@ -83,16 +83,14 @@ public static class EventHandler {
     }
 
     private static Task MessageReceivedEvent(IDeletable messageParam) {
-        if (messageParam is not SocketUserMessage message) return Task.CompletedTask;
+        if (messageParam is not SocketUserMessage message || message.Author.IsWebhook) return Task.CompletedTask;
 
         _ = message.CleanContent.ToLower() switch {
             "whoami"  => message.ReplyAsync("`nobody`"),
             "сука !!" => message.ReplyAsync("`root`"),
             "воооо"   => message.ReplyAsync("`removing /...`"),
-            "op ??" => message.ReplyAsync(
-                "некоторые пасхальные цитаты которые вы могли найти были легально взяты у <@573772175572729876>"),
-            "++++" => message.ReplyAsync("#"),
-            _      => new CommandProcessor(message).HandleCommandAsync()
+            "++++"    => message.ReplyAsync("#"),
+            _         => new CommandProcessor(message).HandleCommandAsync()
         };
         return Task.CompletedTask;
     }

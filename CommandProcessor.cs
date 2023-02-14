@@ -8,7 +8,6 @@ using Discord.WebSocket;
 namespace Boyfriend;
 
 public sealed class CommandProcessor {
-    private static readonly string Mention = $"<@{Boyfriend.Client.CurrentUser.Id}>";
     private static readonly TimeSpan Infinity = TimeSpan.FromMilliseconds(-1);
 
     public static readonly ICommand[] Commands = {
@@ -58,9 +57,10 @@ public sealed class CommandProcessor {
 
     private async Task RunCommandOnLine(string line, string cleanLine, string prefix) {
         var prefixed = line.StartsWith(prefix);
-        if (!prefixed && !line.StartsWith(Mention)) return;
+        var mention = Boyfriend.Client.CurrentUser.Mention;
+        if (!prefixed && !line.StartsWith(mention)) return;
         foreach (var command in Commands) {
-            var lineNoMention = line.Remove(0, prefixed ? prefix.Length : Mention.Length);
+            var lineNoMention = line.Remove(0, prefixed ? prefix.Length : mention.Length);
             if (!command.Aliases.Contains(lineNoMention.Trim().Split()[0])) continue;
 
             var args = lineNoMention.Trim().Split().Skip(1).ToArray();

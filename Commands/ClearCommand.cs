@@ -17,7 +17,7 @@ public sealed class ClearCommand : ICommand {
         var messages = await channel.GetMessagesAsync((int)(toDelete + 1)).FlattenAsync();
 
         var user = (SocketGuildUser)cmd.Context.User;
-        var msgArray = messages.ToArray();
+        var msgArray = messages.Reverse().ToArray();
         await channel.DeleteMessagesAsync(msgArray, Utils.GetRequestOptions(user.ToString()!));
 
         foreach (var msg in msgArray.Where(m => !m.Author.IsBot))
