@@ -25,16 +25,13 @@ public static class Boyfriend {
     private static DateTimeOffset _nextSongAt = DateTimeOffset.MinValue;
     private static uint _nextSongIndex;
 
-    private static readonly Tuple<Game, TimeSpan>[] ActivityList = {
-        Tuple.Create(
-            new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening),
-            new TimeSpan(0, 3, 40)),
-        Tuple.Create(new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
-        Tuple.Create(
-            new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening), new TimeSpan(0, 3, 18)),
-        Tuple.Create(new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
-        Tuple.Create(new Game("RetroSpecter - Overtime", ActivityType.Listening), new TimeSpan(0, 4, 33)),
-        Tuple.Create(new Game("beatMARIO - Night of Knights", ActivityType.Listening), new TimeSpan(0, 4, 10))
+    private static readonly (Game Song, TimeSpan Duration)[] ActivityList = {
+        (new Game("Masayoshi Minoshima (ft. nomico) - Bad Apple!!", ActivityType.Listening), new TimeSpan(0, 3, 40)),
+        (new Game("Xi - Blue Zenith", ActivityType.Listening), new TimeSpan(0, 4, 16)),
+        (new Game("UNDEAD CORPORATION - Everything will freeze", ActivityType.Listening), new TimeSpan(0, 3, 18)),
+        (new Game("Splatoon 3 - Candy-Coated Rocks", ActivityType.Listening), new TimeSpan(0, 2, 39)),
+        (new Game("RetroSpecter - Overtime", ActivityType.Listening), new TimeSpan(0, 4, 33)),
+        (new Game("beatMARIO - Night of Knights", ActivityType.Listening), new TimeSpan(0, 4, 10))
     };
 
     public static readonly DiscordSocketClient Client = new(Config);
@@ -73,8 +70,8 @@ public static class Boyfriend {
 
         if (now >= _nextSongAt) {
             var nextSong = ActivityList[_nextSongIndex];
-            await Client.SetActivityAsync(nextSong.Item1);
-            _nextSongAt = now.Add(nextSong.Item2);
+            await Client.SetActivityAsync(nextSong.Song);
+            _nextSongAt = now.Add(nextSong.Duration);
             _nextSongIndex++;
             if (_nextSongIndex >= ActivityList.Length) _nextSongIndex = 0;
         }

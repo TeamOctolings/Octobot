@@ -118,7 +118,7 @@ public sealed class CommandProcessor {
         return null;
     }
 
-    public Tuple<ulong, SocketUser?>? GetUser(string[] args, string[] cleanArgs, int index) {
+    public (ulong Id, SocketUser? User)? GetUser(string[] args, string[] cleanArgs, int index) {
         if (index >= args.Length) {
             Utils.SafeAppendToBuilder(
                 _stackedReplyMessage, $"{ReplyEmojis.MissingArgument} {Messages.MissingUser}",
@@ -144,7 +144,7 @@ public sealed class CommandProcessor {
             return null;
         }
 
-        return Tuple.Create(mention, Boyfriend.Client.GetUser(mention))!;
+        return (mention, Boyfriend.Client.GetUser(mention));
     }
 
     public bool HasPermission(GuildPermission permission) {
