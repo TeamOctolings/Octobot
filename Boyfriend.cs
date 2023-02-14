@@ -170,7 +170,7 @@ public static class Boyfriend {
                 if (now < reminder.RemindAt) continue;
 
                 var channel = guild.GetTextChannel(reminder.ReminderChannel);
-                var toSend = $"{ReplyEmojis.Reminder} <@{mData.Id}> {Utils.Wrap(reminder.ReminderText)}";
+                var toSend = $"{ReplyEmojis.Reminder} {user.Mention} {Utils.Wrap(reminder.ReminderText)}";
                 if (channel is not null)
                     await channel.SendMessageAsync(toSend);
                 else
