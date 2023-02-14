@@ -3,7 +3,7 @@
 namespace Boyfriend.Commands;
 
 public sealed class UnbanCommand : ICommand {
-    public string[] Aliases { get; } = { "unban", "разбан" };
+    public string[] Aliases { get; } = { "unban", "pardon", "разбан" };
 
     public async Task RunAsync(CommandProcessor cmd, string[] args, string[] cleanArgs) {
         if (!cmd.HasPermission(GuildPermission.BanMembers)) return;
