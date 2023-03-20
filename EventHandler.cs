@@ -89,6 +89,7 @@ public static class EventHandler {
             "whoami"  => message.ReplyAsync("`nobody`"),
             "сука !!" => message.ReplyAsync("`root`"),
             "воооо"   => message.ReplyAsync("`removing /...`"),
+            "пон"     => message.ReplyAsync("https://cdn.discordapp.com/attachments/837385840946053181/1087236080950055023/vUORS10xPaY-1.jpg"),
             "++++"    => message.ReplyAsync("#"),
             _         => new CommandProcessor(message).HandleCommandAsync()
         };
