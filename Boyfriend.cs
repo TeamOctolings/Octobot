@@ -150,13 +150,13 @@ public static class Boyfriend {
             if (!mData.IsInGuild) continue;
             if (mData.MutedUntil is null
                 && ulong.TryParse(config["StarterRole"], out var starterRoleId)
+                && guild.GetRole(starterRoleId) is not null
                 && !mData.Roles.Contains(starterRoleId)) _ = user.AddRoleAsync(starterRoleId);
 
             if (now >= mData.MutedUntil) {
-                await Utils.UnmuteMemberAsync(
+                saveData = await Utils.UnmuteMemberAsync(
                     data, Client.CurrentUser.ToString(), user,
                     Messages.PunishmentExpired);
-                saveData = true;
             }
 
             for (var i = mData.Reminders.Count - 1; i >= 0; i--) {
