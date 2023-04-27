@@ -1,4 +1,4 @@
-﻿name: "ReSharper"
+name: "ReSharper"
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -29,7 +29,7 @@ jobs:
       run: dotnet restore
 
     - name: ReSharper CLI InspectCode
-      uses: muno92/resharper_inspectcode@1.6.6
+      uses: muno92/resharper_inspectcode@1.6.13
       with:
         solutionPath: ./Boyfriend.sln
         ignoreIssueType: InvertIf
