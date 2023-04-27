@@ -7,7 +7,8 @@ public sealed class PingCommand : ICommand {
         var builder = Boyfriend.StringBuilder;
 
         builder.Append(Utils.GetBeep())
-            .Append(Math.Round(Math.Abs(DateTimeOffset.Now.Subtract(cmd.Context.Message.Timestamp).TotalMilliseconds)))
+            .Append(
+                Math.Round(Math.Abs(DateTimeOffset.UtcNow.Subtract(cmd.Context.Message.Timestamp).TotalMilliseconds)))
             .Append(Messages.Milliseconds);
 
         cmd.Reply(builder.ToString(), ReplyEmojis.Ping);

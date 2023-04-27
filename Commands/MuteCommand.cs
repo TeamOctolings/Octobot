@@ -19,7 +19,7 @@ public sealed class MuteCommand : ICommand {
         if ((role is not null && toMute.Roles.Contains(role))
             || (toMute.TimedOutUntil is not null
                 && toMute.TimedOutUntil.Value
-                > DateTimeOffset.Now)) {
+                > DateTimeOffset.UtcNow)) {
             cmd.Reply(Messages.MemberAlreadyMuted, ReplyEmojis.Error);
             return;
         }
@@ -37,7 +37,7 @@ public sealed class MuteCommand : ICommand {
         var memberData = data.MemberData[toMute.Id];
 
         if (role is not null) {
-            memberData.MutedUntil = DateTimeOffset.Now.Add(duration);
+            memberData.MutedUntil = DateTimeOffset.UtcNow.Add(duration);
             if (data.Preferences["RemoveRolesOnMute"] is "true") {
                 memberData.Roles = toMute.RoleIds.ToList();
                 memberData.Roles.Remove(cmd.Context.Guild.Id);

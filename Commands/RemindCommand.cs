@@ -15,7 +15,7 @@ public sealed class RemindCommand : ICommand {
 
         var reminderText = cmd.GetRemaining(cleanArgs, 1, "ReminderText");
         if (reminderText is not null) {
-            var reminderOffset = DateTimeOffset.Now.Add(remindIn);
+            var reminderOffset = DateTimeOffset.UtcNow.Add(remindIn);
             GuildData.Get(cmd.Context.Guild).MemberData[cmd.Context.User.Id].Reminders.Add(
                 new Reminder {
                     RemindAt = reminderOffset,

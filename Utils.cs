@@ -58,8 +58,10 @@ public static partial class Utils {
 
             await channel.SendMessageAsync(text, false, null, null, allowRoles ? AllowRoles : AllowedMentions.None);
         } catch (Exception e) {
-            await Boyfriend.Log(new LogMessage(LogSeverity.Error, nameof(Utils),
-                "Exception while silently sending message", e));
+            await Boyfriend.Log(
+                new LogMessage(
+                    LogSeverity.Error, nameof(Utils),
+                    "Exception while silently sending message", e));
         }
     }
 
@@ -126,8 +128,10 @@ public static partial class Utils {
     }
 
     public static SocketTextChannel? GetEventNotificationChannel(SocketGuild guild) {
-        return guild.GetTextChannel(ParseMention(GuildData.Get(guild)
-            .Preferences["EventNotificationChannel"]));
+        return guild.GetTextChannel(
+            ParseMention(
+                GuildData.Get(guild)
+                    .Preferences["EventNotificationChannel"]));
     }
 
     public static bool UserExists(ulong id) {
@@ -138,8 +142,9 @@ public static partial class Utils {
         return GuildData.GuildDataDictionary.Values.Any(gData => gData.MemberData.Values.Any(mData => mData.Id == id));
     }
 
-    public static async Task<bool> UnmuteMemberAsync(GuildData data, string modDiscrim, SocketGuildUser toUnmute,
-        string reason) {
+    public static async Task<bool> UnmuteMemberAsync(
+        GuildData data, string modDiscrim, SocketGuildUser toUnmute,
+        string    reason) {
         var requestOptions = GetRequestOptions($"({modDiscrim}) {reason}");
         var role = data.MuteRole;
 
@@ -150,7 +155,7 @@ public static partial class Utils {
             await toUnmute.RemoveRoleAsync(role, requestOptions);
             data.MemberData[toUnmute.Id].MutedUntil = null;
         } else {
-            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value < DateTimeOffset.Now) return false;
+            if (toUnmute.TimedOutUntil is null || toUnmute.TimedOutUntil.Value < DateTimeOffset.UtcNow) return false;
 
             await toUnmute.RemoveTimeOutAsync(requestOptions);
         }

@@ -34,7 +34,7 @@ public sealed class BanCommand : ICommand {
 
         var memberData = GuildData.Get(guild).MemberData[toBan.Id];
         memberData.BannedUntil
-            = duration.TotalSeconds < 1 ? DateTimeOffset.MaxValue : DateTimeOffset.Now.Add(duration);
+            = duration.TotalSeconds < 1 ? DateTimeOffset.MaxValue : DateTimeOffset.UtcNow.Add(duration);
         memberData.Roles.Clear();
 
         cmd.ConfigWriteScheduled = true;

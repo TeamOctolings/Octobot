@@ -61,7 +61,7 @@ public static class Boyfriend {
     private static async void TickAllGuildsAsync(object? sender, ElapsedEventArgs e) {
         if (GuildTickTasks.Count is not 0) return;
 
-        var now = DateTimeOffset.Now;
+        var now = DateTimeOffset.UtcNow;
         foreach (var guild in Client.Guilds) GuildTickTasks.Add(TickGuildAsync(guild, now));
 
         if (now >= _nextSongAt) {

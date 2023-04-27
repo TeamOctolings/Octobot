@@ -79,7 +79,7 @@ public record GuildData {
         foreach (var member in guild.Users) {
             if (MemberData.TryGetValue(member.Id, out var memberData)) {
                 if (!memberData.IsInGuild
-                    && DateTimeOffset.Now.ToUnixTimeSeconds()
+                    && DateTimeOffset.UtcNow.ToUnixTimeSeconds()
                     - Math.Max(
                         memberData.LeftAt.Last().ToUnixTimeSeconds(),
                         memberData.BannedUntil?.ToUnixTimeSeconds() ?? 0)

@@ -70,7 +70,7 @@ public static class EventHandler {
         await Task.Delay(500);
 
         var auditLogEntry = (await guild.GetAuditLogsAsync(1).FlattenAsync()).First();
-        if (auditLogEntry.CreatedAt >= DateTimeOffset.Now.Subtract(TimeSpan.FromSeconds(1))
+        if (auditLogEntry.CreatedAt >= DateTimeOffset.UtcNow.Subtract(TimeSpan.FromSeconds(1))
             && auditLogEntry.Data is MessageDeleteAuditLogData data
             && msg.Author.Id == data.Target.Id)
             mention = auditLogEntry.User.Mention;
@@ -89,9 +89,10 @@ public static class EventHandler {
             "whoami"  => message.ReplyAsync("`nobody`"),
             "сука !!" => message.ReplyAsync("`root`"),
             "воооо"   => message.ReplyAsync("`removing /...`"),
-            "пон"     => message.ReplyAsync("https://cdn.discordapp.com/attachments/837385840946053181/1087236080950055023/vUORS10xPaY-1.jpg"),
-            "++++"    => message.ReplyAsync("#"),
-            _         => new CommandProcessor(message).HandleCommandAsync()
+            "пон" => message.ReplyAsync(
+                "https://cdn.discordapp.com/attachments/837385840946053181/1087236080950055023/vUORS10xPaY-1.jpg"),
+            "++++" => message.ReplyAsync("#"),
+            _      => new CommandProcessor(message).HandleCommandAsync()
         };
         return Task.CompletedTask;
     }
@@ -141,7 +142,7 @@ public static class EventHandler {
             memberData.JoinedAt.Add(user.JoinedAt!.Value);
         }
 
-        if (DateTimeOffset.Now < memberData.MutedUntil) {
+        if (DateTimeOffset.UtcNow < memberData.MutedUntil) {
             await user.AddRoleAsync(data.MuteRole);
             if (config["RemoveRolesOnMute"] is "false" && config["ReturnRolesOnRejoin"] is "true")
                 await user.AddRolesAsync(memberData.Roles);
@@ -151,7 +152,7 @@ public static class EventHandler {
     private static Task UserLeftEvent(SocketGuild guild, SocketUser user) {
         var data = GuildData.Get(guild).MemberData[user.Id];
         data.IsInGuild = false;
-        data.LeftAt.Add(DateTimeOffset.Now);
+        data.LeftAt.Add(DateTimeOffset.UtcNow);
         return Task.CompletedTask;
     }
 
@@ -226,6 +227,6 @@ public static class EventHandler {
             await channel.SendMessageAsync(
                 string.Format(
                     Messages.EventCompleted, Utils.Wrap(scheduledEvent.Name),
-                    Utils.GetHumanizedTimeSpan(DateTimeOffset.Now.Subtract(scheduledEvent.StartTime))));
+                    Utils.GetHumanizedTimeSpan(DateTimeOffset.UtcNow.Subtract(scheduledEvent.StartTime))));
     }
 }
