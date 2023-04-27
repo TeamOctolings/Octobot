@@ -69,11 +69,17 @@ public static class EventHandler {
 
         await Task.Delay(500);
 
-        var auditLogEntry = (await guild.GetAuditLogsAsync(1).FlattenAsync()).First();
-        if (auditLogEntry.CreatedAt >= DateTimeOffset.UtcNow.Subtract(TimeSpan.FromSeconds(1))
-            && auditLogEntry.Data is MessageDeleteAuditLogData data
-            && msg.Author.Id == data.Target.Id)
-            mention = auditLogEntry.User.Mention;
+        var auditLogEnumerator
+            = (await guild.GetAuditLogsAsync(1, actionType: ActionType.MessageDeleted).FlattenAsync()).GetEnumerator();
+        if (auditLogEnumerator.MoveNext()) {
+            var auditLogEntry = auditLogEnumerator.Current!;
+            if (auditLogEntry.CreatedAt >= DateTimeOffset.UtcNow.Subtract(TimeSpan.FromSeconds(1))
+                && auditLogEntry.Data is MessageDeleteAuditLogData data
+                && msg.Author.Id == data.Target.Id)
+                mention = auditLogEntry.User.Mention;
+        }
+
+        auditLogEnumerator.Dispose();
 
         await Utils.SendFeedbackAsync(
             string.Format(
