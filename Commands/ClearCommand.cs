@@ -23,7 +23,7 @@ public sealed class ClearCommand : ICommand {
         foreach (var msg in msgArray.Where(m => !m.Author.IsBot))
             cmd.Audit(
                 string.Format(
-                    Messages.CachedMessageDeleted, msg.Author.Mention,
+                    Messages.CachedMessageCleared, msg.Author.Mention,
                     Utils.MentionChannel(channel.Id),
                     Utils.Wrap(msg.CleanContent)), false);
     }

@@ -1120,5 +1120,14 @@ namespace Boyfriend {
                 return ResourceManager.GetString("InvalidRemindIn", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted message using cleanup from {0} in channel {1}: {2}.
+        /// </summary>
+        internal static string CachedMessageCleared {
+            get {
+                return ResourceManager.GetString("CachedMessageCleared", resourceCulture);
+            }
+        }
     }
 }
