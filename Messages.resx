@@ -123,6 +123,9 @@
   <data name="CachedMessageDeleted" xml:space="preserve">
     <value>Deleted message from {0} in channel {1}: {2}</value>
   </data>
+  <data name="CachedMessageCleared" xml:space="preserve">
+    <value>Cleared message from {0} in channel {1}: {2}</value>
+  </data>
   <data name="CachedMessageEdited" xml:space="preserve">
     <value>Edited message in channel {0}: {1} -&gt; {2}</value>
   </data>

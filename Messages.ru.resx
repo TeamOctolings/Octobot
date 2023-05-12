@@ -123,6 +123,9 @@
   <data name="CachedMessageDeleted" xml:space="preserve">
     <value>Удалено сообщение от {0} в канале {1}: {2}</value>
   </data>
+  <data name="CachedMessageCleared" xml:space="preserve">
+    <value>Очищено сообщение от {0} в канале {1}: {2}</value>
+  </data>
   <data name="CachedMessageEdited" xml:space="preserve">
     <value>Отредактировано сообщение в канале {0}: {1} -&gt; {2}</value>
   </data>
