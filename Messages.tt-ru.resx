@@ -175,8 +175,8 @@
     <value>*тут ничего нет*</value>
   </data>
     <data name="RoleNotSpecified" xml:space="preserve">
-    <value>*тут ничего нет*</value>
-  </data>
+        <value>нъет</value>
+    </data>
   <data name="CurrentSettings" xml:space="preserve">
     <value>настройки:</value>
   </data>
@@ -192,9 +192,9 @@
   <data name="SettingsSendWelcomeMessages" xml:space="preserve">
     <value>разглашать о том что пришел новый шизоид</value>
   </data>
-  <data name="SettingsMuteRole" xml:space="preserve">
-    <value>роль замученного</value>
-  </data>
+    <data name="SettingsMuteRole" xml:space="preserve">
+        <value>звание замученного</value>
+    </data>
     <data name="LanguageNotSupported" xml:space="preserve">
     <value>такого языка нету, ты шо, есть только такие:</value>
   </data>
@@ -211,8 +211,8 @@
     <value>шизоид не замучен!</value>
   </data>
     <data name="SettingsWelcomeMessage" xml:space="preserve">
-    <value>приветствие</value>
-  </data>
+        <value>здравствуйте (типо настройка)</value>
+    </data>
   <data name="ClearAmountInvalid" xml:space="preserve">
     <value>выбери число от {0} до {1} вместо {2}!</value>
   </data>
@@ -222,9 +222,9 @@
   <data name="SettingDoesntExist" xml:space="preserve">
     <value>такой прикол не существует</value>
   </data>
-  <data name="SettingsReceiveStartupMessages" xml:space="preserve">
-    <value>получать инфу о рождении бота</value>
-  </data>
+    <data name="SettingsReceiveStartupMessages" xml:space="preserve">
+        <value>получать инфу о старте бота</value>
+    </data>
   <data name="InvalidSettingValue" xml:space="preserve">
     <value>криво настроил прикол, давай по новой</value>
   </data>
@@ -285,9 +285,9 @@
   <data name="SettingsNothingChanged" xml:space="preserve">
     <value>ты все сломал! значение прикола `{0}` и так {1}</value>
   </data>
-  <data name="SettingNotDefined" xml:space="preserve">
-    <value>*тут ничего нет*</value>
-  </data>
+    <data name="SettingNotDefined" xml:space="preserve">
+        <value>нъет</value>
+    </data>
   <data name="FeedbackSettingsUpdated" xml:space="preserve">
     <value>прикол для `{0}` теперь установлен на {1}</value>
   </data>
@@ -423,9 +423,9 @@
   <data name="UserCannotMuteTarget" xml:space="preserve">
     <value>мут этому шизику нельзя</value>
   </data>
-  <data name="UserCannotUnmuteOwner" xml:space="preserve">
-    <value>ты шо далбайоп шоле, админ замозамучался, не трожь</value>
-  </data>
+    <data name="UserCannotUnmuteOwner" xml:space="preserve">
+        <value>сильно</value>
+    </data>
   <data name="UserCannotUnmuteThemselves" xml:space="preserve">
     <value>ты замучен.</value>
   </data>
