@@ -5,13 +5,16 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TeamOctolings/Boyfriend/.github/workflows/resharper.yml?branch=master)
 ![GitHub last commit](https://img.shields.io/github/last-commit/TeamOctolings/Boyfriend)
 
-## Building
-To build Boyfriend, you need to clone this repo and compile it with [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0).
-```
-git clone https://github.com/TeamOctolings/Boyfriend
-cd Boyfriend
-dotnet build
-```
+Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and Discord.Net
 
-## Initial setup
-Create `token.txt` in `Boyfriend/bin/Debug/net7.0/` and enter your bot token. Then, run `Boyfriend.exe`.
+# Features
+* Banning, muting, kicking, etc.
+* Reminding you about something if you wish
+* Reminding everyone about that new event you made
+* Log everything from joining to the server to deleting messages
+
+*...and more!*
+
+# Getting Started
+
+You can read our [wiki](https://github.com/TeamOctolings/Boyfriend/wiki) in order to assemble your Boyfriend™ and moderate the server.
