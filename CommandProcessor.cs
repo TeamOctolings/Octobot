@@ -14,8 +14,8 @@ public sealed class CommandProcessor {
     public static readonly ICommand[] Commands = {
         new BanCommand(), new ClearCommand(), new HelpCommand(),
         new KickCommand(), new MuteCommand(), new PingCommand(),
-        new SettingsCommand(), new UnbanCommand(), new UnmuteCommand(),
-        new RemindCommand()
+        new RemindCommand(), new SettingsCommand(), new UnbanCommand(), 
+        new UnmuteCommand()
     };
 
     private readonly StringBuilder _stackedPrivateFeedback = new();
