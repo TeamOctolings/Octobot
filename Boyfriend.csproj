@@ -26,10 +26,19 @@
 
     <ItemGroup>
         <Compile Remove="old\**"/>
+        <Compile Update="Messages.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Messages.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Remove="old\**"/>
+        <EmbeddedResource Update="Messages.resx.bak">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

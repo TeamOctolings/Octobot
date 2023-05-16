@@ -98,49 +98,53 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
       </xsd:complexType>
     </xsd:element>
   </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Ready" xml:space="preserve">
-    <value>{0}я родился!</value>
-  </data>
-  <data name="CachedMessageDeleted" xml:space="preserve">
-    <value>вырезано сообщение от {0} в канале {1}: {2}</value>
-  </data>
-  <data name="CachedMessageCleared" xml:space="preserve">
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Ready" xml:space="preserve">
+        <value>я родился!</value>
+    </data>
+    <data name="CachedMessageDeleted" xml:space="preserve">
+        <value>сообщение {0} вырезано:</value>
+    </data>
+    <data name="CachedMessageCleared" xml:space="preserve">
     <value>вырезано сообщение (используя `!clear`) от {0} в канале {1}: {2}</value>
   </data>
-  <data name="CachedMessageEdited" xml:space="preserve">
+    <data name="CachedMessageEdited" xml:space="preserve">
     <value>переделано сообщение от {0}: {1} -&gt; {2}</value>
   </data>
-  <data name="DefaultWelcomeMessage" xml:space="preserve">
+    <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Beep1" xml:space="preserve">
-    <value>брах! </value>
-  </data>
-  <data name="Beep2" xml:space="preserve">
-    <value>брох! </value>
-  </data>
+    <data name="Beep1" xml:space="preserve">
+        <value>брах!</value>
+    </data>
+    <data name="Beep2" xml:space="preserve">
+        <value>брох!</value>
+    </data>
     <data name="Beep3" xml:space="preserve">
-    <value>брух! </value>
-  </data>
+        <value>брух!</value>
+    </data>
     <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>у меня прав нету, сделай что нибудь.</value>
   </data>
@@ -256,7 +260,7 @@
     <value>{0}квест {1} начинается в {2}!</value>
   </data>
   <data name="SettingsFrowningFace" xml:space="preserve">
-    <value>оъмъомоъемъъео(((( </value>
+    <value>оъмъомоъемъъео((((</value>
   </data>
   <data name="EventCancelled" xml:space="preserve">
     <value>квест {0} отменен!{1}</value>
@@ -465,13 +469,16 @@
   <data name="SettingsAutoStartEvents" xml:space="preserve">
         <value>автоматом стартить квесты</value>
     </data>
-  <data name="MissingReminderText" xml:space="preserve">
+    <data name="MissingReminderText" xml:space="preserve">
         <value>для крафта напоминалки нужен текст</value>
     </data>
-  <data name="FeedbackReminderAdded" xml:space="preserve">
+    <data name="FeedbackReminderAdded" xml:space="preserve">
         <value>вас понял, упоминание будет &lt;t:{0}:f&gt;</value>
     </data>
-  <data name="InvalidRemindIn" xml:space="preserve">
+    <data name="InvalidRemindIn" xml:space="preserve">
         <value>шизоид у меня на часах такого нету</value>
+    </data>
+    <data name="IssuedBy" xml:space="preserve">
+        <value>ответственный</value>
     </data>
 </root>

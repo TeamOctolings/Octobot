@@ -98,49 +98,53 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
       </xsd:complexType>
     </xsd:element>
   </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Ready" xml:space="preserve">
-    <value>{0}Я запустился!</value>
-  </data>
-  <data name="CachedMessageDeleted" xml:space="preserve">
-    <value>Удалено сообщение от {0} в канале {1}: {2}</value>
-  </data>
-  <data name="CachedMessageCleared" xml:space="preserve">
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Ready" xml:space="preserve">
+        <value>Я запустился!</value>
+    </data>
+    <data name="CachedMessageDeleted" xml:space="preserve">
+        <value>Сообщение {0} удалено:</value>
+    </data>
+    <data name="CachedMessageCleared" xml:space="preserve">
     <value>Очищено сообщение от {0} в канале {1}: {2}</value>
   </data>
-  <data name="CachedMessageEdited" xml:space="preserve">
+    <data name="CachedMessageEdited" xml:space="preserve">
     <value>Отредактировано сообщение в канале {0}: {1} -&gt; {2}</value>
   </data>
-  <data name="DefaultWelcomeMessage" xml:space="preserve">
+    <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Beep1" xml:space="preserve">
-    <value>Бап! </value>
-  </data>
-  <data name="Beep2" xml:space="preserve">
-    <value>Боп! </value>
-  </data>
+    <data name="Beep1" xml:space="preserve">
+        <value>Бап!</value>
+    </data>
+    <data name="Beep2" xml:space="preserve">
+        <value>Боп!</value>
+    </data>
     <data name="Beep3" xml:space="preserve">
-    <value>Бип! </value>
-  </data>
+        <value>Бип!</value>
+    </data>
     <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>У меня недостаточно прав для выполнения этой команды!</value>
   </data>
@@ -465,13 +469,16 @@
   <data name="SettingsAutoStartEvents" xml:space="preserve">
         <value>Автоматически начинать события</value>
     </data>
-  <data name="MissingReminderText" xml:space="preserve">
+    <data name="MissingReminderText" xml:space="preserve">
         <value>Тебе нужно указать текст напоминания!</value>
     </data>
-  <data name="FeedbackReminderAdded" xml:space="preserve">
+    <data name="FeedbackReminderAdded" xml:space="preserve">
         <value>Хорошо, я упомяну тебя &lt;t:{0}:f&gt;</value>
     </data>
-  <data name="InvalidRemindIn" xml:space="preserve">
+    <data name="InvalidRemindIn" xml:space="preserve">
         <value>Нужно указать время, через которое придёт напоминание!</value>
+    </data>
+    <data name="IssuedBy" xml:space="preserve">
+        <value>Ответственный</value>
     </data>
 </root>

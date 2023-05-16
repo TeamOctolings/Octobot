@@ -1,13 +1,16 @@
-using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
+using Remora.Discord.API.Objects;
 using Remora.Discord.Caching.Extensions;
 using Remora.Discord.Caching.Services;
+using Remora.Discord.Gateway;
 using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Hosting.Extensions;
+using Remora.Rest.Core;
 
 namespace Boyfriend;
 
@@ -15,7 +18,8 @@ public class Boyfriend {
     public static ILogger<Boyfriend> Logger = null!;
     public static IConfiguration GuildConfiguration = null!;
 
-    private static readonly Dictionary<string, string> ReflectionMessageCache = new();
+    public static readonly AllowedMentions NoMentions = new(
+        Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
 
     public static async Task Main(string[] args) {
         var host = CreateHostBuilder(args).UseConsoleLifetime().Build();
@@ -48,9 +52,17 @@ public class Boyfriend {
 
                     services.AddDiscordCaching();
                     services.Configure<CacheSettings>(
-                        settings => { settings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7)); });
+                        settings => {
+                            settings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
+                            settings.SetDefaultSlidingExpiration(TimeSpan.FromMinutes(30));
+                            settings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7));
+                            settings.SetSlidingExpiration<IMessage>(TimeSpan.FromDays(7));
+                        });
 
-                    services.AddSingleton<IConfigurationBuilder, ConfigurationBuilder>();
+                    services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>();
+
+                    services.Configure<DiscordGatewayClientOptions>(
+                        options => options.Intents |= GatewayIntents.MessageContents);
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()
@@ -60,19 +72,6 @@ public class Boyfriend {
     }
 
     public static string GetLocalized(string key) {
-        var propertyName = key;
-        key = $"{Messages.Culture}/{key}";
-        if (ReflectionMessageCache.TryGetValue(key, out var cached)) return cached;
-
-        var toReturn =
-            typeof(Messages).GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
-                ?.ToString();
-        if (toReturn is null) {
-            Logger.LogError("Could not find localized property: {Name}", propertyName);
-            return key;
-        }
-
-        ReflectionMessageCache.Add(key, toReturn);
-        return toReturn;
+        return Messages.ResourceManager.GetString(key, Messages.Culture) ?? key;
     }
 }

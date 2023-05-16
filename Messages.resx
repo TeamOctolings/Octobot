@@ -98,49 +98,53 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
       </xsd:complexType>
     </xsd:element>
   </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Ready" xml:space="preserve">
-    <value>{0}I'm ready!</value>
-  </data>
-  <data name="CachedMessageDeleted" xml:space="preserve">
-    <value>Deleted message from {0} in channel {1}: {2}</value>
-  </data>
-  <data name="CachedMessageCleared" xml:space="preserve">
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Ready" xml:space="preserve">
+        <value>I'm ready!</value>
+    </data>
+    <data name="CachedMessageDeleted" xml:space="preserve">
+        <value>Deleted message by {0}:</value>
+    </data>
+    <data name="CachedMessageCleared" xml:space="preserve">
     <value>Cleared message from {0} in channel {1}: {2}</value>
   </data>
-  <data name="CachedMessageEdited" xml:space="preserve">
+    <data name="CachedMessageEdited" xml:space="preserve">
     <value>Edited message in channel {0}: {1} -&gt; {2}</value>
   </data>
-  <data name="DefaultWelcomeMessage" xml:space="preserve">
+    <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, welcome to {1}</value>
   </data>
-  <data name="Beep1" xml:space="preserve">
-    <value>Bah! </value>
-  </data>
-  <data name="Beep2" xml:space="preserve">
-    <value>Bop! </value>
-  </data>
+    <data name="Beep1" xml:space="preserve">
+        <value>Bah!</value>
+    </data>
+    <data name="Beep2" xml:space="preserve">
+        <value>Bop!</value>
+    </data>
     <data name="Beep3" xml:space="preserve">
-    <value>Beep! </value>
-  </data>
+        <value>Beep!</value>
+    </data>
     <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>I do not have permission to execute this command!</value>
   </data>
@@ -473,5 +477,8 @@
     </data>
     <data name="InvalidRemindIn" xml:space="preserve">
         <value>You need to specify when I should send you the reminder!</value>
+    </data>
+    <data name="IssuedBy" xml:space="preserve">
+        <value>Issued by</value>
     </data>
 </root>
