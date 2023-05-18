@@ -62,7 +62,7 @@ public class Boyfriend {
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>();
 
                     services.Configure<DiscordGatewayClientOptions>(
-                        options => options.Intents |= GatewayIntents.MessageContents);
+                        options => options.Intents |= GatewayIntents.MessageContents | GatewayIntents.GuildMembers);
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()
