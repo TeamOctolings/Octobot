@@ -4,7 +4,10 @@ using DiffPlex.DiffBuilder.Model;
 using Microsoft.Extensions.Configuration;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;
+using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
+using Remora.Discord.Caching;
+using Remora.Discord.Caching.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
@@ -39,6 +42,16 @@ public static class Extensions {
     public static CultureInfo GetGuildCulture(this Snowflake guildId) {
         var value = Boyfriend.GuildConfiguration.GetValue<string?>($"GuildConfigs:{guildId}:Language");
         return value is not null ? CultureInfoCache[value] : CultureInfoCache["en"];
+    }
+
+    public static async Task<Result<IUser>> TryGetUserAsync(
+        this Snowflake userId, CacheService cacheService, IDiscordRestUserAPI userApi, CancellationToken ct) {
+        var cachedUserResult = await cacheService.TryGetValueAsync<IUser>(
+            new KeyHelpers.UserCacheKey(userId), ct);
+
+        if (cachedUserResult.IsDefined(out var cachedUser)) return Result<IUser>.FromSuccess(cachedUser);
+
+        return await userApi.GetUserAsync(userId, ct);
     }
 
     public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user) {
@@ -79,6 +92,14 @@ public static class Extensions {
             : default(Optional<string>);
 
         return builder.WithFooter(new EmbedFooter(guild.Name, iconUrl));
+    }
+
+    public static EmbedBuilder WithEventCover(
+        this EmbedBuilder builder, Snowflake eventId, Optional<IImageHash?> imageHashOptional) {
+        if (!imageHashOptional.IsDefined(out var imageHash)) return builder;
+
+        var iconUrlResult = CDN.GetGuildScheduledEventCoverUrl(eventId, imageHash, imageSize: 1024);
+        return iconUrlResult.IsDefined(out var iconUrl) ? builder.WithImageUrl(iconUrl.AbsoluteUri) : builder;
     }
 
     public static string SanitizeForBlockCode(this string s) {

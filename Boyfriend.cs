@@ -7,9 +7,11 @@ using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Caching.Extensions;
 using Remora.Discord.Caching.Services;
+using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Gateway;
 using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Hosting.Extensions;
+using Remora.Discord.Interactivity.Extensions;
 using Remora.Rest.Core;
 
 namespace Boyfriend;
@@ -62,7 +64,13 @@ public class Boyfriend {
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>();
 
                     services.Configure<DiscordGatewayClientOptions>(
-                        options => options.Intents |= GatewayIntents.MessageContents | GatewayIntents.GuildMembers);
+                        options => options.Intents |= GatewayIntents.MessageContents
+                                                      | GatewayIntents.GuildMembers
+                                                      | GatewayIntents.GuildScheduledEvents);
+
+                    services.AddDiscordCommands();
+                    services.AddInteractivity();
+                    services.AddInteractionGroup<InteractionResponders>();
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()

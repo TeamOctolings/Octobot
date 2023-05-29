@@ -481,4 +481,16 @@
     <data name="IssuedBy" xml:space="preserve">
         <value>Issued by</value>
     </data>
+    <data name="EventCreatedTitle" xml:space="preserve">
+        <value>{0} has created a new event:</value>
+    </data>
+    <data name="LocalEventCreatedDescription" xml:space="preserve">
+        <value>The event will start at {0} in {1}</value>
+    </data>
+    <data name="ExternalEventCreatedDescription" xml:space="preserve">
+        <value>The event will start at {0} until {1} in {2}</value>
+    </data>
+    <data name="EventDetailsButton" xml:space="preserve">
+        <value>Event details</value>
+    </data>
 </root>

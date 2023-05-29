@@ -481,4 +481,16 @@
     <data name="IssuedBy" xml:space="preserve">
         <value>ответственный</value>
     </data>
+    <data name="EventCreatedTitle" xml:space="preserve">
+        <value>{0} создает новое событие:</value>
+    </data>
+    <data name="LocalEventCreatedDescription" xml:space="preserve">
+        <value>движуха произойдет в {0} на {1}</value>
+    </data>
+    <data name="ExternalEventCreatedDescription" xml:space="preserve">
+        <value>движуха будет происходить с {0} до {1} на {2}</value>
+    </data>
+    <data name="EventDetailsButton" xml:space="preserve">
+        <value>побольше о движухе</value>
+    </data>
 </root>

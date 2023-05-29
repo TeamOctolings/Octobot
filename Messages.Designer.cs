@@ -764,5 +764,29 @@ namespace Boyfriend {
                 return ResourceManager.GetString("IssuedBy", resourceCulture);
             }
         }
+        
+        internal static string EventCreatedTitle {
+            get {
+                return ResourceManager.GetString("EventCreatedTitle", resourceCulture);
+            }
+        }
+        
+        internal static string LocalEventCreatedDescription {
+            get {
+                return ResourceManager.GetString("LocalEventCreatedDescription", resourceCulture);
+            }
+        }
+        
+        internal static string ExternalEventCreatedDescription {
+            get {
+                return ResourceManager.GetString("ExternalEventCreatedDescription", resourceCulture);
+            }
+        }
+        
+        internal static string EventDetailsButton {
+            get {
+                return ResourceManager.GetString("EventDetailsButton", resourceCulture);
+            }
+        }
     }
 }
