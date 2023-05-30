@@ -1,4 +1,5 @@
 using System.Drawing;
+using Boyfriend.Data.Services;
 using DiffPlex;
 using DiffPlex.DiffBuilder;
 using Microsoft.Extensions.Logging;
@@ -21,29 +22,35 @@ namespace Boyfriend;
 
 public class GuildCreateResponder : IResponder<IGuildCreate> {
     private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _dataService;
+    private readonly ILogger<GuildCreateResponder> _logger;
     private readonly IDiscordRestUserAPI _userApi;
 
-    public GuildCreateResponder(IDiscordRestChannelAPI channelApi, IDiscordRestUserAPI userApi) {
+    public GuildCreateResponder(
+        IDiscordRestChannelAPI        channelApi, GuildDataService dataService, IDiscordRestUserAPI userApi,
+        ILogger<GuildCreateResponder> logger) {
         _channelApi = channelApi;
+        _dataService = dataService;
         _userApi = userApi;
+        _logger = logger;
     }
 
     public async Task<Result> RespondAsync(IGuildCreate gatewayEvent, CancellationToken ct = default) {
         if (!gatewayEvent.Guild.IsT0) return Result.FromSuccess(); // is IAvailableGuild
 
         var guild = gatewayEvent.Guild.AsT0;
-        Boyfriend.Logger.LogInformation("Joined guild \"{Name}\"", guild.Name);
+        _logger.LogInformation("Joined guild \"{Name}\"", guild.Name);
 
-        var channelResult = guild.ID.GetConfigChannel("PrivateFeedbackChannel");
-        if (!channelResult.IsDefined(out var channel)) return Result.FromSuccess();
+        var guildConfig = await _dataService.GetConfiguration(guild.ID, ct);
+        if (!guildConfig.ReceiveStartupMessages)
+            return Result.FromSuccess();
+        if (guildConfig.PrivateFeedbackChannel is null)
+            return Result.FromSuccess();
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
 
-        if (!guild.GetConfigBool("ReceiveStartupMessages").IsDefined(out var shouldSendStartupMessage)
-            || !shouldSendStartupMessage) return Result.FromSuccess();
-
-        Messages.Culture = guild.ID.GetGuildCulture();
+        Messages.Culture = guildConfig.Culture;
         var i = Random.Shared.Next(1, 4);
 
         var embed = new EmbedBuilder()
@@ -56,7 +63,7 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            channel, embeds: new[] { built }, ct: ct);
+            guildConfig.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { built }, ct: ct);
     }
 }
 
@@ -64,22 +71,24 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
     private readonly IDiscordRestAuditLogAPI _auditLogApi;
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _dataService;
     private readonly IDiscordRestUserAPI _userApi;
 
     public MessageDeletedResponder(
-        IDiscordRestAuditLogAPI auditLogApi, CacheService cacheService, IDiscordRestChannelAPI channelApi,
-        IDiscordRestUserAPI     userApi) {
+        IDiscordRestAuditLogAPI auditLogApi, CacheService        cacheService, IDiscordRestChannelAPI channelApi,
+        GuildDataService        dataService, IDiscordRestUserAPI userApi) {
         _auditLogApi = auditLogApi;
         _cacheService = cacheService;
         _channelApi = channelApi;
+        _dataService = dataService;
         _userApi = userApi;
     }
 
     public async Task<Result> RespondAsync(IMessageDelete gatewayEvent, CancellationToken ct = default) {
         if (!gatewayEvent.GuildID.IsDefined(out var guildId)) return Result.FromSuccess();
 
-        var channelResult = guildId.GetConfigChannel("PrivateFeedbackChannel");
-        if (!channelResult.IsDefined(out var logChannel)) return Result.FromSuccess();
+        var guildConfiguration = await _dataService.GetConfiguration(guildId, ct);
+        if (guildConfiguration.PrivateFeedbackChannel is null) return Result.FromSuccess();
 
         var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
             new KeyHelpers.MessageCacheKey(gatewayEvent.ChannelID, gatewayEvent.ID), ct);
@@ -101,7 +110,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
             if (!userResult.IsDefined(out user)) return Result.FromError(userResult);
         }
 
-        Messages.Culture = guildId.GetGuildCulture();
+        Messages.Culture = guildConfiguration.Culture;
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(
@@ -118,21 +127,28 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            logChannel, embeds: new[] { built }, allowedMentions: Boyfriend.NoMentions, ct: ct);
+            guildConfiguration.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { built },
+            allowedMentions: Boyfriend.NoMentions, ct: ct);
     }
 }
 
 public class MessageEditedResponder : IResponder<IMessageUpdate> {
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _dataService;
 
-    public MessageEditedResponder(CacheService cacheService, IDiscordRestChannelAPI channelApi) {
+    public MessageEditedResponder(
+        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
         _cacheService = cacheService;
         _channelApi = channelApi;
+        _dataService = dataService;
     }
 
     public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default) {
         if (!gatewayEvent.GuildID.IsDefined(out var guildId))
+            return Result.FromSuccess();
+        var guildConfiguration = await _dataService.GetConfiguration(guildId, ct);
+        if (guildConfiguration.PrivateFeedbackChannel is null)
             return Result.FromSuccess();
         if (!gatewayEvent.Content.IsDefined(out var newContent))
             return Result.FromSuccess();
@@ -148,18 +164,12 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
         var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
             cacheKey, ct);
         if (!messageResult.IsDefined(out var message)) return Result.FromError(messageResult);
-        if (string.IsNullOrWhiteSpace(message.Content)
-            || string.IsNullOrWhiteSpace(newContent)
-            || message.Content == newContent) return Result.FromSuccess();
+        if (message.Content == newContent) return Result.FromSuccess();
 
         await _cacheService.EvictAsync<IMessage>(cacheKey, ct);
         var newMessageResult = await _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
         if (!newMessageResult.IsDefined(out var newMessage)) return Result.FromError(newMessageResult);
-        // No need to await the recache since we don't depend on it
-        _ = _cacheService.CacheAsync(cacheKey, newMessage, ct);
-
-        var logChannelResult = guildId.GetConfigChannel("PrivateFeedbackChannel");
-        if (!logChannelResult.IsDefined(out var logChannel)) return Result.FromSuccess();
+        await _cacheService.CacheAsync(cacheKey, newMessage, ct);
 
         var currentUserResult = await _cacheService.TryGetValueAsync<IUser>(
             new KeyHelpers.CurrentUserCacheKey(), ct);
@@ -167,7 +177,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
 
         var diff = new SideBySideDiffBuilder(Differ.Instance).BuildDiffModel(message.Content, newContent, true, true);
 
-        Messages.Culture = guildId.GetGuildCulture();
+        Messages.Culture = guildConfiguration.Culture;
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(
@@ -181,30 +191,35 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            logChannel, embeds: new[] { built }, allowedMentions: Boyfriend.NoMentions, ct: ct);
+            guildConfiguration.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { built },
+            allowedMentions: Boyfriend.NoMentions, ct: ct);
     }
 }
 
 public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _dataService;
 
-    public GuildMemberAddResponder(CacheService cacheService, IDiscordRestChannelAPI channelApi) {
+    public GuildMemberAddResponder(
+        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
         _cacheService = cacheService;
         _channelApi = channelApi;
+        _dataService = dataService;
     }
 
     public async Task<Result> RespondAsync(IGuildMemberAdd gatewayEvent, CancellationToken ct = default) {
-        if (!gatewayEvent.GuildID.GetConfigString("WelcomeMessage").IsDefined(out var welcomeMessage)
-            || welcomeMessage is "off" or "disable" or "disabled")
+        var guildConfiguration = await _dataService.GetConfiguration(gatewayEvent.GuildID, ct);
+        if (guildConfiguration.PublicFeedbackChannel is null)
             return Result.FromSuccess();
-        if (welcomeMessage is "default" or "reset") {
-            Messages.Culture = gatewayEvent.GuildID.GetGuildCulture();
-            welcomeMessage = Messages.DefaultWelcomeMessage;
-        }
+        if (guildConfiguration.WelcomeMessage is null or "off" or "disable" or "disabled")
+            return Result.FromSuccess();
 
-        if (!gatewayEvent.GuildID.GetConfigChannel("PublicFeedbackChannel").IsDefined(out var channel))
-            return Result.FromSuccess();
+        Messages.Culture = guildConfiguration.Culture;
+        var welcomeMessage = guildConfiguration.WelcomeMessage is "default" or "reset"
+            ? Messages.DefaultWelcomeMessage
+            : guildConfiguration.WelcomeMessage;
+
         if (!gatewayEvent.User.IsDefined(out var user))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.User)));
 
@@ -221,25 +236,30 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            channel, embeds: new[] { built }, allowedMentions: Boyfriend.NoMentions, ct: ct);
+            guildConfiguration.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { built },
+            allowedMentions: Boyfriend.NoMentions, ct: ct);
     }
 }
 
 public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEventCreate> {
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _dataService;
     private readonly IDiscordRestUserAPI _userApi;
 
     public GuildScheduledEventCreateResponder(
-        CacheService cacheService, IDiscordRestChannelAPI channelApi, IDiscordRestUserAPI userApi) {
+        CacheService        cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService,
+        IDiscordRestUserAPI userApi) {
         _cacheService = cacheService;
         _channelApi = channelApi;
+        _dataService = dataService;
         _userApi = userApi;
     }
 
     public async Task<Result> RespondAsync(IGuildScheduledEventCreate gatewayEvent, CancellationToken ct = default) {
-        var channelResult = gatewayEvent.GuildID.GetConfigChannel("EventNotificationChannel");
-        if (!channelResult.IsDefined(out var channel)) return Result.FromSuccess();
+        var guildConfiguration = await _dataService.GetConfiguration(gatewayEvent.GuildID, ct);
+        if (guildConfiguration.EventNotificationChannel is null)
+            return Result.FromSuccess();
 
         var currentUserResult = await _cacheService.TryGetValueAsync<IUser>(
             new KeyHelpers.CurrentUserCacheKey(), ct);
@@ -250,7 +270,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
         var creatorResult = await creatorId.Value.TryGetUserAsync(_cacheService, _userApi, ct);
         if (!creatorResult.IsDefined(out var creator)) return Result.FromError(creatorResult);
 
-        Messages.Culture = gatewayEvent.GuildID.GetGuildCulture();
+        Messages.Culture = guildConfiguration.Culture;
 
         string embedDescription;
         var eventDescription = gatewayEvent.Description is { HasValue: true, Value: not null }
@@ -308,6 +328,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
         );
 
         return (Result)await _channelApi.CreateMessageAsync(
-            channel, embeds: new[] { built }, components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
+            guildConfiguration.EventNotificationChannel.ToDiscordSnowflake(), embeds: new[] { built },
+            components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
     }
 }

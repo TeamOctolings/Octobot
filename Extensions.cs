@@ -1,7 +1,5 @@
-using System.Globalization;
 using System.Text;
 using DiffPlex.DiffBuilder.Model;
-using Microsoft.Extensions.Configuration;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
@@ -16,34 +14,6 @@ using Remora.Results;
 namespace Boyfriend;
 
 public static class Extensions {
-    private static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
-        { "en", new CultureInfo("en-US") },
-        { "ru", new CultureInfo("ru-RU") },
-        { "mctaylors-ru", new CultureInfo("tt-RU") }
-    };
-
-    public static Result<bool> GetConfigBool(this IGuild guild, string key) {
-        var value = Boyfriend.GuildConfiguration.GetValue<bool?>($"GuildConfigs:{guild.ID}:{key}");
-        return value is not null ? Result<bool>.FromSuccess(value.Value) : Result<bool>.FromError(new NotFoundError());
-    }
-
-    public static Result<Snowflake> GetConfigChannel(this Snowflake guildId, string key) {
-        var value = Boyfriend.GuildConfiguration.GetValue<ulong?>($"GuildConfigs:{guildId}:{key}");
-        return value is not null
-            ? Result<Snowflake>.FromSuccess(DiscordSnowflake.New(value.Value))
-            : Result<Snowflake>.FromError(new NotFoundError());
-    }
-
-    public static Result<string> GetConfigString(this Snowflake guildId, string key) {
-        var value = Boyfriend.GuildConfiguration.GetValue<string?>($"GuildConfigs:{guildId}:{key}");
-        return value is not null ? Result<string>.FromSuccess(value) : Result<string>.FromError(new NotFoundError());
-    }
-
-    public static CultureInfo GetGuildCulture(this Snowflake guildId) {
-        var value = Boyfriend.GuildConfiguration.GetValue<string?>($"GuildConfigs:{guildId}:Language");
-        return value is not null ? CultureInfoCache[value] : CultureInfoCache["en"];
-    }
-
     public static async Task<Result<IUser>> TryGetUserAsync(
         this Snowflake userId, CacheService cacheService, IDiscordRestUserAPI userApi, CancellationToken ct) {
         var cachedUserResult = await cacheService.TryGetValueAsync<IUser>(
@@ -117,5 +87,9 @@ public static class Extensions {
 
     public static string GetTag(this IUser user) {
         return $"{user.Username}#{user.Discriminator:0000}";
+    }
+
+    public static Snowflake ToDiscordSnowflake(this ulong? id) {
+        return DiscordSnowflake.New(id ?? 0);
     }
 }
