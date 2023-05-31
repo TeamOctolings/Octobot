@@ -247,11 +247,11 @@
     <value>:( </value>
   </data>
     <data name="EventCancelled" xml:space="preserve">
-    <value>Событие {0} отменено!{1}</value>
-  </data>
+        <value>Событие "{0}" отменено!</value>
+    </data>
     <data name="EventCompleted" xml:space="preserve">
-    <value>Событие {0} завершено! Продолжительность:{1}</value>
-  </data>
+        <value>Событие "{0}" завершено!</value>
+    </data>
     <data name="Ever" xml:space="preserve">
     <value>всегда</value>
   </data>
@@ -477,4 +477,7 @@
     <data name="EventDetailsButton" xml:space="preserve">
     <value>Подробнее о событии</value>
   </data>
+    <data name="EventDuration" xml:space="preserve">
+        <value>Событие длилось `{0}`</value>
+    </data>
 </root>

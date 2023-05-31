@@ -247,11 +247,11 @@
     <value>оъмъомоъемъъео((((</value>
   </data>
     <data name="EventCancelled" xml:space="preserve">
-    <value>движуха {0} отменен!{1}</value>
-  </data>
+        <value>движуха "{0}" отменен!</value>
+    </data>
     <data name="EventCompleted" xml:space="preserve">
-    <value>движуха {0} завершен! все это длилось{1}</value>
-  </data>
+        <value>движуха "{0}" завершен!</value>
+    </data>
     <data name="Ever" xml:space="preserve">
     <value>всегда</value>
   </data>
@@ -477,4 +477,7 @@
     <data name="EventDetailsButton" xml:space="preserve">
     <value>побольше о движухе</value>
   </data>
+    <data name="EventDuration" xml:space="preserve">
+        <value>все это длилось `{0}`</value>
+    </data>
 </root>

@@ -237,31 +237,31 @@
     <data name="SettingsEventNotificationChannel" xml:space="preserve">
     <value>Channel for event notifications</value>
   </data>
-    <data name="SettingsEventStartedReceivers" xml:space="preserve">
+  <data name="SettingsEventStartedReceivers" xml:space="preserve">
     <value>Event start notifications receivers</value>
   </data>
-    <data name="EventStarted" xml:space="preserve">
+  <data name="EventStarted" xml:space="preserve">
     <value>{0}Event {1} is starting at {2}!</value>
   </data>
-    <data name="SettingsFrowningFace" xml:space="preserve">
+  <data name="SettingsFrowningFace" xml:space="preserve">
     <value>:(</value>
   </data>
-    <data name="EventCancelled" xml:space="preserve">
-    <value>Event {0} is cancelled!{1}</value>
-  </data>
-    <data name="EventCompleted" xml:space="preserve">
-    <value>Event {0} has completed! Duration:{1}</value>
-  </data>
-    <data name="Ever" xml:space="preserve">
+  <data name="EventCancelled" xml:space="preserve">
+        <value>Event "{0}" is cancelled!</value>
+    </data>
+  <data name="EventCompleted" xml:space="preserve">
+        <value>Event "{0}" has completed!</value>
+    </data>
+  <data name="Ever" xml:space="preserve">
     <value>ever</value>
   </data>
-    <data name="FeedbackMessagesCleared" xml:space="preserve">
+  <data name="FeedbackMessagesCleared" xml:space="preserve">
     <value>Deleted {0} messages in {1}</value>
   </data>
-    <data name="FeedbackMemberKicked" xml:space="preserve">
+  <data name="FeedbackMemberKicked" xml:space="preserve">
     <value>Kicked {0}: {1}</value>
   </data>
-    <data name="FeedbackMemberMuted" xml:space="preserve">
+  <data name="FeedbackMemberMuted" xml:space="preserve">
     <value>Muted {0} for{1}: {2}</value>
   </data>
     <data name="FeedbackUserUnbanned" xml:space="preserve">
@@ -468,13 +468,16 @@
     <data name="EventCreatedTitle" xml:space="preserve">
     <value>{0} has created a new event:</value>
   </data>
-    <data name="LocalEventCreatedDescription" xml:space="preserve">
+  <data name="LocalEventCreatedDescription" xml:space="preserve">
     <value>The event will start at {0} in {1}</value>
   </data>
-    <data name="ExternalEventCreatedDescription" xml:space="preserve">
+  <data name="ExternalEventCreatedDescription" xml:space="preserve">
     <value>The event will start at {0} until {1} in {2}</value>
   </data>
-    <data name="EventDetailsButton" xml:space="preserve">
+  <data name="EventDetailsButton" xml:space="preserve">
     <value>Event details</value>
   </data>
+  <data name="EventDuration" xml:space="preserve">
+        <value>The event has lasted for `{0}`</value>
+    </data>
 </root>

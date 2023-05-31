@@ -30,14 +30,17 @@ public static class Extensions {
     }
 
     public static EmbedBuilder WithSmallTitle(
-        this EmbedBuilder builder, IUser avatarSource, string text, string? url = default) {
-        var avatarUrlResult = CDN.GetUserAvatarUrl(avatarSource, imageSize: 256);
+        this EmbedBuilder builder, string text, IUser? avatarSource = null, string? url = default) {
+        Uri? avatarUrl = null;
+        if (avatarSource is not null) {
+            var avatarUrlResult = CDN.GetUserAvatarUrl(avatarSource, imageSize: 256);
 
-        var avatarUrl = avatarUrlResult.IsSuccess
-            ? avatarUrlResult.Entity
-            : CDN.GetDefaultUserAvatarUrl(avatarSource, imageSize: 256).Entity;
+            avatarUrl = avatarUrlResult.IsSuccess
+                ? avatarUrlResult.Entity
+                : CDN.GetDefaultUserAvatarUrl(avatarSource, imageSize: 256).Entity;
+        }
 
-        builder.Author = new EmbedAuthorBuilder(text, url, avatarUrl.AbsoluteUri);
+        builder.Author = new EmbedAuthorBuilder(text, url, avatarUrl?.AbsoluteUri);
         return builder;
     }
 
@@ -75,7 +78,13 @@ public static class Extensions {
         return $"{user.Username}#{user.Discriminator:0000}";
     }
 
-    public static Snowflake ToDiscordSnowflake(this ulong? id) {
-        return DiscordSnowflake.New(id ?? 0);
+    public static Snowflake ToDiscordSnowflake(this ulong id) {
+        return DiscordSnowflake.New(id);
     }
+
+    /*public static string AsDuration(this TimeSpan span) {
+        return span.Humanize(
+            2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month,
+            culture: Messages.Culture.Name.Contains("RU") ? GuildConfiguration.CultureInfoCache["ru"] : Messages.Culture);
+    }*/
 }
