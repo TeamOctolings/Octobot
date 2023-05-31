@@ -2,28 +2,14 @@ using System.Text;
 using DiffPlex.DiffBuilder.Model;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
-using Remora.Discord.Caching;
-using Remora.Discord.Caching.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
-using Remora.Results;
 
 namespace Boyfriend;
 
 public static class Extensions {
-    public static async Task<Result<IUser>> TryGetUserAsync(
-        this Snowflake userId, CacheService cacheService, IDiscordRestUserAPI userApi, CancellationToken ct) {
-        var cachedUserResult = await cacheService.TryGetValueAsync<IUser>(
-            new KeyHelpers.UserCacheKey(userId), ct);
-
-        if (cachedUserResult.IsDefined(out var cachedUser)) return Result<IUser>.FromSuccess(cachedUser);
-
-        return await userApi.GetUserAsync(userId, ct);
-    }
-
     public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user) {
         var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
         var avatarUrl = avatarUrlResult.IsSuccess
