@@ -69,16 +69,14 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
 
 public class MessageDeletedResponder : IResponder<IMessageDelete> {
     private readonly IDiscordRestAuditLogAPI _auditLogApi;
-    private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _dataService;
     private readonly IDiscordRestUserAPI _userApi;
 
     public MessageDeletedResponder(
-        IDiscordRestAuditLogAPI auditLogApi, CacheService        cacheService, IDiscordRestChannelAPI channelApi,
-        GuildDataService        dataService, IDiscordRestUserAPI userApi) {
+        IDiscordRestAuditLogAPI auditLogApi, IDiscordRestChannelAPI channelApi,
+        GuildDataService        dataService, IDiscordRestUserAPI    userApi) {
         _auditLogApi = auditLogApi;
-        _cacheService = cacheService;
         _channelApi = channelApi;
         _dataService = dataService;
         _userApi = userApi;
@@ -90,8 +88,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
         var guildConfiguration = await _dataService.GetConfiguration(guildId, ct);
         if (guildConfiguration.PrivateFeedbackChannel is null) return Result.FromSuccess();
 
-        var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
-            new KeyHelpers.MessageCacheKey(gatewayEvent.ChannelID, gatewayEvent.ID), ct);
+        var messageResult = await _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
         if (!messageResult.IsDefined(out var message)) return Result.FromError(messageResult);
         if (string.IsNullOrWhiteSpace(message.Content)) return Result.FromSuccess();
 
@@ -106,7 +103,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
         var user = message.Author;
         if (options.ChannelID == gatewayEvent.ChannelID
             && DateTimeOffset.UtcNow.Subtract(auditLog.ID.Timestamp).TotalSeconds <= 2) {
-            var userResult = await auditLog.UserID!.Value.TryGetUserAsync(_cacheService, _userApi, ct);
+            var userResult = await _userApi.GetUserAsync(auditLog.UserID!.Value, ct);
             if (!userResult.IsDefined(out user)) return Result.FromError(userResult);
         }
 
@@ -136,12 +133,15 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _dataService;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public MessageEditedResponder(
-        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
+        CacheService        cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService,
+        IDiscordRestUserAPI userApi) {
         _cacheService = cacheService;
         _channelApi = channelApi;
         _dataService = dataService;
+        _userApi = userApi;
     }
 
     public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default) {
@@ -166,13 +166,18 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
         if (!messageResult.IsDefined(out var message)) return Result.FromError(messageResult);
         if (message.Content == newContent) return Result.FromSuccess();
 
+        // Custom event responders are called earlier than responders responsible for message caching
+        // This means that subsequent edit logs may contain the wrong content
+        // We can work around this by evicting the message from the cache
         await _cacheService.EvictAsync<IMessage>(cacheKey, ct);
-        var newMessageResult = await _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
-        if (!newMessageResult.IsDefined(out var newMessage)) return Result.FromError(newMessageResult);
-        await _cacheService.CacheAsync(cacheKey, newMessage, ct);
+        // However, since we evicted the message, subsequent edits won't have a cached instance to work with
+        // Getting the message will put it back in the cache, resolving all issues
+        // We don't need to await this since the result is not needed
+        // NOTE: Because this is not awaited, there may be a race condition depending on how fast clients are able to edit their messages
+        // NOTE: Awaiting this might not even solve this if the same responder is called asynchronously
+        _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
 
-        var currentUserResult = await _cacheService.TryGetValueAsync<IUser>(
-            new KeyHelpers.CurrentUserCacheKey(), ct);
+        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
 
         var diff = new SideBySideDiffBuilder(Differ.Instance).BuildDiffModel(message.Content, newContent, true, true);
@@ -197,15 +202,15 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
 }
 
 public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
-    private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _dataService;
+    private readonly IDiscordRestGuildAPI _guildApi;
 
     public GuildMemberAddResponder(
-        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
-        _cacheService = cacheService;
+        IDiscordRestChannelAPI channelApi, GuildDataService dataService, IDiscordRestGuildAPI guildApi) {
         _channelApi = channelApi;
         _dataService = dataService;
+        _guildApi = guildApi;
     }
 
     public async Task<Result> RespondAsync(IGuildMemberAdd gatewayEvent, CancellationToken ct = default) {
@@ -223,8 +228,7 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
         if (!gatewayEvent.User.IsDefined(out var user))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.User)));
 
-        var guildResult = await _cacheService.TryGetValueAsync<IGuild>(
-            new KeyHelpers.GuildCacheKey(gatewayEvent.GuildID), ct);
+        var guildResult = await _guildApi.GetGuildAsync(gatewayEvent.GuildID, ct: ct);
         if (!guildResult.IsDefined(out var guild)) return Result.FromError(guildResult);
 
         var embed = new EmbedBuilder()
@@ -242,15 +246,13 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
 }
 
 public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEventCreate> {
-    private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _dataService;
     private readonly IDiscordRestUserAPI _userApi;
 
     public GuildScheduledEventCreateResponder(
-        CacheService        cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService,
-        IDiscordRestUserAPI userApi) {
-        _cacheService = cacheService;
+        IDiscordRestChannelAPI channelApi, GuildDataService dataService,
+        IDiscordRestUserAPI    userApi) {
         _channelApi = channelApi;
         _dataService = dataService;
         _userApi = userApi;
@@ -261,13 +263,12 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
         if (guildConfiguration.EventNotificationChannel is null)
             return Result.FromSuccess();
 
-        var currentUserResult = await _cacheService.TryGetValueAsync<IUser>(
-            new KeyHelpers.CurrentUserCacheKey(), ct);
+        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
 
         if (!gatewayEvent.CreatorID.IsDefined(out var creatorId))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.CreatorID)));
-        var creatorResult = await creatorId.Value.TryGetUserAsync(_cacheService, _userApi, ct);
+        var creatorResult = await _userApi.GetUserAsync(creatorId.Value, ct);
         if (!creatorResult.IsDefined(out var creator)) return Result.FromError(creatorResult);
 
         Messages.Culture = guildConfiguration.Culture;
