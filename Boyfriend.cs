@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
+using Remora.Discord.API.Gateway.Commands;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Caching.Extensions;
 using Remora.Discord.Caching.Services;
@@ -40,9 +41,14 @@ public class Boyfriend {
             ).ConfigureServices(
                 (_, services) => {
                     services.Configure<DiscordGatewayClientOptions>(
-                        options => options.Intents |= GatewayIntents.MessageContents
-                                                      | GatewayIntents.GuildMembers
-                                                      | GatewayIntents.GuildScheduledEvents);
+                        options => {
+                            options.Intents |= GatewayIntents.MessageContents
+                                               | GatewayIntents.GuildMembers
+                                               | GatewayIntents.GuildScheduledEvents;
+                            options.Presence = new UpdatePresence(
+                                UserStatus.Online, false, DateTimeOffset.UtcNow,
+                                new[] { new Activity("with Remora.Discord", ActivityType.Game) });
+                        });
                     services.Configure<CacheSettings>(
                         settings => {
                             settings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
