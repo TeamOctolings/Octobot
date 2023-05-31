@@ -320,6 +320,10 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
+        var roleMention = guildConfiguration.EventNotificationRole is not 0
+            ? Mention.Role(guildConfiguration.EventNotificationRole.ToDiscordSnowflake())
+            : string.Empty;
+
         var button = new ButtonComponent(
             ButtonComponentStyle.Primary,
             Messages.EventDetailsButton,
@@ -329,7 +333,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
         );
 
         return (Result)await _channelApi.CreateMessageAsync(
-            guildConfiguration.EventNotificationChannel.ToDiscordSnowflake(), embeds: new[] { built },
+            guildConfiguration.EventNotificationChannel.ToDiscordSnowflake(), roleMention, embeds: new[] { built },
             components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
     }
 }
