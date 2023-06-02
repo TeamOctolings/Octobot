@@ -14,14 +14,17 @@ public class GuildDataService : IHostedService {
     public async Task StopAsync(CancellationToken ct) {
         var tasks = new List<Task>();
         foreach (var data in _datas.Values) {
-            await using var stream = File.OpenWrite(data.ConfigurationPath);
-            tasks.Add(JsonSerializer.SerializeAsync(stream, data.Configuration, cancellationToken: ct));
+            await using var configStream = File.OpenWrite(data.ConfigurationPath);
+            tasks.Add(JsonSerializer.SerializeAsync(configStream, data.Configuration, cancellationToken: ct));
+
+            await using var eventsStream = File.OpenWrite(data.ScheduledEventsPath);
+            tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
         }
 
         await Task.WhenAll(tasks);
     }
 
-    private async Task<GuildData> GetData(Snowflake guildId, CancellationToken ct = default) {
+    public async Task<GuildData> GetData(Snowflake guildId, CancellationToken ct = default) {
         return _datas.TryGetValue(guildId, out var data) ? data : await InitializeData(guildId, ct);
     }
 
@@ -29,16 +32,26 @@ public class GuildDataService : IHostedService {
         var idString = $"{guildId}";
         var memberDataDir = $"{guildId}/MemberData";
         var configurationPath = $"{guildId}/Configuration.json";
+        var scheduledEventsPath = $"{guildId}/ScheduledEvents.json";
         if (!Directory.Exists(idString)) Directory.CreateDirectory(idString);
         if (!Directory.Exists(memberDataDir)) Directory.CreateDirectory(memberDataDir);
         if (!File.Exists(configurationPath)) await File.WriteAllTextAsync(configurationPath, "{}", ct);
+        if (!File.Exists(scheduledEventsPath)) await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
 
-        await using var stream = File.OpenRead(configurationPath);
+        await using var configurationStream = File.OpenRead(configurationPath);
         var configuration
             = JsonSerializer.DeserializeAsync<GuildConfiguration>(
-                stream, cancellationToken: ct);
+                configurationStream, cancellationToken: ct);
 
-        var data = new GuildData(await configuration ?? new GuildConfiguration(), configurationPath);
+        await using var eventsStream = File.OpenRead(scheduledEventsPath);
+        var events
+            = JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
+                eventsStream, cancellationToken: ct);
+
+        var data = new GuildData(
+            await configuration ?? new GuildConfiguration(), configurationPath,
+            await events ?? new Dictionary<ulong, ScheduledEventData>(),
+            scheduledEventsPath);
         _datas.Add(guildId, data);
         return data;
     }
