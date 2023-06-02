@@ -1,4 +1,6 @@
 using System.Drawing;
+using System.Text;
+using Boyfriend.Data;
 using Boyfriend.Data.Services;
 using DiffPlex;
 using DiffPlex.DiffBuilder;
@@ -256,8 +258,11 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
     }
 
     public async Task<Result> RespondAsync(IGuildScheduledEventCreate gatewayEvent, CancellationToken ct = default) {
-        var guildConfiguration = await _dataService.GetConfiguration(gatewayEvent.GuildID, ct);
-        if (guildConfiguration.EventNotificationChannel is 0)
+        var guildData = await _dataService.GetData(gatewayEvent.GuildID, ct);
+        guildData.ScheduledEvents.Add(
+            gatewayEvent.ID.Value, new ScheduledEventData(GuildScheduledEventStatus.Scheduled));
+
+        if (guildData.Configuration.EventNotificationChannel is 0)
             return Result.FromSuccess();
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
@@ -268,7 +273,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
         var creatorResult = await _userApi.GetUserAsync(creatorId.Value, ct);
         if (!creatorResult.IsDefined(out var creator)) return Result.FromError(creatorResult);
 
-        Messages.Culture = guildConfiguration.Culture;
+        Messages.Culture = guildData.Culture;
 
         string embedDescription;
         var eventDescription = gatewayEvent.Description is { HasValue: true, Value: not null }
@@ -317,8 +322,8 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        var roleMention = guildConfiguration.EventNotificationRole is not 0
-            ? Mention.Role(guildConfiguration.EventNotificationRole.ToDiscordSnowflake())
+        var roleMention = guildData.Configuration.EventNotificationRole is not 0
+            ? Mention.Role(guildData.Configuration.EventNotificationRole.ToDiscordSnowflake())
             : string.Empty;
 
         var button = new ButtonComponent(
@@ -330,7 +335,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
         );
 
         return (Result)await _channelApi.CreateMessageAsync(
-            guildConfiguration.EventNotificationChannel.ToDiscordSnowflake(), roleMention, embeds: new[] { built },
+            guildData.Configuration.EventNotificationChannel.ToDiscordSnowflake(), roleMention, embeds: new[] { built },
             components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
     }
 }
@@ -338,32 +343,103 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
 public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEventUpdate> {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _dataService;
+    private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
 
-    public GuildScheduledEventUpdateResponder(IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
+    public GuildScheduledEventUpdateResponder(
+        IDiscordRestChannelAPI channelApi, GuildDataService dataService, IDiscordRestGuildScheduledEventAPI eventApi) {
         _channelApi = channelApi;
         _dataService = dataService;
+        _eventApi = eventApi;
     }
 
     public async Task<Result> RespondAsync(IGuildScheduledEventUpdate gatewayEvent, CancellationToken ct = default) {
-        if (gatewayEvent.Status is not GuildScheduledEventStatus.Completed) return Result.FromSuccess();
+        var guildData = await _dataService.GetData(gatewayEvent.GuildID, ct);
+        if (gatewayEvent.Status == guildData.ScheduledEvents[gatewayEvent.ID.Value].Status
+            || guildData.Configuration.EventNotificationChannel is 0) return Result.FromSuccess();
 
-        var guildConfiguration = await _dataService.GetConfiguration(gatewayEvent.GuildID, ct);
-        if (guildConfiguration.EventNotificationChannel is 0)
-            return Result.FromSuccess();
+        guildData.ScheduledEvents[gatewayEvent.ID.Value].Status = gatewayEvent.Status;
 
-        var embed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, gatewayEvent.Name))
-            .WithDescription(
-                string.Format(
-                    Messages.EventDuration,
-                    DateTimeOffset.UtcNow.Subtract(gatewayEvent.ScheduledStartTime)))
-            .WithColour(Color.Black)
-            .WithCurrentTimestamp()
-            .Build();
+        var embed = new EmbedBuilder();
+        StringBuilder? content = null;
+        switch (gatewayEvent.Status) {
+            case GuildScheduledEventStatus.Active:
+                guildData.ScheduledEvents[gatewayEvent.ID.Value].ActualStartTime = DateTimeOffset.UtcNow;
 
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+                string embedDescription; // what the fuck is this
+                switch (gatewayEvent.EntityType) {
+                    case GuildScheduledEventEntityType.StageInstance or GuildScheduledEventEntityType.Voice:
+                        if (!gatewayEvent.ChannelID.AsOptional().IsDefined(out var channelId))
+                            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ChannelID)));
+
+                        embedDescription = string.Format(
+                            Messages.LocalEventStartedDescription,
+                            Mention.Channel(channelId)
+                        );
+                        break;
+                    case GuildScheduledEventEntityType.External:
+                        if (!gatewayEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
+                            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.EntityMetadata)));
+                        if (!gatewayEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
+                            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ScheduledEndTime)));
+                        if (!metadata.Location.IsDefined(out var location))
+                            return Result.FromError(new ArgumentNullError(nameof(metadata.Location)));
+
+                        embedDescription = string.Format(
+                            Messages.ExternalEventStartedDescription,
+                            Markdown.InlineCode(location),
+                            Markdown.Timestamp(endTime)
+                        );
+                        break;
+                    default:
+                        return Result.FromError(new ArgumentOutOfRangeError(nameof(gatewayEvent.EntityType)));
+                }
+
+                content = new StringBuilder();
+                var receivers = guildData.Configuration.EventStartedReceivers;
+                var role = guildData.Configuration.EventNotificationRole.ToDiscordSnowflake();
+                var usersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
+                    gatewayEvent.GuildID, gatewayEvent.ID, withMember: true, ct: ct);
+                if (!usersResult.IsDefined(out var users)) return Result.FromError(usersResult);
+
+                if (receivers.Contains(NotificationReceiver.Role) && role.Value is not 0)
+                    content.Append($"{Mention.Role(role)} ");
+                if (receivers.Contains(NotificationReceiver.Interested))
+                    content = users.Where(
+                            user => {
+                                if (!user.GuildMember.IsDefined(out var member)) return true;
+                                return !member.Roles.Contains(role);
+                            })
+                        .Aggregate(content, (current, user) => current.Append($"{Mention.User(user.User)} "));
+
+                embed.WithTitle(string.Format(Messages.EventStarted, gatewayEvent.Name))
+                    .WithDescription(embedDescription)
+                    .WithCurrentTimestamp()
+                    .WithColour(Color.LawnGreen);
+                break;
+            case GuildScheduledEventStatus.Completed:
+                embed.WithTitle(string.Format(Messages.EventCompleted, gatewayEvent.Name))
+                    .WithDescription(
+                        string.Format(
+                            Messages.EventDuration,
+                            DateTimeOffset.UtcNow.Subtract(
+                                guildData.ScheduledEvents[gatewayEvent.ID.Value].ActualStartTime
+                                ?? gatewayEvent.ScheduledStartTime)))
+                    .WithColour(Color.Black);
+
+                guildData.ScheduledEvents.Remove(gatewayEvent.ID.Value);
+                break;
+            case GuildScheduledEventStatus.Canceled:
+            case GuildScheduledEventStatus.Scheduled:
+            default: return Result.FromError(new ArgumentOutOfRangeError(nameof(gatewayEvent.Status)));
+        }
+
+        var result = embed.WithCurrentTimestamp().Build();
+
+        if (!result.IsDefined(out var built)) return Result.FromError(result);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            guildConfiguration.EventNotificationChannel.ToDiscordSnowflake(), embeds: new[] { built }, ct: ct);
+            guildData.Configuration.EventNotificationChannel.ToDiscordSnowflake(),
+            content?.ToString() ?? default(Optional<string>), embeds: new[] { built }, ct: ct);
     }
 }
 
@@ -377,8 +453,10 @@ public class GuildScheduledEventResponder : IResponder<IGuildScheduledEventDelet
     }
 
     public async Task<Result> RespondAsync(IGuildScheduledEventDelete gatewayEvent, CancellationToken ct = default) {
-        var guildConfiguration = await _dataService.GetConfiguration(gatewayEvent.GuildID, ct);
-        if (guildConfiguration.EventNotificationChannel is 0)
+        var guildData = await _dataService.GetData(gatewayEvent.GuildID, ct);
+        guildData.ScheduledEvents.Remove(gatewayEvent.ID.Value);
+
+        if (guildData.Configuration.EventNotificationChannel is 0)
             return Result.FromSuccess();
 
         var embed = new EmbedBuilder()
@@ -391,6 +469,6 @@ public class GuildScheduledEventResponder : IResponder<IGuildScheduledEventDelet
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            guildConfiguration.EventNotificationChannel.ToDiscordSnowflake(), embeds: new[] { built }, ct: ct);
+            guildData.Configuration.EventNotificationChannel.ToDiscordSnowflake(), embeds: new[] { built }, ct: ct);
     }
 }

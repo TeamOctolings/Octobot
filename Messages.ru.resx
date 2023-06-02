@@ -241,8 +241,8 @@
     <value>Получатели уведомлений о начале событий</value>
   </data>
     <data name="EventStarted" xml:space="preserve">
-    <value>{0}Событие {1} начинается в {2}!</value>
-  </data>
+        <value>Событие "{0}" началось</value>
+    </data>
     <data name="SettingsFrowningFace" xml:space="preserve">
     <value>:( </value>
   </data>
@@ -471,13 +471,19 @@
     <data name="LocalEventCreatedDescription" xml:space="preserve">
     <value>Событие пройдёт {0} в канале {1}</value>
   </data>
-    <data name="ExternalEventCreatedDescription" xml:space="preserve">
+  <data name="ExternalEventCreatedDescription" xml:space="preserve">
     <value>Событие пройдёт с {0} до {1} в {2}</value>
   </data>
-    <data name="EventDetailsButton" xml:space="preserve">
+  <data name="EventDetailsButton" xml:space="preserve">
     <value>Подробнее о событии</value>
   </data>
-    <data name="EventDuration" xml:space="preserve">
+  <data name="EventDuration" xml:space="preserve">
         <value>Событие длилось `{0}`</value>
+    </data>
+  <data name="LocalEventStartedDescription" xml:space="preserve">
+        <value>Событие происходит в {0}</value>
+    </data>
+  <data name="ExternalEventStartedDescription" xml:space="preserve">
+        <value>Событие происходит в {0} до {1}</value>
     </data>
 </root>

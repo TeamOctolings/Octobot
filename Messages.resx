@@ -231,18 +231,18 @@
     <data name="EventCreated" xml:space="preserve">
     <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;! \n {4}</value>
   </data>
-    <data name="SettingsEventNotificationRole" xml:space="preserve">
+  <data name="SettingsEventNotificationRole" xml:space="preserve">
     <value>Role for event creation notifications</value>
   </data>
-    <data name="SettingsEventNotificationChannel" xml:space="preserve">
+  <data name="SettingsEventNotificationChannel" xml:space="preserve">
     <value>Channel for event notifications</value>
   </data>
   <data name="SettingsEventStartedReceivers" xml:space="preserve">
     <value>Event start notifications receivers</value>
   </data>
   <data name="EventStarted" xml:space="preserve">
-    <value>{0}Event {1} is starting at {2}!</value>
-  </data>
+        <value>Event "{0}" started</value>
+    </data>
   <data name="SettingsFrowningFace" xml:space="preserve">
     <value>:(</value>
   </data>
@@ -479,5 +479,11 @@
   </data>
   <data name="EventDuration" xml:space="preserve">
         <value>The event has lasted for `{0}`</value>
+    </data>
+  <data name="LocalEventStartedDescription" xml:space="preserve">
+        <value>The event is happening at {0}</value>
+    </data>
+  <data name="ExternalEventStartedDescription" xml:space="preserve">
+        <value>The event is happening at {0} until {1}</value>
     </data>
 </root>

@@ -794,5 +794,17 @@ namespace Boyfriend {
                 return ResourceManager.GetString("EventDuration", resourceCulture);
             }
         }
+        
+        internal static string LocalEventStartedDescription {
+            get {
+                return ResourceManager.GetString("LocalEventStartedDescription", resourceCulture);
+            }
+        }
+        
+        internal static string ExternalEventStartedDescription {
+            get {
+                return ResourceManager.GetString("ExternalEventStartedDescription", resourceCulture);
+            }
+        }
     }
 }
