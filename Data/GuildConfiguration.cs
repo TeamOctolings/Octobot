@@ -3,6 +3,11 @@ using System.Globalization;
 namespace Boyfriend.Data;
 
 public class GuildConfiguration {
+    public enum NotificationReceiver {
+        Interested,
+        Role
+    }
+
     public static readonly Dictionary<string, CultureInfo> CultureInfoCache = new() {
         { "en", new CultureInfo("en-US") },
         { "ru", new CultureInfo("ru-RU") },

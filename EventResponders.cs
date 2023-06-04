@@ -401,9 +401,9 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
                     gatewayEvent.GuildID, gatewayEvent.ID, withMember: true, ct: ct);
                 if (!usersResult.IsDefined(out var users)) return Result.FromError(usersResult);
 
-                if (receivers.Contains(NotificationReceiver.Role) && role.Value is not 0)
+                if (receivers.Contains(GuildConfiguration.NotificationReceiver.Role) && role.Value is not 0)
                     content.Append($"{Mention.Role(role)} ");
-                if (receivers.Contains(NotificationReceiver.Interested))
+                if (receivers.Contains(GuildConfiguration.NotificationReceiver.Interested))
                     content = users.Where(
                             user => {
                                 if (!user.GuildMember.IsDefined(out var member)) return true;
@@ -423,7 +423,7 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
                             Messages.EventDuration,
                             DateTimeOffset.UtcNow.Subtract(
                                 guildData.ScheduledEvents[gatewayEvent.ID.Value].ActualStartTime
-                                ?? gatewayEvent.ScheduledStartTime)))
+                                ?? gatewayEvent.ScheduledStartTime).ToString()))
                     .WithColour(Color.Black);
 
                 guildData.ScheduledEvents.Remove(gatewayEvent.ID.Value);
