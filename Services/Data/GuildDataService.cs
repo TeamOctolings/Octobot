@@ -1,8 +1,9 @@
 using System.Text.Json;
+using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Remora.Rest.Core;
 
-namespace Boyfriend.Data.Services;
+namespace Boyfriend.Services.Data;
 
 public class GuildDataService : IHostedService {
     private readonly Dictionary<Snowflake, GuildData> _datas = new();

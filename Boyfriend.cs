@@ -1,8 +1,11 @@
-using Boyfriend.Data.Services;
+using Boyfriend.Commands;
+using Boyfriend.Services;
+using Boyfriend.Services.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Remora.Commands.Extensions;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Gateway.Commands;
@@ -26,16 +29,10 @@ public class Boyfriend {
     public static async Task Main(string[] args) {
         var host = CreateHostBuilder(args).UseConsoleLifetime().Build();
         var services = host.Services;
-        var configuration = services.GetRequiredService<IConfiguration>();
-
-
-
 
         var slashService = services.GetRequiredService<SlashService>();
-        var updateSlash = await slashService.UpdateSlashCommandsAsync(new Snowflake(1115043975573811250));
-        if (!updateSlash.IsSuccess) {
-            Console.WriteLine("Failed to update slash commands: {Reason}", updateSlash.Error.Message);
-        }
+        _ = await slashService.UpdateSlashCommandsAsync();
+
         await host.RunAsync();
     }
 
@@ -71,10 +68,13 @@ public class Boyfriend {
 
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>()
                         .AddDiscordCaching()
-                        .AddDiscordCommands()
+                        .AddDiscordCommands(true)
                         .AddInteractivity()
                         .AddInteractionGroup<InteractionResponders>()
-                        .AddSingleton<GuildDataService>();
+                        .AddSingleton<GuildDataService>()
+                        .AddSingleton<UtilityService>()
+                        .AddCommandTree()
+                        .WithCommandGroup<BanCommand>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
@@ -85,9 +85,5 @@ public class Boyfriend {
                     .AddFilter("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)
                     .AddFilter("System.Net.Http.HttpClient.*.ClientHandler", LogLevel.Warning)
             );
-    }
-
-    public static string GetLocalized(string key) {
-        return Messages.ResourceManager.GetString(key, Messages.Culture) ?? key;
     }
 }

@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Text;
 using Boyfriend.Data;
-using Boyfriend.Data.Services;
+using Boyfriend.Services.Data;
 using DiffPlex;
 using DiffPlex.DiffBuilder;
 using Microsoft.Extensions.Logging;
@@ -56,7 +56,7 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
         var i = Random.Shared.Next(1, 4);
 
         var embed = new EmbedBuilder()
-            .WithTitle(Boyfriend.GetLocalized($"Beep{i}"))
+            .WithTitle($"Beep{i}".Localized())
             .WithDescription(Messages.Ready)
             .WithUserFooter(currentUser)
             .WithCurrentTimestamp()
@@ -120,7 +120,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
                 $"{Mention.Channel(gatewayEvent.ChannelID)}\n{Markdown.BlockCode(message.Content.SanitizeForBlockCode())}")
             .WithActionFooter(user)
             .WithTimestamp(message.Timestamp)
-            .WithColour(Color.Crimson)
+            .WithColour(Color.Firebrick)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
@@ -153,13 +153,13 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
             return Result.FromSuccess();
         if (!gatewayEvent.Content.IsDefined(out var newContent))
             return Result.FromSuccess();
+        if (!gatewayEvent.EditedTimestamp.IsDefined(out var timestamp))
+            return Result.FromSuccess();
 
         if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ChannelID)));
         if (!gatewayEvent.ID.IsDefined(out var messageId))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ID)));
-        if (!gatewayEvent.EditedTimestamp.IsDefined(out var timestamp))
-            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.EditedTimestamp)));
 
         var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
         var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
@@ -286,7 +286,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
 
                 embedDescription = $"{eventDescription}\n\n{Markdown.BlockQuote(
                     string.Format(
-                        Messages.LocalEventCreatedDescription,
+                        Messages.DescriptionLocalEventCreated,
                         Markdown.Timestamp(gatewayEvent.ScheduledStartTime),
                         Mention.Channel(channelId)
                     ))}";
@@ -301,7 +301,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
 
                 embedDescription = $"{eventDescription}\n\n{Markdown.BlockQuote(
                     string.Format(
-                        Messages.ExternalEventCreatedDescription,
+                        Messages.DescriptionExternalEventCreated,
                         Markdown.Timestamp(gatewayEvent.ScheduledStartTime),
                         Markdown.Timestamp(endTime),
                         Markdown.InlineCode(location)
@@ -365,14 +365,14 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
             case GuildScheduledEventStatus.Active:
                 guildData.ScheduledEvents[gatewayEvent.ID.Value].ActualStartTime = DateTimeOffset.UtcNow;
 
-                string embedDescription; // what the fuck is this
+                string embedDescription;
                 switch (gatewayEvent.EntityType) {
                     case GuildScheduledEventEntityType.StageInstance or GuildScheduledEventEntityType.Voice:
                         if (!gatewayEvent.ChannelID.AsOptional().IsDefined(out var channelId))
                             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ChannelID)));
 
                         embedDescription = string.Format(
-                            Messages.LocalEventStartedDescription,
+                            Messages.DescriptionLocalEventStarted,
                             Mention.Channel(channelId)
                         );
                         break;
@@ -385,7 +385,7 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
                             return Result.FromError(new ArgumentNullError(nameof(metadata.Location)));
 
                         embedDescription = string.Format(
-                            Messages.ExternalEventStartedDescription,
+                            Messages.DescriptionExternalEventStarted,
                             Markdown.InlineCode(location),
                             Markdown.Timestamp(endTime)
                         );
@@ -462,7 +462,7 @@ public class GuildScheduledEventResponder : IResponder<IGuildScheduledEventDelet
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.EventCancelled, gatewayEvent.Name))
             .WithDescription(":(")
-            .WithColour(Color.DarkRed)
+            .WithColour(Color.Firebrick)
             .WithCurrentTimestamp()
             .Build();
 

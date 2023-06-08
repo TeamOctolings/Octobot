@@ -204,9 +204,9 @@
     <data name="ClearAmountInvalid" xml:space="preserve">
     <value>You need to specify an integer from {0} to {1} instead of {2}!</value>
   </data>
-    <data name="FeedbackUserBanned" xml:space="preserve">
-    <value>Banned {0} for{1}: {2}</value>
-  </data>
+    <data name="UserBanned" xml:space="preserve">
+        <value>{0} was banned</value>
+    </data>
     <data name="SettingDoesntExist" xml:space="preserve">
     <value>That setting doesn't exist!</value>
   </data>
@@ -468,22 +468,28 @@
     <data name="EventCreatedTitle" xml:space="preserve">
     <value>{0} has created a new event:</value>
   </data>
-  <data name="LocalEventCreatedDescription" xml:space="preserve">
+    <data name="DescriptionLocalEventCreated" xml:space="preserve">
     <value>The event will start at {0} in {1}</value>
   </data>
-  <data name="ExternalEventCreatedDescription" xml:space="preserve">
+    <data name="DescriptionExternalEventCreated" xml:space="preserve">
     <value>The event will start at {0} until {1} in {2}</value>
   </data>
   <data name="EventDetailsButton" xml:space="preserve">
     <value>Event details</value>
   </data>
-  <data name="EventDuration" xml:space="preserve">
+    <data name="EventDuration" xml:space="preserve">
         <value>The event has lasted for `{0}`</value>
     </data>
-  <data name="LocalEventStartedDescription" xml:space="preserve">
+    <data name="DescriptionLocalEventStarted" xml:space="preserve">
         <value>The event is happening at {0}</value>
     </data>
-  <data name="ExternalEventStartedDescription" xml:space="preserve">
+    <data name="DescriptionExternalEventStarted" xml:space="preserve">
         <value>The event is happening at {0} until {1}</value>
+    </data>
+    <data name="DescriptionUserBanned" xml:space="preserve">
+        <value>Reason: {0}</value>
+    </data>
+    <data name="UserAlreadyBanned" xml:space="preserve">
+        <value>This user is already banned!</value>
     </data>
 </root>

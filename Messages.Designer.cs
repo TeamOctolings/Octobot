@@ -243,9 +243,9 @@ namespace Boyfriend {
             }
         }
         
-        internal static string FeedbackUserBanned {
+        internal static string UserBanned {
             get {
-                return ResourceManager.GetString("FeedbackUserBanned", resourceCulture);
+                return ResourceManager.GetString("UserBanned", resourceCulture);
             }
         }
         
@@ -771,15 +771,15 @@ namespace Boyfriend {
             }
         }
         
-        internal static string LocalEventCreatedDescription {
+        internal static string DescriptionLocalEventCreated {
             get {
-                return ResourceManager.GetString("LocalEventCreatedDescription", resourceCulture);
+                return ResourceManager.GetString("DescriptionLocalEventCreated", resourceCulture);
             }
         }
         
-        internal static string ExternalEventCreatedDescription {
+        internal static string DescriptionExternalEventCreated {
             get {
-                return ResourceManager.GetString("ExternalEventCreatedDescription", resourceCulture);
+                return ResourceManager.GetString("DescriptionExternalEventCreated", resourceCulture);
             }
         }
         
@@ -795,15 +795,27 @@ namespace Boyfriend {
             }
         }
         
-        internal static string LocalEventStartedDescription {
+        internal static string DescriptionLocalEventStarted {
             get {
-                return ResourceManager.GetString("LocalEventStartedDescription", resourceCulture);
+                return ResourceManager.GetString("DescriptionLocalEventStarted", resourceCulture);
             }
         }
         
-        internal static string ExternalEventStartedDescription {
+        internal static string DescriptionExternalEventStarted {
             get {
-                return ResourceManager.GetString("ExternalEventStartedDescription", resourceCulture);
+                return ResourceManager.GetString("DescriptionExternalEventStarted", resourceCulture);
+            }
+        }
+        
+        internal static string DescriptionUserBanned {
+            get {
+                return ResourceManager.GetString("DescriptionUserBanned", resourceCulture);
+            }
+        }
+        
+        internal static string UserAlreadyBanned {
+            get {
+                return ResourceManager.GetString("UserAlreadyBanned", resourceCulture);
             }
         }
     }

@@ -65,6 +65,10 @@ public static class Extensions {
         return s.Replace("```", "​`​`​`​");
     }
 
+    public static string Localized(this string key) {
+        return Messages.ResourceManager.GetString(key, Messages.Culture) ?? key;
+    }
+
     public static string AsMarkdown(this SideBySideDiffModel model) {
         var builder = new StringBuilder();
         foreach (var line in model.OldText.Lines.Where(piece => !string.IsNullOrWhiteSpace(piece.Text)))
@@ -78,13 +82,13 @@ public static class Extensions {
         return $"{user.Username}#{user.Discriminator:0000}";
     }
 
+
     public static Snowflake ToDiscordSnowflake(this ulong id) {
         return DiscordSnowflake.New(id);
     }
 
-    /*public static string AsDuration(this TimeSpan span) {
-        return span.Humanize(
-            2, minUnit: TimeUnit.Second, maxUnit: TimeUnit.Month,
-            culture: Messages.Culture.Name.Contains("RU") ? GuildConfiguration.CultureInfoCache["ru"] : Messages.Culture);
-    }*/
+    public static TResult? MaxOrDefault<TSource, TResult>(
+        this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
+        return source.Any() ? source.Max(selector) : default;
+    }
 }
