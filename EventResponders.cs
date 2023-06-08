@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services.Data;
@@ -60,7 +59,7 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
             .WithDescription(Messages.Ready)
             .WithUserFooter(currentUser)
             .WithCurrentTimestamp()
-            .WithColour(Color.Aqua)
+            .WithColour(ColorsList.Blue)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
@@ -120,7 +119,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
                 $"{Mention.Channel(gatewayEvent.ChannelID)}\n{Markdown.BlockCode(message.Content.SanitizeForBlockCode())}")
             .WithActionFooter(user)
             .WithTimestamp(message.Timestamp)
-            .WithColour(Color.Firebrick)
+            .WithColour(ColorsList.Red)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
@@ -190,7 +189,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
             .WithDescription($"https://discord.com/channels/{guildId}/{channelId}/{messageId}\n{diff.AsMarkdown()}")
             .WithUserFooter(currentUser)
             .WithTimestamp(timestamp.Value)
-            .WithColour(Color.Gold)
+            .WithColour(ColorsList.Yellow)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
@@ -234,7 +233,7 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
             .WithSmallTitle(string.Format(welcomeMessage, user.GetTag(), guild.Name), user)
             .WithGuildFooter(guild)
             .WithTimestamp(gatewayEvent.JoinedAt)
-            .WithColour(Color.LawnGreen)
+            .WithColour(ColorsList.Green)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
@@ -318,7 +317,7 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
             .WithEventCover(gatewayEvent.ID, gatewayEvent.Image)
             .WithUserFooter(currentUser)
             .WithCurrentTimestamp()
-            .WithColour(Color.Gray)
+            .WithColour(ColorsList.Default)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
@@ -414,7 +413,7 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
                 embed.WithTitle(string.Format(Messages.EventStarted, gatewayEvent.Name))
                     .WithDescription(embedDescription)
                     .WithCurrentTimestamp()
-                    .WithColour(Color.LawnGreen);
+                    .WithColour(ColorsList.Green);
                 break;
             case GuildScheduledEventStatus.Completed:
                 embed.WithTitle(string.Format(Messages.EventCompleted, gatewayEvent.Name))
@@ -424,7 +423,7 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
                             DateTimeOffset.UtcNow.Subtract(
                                 guildData.ScheduledEvents[gatewayEvent.ID.Value].ActualStartTime
                                 ?? gatewayEvent.ScheduledStartTime).ToString()))
-                    .WithColour(Color.Black);
+                    .WithColour(ColorsList.Black);
 
                 guildData.ScheduledEvents.Remove(gatewayEvent.ID.Value);
                 break;
@@ -462,7 +461,7 @@ public class GuildScheduledEventResponder : IResponder<IGuildScheduledEventDelet
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.EventCancelled, gatewayEvent.Name))
             .WithDescription(":(")
-            .WithColour(Color.Firebrick)
+            .WithColour(ColorsList.Red)
             .WithCurrentTimestamp()
             .Build();
 

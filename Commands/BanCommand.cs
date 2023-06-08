@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Drawing;
 using Boyfriend.Services;
 using Boyfriend.Services.Data;
 using Remora.Commands.Attributes;
@@ -58,7 +57,7 @@ public class BanCommand : CommandGroup {
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (existingBanResult.IsDefined(out _)) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, currentUser)
-                .WithColour(Color.Firebrick).Build();
+                .WithColour(ColorsList.Red).Build();
 
             if (!embed.IsDefined(out var alreadyBuilt))
                 return Result.FromError(embed);
@@ -74,7 +73,7 @@ public class BanCommand : CommandGroup {
         Result<Embed> responseEmbed;
         if (interactionResult.Entity is not null) {
             responseEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
-                .WithColour(Color.Firebrick).Build();
+                .WithColour(ColorsList.Red).Build();
         } else {
             var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
             if (!userResult.IsDefined(out var user))
@@ -87,7 +86,7 @@ public class BanCommand : CommandGroup {
 
             responseEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserBanned, target.GetTag()), target)
-                .WithColour(Color.LawnGreen).Build();
+                .WithColour(ColorsList.Green).Build();
 
             var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
             if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
@@ -97,7 +96,7 @@ public class BanCommand : CommandGroup {
                     .WithDescription(string.Format(Messages.DescriptionUserBanned, reason))
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
-                    .WithColour(Color.Firebrick)
+                    .WithColour(ColorsList.Red)
                     .Build();
 
                 if (!logEmbed.IsDefined(out var logBuilt))
