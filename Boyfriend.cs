@@ -10,6 +10,7 @@ using Remora.Discord.API.Objects;
 using Remora.Discord.Caching.Extensions;
 using Remora.Discord.Caching.Services;
 using Remora.Discord.Commands.Extensions;
+using Remora.Discord.Commands.Services;
 using Remora.Discord.Gateway;
 using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Hosting.Extensions;
@@ -24,6 +25,17 @@ public class Boyfriend {
 
     public static async Task Main(string[] args) {
         var host = CreateHostBuilder(args).UseConsoleLifetime().Build();
+        var services = host.Services;
+        var configuration = services.GetRequiredService<IConfiguration>();
+
+
+
+
+        var slashService = services.GetRequiredService<SlashService>();
+        var updateSlash = await slashService.UpdateSlashCommandsAsync(new Snowflake(1115043975573811250));
+        if (!updateSlash.IsSuccess) {
+            Console.WriteLine("Failed to update slash commands: {Reason}", updateSlash.Error.Message);
+        }
         await host.RunAsync();
     }
 
