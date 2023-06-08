@@ -13,6 +13,9 @@ using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Results;
 
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable UnusedMember.Global
+
 namespace Boyfriend.Commands;
 
 public class BanCommand : CommandGroup {

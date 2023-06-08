@@ -89,6 +89,7 @@ public static class Extensions {
 
     public static TResult? MaxOrDefault<TSource, TResult>(
         this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
-        return source.Any() ? source.Max(selector) : default;
+        var list = source.ToList();
+        return list.Any() ? list.Max(selector) : default;
     }
 }

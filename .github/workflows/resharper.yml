@@ -29,5 +29,5 @@ jobs:
       uses: muno92/resharper_inspectcode@1.6.13
       with:
         solutionPath: ./Boyfriend.sln
-        ignoreIssueType: InvertIf
+        ignoreIssueType: InvertIf,ConvertIfStatementToReturnStatement
         solutionWideAnalysis: true

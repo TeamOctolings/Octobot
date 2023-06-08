@@ -62,8 +62,10 @@ public class UtilityService : IHostedService {
         var interacterRoles = roles.Where(r => interacter.Roles.Contains(r.ID));
         var botRoles = roles.Where(r => currentMember.Roles.Contains(r.ID));
 
-        var targetBotRoleDiff = targetRoles.MaxOrDefault(r => r.Position) - botRoles.Max(r => r.Position);
-        var targetInteracterRoleDiff = targetRoles.MaxOrDefault(r => r.Position) - interacterRoles.Max(r => r.Position);
+        var targetRolesList = targetRoles.ToList();
+        var targetBotRoleDiff = targetRolesList.MaxOrDefault(r => r.Position) - botRoles.Max(r => r.Position);
+        var targetInteracterRoleDiff
+            = targetRolesList.MaxOrDefault(r => r.Position) - interacterRoles.Max(r => r.Position);
 
         if (targetInteracterRoleDiff >= 0)
             return Result<string?>.FromSuccess($"UserCannot{action}Target".Localized());
