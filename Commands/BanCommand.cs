@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net;
 using Boyfriend.Services;
 using Boyfriend.Services.Data;
 using Remora.Commands.Attributes;
@@ -86,7 +87,8 @@ public class BanCommand : CommandGroup {
                 return Result.FromError(userResult);
 
             var banResult = await _guildApi.CreateGuildBanAsync(
-                guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}", ct: CancellationToken);
+                guildId.Value, target.ID, reason: $"({user.GetTag()}) {WebUtility.UrlEncode(reason)}",
+                ct: CancellationToken);
             if (!banResult.IsSuccess)
                 return Result.FromError(banResult.Error);
 
@@ -155,7 +157,8 @@ public class BanCommand : CommandGroup {
             return Result.FromError(userResult);
 
         var banResult = await _guildApi.CreateGuildBanAsync(
-            guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}", ct: CancellationToken);
+            guildId.Value, target.ID, reason: $"({user.GetTag()}) {WebUtility.UrlEncode(reason)}",
+            ct: CancellationToken);
         if (!banResult.IsSuccess)
             return Result.FromError(banResult.Error);
 
