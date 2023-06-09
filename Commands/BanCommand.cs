@@ -122,4 +122,71 @@ public class BanCommand : CommandGroup {
 
         return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
     }
+
+    [Command("unban")]
+    [RequireContext(ChannelContext.Guild)]
+    [RequireDiscordPermission(DiscordPermission.BanMembers)]
+    [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
+    [Description("разбанит пидора")]
+    public async Task<Result> UnBanUserAsync([Description("Юзер, кого банить")] IUser target, string reason) {
+        if (!_context.TryGetGuildID(out var guildId))
+            return Result.FromError(new ArgumentNullError(nameof(guildId)));
+        if (!_context.TryGetUserID(out var userId))
+            return Result.FromError(new ArgumentNullError(nameof(userId)));
+        if (!_context.TryGetChannelID(out var channelId))
+            return Result.FromError(new ArgumentNullError(nameof(channelId)));
+
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+            return Result.FromError(currentUserResult);
+
+        //TODO: Проверка на существующий бан.
+
+
+        Result<Embed> responseEmbed;
+
+        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+            return Result.FromError(userResult);
+
+        var banResult = await _guildApi.CreateGuildBanAsync(
+            guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}", ct: CancellationToken);
+        if (!banResult.IsSuccess)
+            return Result.FromError(banResult.Error);
+
+        responseEmbed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.UserBanned, target.GetTag()), target)
+            .WithColour(ColorsList.Green).Build();
+
+        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
+        if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
+            || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+            var logEmbed = new EmbedBuilder().WithSmallTitle(
+                    string.Format(Messages.UserBanned, target.GetTag()), target)
+                .WithDescription(string.Format(Messages.DescriptionUserBanned, reason))
+                .WithActionFooter(user)
+                .WithCurrentTimestamp()
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            if (!logEmbed.IsDefined(out var logBuilt))
+                return Result.FromError(logEmbed);
+
+            var builtArray = new[] { logBuilt };
+            if (cfg.PrivateFeedbackChannel != channelId.Value)
+                _ = _channelApi.CreateMessageAsync(
+                    cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                    ct: CancellationToken);
+            if (cfg.PublicFeedbackChannel != channelId.Value)
+                _ = _channelApi.CreateMessageAsync(
+                    cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                    ct: CancellationToken);
+        }
+
+
+        if (!responseEmbed.IsDefined(out var built))
+            return Result.FromError(responseEmbed);
+
+        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+    }
 }
