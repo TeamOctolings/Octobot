@@ -20,12 +20,12 @@ namespace Boyfriend.Commands;
 
 public class BanCommand : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly ICommandContext _context;
-    private readonly GuildDataService _dataService;
-    private readonly FeedbackService _feedbackService;
-    private readonly IDiscordRestGuildAPI _guildApi;
-    private readonly IDiscordRestUserAPI _userApi;
-    private readonly UtilityService _utility;
+    private readonly ICommandContext        _context;
+    private readonly GuildDataService       _dataService;
+    private readonly FeedbackService        _feedbackService;
+    private readonly IDiscordRestGuildAPI   _guildApi;
+    private readonly IDiscordRestUserAPI    _userApi;
+    private readonly UtilityService         _utility;
 
     public BanCommand(
         ICommandContext context,         IDiscordRestChannelAPI channelApi, GuildDataService    dataService,
@@ -56,6 +56,9 @@ public class BanCommand : CommandGroup {
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
+
+        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
+        Messages.Culture = cfg.Culture;
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (existingBanResult.IsDefined(out _)) {
@@ -91,7 +94,6 @@ public class BanCommand : CommandGroup {
                     string.Format(Messages.UserBanned, target.GetTag()), target)
                 .WithColour(ColorsList.Green).Build();
 
-            var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
             if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
@@ -140,6 +142,9 @@ public class BanCommand : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
+        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
+        Messages.Culture = cfg.Culture;
+
         //TODO: Проверка на существующий бан.
 
 
@@ -158,7 +163,6 @@ public class BanCommand : CommandGroup {
                 string.Format(Messages.UserBanned, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
             || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(
