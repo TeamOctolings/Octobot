@@ -69,6 +69,7 @@ public class Boyfriend {
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>()
                         .AddDiscordCaching()
                         .AddDiscordCommands(true)
+                        .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
                         .AddInteractivity()
                         .AddInteractionGroup<InteractionResponders>()
                         .AddSingleton<GuildDataService>()
