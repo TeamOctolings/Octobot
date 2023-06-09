@@ -132,7 +132,7 @@ public class BanCommand : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("разбанит пидора")]
-    public async Task<Result> UnBanUserAsync([Description("Юзер, кого банить")] IUser target, string reason) {
+    public async Task<Result> UnBanUserAsync([Description("Юзер, кого разбанить")] IUser target, string reason) {
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
         if (!_context.TryGetUserID(out var userId))
@@ -147,7 +147,15 @@ public class BanCommand : CommandGroup {
         var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         Messages.Culture = cfg.Culture;
 
-        //TODO: Проверка на существующий бан.
+        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
+        if (!existingBanResult.IsDefined()) {
+            return (Result)await _feedbackService.SendContextualEmbedAsync(
+                new Embed(
+                          Title: Messages.UserNotBanned,
+                          Colour: ColorsList.Red
+                    ),
+                ct: CancellationToken);
+        }
 
 
         Result<Embed> responseEmbed;
@@ -156,24 +164,23 @@ public class BanCommand : CommandGroup {
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var banResult = await _guildApi.CreateGuildBanAsync(
+        var unbanResult = await _guildApi.RemoveGuildBanAsync(
             guildId.Value, target.ID, reason: $"({user.GetTag()}) {WebUtility.UrlEncode(reason)}",
             ct: CancellationToken);
-        if (!banResult.IsSuccess)
-            return Result.FromError(banResult.Error);
+        if (!unbanResult.IsSuccess)
+            return Result.FromError(unbanResult.Error);
 
         responseEmbed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.UserBanned, target.GetTag()), target)
+                string.Format(Messages.UserUnbanned, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
         if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
             || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(
-                    string.Format(Messages.UserBanned, target.GetTag()), target)
-                .WithDescription(string.Format(Messages.DescriptionUserBanned, reason))
+                    string.Format(Messages.UserUnbanned, target.GetTag()), target)
                 .WithActionFooter(user)
                 .WithCurrentTimestamp()
-                .WithColour(ColorsList.Red)
+                .WithColour(ColorsList.Green)
                 .Build();
 
             if (!logEmbed.IsDefined(out var logBuilt))

@@ -492,4 +492,7 @@
     <data name="UserAlreadyBanned" xml:space="preserve">
         <value>этот шизоид уже лежит в бане</value>
     </data>
+    <data name="UserUnbanned" xml:space="preserve">
+        <value>{0} раззабанен</value>
+    </data>
 </root>

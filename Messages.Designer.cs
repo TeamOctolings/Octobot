@@ -818,5 +818,11 @@ namespace Boyfriend {
                 return ResourceManager.GetString("UserAlreadyBanned", resourceCulture);
             }
         }
+        
+        internal static string UserUnbanned {
+            get {
+                return ResourceManager.GetString("UserUnbanned", resourceCulture);
+            }
+        }
     }
 }

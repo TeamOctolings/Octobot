@@ -492,4 +492,7 @@
     <data name="UserAlreadyBanned" xml:space="preserve">
         <value>This user is already banned!</value>
     </data>
+    <data name="UserUnbanned" xml:space="preserve">
+        <value>{0} was unbanned</value>
+    </data>
 </root>
