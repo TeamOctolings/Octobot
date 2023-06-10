@@ -493,6 +493,6 @@
         <value>Этот пользователь уже забанен!</value>
     </data>
     <data name="UserUnbanned" xml:space="preserve">
-        <value>{0} был(-а) забанен(-а)</value>
+        <value>{0} был(-а) разбанен(-а)</value>
     </data>
 </root>

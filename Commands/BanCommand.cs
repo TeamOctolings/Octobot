@@ -148,15 +148,15 @@ public class BanCommand : CommandGroup {
         Messages.Culture = cfg.Culture;
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
-        if (!existingBanResult.IsDefined()) {
-            return (Result)await _feedbackService.SendContextualEmbedAsync(
-                new Embed(
-                          Title: Messages.UserNotBanned,
-                          Colour: ColorsList.Red
-                    ),
-                ct: CancellationToken);
-        }
+        if (!existingBanResult.IsDefined(out _)) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, currentUser)
+                .WithColour(ColorsList.Red).Build();
 
+            if (!embed.IsDefined(out var alreadyBuilt))
+                return Result.FromError(embed);
+
+            return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
+        }
 
         Result<Embed> responseEmbed;
 
