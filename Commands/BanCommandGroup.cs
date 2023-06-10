@@ -19,7 +19,7 @@ using Remora.Results;
 
 namespace Boyfriend.Commands;
 
-public class BanCommand : CommandGroup {
+public class BanCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
     private readonly GuildDataService       _dataService;
@@ -28,7 +28,7 @@ public class BanCommand : CommandGroup {
     private readonly IDiscordRestUserAPI    _userApi;
     private readonly UtilityService         _utility;
 
-    public BanCommand(
+    public BanCommandGroup(
         ICommandContext context,         IDiscordRestChannelAPI channelApi, GuildDataService    dataService,
         FeedbackService feedbackService, IDiscordRestGuildAPI   guildApi,   IDiscordRestUserAPI userApi,
         UtilityService  utility) {
@@ -62,7 +62,7 @@ public class BanCommand : CommandGroup {
         Messages.Culture = cfg.Culture;
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
-        if (existingBanResult.IsDefined(out _)) {
+        if (existingBanResult.IsDefined()) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
@@ -148,7 +148,7 @@ public class BanCommand : CommandGroup {
         Messages.Culture = cfg.Culture;
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
-        if (!existingBanResult.IsDefined(out _)) {
+        if (!existingBanResult.IsDefined()) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, currentUser)
                 .WithColour(ColorsList.Red).Build();
 

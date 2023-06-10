@@ -14,7 +14,6 @@ public class GuildConfiguration {
         { "mctaylors-ru", new CultureInfo("tt-RU") }
     };
 
-    public string Prefix                   { get; set; } = "!";
     public string Language                 { get; set; } = "en";
     public string WelcomeMessage           { get; set; } = "default";
     public bool   ReceiveStartupMessages   { get; set; }

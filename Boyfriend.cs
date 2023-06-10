@@ -31,7 +31,7 @@ public class Boyfriend {
         var services = host.Services;
 
         var slashService = services.GetRequiredService<SlashService>();
-        _ = await slashService.UpdateSlashCommandsAsync();
+        await slashService.UpdateSlashCommandsAsync();
 
         await host.RunAsync();
     }
@@ -75,7 +75,7 @@ public class Boyfriend {
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
                         .AddCommandTree()
-                        .WithCommandGroup<BanCommand>();
+                        .WithCommandGroup<BanCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
