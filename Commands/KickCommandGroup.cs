@@ -1,0 +1,145 @@
+﻿using System.ComponentModel;
+using Boyfriend.Services;
+using Boyfriend.Services.Data;
+using Remora.Commands.Attributes;
+using Remora.Commands.Groups;
+using Remora.Discord.API.Abstractions.Objects;
+using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.API.Objects;
+using Remora.Discord.Commands.Conditions;
+using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Extensions;
+using Remora.Discord.Commands.Feedback.Services;
+using Remora.Discord.Extensions.Embeds;
+using Remora.Results;
+
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable UnusedMember.Global
+
+namespace Boyfriend.Commands;
+
+public class KickCommandGroup : CommandGroup {
+    private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly ICommandContext        _context;
+    private readonly GuildDataService       _dataService;
+    private readonly FeedbackService        _feedbackService;
+    private readonly IDiscordRestGuildAPI   _guildApi;
+    private readonly IDiscordRestUserAPI    _userApi;
+    private readonly UtilityService         _utility;
+
+    public KickCommandGroup(
+        ICommandContext context,         IDiscordRestChannelAPI channelApi, GuildDataService    dataService,
+        FeedbackService feedbackService, IDiscordRestGuildAPI   guildApi,   IDiscordRestUserAPI userApi,
+        UtilityService  utility) {
+        _context = context;
+        _channelApi = channelApi;
+        _dataService = dataService;
+        _feedbackService = feedbackService;
+        _guildApi = guildApi;
+        _userApi = userApi;
+        _utility = utility;
+    }
+
+    /// <summary>
+    ///     A slash command that kicks a Discord user with the specified reason.
+    /// </summary>
+    /// <param name="target">The user to kick.</param>
+    /// <param name="reason">
+    ///     The reason for this kick. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     <see cref="IDiscordRestGuildAPI.RemoveGuildMemberAsync" />.
+    /// </param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
+    ///     was kicked and vice-versa.
+    /// </returns>
+    [Command("kick", "кик")]
+    [RequireContext(ChannelContext.Guild)]
+    [RequireDiscordPermission(DiscordPermission.KickMembers)]
+    [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
+    [Description("кикает твоего друга <3")]
+    public async Task<Result> KickUserAsync(
+        [Description("друг которого кикать")] IUser target, [Description("причина зачем кикать")] string reason) {
+        // Data checks
+        if (!_context.TryGetGuildID(out var guildId))
+            return Result.FromError(new ArgumentNullError(nameof(guildId)));
+        if (!_context.TryGetUserID(out var userId))
+            return Result.FromError(new ArgumentNullError(nameof(userId)));
+        if (!_context.TryGetChannelID(out var channelId))
+            return Result.FromError(new ArgumentNullError(nameof(channelId)));
+
+        // The current user's avatar is used when sending error messages
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+            return Result.FromError(currentUserResult);
+
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var cfg = data.Configuration;
+        Messages.Culture = data.Culture;
+
+        var existingKickResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID);
+        if (!existingKickResult.IsSuccess) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
+                .WithColour(ColorsList.Red).Build();
+
+            if (!embed.IsDefined(out var alreadyBuilt))
+                return Result.FromError(embed);
+
+            return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
+        }
+
+        var interactionResult
+            = await _utility.CheckInteractionsAsync(guildId.Value, userId.Value, target.ID, "Kick", CancellationToken);
+        if (!interactionResult.IsSuccess)
+            return Result.FromError(interactionResult);
+
+        Result<Embed> responseEmbed;
+        if (interactionResult.Entity is not null) {
+            responseEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
+                .WithColour(ColorsList.Red).Build();
+        } else {
+            var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+            if (!userResult.IsDefined(out var user))
+                return Result.FromError(userResult);
+
+            var kickResult = await _guildApi.RemoveGuildMemberAsync(
+                guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason.EncodeHeader()}",
+                ct: CancellationToken);
+            if (!kickResult.IsSuccess)
+                return Result.FromError(kickResult.Error);
+
+            responseEmbed = new EmbedBuilder().WithSmallTitle(
+                    string.Format(Messages.UserKicked, target.GetTag()), target)
+                .WithColour(ColorsList.Green).Build();
+
+            if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
+                || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+                var logEmbed = new EmbedBuilder().WithSmallTitle(
+                        string.Format(Messages.UserKicked, target.GetTag()), target)
+                    .WithDescription(string.Format(Messages.DescriptionUserPunished, reason))
+                    .WithActionFooter(user)
+                    .WithCurrentTimestamp()
+                    .WithColour(ColorsList.Red)
+                    .Build();
+
+                if (!logEmbed.IsDefined(out var logBuilt))
+                    return Result.FromError(logEmbed);
+
+                var builtArray = new[] { logBuilt };
+                // Not awaiting to reduce response time
+                if (cfg.PrivateFeedbackChannel != channelId.Value)
+                    _ = _channelApi.CreateMessageAsync(
+                        cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        ct: CancellationToken);
+                if (cfg.PublicFeedbackChannel != channelId.Value)
+                    _ = _channelApi.CreateMessageAsync(
+                        cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        ct: CancellationToken);
+            }
+        }
+
+        if (!responseEmbed.IsDefined(out var built))
+            return Result.FromError(responseEmbed);
+
+        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+    }
+}

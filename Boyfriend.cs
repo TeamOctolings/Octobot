@@ -76,7 +76,8 @@ public class Boyfriend {
                         .AddSingleton<UtilityService>()
                         .AddHostedService<GuildUpdateService>()
                         .AddCommandTree()
-                        .WithCommandGroup<BanCommandGroup>();
+                        .WithCommandGroup<BanCommandGroup>()
+                        .WithCommandGroup<KickCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());

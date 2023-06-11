@@ -1,52 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
     <!--
-        Microsoft ResX Schema
+          Microsoft ResX Schema
 
-        Version 2.0
+          Version 2.0
 
-        The primary goals of this format is to allow a simple XML format
-        that is mostly human readable. The generation and parsing of the
-        various data types are done through the TypeConverter classes
-        associated with the data types.
+          The primary goals of this format is to allow a simple XML format
+          that is mostly human readable. The generation and parsing of the
+          various data types are done through the TypeConverter classes
+          associated with the data types.
 
-        Example:
+          Example:
 
-        ... ado.net/XML headers & schema ...
-        <resheader name="resmimetype">text/microsoft-resx</resheader><resheader name="version">2.0</resheader><resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader><resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader><data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data><data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data><data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64"><value>[base64 mime encoded serialized .NET Framework object]</value></data><data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64"><value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value><comment>This is a comment</comment></data>
+          ... ado.net/XML headers & schema ...
+          <resheader name="resmimetype">text/microsoft-resx</resheader><resheader name="version">2.0</resheader><resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader><resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader><data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data><data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data><data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64"><value>[base64 mime encoded serialized .NET Framework object]</value></data><data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64"><value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value><comment>This is a comment</comment></data>
 
-        There are any number of "resheader" rows that contain simple
-        name/value pairs.
+          There are any number of "resheader" rows that contain simple
+          name/value pairs.
 
-        Each data row contains a name, and value. The row also contains a
-        type or mimetype. Type corresponds to a .NET class that support
-        text/value conversion through the TypeConverter architecture.
-        Classes that don't support this are serialized and stored with the
-        mimetype set.
+          Each data row contains a name, and value. The row also contains a
+          type or mimetype. Type corresponds to a .NET class that support
+          text/value conversion through the TypeConverter architecture.
+          Classes that don't support this are serialized and stored with the
+          mimetype set.
 
-        The mimetype is used for serialized objects, and tells the
-        ResXResourceReader how to depersist the object. This is currently not
-        extensible. For a given mimetype the value must be set accordingly:
+          The mimetype is used for serialized objects, and tells the
+          ResXResourceReader how to depersist the object. This is currently not
+          extensible. For a given mimetype the value must be set accordingly:
 
-        Note - application/x-microsoft.net.object.binary.base64 is the format
-        that the ResXResourceWriter will generate, however the reader can
-        read any of the formats listed below.
+          Note - application/x-microsoft.net.object.binary.base64 is the format
+          that the ResXResourceWriter will generate, however the reader can
+          read any of the formats listed below.
 
-        mimetype: application/x-microsoft.net.object.binary.base64
-        value   : The object must be serialized with
-                : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-                : and then encoded with base64 encoding.
+          mimetype: application/x-microsoft.net.object.binary.base64
+          value   : The object must be serialized with
+                  : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+                  : and then encoded with base64 encoding.
 
-        mimetype: application/x-microsoft.net.object.soap.base64
-        value   : The object must be serialized with
-                : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-                : and then encoded with base64 encoding.
+          mimetype: application/x-microsoft.net.object.soap.base64
+          value   : The object must be serialized with
+                  : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+                  : and then encoded with base64 encoding.
 
-        mimetype: application/x-microsoft.net.object.bytearray.base64
-        value   : The object must be serialized into a byte array
-                : using a System.ComponentModel.TypeConverter
-                : and then encoded with base64 encoding.
-        -->
+          mimetype: application/x-microsoft.net.object.bytearray.base64
+          value   : The object must be serialized into a byte array
+                  : using a System.ComponentModel.TypeConverter
+                  : and then encoded with base64 encoding.
+          -->
     <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
         <xsd:element name="root" msdata:IsDataSet="true">
@@ -205,8 +205,8 @@
     <value>You need to specify an integer from {0} to {1} instead of {2}!</value>
   </data>
     <data name="UserBanned" xml:space="preserve">
-        <value>{0} was banned</value>
-    </data>
+    <value>{0} was banned</value>
+  </data>
     <data name="SettingDoesntExist" xml:space="preserve">
     <value>That setting doesn't exist!</value>
   </data>
@@ -231,37 +231,37 @@
     <data name="EventCreated" xml:space="preserve">
     <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;! \n {4}</value>
   </data>
-  <data name="SettingsEventNotificationRole" xml:space="preserve">
+    <data name="SettingsEventNotificationRole" xml:space="preserve">
     <value>Role for event creation notifications</value>
   </data>
-  <data name="SettingsEventNotificationChannel" xml:space="preserve">
+    <data name="SettingsEventNotificationChannel" xml:space="preserve">
     <value>Channel for event notifications</value>
   </data>
-  <data name="SettingsEventStartedReceivers" xml:space="preserve">
+    <data name="SettingsEventStartedReceivers" xml:space="preserve">
     <value>Event start notifications receivers</value>
   </data>
-  <data name="EventStarted" xml:space="preserve">
-        <value>Event "{0}" started</value>
-    </data>
-  <data name="SettingsFrowningFace" xml:space="preserve">
+    <data name="EventStarted" xml:space="preserve">
+    <value>Event "{0}" started</value>
+  </data>
+    <data name="SettingsFrowningFace" xml:space="preserve">
     <value>:(</value>
   </data>
-  <data name="EventCancelled" xml:space="preserve">
-        <value>Event "{0}" is cancelled!</value>
-    </data>
-  <data name="EventCompleted" xml:space="preserve">
-        <value>Event "{0}" has completed!</value>
-    </data>
-  <data name="Ever" xml:space="preserve">
+    <data name="EventCancelled" xml:space="preserve">
+    <value>Event "{0}" is cancelled!</value>
+  </data>
+    <data name="EventCompleted" xml:space="preserve">
+    <value>Event "{0}" has completed!</value>
+  </data>
+    <data name="Ever" xml:space="preserve">
     <value>ever</value>
   </data>
-  <data name="FeedbackMessagesCleared" xml:space="preserve">
+    <data name="FeedbackMessagesCleared" xml:space="preserve">
     <value>Deleted {0} messages in {1}</value>
   </data>
-  <data name="FeedbackMemberKicked" xml:space="preserve">
+    <data name="FeedbackMemberKicked" xml:space="preserve">
     <value>Kicked {0}: {1}</value>
   </data>
-  <data name="FeedbackMemberMuted" xml:space="preserve">
+    <data name="FeedbackMemberMuted" xml:space="preserve">
     <value>Muted {0} for{1}: {2}</value>
   </data>
     <data name="FeedbackUserUnbanned" xml:space="preserve">
@@ -436,8 +436,8 @@
     <value>I could not find this user in any guild I'm a member of! Check if the ID is correct and that the user was on this server no longer than 30 days ago</value>
   </data>
     <data name="SettingsDefaultRole" xml:space="preserve">
-        <value>Default role</value>
-    </data>
+    <value>Default role</value>
+  </data>
     <data name="CommandDescriptionRemind" xml:space="preserve">
     <value>Adds a reminder</value>
   </data>
@@ -474,25 +474,40 @@
     <data name="DescriptionExternalEventCreated" xml:space="preserve">
     <value>The event will start at {0} until {1} in {2}</value>
   </data>
-  <data name="EventDetailsButton" xml:space="preserve">
+    <data name="EventDetailsButton" xml:space="preserve">
     <value>Event details</value>
   </data>
     <data name="EventDuration" xml:space="preserve">
-        <value>The event has lasted for `{0}`</value>
-    </data>
+    <value>The event has lasted for `{0}`</value>
+  </data>
     <data name="DescriptionLocalEventStarted" xml:space="preserve">
-        <value>The event is happening at {0}</value>
-    </data>
+    <value>The event is happening at {0}</value>
+  </data>
     <data name="DescriptionExternalEventStarted" xml:space="preserve">
-        <value>The event is happening at {0} until {1}</value>
-    </data>
-    <data name="DescriptionUserBanned" xml:space="preserve">
-        <value>Reason: {0}</value>
-    </data>
+    <value>The event is happening at {0} until {1}</value>
+  </data>
     <data name="UserAlreadyBanned" xml:space="preserve">
-        <value>This user is already banned!</value>
-    </data>
+    <value>This user is already banned!</value>
+  </data>
     <data name="UserUnbanned" xml:space="preserve">
-        <value>{0} was unbanned</value>
-    </data>
+    <value>{0} was unbanned</value>
+  </data>
+    <data name="UserMuted" xml:space="preserve">
+    <value>{0} was muted</value>
+  </data>
+    <data name="UserUnmuted" xml:space="preserve">
+    <value>{0} was unmuted</value>
+  </data>
+    <data name="UserNotMuted" xml:space="preserve">
+    <value>This member is not muted!</value>
+  </data>
+    <data name="UserNotFoundShort" xml:space="preserve">
+    <value>I could not find this user!</value>
+  </data>
+    <data name="UserKicked" xml:space="preserve">
+    <value>{0} was kicked</value>
+  </data>
+    <data name="DescriptionUserPunished" xml:space="preserve">
+    <value>Reason: {0}</value>
+  </data>
 </root>

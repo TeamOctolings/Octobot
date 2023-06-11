@@ -56,14 +56,14 @@ public class BanCommandGroup : CommandGroup {
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
     ///     was banned and vice-versa.
     /// </returns>
-    /// <seealso cref="UnBanUserAsync" />
+    /// <seealso cref="UnbanUserAsync" />
     [Command("ban", "бан")]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("банит пидора")]
     public async Task<Result> BanUserAsync(
-        [Description("Юзер, кого банить")] IUser target, string reason, TimeSpan? duration = null) {
+        [Description("юзер кого банить")] IUser target, [Description("причина зачем банить")] string reason, TimeSpan? duration = null) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
@@ -122,7 +122,7 @@ public class BanCommandGroup : CommandGroup {
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserBanned, target.GetTag()), target)
-                    .WithDescription(string.Format(Messages.DescriptionUserBanned, reason))
+                    .WithDescription(string.Format(Messages.DescriptionUserPunished, reason))
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
                     .WithColour(ColorsList.Red)
@@ -169,7 +169,7 @@ public class BanCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("разбанит пидора")]
-    public async Task<Result> UnBanUserAsync([Description("Юзер, кого разбанить")] IUser target, string reason) {
+    public async Task<Result> UnbanUserAsync([Description("Юзер, кого разбанить")] IUser target, string reason) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
