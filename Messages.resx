@@ -507,7 +507,10 @@
     <data name="UserKicked" xml:space="preserve">
     <value>{0} was kicked</value>
   </data>
-    <data name="DescriptionUserPunished" xml:space="preserve">
+    <data name="DescriptionActionReason" xml:space="preserve">
     <value>Reason: {0}</value>
   </data>
+    <data name="DescriptionActionExpiresAt" xml:space="preserve">
+        <value>Expires at: {0}</value>
+    </data>
 </root>

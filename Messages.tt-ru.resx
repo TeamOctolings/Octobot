@@ -507,7 +507,10 @@
     <data name="UserKicked" xml:space="preserve">
     <value>{0} вышел с посторонней помощью</value>
   </data>
-    <data name="DescriptionUserPunished" xml:space="preserve">
+    <data name="DescriptionActionReason" xml:space="preserve">
     <value>причина: {0}</value>
   </data>
+    <data name="DescriptionActionExpiresAt" xml:space="preserve">
+        <value>заживёт: {0}</value>
+    </data>
 </root>

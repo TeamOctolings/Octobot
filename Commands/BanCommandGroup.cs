@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text;
 using Boyfriend.Services;
 using Boyfriend.Services.Data;
 using Remora.Commands.Attributes;
@@ -11,6 +12,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -63,7 +65,8 @@ public class BanCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("банит пидора")]
     public async Task<Result> BanUserAsync(
-        [Description("юзер кого банить")] IUser target, [Description("причина зачем банить")] string reason, TimeSpan? duration = null) {
+        [Description("юзер кого банить")] IUser target, [Description("причина зачем банить")] string reason,
+        TimeSpan?                               duration = null) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
@@ -107,11 +110,12 @@ public class BanCommandGroup : CommandGroup {
                 return Result.FromError(userResult);
 
             var banResult = await _guildApi.CreateGuildBanAsync(
-                guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason.EncodeHeader()}",
+                guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
                 ct: CancellationToken);
             if (!banResult.IsSuccess)
                 return Result.FromError(banResult.Error);
-            data.GetMemberData(target.ID).BannedUntil
+            var memberData = data.GetMemberData(target.ID);
+            memberData.BannedUntil
                 = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
 
             responseEmbed = new EmbedBuilder().WithSmallTitle(
@@ -120,9 +124,15 @@ public class BanCommandGroup : CommandGroup {
 
             if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+                var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason));
+                if (duration is not null)
+                    builder.Append(
+                        string.Format(
+                            Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
+
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserBanned, target.GetTag()), target)
-                    .WithDescription(string.Format(Messages.DescriptionUserPunished, reason))
+                    .WithDescription(builder.ToString())
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
                     .WithColour(ColorsList.Red)
@@ -203,7 +213,7 @@ public class BanCommandGroup : CommandGroup {
             return Result.FromError(userResult);
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
-            guildId.Value, target.ID, $"({user.GetTag()}) {reason.EncodeHeader()}",
+            guildId.Value, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct: CancellationToken);
         if (!unbanResult.IsSuccess)
             return Result.FromError(unbanResult.Error);
@@ -216,6 +226,7 @@ public class BanCommandGroup : CommandGroup {
             || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserUnbanned, target.GetTag()), target)
+                .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
                 .WithActionFooter(user)
                 .WithCurrentTimestamp()
                 .WithColour(ColorsList.Green)

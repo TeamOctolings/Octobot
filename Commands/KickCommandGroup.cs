@@ -102,7 +102,7 @@ public class KickCommandGroup : CommandGroup {
                 return Result.FromError(userResult);
 
             var kickResult = await _guildApi.RemoveGuildMemberAsync(
-                guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason.EncodeHeader()}",
+                guildId.Value, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
                 ct: CancellationToken);
             if (!kickResult.IsSuccess)
                 return Result.FromError(kickResult.Error);
@@ -115,7 +115,7 @@ public class KickCommandGroup : CommandGroup {
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserKicked, target.GetTag()), target)
-                    .WithDescription(string.Format(Messages.DescriptionUserPunished, reason))
+                    .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
                     .WithColour(ColorsList.Red)
