@@ -7,10 +7,10 @@ namespace Boyfriend.Data;
 /// </summary>
 /// <remarks>This information is stored on disk as a JSON file.</remarks>
 public class ScheduledEventData {
-    public DateTimeOffset?           ActualStartTime;
-    public GuildScheduledEventStatus Status;
-
     public ScheduledEventData(GuildScheduledEventStatus status) {
         Status = status;
     }
+
+    public DateTimeOffset?           ActualStartTime { get; set; }
+    public GuildScheduledEventStatus Status          { get; set; }
 }

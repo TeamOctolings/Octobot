@@ -11,11 +11,24 @@ namespace Boyfriend.Services.Data;
 public class GuildDataService : IHostedService {
     private readonly Dictionary<Snowflake, GuildData> _datas = new();
 
+    // https://github.com/dotnet/aspnetcore/issues/39139
+    public GuildDataService(IHostApplicationLifetime lifetime) {
+        lifetime.ApplicationStopping.Register(ApplicationStopping);
+    }
+
     public Task StartAsync(CancellationToken ct) {
         return Task.CompletedTask;
     }
 
-    public async Task StopAsync(CancellationToken ct) {
+    public Task StopAsync(CancellationToken ct) {
+        return Task.CompletedTask;
+    }
+
+    private void ApplicationStopping() {
+        SaveAsync(CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    private async Task SaveAsync(CancellationToken ct) {
         var tasks = new List<Task>();
         foreach (var data in _datas.Values) {
             await using var configStream = File.OpenWrite(data.ConfigurationPath);
@@ -23,6 +36,11 @@ public class GuildDataService : IHostedService {
 
             await using var eventsStream = File.OpenWrite(data.ScheduledEventsPath);
             tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
+
+            foreach (var memberData in data.MemberData.Values) {
+                await using var memberDataStream = File.OpenWrite($"{data.MemberDataPath}/{memberData.Id}.json");
+                tasks.Add(JsonSerializer.SerializeAsync(memberDataStream, memberData, cancellationToken: ct));
+            }
         }
 
         await Task.WhenAll(tasks);
@@ -34,11 +52,11 @@ public class GuildDataService : IHostedService {
 
     private async Task<GuildData> InitializeData(Snowflake guildId, CancellationToken ct = default) {
         var idString = $"{guildId}";
-        var memberDataDir = $"{guildId}/MemberData";
+        var memberDataPath = $"{guildId}/MemberData";
         var configurationPath = $"{guildId}/Configuration.json";
         var scheduledEventsPath = $"{guildId}/ScheduledEvents.json";
         if (!Directory.Exists(idString)) Directory.CreateDirectory(idString);
-        if (!Directory.Exists(memberDataDir)) Directory.CreateDirectory(memberDataDir);
+        if (!Directory.Exists(memberDataPath)) Directory.CreateDirectory(memberDataPath);
         if (!File.Exists(configurationPath)) await File.WriteAllTextAsync(configurationPath, "{}", ct);
         if (!File.Exists(scheduledEventsPath)) await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
 
@@ -52,15 +70,32 @@ public class GuildDataService : IHostedService {
             = JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
                 eventsStream, cancellationToken: ct);
 
-        var data = new GuildData(
+        var memberData = new Dictionary<ulong, MemberData>();
+        foreach (var dataPath in Directory.GetFiles(memberDataPath)) {
+            await using var dataStream = File.OpenRead(dataPath);
+            var data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
+            if (data is null) continue;
+
+            memberData.Add(data.Id, data);
+        }
+
+        var finalData = new GuildData(
             await configuration ?? new GuildConfiguration(), configurationPath,
-            await events ?? new Dictionary<ulong, ScheduledEventData>(),
-            scheduledEventsPath);
-        _datas.Add(guildId, data);
-        return data;
+            await events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
+            memberData, memberDataPath);
+        _datas.Add(guildId, finalData);
+        return finalData;
     }
 
     public async Task<GuildConfiguration> GetConfiguration(Snowflake guildId, CancellationToken ct = default) {
         return (await GetData(guildId, ct)).Configuration;
+    }
+
+    public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {
+        return (await GetData(guildId, ct)).GetMemberData(userId);
+    }
+
+    public List<Snowflake> GetGuildIds() {
+        return _datas.Keys.ToList();
     }
 }

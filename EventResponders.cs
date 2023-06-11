@@ -32,12 +32,12 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
     private readonly IDiscordRestUserAPI           _userApi;
 
     public GuildCreateResponder(
-        IDiscordRestChannelAPI        channelApi, GuildDataService dataService, IDiscordRestUserAPI userApi,
-        ILogger<GuildCreateResponder> logger) {
+        IDiscordRestChannelAPI channelApi, GuildDataService dataService, ILogger<GuildCreateResponder> logger,
+        IDiscordRestUserAPI    userApi) {
         _channelApi = channelApi;
         _dataService = dataService;
-        _userApi = userApi;
         _logger = logger;
+        _userApi = userApi;
     }
 
     public async Task<Result> RespondAsync(IGuildCreate gatewayEvent, CancellationToken ct = default) {
@@ -55,7 +55,7 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
 
-        Messages.Culture = guildConfig.Culture;
+        Messages.Culture = guildConfig.GetCulture();
         var i = Random.Shared.Next(1, 4);
 
         var embed = new EmbedBuilder()
@@ -116,7 +116,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
             if (!userResult.IsDefined(out user)) return Result.FromError(userResult);
         }
 
-        Messages.Culture = guildConfiguration.Culture;
+        Messages.Culture = guildConfiguration.GetCulture();
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(
@@ -194,7 +194,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
 
         var diff = new SideBySideDiffBuilder(Differ.Instance).BuildDiffModel(message.Content, newContent, true, true);
 
-        Messages.Culture = guildConfiguration.Culture;
+        Messages.Culture = guildConfiguration.GetCulture();
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.CachedMessageEdited, message.Author.GetTag()), message.Author)
@@ -234,7 +234,7 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
         if (guildConfiguration.WelcomeMessage is "off" or "disable" or "disabled")
             return Result.FromSuccess();
 
-        Messages.Culture = guildConfiguration.Culture;
+        Messages.Culture = guildConfiguration.GetCulture();
         var welcomeMessage = guildConfiguration.WelcomeMessage is "default" or "reset"
             ? Messages.DefaultWelcomeMessage
             : guildConfiguration.WelcomeMessage;

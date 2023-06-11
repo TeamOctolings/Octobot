@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using DiffPlex.DiffBuilder.Model;
 using Remora.Discord.API;
@@ -106,6 +107,10 @@ public static class Extensions {
 
     public static string Localized(this string key) {
         return Messages.ResourceManager.GetString(key, Messages.Culture) ?? key;
+    }
+
+    public static string EncodeHeader(this string s) {
+        return WebUtility.UrlEncode(s).Replace('+', ' ');
     }
 
     public static string AsMarkdown(this SideBySideDiffModel model) {

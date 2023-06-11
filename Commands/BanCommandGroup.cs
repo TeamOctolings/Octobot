@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Net;
 using Boyfriend.Services;
 using Boyfriend.Services.Data;
 using Remora.Commands.Attributes;
@@ -48,8 +47,9 @@ public class BanCommandGroup : CommandGroup {
     ///     A slash command that bans a Discord user with the specified reason.
     /// </summary>
     /// <param name="target">The user to ban.</param>
+    /// <param name="duration">The duration for this ban. The user will be automatically unbanned after this duration.</param>
     /// <param name="reason">
-    ///     The reason for this ban. Must be encoded with <see cref="WebUtility.UrlEncode" /> when passed to
+    ///     The reason for this ban. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.CreateGuildBanAsync" />.
     /// </param>
     /// <returns>
@@ -62,7 +62,8 @@ public class BanCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("банит пидора")]
-    public async Task<Result> BanUserAsync([Description("Юзер, кого банить")] IUser target, string reason) {
+    public async Task<Result> BanUserAsync(
+        [Description("Юзер, кого банить")] IUser target, string reason, TimeSpan? duration = null) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
@@ -76,8 +77,9 @@ public class BanCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.Culture;
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var cfg = data.Configuration;
+        Messages.Culture = data.Culture;
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (existingBanResult.IsDefined()) {
@@ -105,10 +107,12 @@ public class BanCommandGroup : CommandGroup {
                 return Result.FromError(userResult);
 
             var banResult = await _guildApi.CreateGuildBanAsync(
-                guildId.Value, target.ID, reason: $"({user.GetTag()}) {WebUtility.UrlEncode(reason)}",
+                guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason.EncodeHeader()}",
                 ct: CancellationToken);
             if (!banResult.IsSuccess)
                 return Result.FromError(banResult.Error);
+            data.GetMemberData(target.ID).BannedUntil
+                = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
 
             responseEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserBanned, target.GetTag()), target)
@@ -151,7 +155,7 @@ public class BanCommandGroup : CommandGroup {
     /// </summary>
     /// <param name="target">The user to unban.</param>
     /// <param name="reason">
-    ///     The reason for this unban. Must be encoded with <see cref="WebUtility.UrlEncode" /> when passed to
+    ///     The reason for this unban. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.RemoveGuildBanAsync" />.
     /// </param>
     /// <returns>
@@ -179,7 +183,7 @@ public class BanCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.Culture;
+        Messages.Culture = cfg.GetCulture();
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (!existingBanResult.IsDefined()) {
@@ -198,7 +202,7 @@ public class BanCommandGroup : CommandGroup {
             return Result.FromError(userResult);
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
-            guildId.Value, target.ID, reason: $"({user.GetTag()}) {WebUtility.UrlEncode(reason)}",
+            guildId.Value, target.ID, $"({user.GetTag()}) {reason.EncodeHeader()}",
             ct: CancellationToken);
         if (!unbanResult.IsSuccess)
             return Result.FromError(unbanResult.Error);
@@ -231,7 +235,6 @@ public class BanCommandGroup : CommandGroup {
                     cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
                     ct: CancellationToken);
         }
-
 
         if (!responseEmbed.IsDefined(out var built))
             return Result.FromError(responseEmbed);

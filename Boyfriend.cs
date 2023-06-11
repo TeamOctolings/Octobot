@@ -74,6 +74,7 @@ public class Boyfriend {
                         .AddInteractionGroup<InteractionResponders>()
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
+                        .AddHostedService<GuildUpdateService>()
                         .AddCommandTree()
                         .WithCommandGroup<BanCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly

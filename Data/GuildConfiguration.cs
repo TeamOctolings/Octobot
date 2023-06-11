@@ -83,5 +83,7 @@ public class GuildConfiguration {
     /// </summary>
     public TimeSpan EventEarlyNotificationOffset { get; set; } = TimeSpan.Zero;
 
-    public CultureInfo Culture => CultureInfoCache[Language];
+    public CultureInfo GetCulture() {
+        return CultureInfoCache[Language];
+    }
 }
