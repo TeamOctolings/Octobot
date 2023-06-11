@@ -163,6 +163,7 @@ public class BanCommandGroup : CommandGroup {
     ///     was unbanned and vice-versa.
     /// </returns>
     /// <seealso cref="BanUserAsync" />
+    /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
     [Command("unban")]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]

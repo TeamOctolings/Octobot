@@ -33,9 +33,10 @@ public class GuildUpdateService : BackgroundService {
 
         foreach (var memberData in data.MemberData.Values)
             if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
-                _ = _guildApi.RemoveGuildBanAsync(
+                var unbanResult = await _guildApi.RemoveGuildBanAsync(
                     guildId, memberData.Id.ToDiscordSnowflake(), Messages.PunishmentExpired.EncodeHeader(), ct);
-                memberData.BannedUntil = null;
+                if (unbanResult.IsSuccess)
+                    memberData.BannedUntil = null;
             }
     }
 }
