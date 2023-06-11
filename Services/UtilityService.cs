@@ -1,5 +1,9 @@
+using System.Text;
+using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
@@ -10,12 +14,15 @@ namespace Boyfriend.Services;
 ///     of some Discord APIs.
 /// </summary>
 public class UtilityService : IHostedService {
-    private readonly IDiscordRestGuildAPI _guildApi;
-    private readonly IDiscordRestUserAPI  _userApi;
+    private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
+    private readonly IDiscordRestGuildAPI               _guildApi;
+    private readonly IDiscordRestUserAPI                _userApi;
 
-    public UtilityService(IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi) {
+    public UtilityService(
+        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, IDiscordRestGuildScheduledEventAPI eventApi) {
         _guildApi = guildApi;
         _userApi = userApi;
+        _eventApi = eventApi;
     }
 
     public Task StartAsync(CancellationToken ct) {
@@ -93,5 +100,26 @@ public class UtilityService : IHostedService {
             return Result<string?>.FromSuccess($"UserCannot{action}Target".Localized());
 
         return Result<string?>.FromSuccess(null);
+    }
+
+    public async Task<Result<string>> GetEventNotificationMentions(
+        GuildData data, IGuildScheduledEvent scheduledEvent, CancellationToken ct = default) {
+        var builder = new StringBuilder();
+        var receivers = data.Configuration.EventStartedReceivers;
+        var role = data.Configuration.EventNotificationRole.ToDiscordSnowflake();
+        var usersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
+            scheduledEvent.GuildID, scheduledEvent.ID, withMember: true, ct: ct);
+        if (!usersResult.IsDefined(out var users)) return Result<string>.FromError(usersResult);
+
+        if (receivers.Contains(GuildConfiguration.NotificationReceiver.Role) && role.Value is not 0)
+            builder.Append($"{Mention.Role(role)} ");
+        if (receivers.Contains(GuildConfiguration.NotificationReceiver.Interested))
+            builder = users.Where(
+                    user => {
+                        if (!user.GuildMember.IsDefined(out var member)) return true;
+                        return !member.Roles.Contains(role);
+                    })
+                .Aggregate(builder, (current, user) => current.Append($"{Mention.User(user.User)} "));
+        return builder.ToString();
     }
 }

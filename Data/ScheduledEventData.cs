@@ -11,6 +11,7 @@ public class ScheduledEventData {
         Status = status;
     }
 
-    public DateTimeOffset?           ActualStartTime { get; set; }
-    public GuildScheduledEventStatus Status          { get; set; }
+    public bool                      EarlyNotificationSent { get; set; }
+    public DateTimeOffset?           ActualStartTime       { get; set; }
+    public GuildScheduledEventStatus Status                { get; set; }
 }

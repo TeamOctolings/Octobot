@@ -91,11 +91,11 @@ public class GuildDataService : IHostedService {
         return (await GetData(guildId, ct)).Configuration;
     }
 
-    public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {
+    /*public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {
         return (await GetData(guildId, ct)).GetMemberData(userId);
-    }
+    }*/
 
-    public List<Snowflake> GetGuildIds() {
-        return _datas.Keys.ToList();
+    public IEnumerable<Snowflake> GetGuildIds() {
+        return _datas.Keys;
     }
 }
