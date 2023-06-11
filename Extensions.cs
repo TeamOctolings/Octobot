@@ -109,6 +109,12 @@ public static class Extensions {
         return Messages.ResourceManager.GetString(key, Messages.Culture) ?? key;
     }
 
+    /// <summary>
+    ///     Encodes a string to allow its transmission in request headers.
+    /// </summary>
+    /// <remarks>Used when encountering "Request headers must contain only ASCII characters".</remarks>
+    /// <param name="s">The string to encode.</param>
+    /// <returns>An encoded string with spaces kept intact.</returns>
     public static string EncodeHeader(this string s) {
         return WebUtility.UrlEncode(s).Replace('+', ' ');
     }
