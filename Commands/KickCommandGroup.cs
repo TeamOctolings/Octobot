@@ -126,13 +126,14 @@ public class KickCommandGroup : CommandGroup {
 
                 var builtArray = new[] { logBuilt };
                 // Not awaiting to reduce response time
-                if (cfg.PrivateFeedbackChannel != channelId.Value)
-                    _ = _channelApi.CreateMessageAsync(
-                        cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
-                        ct: CancellationToken);
                 if (cfg.PublicFeedbackChannel != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
                         cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        ct: CancellationToken);
+                if (cfg.PrivateFeedbackChannel != cfg.PublicFeedbackChannel
+                    && cfg.PrivateFeedbackChannel != channelId.Value)
+                    _ = _channelApi.CreateMessageAsync(
+                        cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
                         ct: CancellationToken);
             }
         }
