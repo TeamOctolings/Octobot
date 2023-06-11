@@ -705,9 +705,9 @@ namespace Boyfriend {
             }
         }
         
-        internal static string SettingsStarterRole {
+        internal static string SettingsDefaultRole {
             get {
-                return ResourceManager.GetString("SettingsStarterRole", resourceCulture);
+                return ResourceManager.GetString("SettingsDefaultRole", resourceCulture);
             }
         }
         

@@ -21,11 +21,15 @@ using Remora.Results;
 
 namespace Boyfriend;
 
+/// <summary>
+///     Handles sending a <see cref="Messages.Ready" /> message to a guild that has just initialized if that guild
+///     has <see cref="GuildConfiguration.ReceiveStartupMessages" /> enabled
+/// </summary>
 public class GuildCreateResponder : IResponder<IGuildCreate> {
-    private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
+    private readonly IDiscordRestChannelAPI        _channelApi;
+    private readonly GuildDataService              _dataService;
     private readonly ILogger<GuildCreateResponder> _logger;
-    private readonly IDiscordRestUserAPI _userApi;
+    private readonly IDiscordRestUserAPI           _userApi;
 
     public GuildCreateResponder(
         IDiscordRestChannelAPI        channelApi, GuildDataService dataService, IDiscordRestUserAPI userApi,
@@ -37,7 +41,7 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
     }
 
     public async Task<Result> RespondAsync(IGuildCreate gatewayEvent, CancellationToken ct = default) {
-        if (!gatewayEvent.Guild.IsT0) return Result.FromSuccess(); // is IAvailableGuild
+        if (!gatewayEvent.Guild.IsT0) return Result.FromSuccess(); // Guild isn't IAvailableGuild
 
         var guild = gatewayEvent.Guild.AsT0;
         _logger.LogInformation("Joined guild \"{Name}\"", guild.Name);
@@ -68,11 +72,15 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
     }
 }
 
+/// <summary>
+///     Handles logging the contents of a deleted message and the user who deleted the message
+///     to a guild's <see cref="GuildConfiguration.PrivateFeedbackChannel" /> if one is set.
+/// </summary>
 public class MessageDeletedResponder : IResponder<IMessageDelete> {
     private readonly IDiscordRestAuditLogAPI _auditLogApi;
-    private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
-    private readonly IDiscordRestUserAPI _userApi;
+    private readonly IDiscordRestChannelAPI  _channelApi;
+    private readonly GuildDataService        _dataService;
+    private readonly IDiscordRestUserAPI     _userApi;
 
     public MessageDeletedResponder(
         IDiscordRestAuditLogAPI auditLogApi, IDiscordRestChannelAPI channelApi,
@@ -129,11 +137,15 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
     }
 }
 
+/// <summary>
+///     Handles logging the difference between an edited message's old and new content
+///     to a guild's <see cref="GuildConfiguration.PrivateFeedbackChannel" /> if one is set.
+/// </summary>
 public class MessageEditedResponder : IResponder<IMessageUpdate> {
-    private readonly CacheService _cacheService;
+    private readonly CacheService           _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
-    private readonly IDiscordRestUserAPI _userApi;
+    private readonly GuildDataService       _dataService;
+    private readonly IDiscordRestUserAPI    _userApi;
 
     public MessageEditedResponder(
         CacheService        cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService,
@@ -153,7 +165,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
         if (!gatewayEvent.Content.IsDefined(out var newContent))
             return Result.FromSuccess();
         if (!gatewayEvent.EditedTimestamp.IsDefined(out var timestamp))
-            return Result.FromSuccess();
+            return Result.FromSuccess(); // The message wasn't actually edited
 
         if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ChannelID)));
@@ -199,10 +211,14 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
     }
 }
 
+/// <summary>
+///     Handles sending a guild's <see cref="GuildConfiguration.WelcomeMessage" /> if one is set.
+/// </summary>
+/// <seealso cref="GuildConfiguration.WelcomeMessage" />
 public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
-    private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService       _dataService;
+    private readonly IDiscordRestGuildAPI   _guildApi;
 
     public GuildMemberAddResponder(
         IDiscordRestChannelAPI channelApi, GuildDataService dataService, IDiscordRestGuildAPI guildApi) {
@@ -243,10 +259,16 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
     }
 }
 
+/// <summary>
+///     Handles sending a notification, mentioning the <see cref="GuildConfiguration.EventNotificationRole" /> if one is
+///     set,
+///     when a scheduled event is created
+///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
+/// </summary>
 public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEventCreate> {
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
-    private readonly IDiscordRestUserAPI _userApi;
+    private readonly GuildDataService       _dataService;
+    private readonly IDiscordRestUserAPI    _userApi;
 
     public GuildScheduledEventCreateResponder(
         IDiscordRestChannelAPI channelApi, GuildDataService dataService,
@@ -339,9 +361,15 @@ public class GuildScheduledEventCreateResponder : IResponder<IGuildScheduledEven
     }
 }
 
+/// <summary>
+///     Handles sending a notification, mentioning the <see cref="GuildConfiguration.EventNotificationRole" /> if one is
+///     set,
+///     when a scheduled event has started or completed
+///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
+/// </summary>
 public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEventUpdate> {
-    private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
+    private readonly IDiscordRestChannelAPI             _channelApi;
+    private readonly GuildDataService                   _dataService;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
 
     public GuildScheduledEventUpdateResponder(
@@ -353,10 +381,16 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
 
     public async Task<Result> RespondAsync(IGuildScheduledEventUpdate gatewayEvent, CancellationToken ct = default) {
         var guildData = await _dataService.GetData(gatewayEvent.GuildID, ct);
-        if (gatewayEvent.Status == guildData.ScheduledEvents[gatewayEvent.ID.Value].Status
-            || guildData.Configuration.EventNotificationChannel is 0) return Result.FromSuccess();
+        if (guildData.Configuration.EventNotificationChannel is 0)
+            return Result.FromSuccess();
+        if (!guildData.ScheduledEvents.TryGetValue(gatewayEvent.ID.Value, out var data)) {
+            guildData.ScheduledEvents.Add(gatewayEvent.ID.Value, new ScheduledEventData(gatewayEvent.Status));
+        } else {
+            if (gatewayEvent.Status == data.Status)
+                return Result.FromSuccess();
 
-        guildData.ScheduledEvents[gatewayEvent.ID.Value].Status = gatewayEvent.Status;
+            guildData.ScheduledEvents[gatewayEvent.ID.Value].Status = gatewayEvent.Status;
+        }
 
         var embed = new EmbedBuilder();
         StringBuilder? content = null;
@@ -442,11 +476,15 @@ public class GuildScheduledEventUpdateResponder : IResponder<IGuildScheduledEven
     }
 }
 
-public class GuildScheduledEventResponder : IResponder<IGuildScheduledEventDelete> {
+/// <summary>
+///     Handles sending a notification when a scheduled event has been cancelled
+///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
+/// </summary>
+public class GuildScheduledEventDeleteResponder : IResponder<IGuildScheduledEventDelete> {
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService _dataService;
+    private readonly GuildDataService       _dataService;
 
-    public GuildScheduledEventResponder(IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
+    public GuildScheduledEventDeleteResponder(IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
         _channelApi = channelApi;
         _dataService = dataService;
     }

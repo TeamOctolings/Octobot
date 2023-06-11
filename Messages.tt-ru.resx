@@ -435,9 +435,9 @@
     <data name="UserNotFound" xml:space="preserve">
     <value>у нас такого шизоида нету, проверь, валиден ли ID уважаемого (я забываю о шизоидах если они ливнули минимум месяц назад)</value>
   </data>
-    <data name="SettingsStarterRole" xml:space="preserve">
-    <value>базовое звание</value>
-  </data>
+    <data name="SettingsDefaultRole" xml:space="preserve">
+        <value>дефолтное звание</value>
+    </data>
     <data name="CommandDescriptionRemind" xml:space="preserve">
     <value>крафтит напоминалку</value>
   </data>

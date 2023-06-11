@@ -10,6 +10,12 @@ using Remora.Rest.Core;
 namespace Boyfriend;
 
 public static class Extensions {
+    /// <summary>
+    ///     Adds a footer with the <paramref name="user" />'s avatar and tag (username#0000).
+    /// </summary>
+    /// <param name="builder">The builder to add the footer to.</param>
+    /// <param name="user">The user whose tag and avatar to add.</param>
+    /// <returns>The builder with the added footer.</returns>
     public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user) {
         var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
         var avatarUrl = avatarUrlResult.IsSuccess
@@ -19,6 +25,12 @@ public static class Extensions {
         return builder.WithFooter(new EmbedFooter(user.GetTag(), avatarUrl));
     }
 
+    /// <summary>
+    ///     Adds a footer representing that an action was performed by a <paramref name="user" />.
+    /// </summary>
+    /// <param name="builder">The builder to add the footer to.</param>
+    /// <param name="user">The user that performed the action whose tag and avatar to use.</param>
+    /// <returns>The builder with the added footer.</returns>
     public static EmbedBuilder WithActionFooter(this EmbedBuilder builder, IUser user) {
         var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
         var avatarUrl = avatarUrlResult.IsSuccess
@@ -29,6 +41,14 @@ public static class Extensions {
             new EmbedFooter($"{Messages.IssuedBy}:\n{user.GetTag()}", avatarUrl));
     }
 
+    /// <summary>
+    ///     Adds a title using the author field, making it smaller than using the title field.
+    /// </summary>
+    /// <param name="builder">The builder to add the small title to.</param>
+    /// <param name="text">The text of the small title.</param>
+    /// <param name="avatarSource">The user whose avatar to use in the small title.</param>
+    /// <param name="url">The URL that will be opened if a user clicks on the small title.</param>
+    /// <returns>The builder with the added small title in the author field.</returns>
     public static EmbedBuilder WithSmallTitle(
         this EmbedBuilder builder, string text, IUser? avatarSource = null, string? url = default) {
         Uri? avatarUrl = null;
@@ -44,6 +64,12 @@ public static class Extensions {
         return builder;
     }
 
+    /// <summary>
+    ///     Adds a footer representing that the action was performed in the <paramref name="guild" />.
+    /// </summary>
+    /// <param name="builder">The builder to add the footer to.</param>
+    /// <param name="guild">The guild whose name and icon to use.</param>
+    /// <returns>The builder with the added footer.</returns>
     public static EmbedBuilder WithGuildFooter(this EmbedBuilder builder, IGuild guild) {
         var iconUrlResult = CDN.GetGuildIconUrl(guild, imageSize: 256);
         var iconUrl = iconUrlResult.IsSuccess
@@ -53,6 +79,13 @@ public static class Extensions {
         return builder.WithFooter(new EmbedFooter(guild.Name, iconUrl));
     }
 
+    /// <summary>
+    ///     Adds a scheduled event's cover image.
+    /// </summary>
+    /// <param name="builder">The builder to add the image to.</param>
+    /// <param name="eventId">The ID of the scheduled event whose image to use.</param>
+    /// <param name="imageHashOptional">The Optional containing the image hash.</param>
+    /// <returns>The builder with the added cover image.</returns>
     public static EmbedBuilder WithEventCover(
         this EmbedBuilder builder, Snowflake eventId, Optional<IImageHash?> imageHashOptional) {
         if (!imageHashOptional.IsDefined(out var imageHash)) return builder;
@@ -61,6 +94,12 @@ public static class Extensions {
         return iconUrlResult.IsDefined(out var iconUrl) ? builder.WithImageUrl(iconUrl.AbsoluteUri) : builder;
     }
 
+    /// <summary>
+    ///     Sanitizes a string for use in <see cref="Markdown.BlockCode(string)" /> by inserting zero-width spaces in between
+    ///     symbols used to format the string with block code.
+    /// </summary>
+    /// <param name="s">The string to sanitize.</param>
+    /// <returns>The sanitized string that can be safely used in <see cref="Markdown.BlockCode(string)" />.</returns>
     public static string SanitizeForBlockCode(this string s) {
         return s.Replace("```", "​`​`​`​");
     }
@@ -81,7 +120,6 @@ public static class Extensions {
     public static string GetTag(this IUser user) {
         return $"{user.Username}#{user.Discriminator:0000}";
     }
-
 
     public static Snowflake ToDiscordSnowflake(this ulong id) {
         return DiscordSnowflake.New(id);

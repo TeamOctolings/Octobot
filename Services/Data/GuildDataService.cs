@@ -5,6 +5,9 @@ using Remora.Rest.Core;
 
 namespace Boyfriend.Services.Data;
 
+/// <summary>
+///     Handles saving, loading, initializing and providing <see cref="GuildData" />.
+/// </summary>
 public class GuildDataService : IHostedService {
     private readonly Dictionary<Snowflake, GuildData> _datas = new();
 

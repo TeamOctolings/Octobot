@@ -19,6 +19,9 @@ using Remora.Results;
 
 namespace Boyfriend.Commands;
 
+/// <summary>
+///     Handles commands related to ban management: /ban and unban.
+/// </summary>
 public class BanCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -41,12 +44,26 @@ public class BanCommandGroup : CommandGroup {
         _utility = utility;
     }
 
-    [Command("ban")]
+    /// <summary>
+    ///     A slash command that bans a Discord user with the specified reason.
+    /// </summary>
+    /// <param name="target">The user to ban.</param>
+    /// <param name="reason">
+    ///     The reason for this ban. Must be encoded with <see cref="WebUtility.UrlEncode" /> when passed to
+    ///     <see cref="IDiscordRestGuildAPI.CreateGuildBanAsync" />.
+    /// </param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
+    ///     was banned and vice-versa.
+    /// </returns>
+    /// <seealso cref="UnBanUserAsync" />
+    [Command("ban", "бан")]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("банит пидора")]
     public async Task<Result> BanUserAsync([Description("Юзер, кого банить")] IUser target, string reason) {
+        // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
         if (!_context.TryGetUserID(out var userId))
@@ -54,6 +71,7 @@ public class BanCommandGroup : CommandGroup {
         if (!_context.TryGetChannelID(out var channelId))
             return Result.FromError(new ArgumentNullError(nameof(channelId)));
 
+        // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
@@ -110,6 +128,7 @@ public class BanCommandGroup : CommandGroup {
                     return Result.FromError(logEmbed);
 
                 var builtArray = new[] { logBuilt };
+                // Not awaiting to reduce response time
                 if (cfg.PrivateFeedbackChannel != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
                         cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
@@ -127,12 +146,26 @@ public class BanCommandGroup : CommandGroup {
         return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
     }
 
+    /// <summary>
+    ///     A slash command that unbans a Discord user with the specified reason.
+    /// </summary>
+    /// <param name="target">The user to unban.</param>
+    /// <param name="reason">
+    ///     The reason for this unban. Must be encoded with <see cref="WebUtility.UrlEncode" /> when passed to
+    ///     <see cref="IDiscordRestGuildAPI.RemoveGuildBanAsync" />.
+    /// </param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
+    ///     was unbanned and vice-versa.
+    /// </returns>
+    /// <seealso cref="BanUserAsync" />
     [Command("unban")]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("разбанит пидора")]
     public async Task<Result> UnBanUserAsync([Description("Юзер, кого разбанить")] IUser target, string reason) {
+        // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
         if (!_context.TryGetUserID(out var userId))
@@ -140,6 +173,7 @@ public class BanCommandGroup : CommandGroup {
         if (!_context.TryGetChannelID(out var channelId))
             return Result.FromError(new ArgumentNullError(nameof(channelId)));
 
+        // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
@@ -158,8 +192,7 @@ public class BanCommandGroup : CommandGroup {
             return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
         }
 
-        Result<Embed> responseEmbed;
-
+        // Needed to get the tag and avatar
         var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
@@ -170,7 +203,7 @@ public class BanCommandGroup : CommandGroup {
         if (!unbanResult.IsSuccess)
             return Result.FromError(unbanResult.Error);
 
-        responseEmbed = new EmbedBuilder().WithSmallTitle(
+        var responseEmbed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnbanned, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
@@ -187,6 +220,8 @@ public class BanCommandGroup : CommandGroup {
                 return Result.FromError(logEmbed);
 
             var builtArray = new[] { logBuilt };
+
+            // Not awaiting to reduce response time
             if (cfg.PrivateFeedbackChannel != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
                     cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,

@@ -5,6 +5,9 @@
 
 namespace Boyfriend;
 
+/// <summary>
+///     Contains all colors used in embeds.
+/// </summary>
 public static class ColorsList {
     public static readonly Color Default = Color.Gray;
     public static readonly Color Red     = Color.Firebrick;

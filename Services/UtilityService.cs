@@ -5,6 +5,10 @@ using Remora.Results;
 
 namespace Boyfriend.Services;
 
+/// <summary>
+///     Provides utility methods that cannot be transformed to extension methods because they require usage
+///     of some Discord APIs.
+/// </summary>
 public class UtilityService : IHostedService {
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly IDiscordRestUserAPI  _userApi;
@@ -22,6 +26,24 @@ public class UtilityService : IHostedService {
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Checks whether or not a member can interact with another member
+    /// </summary>
+    /// <param name="guildId">The ID of the guild in which an operation is being performed.</param>
+    /// <param name="interacterId">The executor of the operation.</param>
+    /// <param name="targetId">The target of the operation.</param>
+    /// <param name="action">The operation.</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
+    /// <returns>
+    ///     <list type="bullet">
+    ///         <item>A result which has succeeded with a null string if the member can interact with the target.</item>
+    ///         <item>
+    ///             A result which has succeeded with a non-null string containing the error message if the member cannot
+    ///             interact with the target.
+    ///         </item>
+    ///         <item>A result which has failed if an error occurred during the execution of this method.</item>
+    ///     </list>
+    /// </returns>
     public async Task<Result<string?>> CheckInteractionsAsync(
         Snowflake guildId, Snowflake interacterId, Snowflake targetId, string action, CancellationToken ct = default) {
         if (interacterId == targetId)
