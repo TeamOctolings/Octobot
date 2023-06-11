@@ -102,11 +102,26 @@ public class UtilityService : IHostedService {
         return Result<string?>.FromSuccess(null);
     }
 
+    /// <summary>
+    ///     Gets the string mentioning all <see cref="GuildConfiguration.NotificationReceiver" />s related to a scheduled
+    ///     event.
+    /// </summary>
+    /// <remarks>
+    ///     If the guild configuration enables <see cref="GuildConfiguration.NotificationReceiver.Role" />, then the
+    ///     <see cref="GuildConfiguration.EventNotificationRole" /> will also be mentioned.
+    /// </remarks>
+    /// <param name="scheduledEvent">
+    ///     The scheduled event whose subscribers will be mentioned if the guild configuration enables
+    ///     <see cref="GuildConfiguration.NotificationReceiver.Interested" />.
+    /// </param>
+    /// <param name="config">The configuration of the guild containing the scheduled event</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
+    /// <returns>A result containing the string which may or may not have succeeded.</returns>
     public async Task<Result<string>> GetEventNotificationMentions(
-        GuildData data, IGuildScheduledEvent scheduledEvent, CancellationToken ct = default) {
+        IGuildScheduledEvent scheduledEvent, GuildConfiguration config, CancellationToken ct = default) {
         var builder = new StringBuilder();
-        var receivers = data.Configuration.EventStartedReceivers;
-        var role = data.Configuration.EventNotificationRole.ToDiscordSnowflake();
+        var receivers = config.EventStartedReceivers;
+        var role = config.EventNotificationRole.ToDiscordSnowflake();
         var usersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
             scheduledEvent.GuildID, scheduledEvent.ID, withMember: true, ct: ct);
         if (!usersResult.IsDefined(out var users)) return Result<string>.FromError(usersResult);

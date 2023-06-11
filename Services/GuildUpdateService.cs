@@ -7,12 +7,16 @@ using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
+using Remora.Discord.Gateway.Responders;
 using Remora.Discord.Interactivity;
 using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Services;
 
+/// <summary>
+///     Handles executing guild updates (also called "ticks") once per second.
+/// </summary>
 public class GuildUpdateService : BackgroundService {
     private readonly IDiscordRestChannelAPI             _channelApi;
     private readonly GuildDataService                   _dataService;
@@ -35,6 +39,11 @@ public class GuildUpdateService : BackgroundService {
         _utility = utility;
     }
 
+    /// <summary>
+    ///     Activates a periodic timer with a 1 second interval and adds guild update tasks on each timer tick.
+    /// </summary>
+    /// <remarks>If update tasks take longer than 1 second, the next timer tick will be skipped.</remarks>
+    /// <param name="ct">The cancellation token for this operation.</param>
     protected override async Task ExecuteAsync(CancellationToken ct) {
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
         var tasks = new List<Task>();
@@ -47,6 +56,28 @@ public class GuildUpdateService : BackgroundService {
         }
     }
 
+    /// <summary>
+    ///     Runs an update ("tick") for a guild with the provided <paramref name="guildId" />.
+    /// </summary>
+    /// <remarks>
+    ///     This method does the following:
+    ///     <list type="bullet">
+    ///         <item>Automatically unbans users once their ban period has expired.</item>
+    ///         <item>Sends reminders about an upcoming scheduled event.</item>
+    ///         <item>Sends scheduled event start notifications.</item>
+    ///         <item>Sends scheduled event completion notifications.</item>
+    ///     </list>
+    ///     This is done here and not in a <see cref="IResponder{TGatewayEvent}" /> for the following reasons:
+    ///     <list type="bullet">
+    ///         <item>
+    ///             Downtime would affect the reliability of notifications and automatic unbans if this logic were to be in a
+    ///             <see cref="IResponder{TGatewayEvent}" />.
+    ///         </item>
+    ///         <item>The Discord API doesn't provide necessary about scheduled event updates.</item>
+    ///     </list>
+    /// </remarks>
+    /// <param name="guildId">The ID of the guild to update.</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
     private async Task TickGuildAsync(Snowflake guildId, CancellationToken ct = default) {
         var data = await _dataService.GetData(guildId, ct);
         Messages.Culture = data.Culture;
@@ -76,7 +107,7 @@ public class GuildUpdateService : BackgroundService {
                     if (DateTimeOffset.UtcNow
                         >= scheduledEvent.ScheduledStartTime - data.Configuration.EventEarlyNotificationOffset
                         && !storedEvent.EarlyNotificationSent) {
-                        var earlyResult = await SendScheduledEventStartedMessage(scheduledEvent, data, true, ct);
+                        var earlyResult = await SendScheduledEventUpdatedMessage(scheduledEvent, data, true, ct);
                         if (earlyResult.IsSuccess)
                             storedEvent.EarlyNotificationSent = true;
                         else
@@ -95,7 +126,7 @@ public class GuildUpdateService : BackgroundService {
                 GuildScheduledEventStatus.Scheduled =>
                     await SendScheduledEventCreatedMessage(scheduledEvent, data.Configuration, ct),
                 GuildScheduledEventStatus.Active or GuildScheduledEventStatus.Completed =>
-                    await SendScheduledEventStartedMessage(scheduledEvent, data, false, ct),
+                    await SendScheduledEventUpdatedMessage(scheduledEvent, data, false, ct),
                 _ => Result.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.Status)))
             };
 
@@ -110,6 +141,10 @@ public class GuildUpdateService : BackgroundService {
     ///     when a scheduled event is created
     ///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
     /// </summary>
+    /// <param name="scheduledEvent">The scheduled event that has just been created.</param>
+    /// <param name="config">The configuration of the guild containing the scheduled event.</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
+    /// <returns>A notification sending result which may or may not have succeeded.</returns>
     private async Task<Result> SendScheduledEventCreatedMessage(
         IGuildScheduledEvent scheduledEvent, GuildConfiguration config, CancellationToken ct = default) {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
@@ -189,7 +224,12 @@ public class GuildUpdateService : BackgroundService {
     ///     when a scheduled event is about to start, has started or completed
     ///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
     /// </summary>
-    private async Task<Result> SendScheduledEventStartedMessage(
+    /// <param name="scheduledEvent">The scheduled event that is about to start, has started or completed.</param>
+    /// <param name="data">The data for the guild containing the scheduled event.</param>
+    /// <param name="early">Controls whether or not a reminder for the scheduled event should be sent instead of the event started/completed notification</param>
+    /// <param name="ct">The cancellation token for this operation</param>
+    /// <returns>A reminder/notification sending result which may or may not have succeeded.</returns>
+    private async Task<Result> SendScheduledEventUpdatedMessage(
         IGuildScheduledEvent scheduledEvent, GuildData data, bool early, CancellationToken ct = default) {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
@@ -233,7 +273,8 @@ public class GuildUpdateService : BackgroundService {
                             return Result.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.EntityType)));
                     }
 
-                    var contentResult = await _utility.GetEventNotificationMentions(data, scheduledEvent, ct);
+                    var contentResult = await _utility.GetEventNotificationMentions(
+                        scheduledEvent, data.Configuration, ct);
                     if (!contentResult.IsDefined(out content))
                         return Result.FromError(contentResult);
 
