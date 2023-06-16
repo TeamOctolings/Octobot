@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
@@ -11,9 +12,9 @@ namespace Boyfriend.Services.Data;
 ///     Handles saving, loading, initializing and providing <see cref="GuildData" />.
 /// </summary>
 public class GuildDataService : IHostedService {
-    private readonly Dictionary<Snowflake, GuildData> _datas = new();
-    private readonly IDiscordRestGuildAPI             _guildApi;
-    private readonly ILogger<GuildDataService>        _logger;
+    private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
+    private readonly IDiscordRestGuildAPI                       _guildApi;
+    private readonly ILogger<GuildDataService>                  _logger;
 
     // https://github.com/dotnet/aspnetcore/issues/39139
     public GuildDataService(
@@ -85,8 +86,6 @@ public class GuildDataService : IHostedService {
             var memberResult = await _guildApi.GetGuildMemberAsync(guildId, data.Id.ToDiscordSnowflake(), ct);
             if (memberResult.IsSuccess)
                 data.Roles = memberResult.Entity.Roles.ToList();
-            else
-                _logger.LogWarning("Error in member retrieval.\n{ErrorMessage}", memberResult.Error.Message);
 
             memberData.Add(data.Id, data);
         }
@@ -95,7 +94,7 @@ public class GuildDataService : IHostedService {
             await configuration ?? new GuildConfiguration(), configurationPath,
             await events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
             memberData, memberDataPath);
-        _datas.Add(guildId, finalData);
+        while (!_datas.ContainsKey(guildId)) _datas.TryAdd(guildId, finalData);
         return finalData;
     }
 

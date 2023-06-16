@@ -21,7 +21,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles commands related to mute management: /mute and unmute.
+///     Handles commands related to mute management: /mute and /unmute.
 /// </summary>
 public class MuteCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
@@ -65,8 +65,10 @@ public class MuteCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("мутит друга <3")]
     public async Task<Result> MuteUserAsync(
-        [Description("друг которого нужно замутить ПОТОМУ-ЧТО ОН ЗАЕБАЛ")] IUser target,
-        [Description("причина зачем мутить друга (пиши заебал)")] string reason,
+        [Description("друг которого нужно замутить ПОТОМУ-ЧТО ОН ЗАЕБАЛ")]
+        IUser target,
+        [Description("причина зачем мутить друга (пиши заебал)")]
+        string reason,
         TimeSpan duration) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
@@ -82,15 +84,14 @@ public class MuteCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guildId.Value, userId.Value, target.ID, "Timeout", CancellationToken);
+            = await _utility.CheckInteractionsAsync(
+                guildId.Value, userId.Value, target.ID, "Timeout", CancellationToken);
         if (!interactionResult.IsSuccess)
             return Result.FromError(interactionResult);
 
         var data = await _dataService.GetData(guildId.Value, CancellationToken);
         var cfg = data.Configuration;
         Messages.Culture = data.Culture;
-
-        var newCoolDuration = DateTimeOffset.UtcNow.Add(duration);
 
         Result<Embed> responseEmbed;
         if (interactionResult.Entity is not null) {
@@ -101,9 +102,10 @@ public class MuteCommandGroup : CommandGroup {
             if (!userResult.IsDefined(out var user))
                 return Result.FromError(userResult);
 
+            var until = DateTimeOffset.UtcNow.Add(duration); // >:)
             var muteResult = await _guildApi.ModifyGuildMemberAsync(
                 guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
-                communicationDisabledUntil: newCoolDuration, ct: CancellationToken);
+                communicationDisabledUntil: until, ct: CancellationToken);
             if (!muteResult.IsSuccess)
                 return Result.FromError(muteResult.Error);
 
@@ -113,10 +115,10 @@ public class MuteCommandGroup : CommandGroup {
 
             if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
-                var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason));
-                builder.Append(
+                var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+                    .Append(
                         string.Format(
-                            Messages.DescriptionActionExpiresAt, Markdown.Timestamp(newCoolDuration)));
+                            Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until)));
 
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserMuted, target.GetTag()), target)
@@ -163,7 +165,7 @@ public class MuteCommandGroup : CommandGroup {
     /// </returns>
     /// <seealso cref="MuteUserAsync" />
     /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
-    [Command("unmute")]
+    [Command("unmute", "размут")]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
@@ -185,7 +187,8 @@ public class MuteCommandGroup : CommandGroup {
         var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         Messages.Culture = cfg.GetCulture();
 
-        var existingMuteResult = await _guildApi.ModifyGuildMemberAsync(guildId.Value, target.ID, communicationDisabledUntil: DateTimeOffset.UtcNow);
+        var existingMuteResult = await _guildApi.ModifyGuildMemberAsync(
+            guildId.Value, target.ID, communicationDisabledUntil: DateTimeOffset.UtcNow);
         if (!existingMuteResult.IsSuccess) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotMuted, currentUser)
                 .WithColour(ColorsList.Red).Build();
