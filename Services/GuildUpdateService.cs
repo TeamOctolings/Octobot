@@ -63,7 +63,9 @@ public class GuildUpdateService : BackgroundService {
     ///     This method does the following:
     ///     <list type="bullet">
     ///         <item>Automatically unbans users once their ban period has expired.</item>
+    ///         <item>Automatically grants users the guild's <see cref="GuildConfiguration.DefaultRole"/> if one is set.</item>
     ///         <item>Sends reminders about an upcoming scheduled event.</item>
+    ///         <item>Automatically starts scheduled events if <see cref="GuildConfiguration.AutoStartEvents"/> is enabled.</item>
     ///         <item>Sends scheduled event start notifications.</item>
     ///         <item>Sends scheduled event completion notifications.</item>
     ///     </list>
@@ -73,7 +75,7 @@ public class GuildUpdateService : BackgroundService {
     ///             Downtime would affect the reliability of notifications and automatic unbans if this logic were to be in a
     ///             <see cref="IResponder{TGatewayEvent}" />.
     ///         </item>
-    ///         <item>The Discord API doesn't provide necessary about scheduled event updates.</item>
+    ///         <item>The Discord API doesn't provide necessary information about scheduled event updates.</item>
     ///     </list>
     /// </remarks>
     /// <param name="guildId">The ID of the guild to update.</param>
@@ -81,17 +83,29 @@ public class GuildUpdateService : BackgroundService {
     private async Task TickGuildAsync(Snowflake guildId, CancellationToken ct = default) {
         var data = await _dataService.GetData(guildId, ct);
         Messages.Culture = data.Culture;
+        var defaultRoleSnowflake = data.Configuration.DefaultRole.ToDiscordSnowflake();
 
-        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
-        foreach (var memberData in data.MemberData.Values)
+        foreach (var memberData in data.MemberData.Values) {
+            var userIdSnowflake = memberData.Id.ToDiscordSnowflake();
+            if (!memberData.Roles.Contains(defaultRoleSnowflake)) {
+                var defaultRoleResult = await _guildApi.AddGuildMemberRoleAsync(
+                    guildId, userIdSnowflake, defaultRoleSnowflake, ct: ct);
+                if (!defaultRoleResult.IsSuccess)
+                    _logger.LogWarning(
+                        "Error in automatic default role add request.\n{ErrorMessage}",
+                        defaultRoleResult.Error.Message);
+            }
+
             if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
                 var unbanResult = await _guildApi.RemoveGuildBanAsync(
-                    guildId, memberData.Id.ToDiscordSnowflake(), Messages.PunishmentExpired.EncodeHeader(), ct);
+                    guildId, userIdSnowflake, Messages.PunishmentExpired.EncodeHeader(), ct);
                 if (unbanResult.IsSuccess)
                     memberData.BannedUntil = null;
                 else
-                    _logger.LogWarning("Error in member data update.\n{ErrorMessage}", unbanResult.Error.Message);
+                    _logger.LogWarning(
+                        "Error in automatic user unban request.\n{ErrorMessage}", unbanResult.Error.Message);
             }
+        }
 
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
         if (!eventsResult.IsDefined(out var events)) return;
@@ -104,9 +118,19 @@ public class GuildUpdateService : BackgroundService {
             } else {
                 var storedEvent = data.ScheduledEvents[scheduledEvent.ID.Value];
                 if (storedEvent.Status == scheduledEvent.Status) {
-                    if (DateTimeOffset.UtcNow
-                        >= scheduledEvent.ScheduledStartTime - data.Configuration.EventEarlyNotificationOffset
-                        && !storedEvent.EarlyNotificationSent) {
+                    if (DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime) {
+                        if (scheduledEvent.Status is not GuildScheduledEventStatus.Active) {
+                            var startResult = await _eventApi.ModifyGuildScheduledEventAsync(
+                                guildId, scheduledEvent.ID,
+                                status: GuildScheduledEventStatus.Active, ct: ct);
+                            if (!startResult.IsSuccess)
+                                _logger.LogWarning(
+                                    "Error in automatic scheduled event start request.\n{ErrorMessage}",
+                                    startResult.Error.Message);
+                        }
+                    } else if (DateTimeOffset.UtcNow
+                               >= scheduledEvent.ScheduledStartTime - data.Configuration.EventEarlyNotificationOffset
+                               && !storedEvent.EarlyNotificationSent) {
                         var earlyResult = await SendScheduledEventUpdatedMessage(scheduledEvent, data, true, ct);
                         if (earlyResult.IsSuccess)
                             storedEvent.EarlyNotificationSent = true;

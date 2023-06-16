@@ -23,7 +23,7 @@ public class InteractionResponders : InteractionGroup {
     ///     A button that will output an ephemeral embed containing the information about a scheduled event.
     /// </summary>
     /// <param name="state">The ID of the guild and scheduled event, encoded as "guildId:eventId".</param>
-    /// <returns>A feedback sending result which may or may not have succeeded.</returns>
+    /// <returns>An ephemeral feedback sending result which may or may not have succeeded.</returns>
     [Button("scheduled-event-details")]
     public async Task<Result> OnStatefulButtonClicked(string? state = null) {
         if (state is null) return Result.FromError(new ArgumentNullError(nameof(state)));

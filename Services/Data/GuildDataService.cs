@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest.Core;
 
 namespace Boyfriend.Services.Data;
@@ -10,9 +12,14 @@ namespace Boyfriend.Services.Data;
 /// </summary>
 public class GuildDataService : IHostedService {
     private readonly Dictionary<Snowflake, GuildData> _datas = new();
+    private readonly IDiscordRestGuildAPI             _guildApi;
+    private readonly ILogger<GuildDataService>        _logger;
 
     // https://github.com/dotnet/aspnetcore/issues/39139
-    public GuildDataService(IHostApplicationLifetime lifetime) {
+    public GuildDataService(
+        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi, ILogger<GuildDataService> logger) {
+        _guildApi = guildApi;
+        _logger = logger;
         lifetime.ApplicationStopping.Register(ApplicationStopping);
     }
 
@@ -75,6 +82,11 @@ public class GuildDataService : IHostedService {
             await using var dataStream = File.OpenRead(dataPath);
             var data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
             if (data is null) continue;
+            var memberResult = await _guildApi.GetGuildMemberAsync(guildId, data.Id.ToDiscordSnowflake(), ct);
+            if (memberResult.IsSuccess)
+                data.Roles = memberResult.Entity.Roles.ToList();
+            else
+                _logger.LogWarning("Error in member retrieval.\n{ErrorMessage}", memberResult.Error.Message);
 
             memberData.Add(data.Id, data);
         }
@@ -91,9 +103,9 @@ public class GuildDataService : IHostedService {
         return (await GetData(guildId, ct)).Configuration;
     }
 
-    /*public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {
+    public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {
         return (await GetData(guildId, ct)).GetMemberData(userId);
-    }*/
+    }
 
     public IEnumerable<Snowflake> GetGuildIds() {
         return _datas.Keys;

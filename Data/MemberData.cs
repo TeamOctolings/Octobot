@@ -1,3 +1,5 @@
+using Remora.Rest.Core;
+
 namespace Boyfriend.Data;
 
 public class MemberData {
@@ -8,4 +10,5 @@ public class MemberData {
 
     public ulong           Id          { get; }
     public DateTimeOffset? BannedUntil { get; set; }
+    public List<Snowflake> Roles       { get; set; } = new();
 }
