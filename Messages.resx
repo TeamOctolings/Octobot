@@ -513,4 +513,7 @@
     <data name="DescriptionActionExpiresAt" xml:space="preserve">
         <value>Expires at: {0}</value>
     </data>
+    <data name="UserAlreadyMuted" xml:space="preserve">
+        <value>This user is already muted!</value>
+    </data>
 </root>
