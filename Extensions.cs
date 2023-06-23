@@ -129,7 +129,7 @@ public static class Extensions {
     }
 
     public static string GetTag(this IUser user) {
-        return $"{user.Username}#{user.Discriminator:0000}";
+        return user.Discriminator is 0000 ? $"@{user.Username}" : $"{user.Username}#{user.Discriminator:0000}";
     }
 
     public static Snowflake ToDiscordSnowflake(this ulong id) {

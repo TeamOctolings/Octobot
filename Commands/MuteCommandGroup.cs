@@ -21,9 +21,9 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles commands related to ban management: /ban and /unban.
+///     Handles commands related to mute management: /mute and /unmute.
 /// </summary>
-public class BanCommandGroup : CommandGroup {
+public class MuteCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
     private readonly GuildDataService       _dataService;
@@ -32,7 +32,7 @@ public class BanCommandGroup : CommandGroup {
     private readonly IDiscordRestUserAPI    _userApi;
     private readonly UtilityService         _utility;
 
-    public BanCommandGroup(
+    public MuteCommandGroup(
         ICommandContext context,         IDiscordRestChannelAPI channelApi, GuildDataService    dataService,
         FeedbackService feedbackService, IDiscordRestGuildAPI   guildApi,   IDiscordRestUserAPI userApi,
         UtilityService  utility) {
@@ -46,27 +46,30 @@ public class BanCommandGroup : CommandGroup {
     }
 
     /// <summary>
-    ///     A slash command that bans a Discord user with the specified reason.
+    ///     A slash command that mutes a Discord user with the specified reason.
     /// </summary>
-    /// <param name="target">The user to ban.</param>
-    /// <param name="duration">The duration for this ban. The user will be automatically unbanned after this duration.</param>
+    /// <param name="target">The user to mute.</param>
+    /// <param name="duration">The duration for this mute. The user will be automatically unmuted after this duration.</param>
     /// <param name="reason">
-    ///     The reason for this ban. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
-    ///     <see cref="IDiscordRestGuildAPI.CreateGuildBanAsync" />.
+    ///     The reason for this mute. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
-    ///     was banned and vice-versa.
+    ///     was muted and vice-versa.
     /// </returns>
-    /// <seealso cref="UnbanUserAsync" />
-    [Command("ban", "бан")]
+    /// <seealso cref="UnmuteUserAsync" />
+    [Command("mute", "мут")]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.BanMembers)]
-    [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
-    [Description("банит пидора")]
-    public async Task<Result> BanUserAsync(
-        [Description("юзер кого банить")] IUser target, [Description("причина зачем банить")] string reason,
-        TimeSpan?                               duration = null) {
+    [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
+    [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
+    [Description("мутит друга <3")]
+    public async Task<Result> MuteUserAsync(
+        [Description("друг которого нужно замутить ПОТОМУ-ЧТО ОН ЗАЕБАЛ")]
+        IUser target,
+        [Description("причина зачем мутить друга (пиши заебал)")]
+        string reason,
+        TimeSpan duration) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
@@ -80,13 +83,9 @@ public class BanCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
-        var cfg = data.Configuration;
-        Messages.Culture = data.Culture;
-
-        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
-        if (existingBanResult.IsDefined()) {
-            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, currentUser)
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        if (!memberResult.IsSuccess) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
             if (!embed.IsDefined(out var alreadyBuilt))
@@ -96,9 +95,14 @@ public class BanCommandGroup : CommandGroup {
         }
 
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guildId.Value, userId.Value, target.ID, "Ban", CancellationToken);
+            = await _utility.CheckInteractionsAsync(
+                guildId.Value, userId.Value, target.ID, "Mute", CancellationToken);
         if (!interactionResult.IsSuccess)
             return Result.FromError(interactionResult);
+
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var cfg = data.Configuration;
+        Messages.Culture = data.Culture;
 
         Result<Embed> responseEmbed;
         if (interactionResult.Entity is not null) {
@@ -109,29 +113,26 @@ public class BanCommandGroup : CommandGroup {
             if (!userResult.IsDefined(out var user))
                 return Result.FromError(userResult);
 
-            var banResult = await _guildApi.CreateGuildBanAsync(
+            var until = DateTimeOffset.UtcNow.Add(duration); // >:)
+            var muteResult = await _guildApi.ModifyGuildMemberAsync(
                 guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
-                ct: CancellationToken);
-            if (!banResult.IsSuccess)
-                return Result.FromError(banResult.Error);
-            var memberData = data.GetMemberData(target.ID);
-            memberData.BannedUntil
-                = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
+                communicationDisabledUntil: until, ct: CancellationToken);
+            if (!muteResult.IsSuccess)
+                return Result.FromError(muteResult.Error);
 
             responseEmbed = new EmbedBuilder().WithSmallTitle(
-                    string.Format(Messages.UserBanned, target.GetTag()), target)
+                    string.Format(Messages.UserMuted, target.GetTag()), target)
                 .WithColour(ColorsList.Green).Build();
 
             if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
-                var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason));
-                if (duration is not null)
-                    builder.Append(
+                var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+                    .Append(
                         string.Format(
-                            Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
+                            Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until)));
 
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
-                        string.Format(Messages.UserBanned, target.GetTag()), target)
+                        string.Format(Messages.UserMuted, target.GetTag()), target)
                     .WithDescription(builder.ToString())
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
@@ -162,25 +163,25 @@ public class BanCommandGroup : CommandGroup {
     }
 
     /// <summary>
-    ///     A slash command that unbans a Discord user with the specified reason.
+    ///     A slash command that unmutes a Discord user with the specified reason.
     /// </summary>
-    /// <param name="target">The user to unban.</param>
+    /// <param name="target">The user to unmute.</param>
     /// <param name="reason">
-    ///     The reason for this unban. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
-    ///     <see cref="IDiscordRestGuildAPI.RemoveGuildBanAsync" />.
+    ///     The reason for this unmute. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
-    ///     was unbanned and vice-versa.
+    ///     was unmuted and vice-versa.
     /// </returns>
-    /// <seealso cref="BanUserAsync" />
+    /// <seealso cref="MuteUserAsync" />
     /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
-    [Command("unban")]
+    [Command("unmute", "размут")]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.BanMembers)]
-    [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
-    [Description("разбанит пидора")]
-    public async Task<Result> UnbanUserAsync([Description("Юзер, кого разбанить")] IUser target, string reason) {
+    [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
+    [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
+    [Description("ФУНКЦИЯ ФОРС РАЗМУТ КАВАЯ КОЛЕСИКИ!!!!1111111111")]
+    public async Task<Result> UnmuteUserAsync([Description("юзер кого раззамучивать")] IUser target, string reason) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));
@@ -197,9 +198,9 @@ public class BanCommandGroup : CommandGroup {
         var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         Messages.Culture = cfg.GetCulture();
 
-        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
-        if (!existingBanResult.IsDefined()) {
-            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, currentUser)
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        if (!memberResult.IsSuccess) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
             if (!embed.IsDefined(out var alreadyBuilt))
@@ -208,25 +209,31 @@ public class BanCommandGroup : CommandGroup {
             return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
         }
 
+        var interactionResult
+            = await _utility.CheckInteractionsAsync(
+                guildId.Value, userId.Value, target.ID, "Unmute", CancellationToken);
+        if (!interactionResult.IsSuccess)
+            return Result.FromError(interactionResult);
+
         // Needed to get the tag and avatar
         var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var unbanResult = await _guildApi.RemoveGuildBanAsync(
+        var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId.Value, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
-            ct: CancellationToken);
-        if (!unbanResult.IsSuccess)
-            return Result.FromError(unbanResult.Error);
+            communicationDisabledUntil: null, ct: CancellationToken);
+        if (!unmuteResult.IsSuccess)
+            return Result.FromError(unmuteResult.Error);
 
         var responseEmbed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.UserUnbanned, target.GetTag()), target)
+                string.Format(Messages.UserUnmuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
         if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
             || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(
-                    string.Format(Messages.UserUnbanned, target.GetTag()), target)
+                    string.Format(Messages.UserUnmuted, target.GetTag()), target)
                 .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
                 .WithActionFooter(user)
                 .WithCurrentTimestamp()

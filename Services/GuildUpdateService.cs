@@ -87,14 +87,9 @@ public class GuildUpdateService : BackgroundService {
 
         foreach (var memberData in data.MemberData.Values) {
             var userIdSnowflake = memberData.Id.ToDiscordSnowflake();
-            if (!memberData.Roles.Contains(defaultRoleSnowflake)) {
-                var defaultRoleResult = await _guildApi.AddGuildMemberRoleAsync(
+            if (defaultRoleSnowflake.Value is not 0 && !memberData.Roles.Contains(defaultRoleSnowflake))
+                _ = _guildApi.AddGuildMemberRoleAsync(
                     guildId, userIdSnowflake, defaultRoleSnowflake, ct: ct);
-                if (!defaultRoleResult.IsSuccess)
-                    _logger.LogWarning(
-                        "Error in automatic default role add request.\n{ErrorMessage}",
-                        defaultRoleResult.Error.Message);
-            }
 
             if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
                 var unbanResult = await _guildApi.RemoveGuildBanAsync(
