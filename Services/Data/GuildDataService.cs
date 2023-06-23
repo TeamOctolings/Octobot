@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest.Core;
 
@@ -14,13 +13,11 @@ namespace Boyfriend.Services.Data;
 public class GuildDataService : IHostedService {
     private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
     private readonly IDiscordRestGuildAPI                       _guildApi;
-    private readonly ILogger<GuildDataService>                  _logger;
 
     // https://github.com/dotnet/aspnetcore/issues/39139
     public GuildDataService(
-        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi, ILogger<GuildDataService> logger) {
+        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi) {
         _guildApi = guildApi;
-        _logger = logger;
         lifetime.ApplicationStopping.Register(ApplicationStopping);
     }
 
