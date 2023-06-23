@@ -31,6 +31,10 @@ public class Boyfriend {
         var services = host.Services;
 
         var slashService = services.GetRequiredService<SlashService>();
+        // Providing a guild ID to this call will result in command duplicates!
+        // To get rid of them, provide the ID of the guild containing duplicates,
+        // comment out calls to WithCommandGroup in CreateHostBuilder
+        // then launch the bot again and remove the guild ID
         await slashService.UpdateSlashCommandsAsync();
 
         await host.RunAsync();
