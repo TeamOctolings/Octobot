@@ -83,9 +83,20 @@ public class MuteCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        if (!memberResult.IsSuccess) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
+                .WithColour(ColorsList.Red).Build();
+
+            if (!embed.IsDefined(out var alreadyBuilt))
+                return Result.FromError(embed);
+
+            return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
+        }
+
         var interactionResult
             = await _utility.CheckInteractionsAsync(
-                guildId.Value, userId.Value, target.ID, "Timeout", CancellationToken);
+                guildId.Value, userId.Value, target.ID, "Mute", CancellationToken);
         if (!interactionResult.IsSuccess)
             return Result.FromError(interactionResult);
 
@@ -187,10 +198,9 @@ public class MuteCommandGroup : CommandGroup {
         var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         Messages.Culture = cfg.GetCulture();
 
-        var existingMuteResult = await _guildApi.ModifyGuildMemberAsync(
-            guildId.Value, target.ID, communicationDisabledUntil: DateTimeOffset.UtcNow);
-        if (!existingMuteResult.IsSuccess) {
-            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotMuted, currentUser)
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        if (!memberResult.IsSuccess) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
             if (!embed.IsDefined(out var alreadyBuilt))
@@ -199,6 +209,12 @@ public class MuteCommandGroup : CommandGroup {
             return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
         }
 
+        var interactionResult
+            = await _utility.CheckInteractionsAsync(
+                guildId.Value, userId.Value, target.ID, "Unmute", CancellationToken);
+        if (!interactionResult.IsSuccess)
+            return Result.FromError(interactionResult);
+
         // Needed to get the tag and avatar
         var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
         if (!userResult.IsDefined(out var user))
@@ -206,7 +222,7 @@ public class MuteCommandGroup : CommandGroup {
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId.Value, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
-            communicationDisabledUntil: DateTimeOffset.UtcNow, ct: CancellationToken);
+            communicationDisabledUntil: null, ct: CancellationToken);
         if (!unmuteResult.IsSuccess)
             return Result.FromError(unmuteResult.Error);
 

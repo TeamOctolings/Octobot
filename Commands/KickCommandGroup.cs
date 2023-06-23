@@ -76,8 +76,8 @@ public class KickCommandGroup : CommandGroup {
         var cfg = data.Configuration;
         Messages.Culture = data.Culture;
 
-        var existingKickResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID);
-        if (!existingKickResult.IsSuccess) {
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        if (!memberResult.IsSuccess) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 

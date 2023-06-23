@@ -21,7 +21,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles commands related to ban management: /ban and unban.
+///     Handles commands related to ban management: /ban and /unban.
 /// </summary>
 public class BanCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
