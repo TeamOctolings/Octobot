@@ -63,12 +63,10 @@ public class MuteCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
-    [Description("мутит друга <3")]
+    [Description("глушит юзера")]
     public async Task<Result> MuteUserAsync(
-        [Description("друг которого нужно замутить ПОТОМУ-ЧТО ОН ЗАЕБАЛ")]
-        IUser target,
-        [Description("причина зачем мутить друга (пиши заебал)")]
-        string reason,
+        [Description("юзер кого глушить")]     IUser  target,
+        [Description("причина зачем глушить")] string reason,
         [Description("продолжительность мута")]
         TimeSpan duration) {
         // Data checks
@@ -181,7 +179,7 @@ public class MuteCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
-    [Description("ФУНКЦИЯ ФОРС РАЗМУТ КАВАЯ КОЛЕСИКИ!!!!1111111111")]
+    [Description("разрешает юзеру снова говорить")]
     public async Task<Result> UnmuteUserAsync(
         [Description("юзер кого раззамучивать")]
         IUser target,

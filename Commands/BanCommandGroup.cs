@@ -63,7 +63,7 @@ public class BanCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
-    [Description("банит пидора")]
+    [Description("банит юзера")]
     public async Task<Result> BanUserAsync(
         [Description("юзер кого банить")]     IUser  target,
         [Description("причина зачем банить")] string reason,
@@ -177,7 +177,7 @@ public class BanCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
-    [Description("разбанит пидора")]
+    [Description("разбанит юзера")]
     public async Task<Result> UnbanUserAsync(
         [Description("юзер кого разбанить")] IUser target,
         [Description("причина зачем разбанить")]

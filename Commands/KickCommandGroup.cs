@@ -55,9 +55,9 @@ public class KickCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.KickMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
-    [Description("кикает твоего друга <3")]
+    [Description("кикает юзера")]
     public async Task<Result> KickUserAsync(
-        [Description("друг которого кикать")] IUser  target,
+        [Description("юзер кого кикать")]     IUser  target,
         [Description("причина зачем кикать")] string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
