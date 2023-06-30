@@ -103,7 +103,7 @@ public class GuildDataService : IHostedService {
         return (await GetData(guildId, ct)).GetMemberData(userId);
     }
 
-    public IEnumerable<Snowflake> GetGuildIds() {
+    public ICollection<Snowflake> GetGuildIds() {
         return _datas.Keys;
     }
 }

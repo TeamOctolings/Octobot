@@ -1,12 +1,15 @@
 using Boyfriend.Data;
 using Boyfriend.Services.Data;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.API.Gateway.Commands;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
+using Remora.Discord.Gateway;
 using Remora.Discord.Gateway.Responders;
 using Remora.Discord.Interactivity;
 using Remora.Rest.Core;
@@ -18,23 +21,38 @@ namespace Boyfriend.Services;
 ///     Handles executing guild updates (also called "ticks") once per second.
 /// </summary>
 public class GuildUpdateService : BackgroundService {
+    private static readonly (string Name, TimeSpan Duration)[] SongList = {
+        ("UNDEAD CORPORATION - The Empress", new TimeSpan(0, 4, 34)),
+        ("UNDEAD CORPORATION - Everything will freeze", new TimeSpan(0, 3, 17)),
+        ("Splatoon 3 - Rockagilly Blues (Yoko & the Gold Bazookas)", new TimeSpan(0, 3, 37)),
+        ("Splatoon 3 - Seep and Destroy", new TimeSpan(0, 2, 42)),
+        ("IA - A Tale of Six Trillion Years and a Night", new TimeSpan(0, 3, 40)),
+        ("Manuel - Gas Gas Gas", new TimeSpan(0, 3, 17))
+    };
+
+    private readonly List<Activity> _activityList = new(1) { new Activity("with Remora.Discord", ActivityType.Game) };
+
     private readonly IDiscordRestChannelAPI             _channelApi;
     private readonly GuildDataService                   _dataService;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly IDiscordRestGuildAPI               _guildApi;
     private readonly ILogger<GuildUpdateService>        _logger;
+    private readonly IServiceProvider                   _provider;
     private readonly IDiscordRestUserAPI                _userApi;
     private readonly UtilityService                     _utility;
+    private          DateTimeOffset                     _nextSongAt = DateTimeOffset.MinValue;
+    private          uint                               _nextSongIndex;
 
     public GuildUpdateService(
-        IDiscordRestChannelAPI             channelApi, GuildDataService dataService, IDiscordRestGuildAPI guildApi,
-        IDiscordRestGuildScheduledEventAPI eventApi,   ILogger<GuildUpdateService> logger, IDiscordRestUserAPI userApi,
-        UtilityService                     utility) {
+        IDiscordRestChannelAPI channelApi, GuildDataService dataService, IDiscordRestGuildScheduledEventAPI eventApi,
+        IDiscordRestGuildAPI   guildApi,   ILogger<GuildUpdateService> logger, IServiceProvider provider,
+        IDiscordRestUserAPI    userApi,    UtilityService utility) {
         _channelApi = channelApi;
         _dataService = dataService;
-        _guildApi = guildApi;
         _eventApi = eventApi;
+        _guildApi = guildApi;
         _logger = logger;
+        _provider = provider;
         _userApi = userApi;
         _utility = utility;
     }
@@ -49,7 +67,20 @@ public class GuildUpdateService : BackgroundService {
         var tasks = new List<Task>();
 
         while (await timer.WaitForNextTickAsync(ct)) {
-            tasks.AddRange(_dataService.GetGuildIds().Select(id => TickGuildAsync(id, ct)));
+            var guildIds = _dataService.GetGuildIds();
+            if (guildIds.Count > 0 && DateTimeOffset.UtcNow >= _nextSongAt) {
+                var nextSong = SongList[_nextSongIndex];
+                _activityList[0] = new Activity(nextSong.Name, ActivityType.Listening);
+                var client = _provider.GetRequiredService<DiscordGatewayClient>();
+                client.SubmitCommand(
+                    new UpdatePresence(
+                        UserStatus.Online, false, DateTimeOffset.UtcNow, _activityList));
+                _nextSongAt = DateTimeOffset.UtcNow.Add(nextSong.Duration);
+                _nextSongIndex++;
+                if (_nextSongIndex >= SongList.Length) _nextSongIndex = 0;
+            }
+
+            tasks.AddRange(guildIds.Select(id => TickGuildAsync(id, ct)));
 
             await Task.WhenAll(tasks);
             tasks.Clear();
