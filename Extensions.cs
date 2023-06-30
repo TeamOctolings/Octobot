@@ -1,9 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using DiffPlex.DiffBuilder.Model;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
+using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
@@ -140,5 +143,16 @@ public static class Extensions {
         this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
         var list = source.ToList();
         return list.Any() ? list.Max(selector) : default;
+    }
+
+    public static bool TryGetContextIDs(
+        this                    ICommandContext context,   [NotNullWhen(true)] out Snowflake? guildId,
+        [NotNullWhen(true)] out Snowflake?      channelId, [NotNullWhen(true)] out Snowflake? userId) {
+        guildId = null;
+        channelId = null;
+        userId = null;
+        return context.TryGetGuildID(out guildId)
+               && context.TryGetChannelID(out channelId)
+               && context.TryGetUserID(out userId);
     }
 }

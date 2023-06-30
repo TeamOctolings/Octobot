@@ -65,15 +65,13 @@ public class BanCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("банит пидора")]
     public async Task<Result> BanUserAsync(
-        [Description("юзер кого банить")] IUser target, [Description("причина зачем банить")] string reason,
-        TimeSpan?                               duration = null) {
-        // Data checks
-        if (!_context.TryGetGuildID(out var guildId))
-            return Result.FromError(new ArgumentNullError(nameof(guildId)));
-        if (!_context.TryGetUserID(out var userId))
-            return Result.FromError(new ArgumentNullError(nameof(userId)));
-        if (!_context.TryGetChannelID(out var channelId))
-            return Result.FromError(new ArgumentNullError(nameof(channelId)));
+        [Description("юзер кого банить")]     IUser  target,
+        [Description("причина зачем банить")] string reason,
+        [Description("продолжительность бана")]
+        TimeSpan? duration = null) {
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+            return Result.FromError(
+                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
@@ -180,7 +178,10 @@ public class BanCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("разбанит пидора")]
-    public async Task<Result> UnbanUserAsync([Description("Юзер, кого разбанить")] IUser target, string reason) {
+    public async Task<Result> UnbanUserAsync(
+        [Description("юзер кого разбанить")] IUser target,
+        [Description("причина зачем разбанить")]
+        string reason) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
             return Result.FromError(new ArgumentNullError(nameof(guildId)));

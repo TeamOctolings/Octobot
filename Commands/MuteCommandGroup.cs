@@ -69,6 +69,7 @@ public class MuteCommandGroup : CommandGroup {
         IUser target,
         [Description("причина зачем мутить друга (пиши заебал)")]
         string reason,
+        [Description("продолжительность мута")]
         TimeSpan duration) {
         // Data checks
         if (!_context.TryGetGuildID(out var guildId))
@@ -181,14 +182,14 @@ public class MuteCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("ФУНКЦИЯ ФОРС РАЗМУТ КАВАЯ КОЛЕСИКИ!!!!1111111111")]
-    public async Task<Result> UnmuteUserAsync([Description("юзер кого раззамучивать")] IUser target, string reason) {
-        // Data checks
-        if (!_context.TryGetGuildID(out var guildId))
-            return Result.FromError(new ArgumentNullError(nameof(guildId)));
-        if (!_context.TryGetUserID(out var userId))
-            return Result.FromError(new ArgumentNullError(nameof(userId)));
-        if (!_context.TryGetChannelID(out var channelId))
-            return Result.FromError(new ArgumentNullError(nameof(channelId)));
+    public async Task<Result> UnmuteUserAsync(
+        [Description("юзер кого раззамучивать")]
+        IUser target,
+        [Description("причина зачем раззамучивать")]
+        string reason) {
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+            return Result.FromError(
+                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
