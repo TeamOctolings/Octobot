@@ -113,7 +113,7 @@ public class KickCommandGroup : CommandGroup {
 
                 if (!dmEmbed.IsDefined(out var dmBuilt))
                     return Result.FromError(dmEmbed);
-                await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt });
+                await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: CancellationToken);
             }
 
             var kickResult = await _guildApi.RemoveGuildMemberAsync(

@@ -130,7 +130,7 @@ public class BanCommandGroup : CommandGroup {
 
                 if (!dmEmbed.IsDefined(out var dmBuilt))
                     return Result.FromError(dmEmbed);
-                await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt });
+                await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: CancellationToken);
             }
 
             var banResult = await _guildApi.CreateGuildBanAsync(
