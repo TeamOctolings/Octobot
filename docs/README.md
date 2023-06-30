@@ -35,3 +35,14 @@ moderate the server.
 When it comes to contributing to the project, the two main things you can do to help out are reporting issues and
 submitting pull requests. Please refer to the [contributing guidelines](CONTRIBUTING.md) to understand how to help in
 the most effective way possible.
+
+## Special Thanks
+
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
+
+[JetBrains](https://www.jetbrains.com/), creators of [ReSharper](https://www.jetbrains.com/resharper)
+and [Rider](https://www.jetbrains.com/rider), supports Boyfriend with one of
+their [Open Source Licenses](https://jb.gg/OpenSourceSupport).
+Rider is the recommended IDE when working with Boyfriend, and most of the Boyfriend team uses it.
+Additionally, ReSharper command-line tools made by JetBrains are used for status checks on pull requests to ensure code
+quality even when not using ReSharper or Rider.
