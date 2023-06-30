@@ -84,6 +84,22 @@ public static class Extensions {
     }
 
     /// <summary>
+    ///     Adds a title representing that the action happened in the <paramref name="guild" />.
+    /// </summary>
+    /// <param name="builder">The builder to add the title to.</param>
+    /// <param name="guild">The guild whose name and icon to use.</param>
+    /// <returns>The builder with the added title.</returns>
+    public static EmbedBuilder WithGuildTitle(this EmbedBuilder builder, IGuild guild) {
+        var iconUrlResult = CDN.GetGuildIconUrl(guild, imageSize: 256);
+        var iconUrl = iconUrlResult.IsSuccess
+            ? iconUrlResult.Entity.AbsoluteUri
+            : null;
+
+        builder.Author = new EmbedAuthorBuilder(guild.Name, iconUrl: iconUrl);
+        return builder;
+    }
+
+    /// <summary>
     ///     Adds a scheduled event's cover image.
     /// </summary>
     /// <param name="builder">The builder to add the image to.</param>

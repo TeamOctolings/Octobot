@@ -136,8 +136,8 @@
     <value>You do not have permission to execute this command!</value>
   </data>
     <data name="YouWereBanned" xml:space="preserve">
-    <value>You were banned by {0} in guild `{1}` for {2}</value>
-  </data>
+        <value>You were banned</value>
+    </data>
     <data name="PunishmentExpired" xml:space="preserve">
     <value>Punishment expired</value>
   </data>
@@ -151,8 +151,8 @@
     <value>Command help:</value>
   </data>
     <data name="YouWereKicked" xml:space="preserve">
-    <value>You were kicked by {0} in guild `{1}` for {2}</value>
-  </data>
+        <value>You were kicked</value>
+    </data>
     <data name="Milliseconds" xml:space="preserve">
     <value>ms</value>
   </data>

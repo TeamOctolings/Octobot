@@ -135,9 +135,6 @@
     <data name="CommandNoPermissionUser" xml:space="preserve">
     <value>У тебя недостаточно прав для выполнения этой команды!</value>
   </data>
-    <data name="YouWereBanned" xml:space="preserve">
-    <value>Тебя забанил {0} на сервере `{1}` за {2}</value>
-  </data>
     <data name="PunishmentExpired" xml:space="preserve">
     <value>Время наказания истекло</value>
   </data>
@@ -151,8 +148,8 @@
     <value>Справка по командам:</value>
   </data>
     <data name="YouWereKicked" xml:space="preserve">
-    <value>Тебя кикнул {0} на сервере `{1}` за {2}</value>
-  </data>
+        <value>Вы были выгнаны</value>
+    </data>
     <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
@@ -515,5 +512,8 @@
     </data>
     <data name="UserAlreadyMuted" xml:space="preserve">
         <value>Этот пользователь уже в муте!</value>
+    </data>
+    <data name="YouWereBanned" xml:space="preserve">
+        <value>Вы были забанены</value>
     </data>
 </root>

@@ -136,8 +136,8 @@
     <value>у тебя прав нету, твои проблемы.</value>
   </data>
     <data name="YouWereBanned" xml:space="preserve">
-    <value>здарова, тебя крч забанил {0} на сервере `{1}` за {2}</value>
-  </data>
+        <value>вы были забанены</value>
+    </data>
     <data name="PunishmentExpired" xml:space="preserve">
     <value>время бана закончиловсь</value>
   </data>
@@ -151,8 +151,8 @@
     <value>туториал по приколам:</value>
   </data>
     <data name="YouWereKicked" xml:space="preserve">
-    <value>здарова, тебя крч кикнул {0} на сервере `{1}` за {2}</value>
-  </data>
+        <value>вы были кикнуты</value>
+    </data>
     <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
@@ -511,7 +511,7 @@
     <value>причина: {0}</value>
   </data>
     <data name="DescriptionActionExpiresAt" xml:space="preserve">
-        <value>заживёт: {0}</value>
+        <value>до: {0}</value>
     </data>
     <data name="UserAlreadyMuted" xml:space="preserve">
         <value>этот шизоид УЖЕ замучился</value>

@@ -97,6 +97,25 @@ public class KickCommandGroup : CommandGroup {
             if (!userResult.IsDefined(out var user))
                 return Result.FromError(userResult);
 
+            var dmChannelResult = await _userApi.CreateDMAsync(target.ID, CancellationToken);
+            if (dmChannelResult.IsDefined(out var dmChannel)) {
+                var guildResult = await _guildApi.GetGuildAsync(guildId.Value, ct: CancellationToken);
+                if (!guildResult.IsDefined(out var guild))
+                    return Result.FromError(guildResult);
+
+                var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
+                    .WithTitle(Messages.YouWereKicked)
+                    .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
+                    .WithActionFooter(user)
+                    .WithCurrentTimestamp()
+                    .WithColour(ColorsList.Red)
+                    .Build();
+
+                if (!dmEmbed.IsDefined(out var dmBuilt))
+                    return Result.FromError(dmEmbed);
+                await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt });
+            }
+
             var kickResult = await _guildApi.RemoveGuildMemberAsync(
                 guildId.Value, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
                 ct: CancellationToken);

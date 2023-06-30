@@ -107,6 +107,32 @@ public class BanCommandGroup : CommandGroup {
             if (!userResult.IsDefined(out var user))
                 return Result.FromError(userResult);
 
+            var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason));
+            if (duration is not null)
+                builder.Append(
+                    string.Format(
+                        Messages.DescriptionActionExpiresAt,
+                        Markdown.Timestamp(DateTimeOffset.UtcNow.Add(duration.Value))));
+
+            var dmChannelResult = await _userApi.CreateDMAsync(target.ID, CancellationToken);
+            if (dmChannelResult.IsDefined(out var dmChannel)) {
+                var guildResult = await _guildApi.GetGuildAsync(guildId.Value, ct: CancellationToken);
+                if (!guildResult.IsDefined(out var guild))
+                    return Result.FromError(guildResult);
+
+                var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
+                    .WithTitle(Messages.YouWereBanned)
+                    .WithDescription(builder.ToString())
+                    .WithActionFooter(user)
+                    .WithCurrentTimestamp()
+                    .WithColour(ColorsList.Red)
+                    .Build();
+
+                if (!dmEmbed.IsDefined(out var dmBuilt))
+                    return Result.FromError(dmEmbed);
+                await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt });
+            }
+
             var banResult = await _guildApi.CreateGuildBanAsync(
                 guildId.Value, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
                 ct: CancellationToken);
@@ -122,12 +148,6 @@ public class BanCommandGroup : CommandGroup {
 
             if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
-                var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason));
-                if (duration is not null)
-                    builder.Append(
-                        string.Format(
-                            Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
-
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserBanned, target.GetTag()), target)
                     .WithDescription(builder.ToString())
