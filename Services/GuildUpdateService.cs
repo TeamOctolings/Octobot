@@ -27,7 +27,8 @@ public class GuildUpdateService : BackgroundService {
         ("Splatoon 3 - Rockagilly Blues (Yoko & the Gold Bazookas)", new TimeSpan(0, 3, 37)),
         ("Splatoon 3 - Seep and Destroy", new TimeSpan(0, 2, 42)),
         ("IA - A Tale of Six Trillion Years and a Night", new TimeSpan(0, 3, 40)),
-        ("Manuel - Gas Gas Gas", new TimeSpan(0, 3, 17))
+        ("Manuel - Gas Gas Gas", new TimeSpan(0, 3, 17)),
+        ("Camellia - Flamewall", new TimeSpan(0, 6, 50))
     };
 
     private readonly List<Activity> _activityList = new(1) { new Activity("with Remora.Discord", ActivityType.Game) };
@@ -59,6 +60,7 @@ public class GuildUpdateService : BackgroundService {
 
     /// <summary>
     ///     Activates a periodic timer with a 1 second interval and adds guild update tasks on each timer tick.
+    ///     Additionally, updates the current presence with songs from <see cref="SongList"/>.
     /// </summary>
     /// <remarks>If update tasks take longer than 1 second, the next timer tick will be skipped.</remarks>
     /// <param name="ct">The cancellation token for this operation.</param>

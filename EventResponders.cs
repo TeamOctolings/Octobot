@@ -11,6 +11,7 @@ using Remora.Discord.Caching.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Discord.Gateway.Responders;
+using Remora.Rest.Core;
 using Remora.Results;
 
 // ReSharper disable UnusedType.Global
@@ -303,5 +304,30 @@ public class GuildMemberUpdateResponder : IResponder<IGuildMemberUpdate> {
         var memberData = await _dataService.GetMemberData(gatewayEvent.GuildID, gatewayEvent.User.ID, ct);
         memberData.Roles = gatewayEvent.Roles.ToList();
         return Result.FromSuccess();
+    }
+}
+
+/// <summary>
+///     Handles sending replies to easter egg messages.
+/// </summary>
+public class MessageCreateResponder : IResponder<IMessageCreate> {
+    private readonly IDiscordRestChannelAPI _channelApi;
+
+    public MessageCreateResponder(IDiscordRestChannelAPI channelApi) {
+        _channelApi = channelApi;
+    }
+
+    public Task<Result> RespondAsync(IMessageCreate gatewayEvent, CancellationToken ct = default) {
+        _ = _channelApi.CreateMessageAsync(
+            gatewayEvent.ChannelID, ct: ct, content: gatewayEvent.Content switch {
+                "whoami"  => "`nobody`",
+                "сука !!" => "`root`",
+                "воооо"   => "`removing /...`",
+                "пон" =>
+                    "https://cdn.discordapp.com/attachments/837385840946053181/1087236080950055023/vUORS10xPaY-1.jpg",
+                "++++" => "#",
+                _      => default(Optional<string>)
+            });
+        return Task.FromResult(Result.FromSuccess());
     }
 }
