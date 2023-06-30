@@ -11,10 +11,13 @@
 ![GitHub License](https://img.shields.io/github/license/TeamOctolings/Boyfriend)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TeamOctolings/Boyfriend/.github/workflows/resharper.yml?branch=master)
 ![GitHub last commit](https://img.shields.io/github/last-commit/TeamOctolings/Boyfriend)
+![CodeFactor](https://img.shields.io/codefactor/grade/github/TeamOctolings/Boyfriend)
 
-Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and Discord.Net
+Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and
+Discord.Net
 
-# Features
+## Features
+
 * Banning, muting, kicking, etc.
 * Reminding you about something if you wish
 * Reminding everyone about that new event you made
@@ -22,6 +25,13 @@ Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://
 
 *...and more!*
 
-# Getting Started
+## Installing and running Boyfriend
 
-You can read our [wiki](https://github.com/TeamOctolings/Boyfriend/wiki) in order to assemble your Boyfriend™ and moderate the server.
+You can read our [wiki](https://github.com/TeamOctolings/Boyfriend/wiki) in order to assemble your Boyfriend™ and
+moderate the server.
+
+## Contributing
+
+When it comes to contributing to the project, the two main things you can do to help out are reporting issues and
+submitting pull requests. Please refer to the [contributing guidelines](CONTRIBUTING.md) to understand how to help in
+the most effective way possible.
