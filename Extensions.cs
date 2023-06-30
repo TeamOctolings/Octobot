@@ -122,11 +122,16 @@ public static class Extensions {
         return WebUtility.UrlEncode(s).Replace('+', ' ');
     }
 
-    public static string AsMarkdown(this SideBySideDiffModel model) {
+    public static string AsMarkdown(this DiffPaneModel model) {
         var builder = new StringBuilder();
-        foreach (var line in model.OldText.Lines.Where(piece => !string.IsNullOrWhiteSpace(piece.Text)))
-            builder.Append("-- ").AppendLine(line.Text);
-        foreach (var line in model.NewText.Lines) builder.Append("++ ").AppendLine(line.Text);
+        foreach (var line in model.Lines) {
+            if (line.Type is ChangeType.Deleted)
+                builder.Append("-- ");
+            if (line.Type is ChangeType.Inserted)
+                builder.Append("++ ");
+            if (line.Type is not ChangeType.Imaginary)
+                builder.AppendLine(line.Text);
+        }
 
         return Markdown.BlockCode(builder.ToString().SanitizeForBlockCode(), "diff");
     }

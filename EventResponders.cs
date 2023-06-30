@@ -1,6 +1,5 @@
 using Boyfriend.Data;
 using Boyfriend.Services.Data;
-using DiffPlex;
 using DiffPlex.DiffBuilder;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Gateway.Events;
@@ -189,7 +188,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
 
-        var diff = new SideBySideDiffBuilder(Differ.Instance).BuildDiffModel(message.Content, newContent, true, true);
+        var diff = InlineDiffBuilder.Diff(message.Content, newContent);
 
         Messages.Culture = guildConfiguration.GetCulture();
 
