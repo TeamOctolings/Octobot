@@ -345,9 +345,9 @@ namespace Boyfriend {
             }
         }
         
-        internal static string FeedbackMessagesCleared {
+        internal static string MessagesCleared {
             get {
-                return ResourceManager.GetString("FeedbackMessagesCleared", resourceCulture);
+                return ResourceManager.GetString("MessagesCleared", resourceCulture);
             }
         }
         
@@ -864,6 +864,12 @@ namespace Boyfriend {
         internal static string UserAlreadyMuted {
             get {
                 return ResourceManager.GetString("UserAlreadyMuted", resourceCulture);
+            }
+        }
+        
+        internal static string MessageFrom {
+            get {
+                return ResourceManager.GetString("MessageFrom", resourceCulture);
             }
         }
     }

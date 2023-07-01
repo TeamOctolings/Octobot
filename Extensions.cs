@@ -15,7 +15,7 @@ namespace Boyfriend;
 
 public static class Extensions {
     /// <summary>
-    ///     Adds a footer with the <paramref name="user" />'s avatar and tag (username#0000).
+    ///     Adds a footer with the <paramref name="user" />'s avatar and tag (@username or username#0000).
     /// </summary>
     /// <param name="builder">The builder to add the footer to.</param>
     /// <param name="user">The user whose tag and avatar to add.</param>
@@ -120,8 +120,18 @@ public static class Extensions {
     /// </summary>
     /// <param name="s">The string to sanitize.</param>
     /// <returns>The sanitized string that can be safely used in <see cref="Markdown.BlockCode(string)" />.</returns>
-    public static string SanitizeForBlockCode(this string s) {
+    private static string SanitizeForBlockCode(this string s) {
         return s.Replace("```", "​`​`​`​");
+    }
+
+    /// <summary>
+    ///     Sanitizes a string (see <see cref="SanitizeForBlockCode" />) and formats the string with block code.
+    /// </summary>
+    /// <param name="s">The string to sanitize and format.</param>
+    /// <returns>The sanitized string formatted with <see cref="Markdown.BlockCode(string)" />.</returns>
+    public static string InBlockCode(this string s) {
+        s = s.SanitizeForBlockCode();
+        return $"```{s.SanitizeForBlockCode()}{(s.EndsWith("`") || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
     }
 
     public static string Localized(this string key) {

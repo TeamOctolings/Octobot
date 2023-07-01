@@ -120,7 +120,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
                     Messages.CachedMessageDeleted,
                     message.Author.GetTag()), message.Author)
             .WithDescription(
-                $"{Mention.Channel(gatewayEvent.ChannelID)}\n{Markdown.BlockCode(message.Content.SanitizeForBlockCode())}")
+                $"{Mention.Channel(gatewayEvent.ChannelID)}\n{message.Content.InBlockCode()}")
             .WithActionFooter(user)
             .WithTimestamp(message.Timestamp)
             .WithColour(ColorsList.Red)

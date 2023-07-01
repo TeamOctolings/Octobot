@@ -252,9 +252,9 @@
     <data name="Ever" xml:space="preserve">
     <value>всегда</value>
   </data>
-    <data name="FeedbackMessagesCleared" xml:space="preserve">
-    <value>Удалено {0} сообщений в {1}</value>
-  </data>
+    <data name="MessagesCleared" xml:space="preserve">
+        <value>Очищено {0} сообщений</value>
+    </data>
     <data name="FeedbackMemberKicked" xml:space="preserve">
     <value>Выгнан {0}: {1}</value>
   </data>
@@ -515,5 +515,8 @@
     </data>
     <data name="YouWereBanned" xml:space="preserve">
         <value>Вы были забанены</value>
+    </data>
+    <data name="MessageFrom" xml:space="preserve">
+        <value>От {0}:</value>
     </data>
 </root>

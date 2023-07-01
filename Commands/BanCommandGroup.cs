@@ -113,6 +113,7 @@ public class BanCommandGroup : CommandGroup {
                     string.Format(
                         Messages.DescriptionActionExpiresAt,
                         Markdown.Timestamp(DateTimeOffset.UtcNow.Add(duration.Value))));
+            var description = builder.ToString();
 
             var dmChannelResult = await _userApi.CreateDMAsync(target.ID, CancellationToken);
             if (dmChannelResult.IsDefined(out var dmChannel)) {
@@ -122,7 +123,7 @@ public class BanCommandGroup : CommandGroup {
 
                 var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                     .WithTitle(Messages.YouWereBanned)
-                    .WithDescription(builder.ToString())
+                    .WithDescription(description)
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
                     .WithColour(ColorsList.Red)
@@ -150,7 +151,7 @@ public class BanCommandGroup : CommandGroup {
                 || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserBanned, target.GetTag()), target)
-                    .WithDescription(builder.ToString())
+                    .WithDescription(description)
                     .WithActionFooter(user)
                     .WithCurrentTimestamp()
                     .WithColour(ColorsList.Red)

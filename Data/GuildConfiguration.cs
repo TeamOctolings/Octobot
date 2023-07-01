@@ -83,6 +83,7 @@ public class GuildConfiguration {
     /// </summary>
     public TimeSpan EventEarlyNotificationOffset { get; set; } = TimeSpan.Zero;
 
+    // Do not convert this to a property, else serialization will be attempted
     public CultureInfo GetCulture() {
         return CultureInfoCache[Language];
     }

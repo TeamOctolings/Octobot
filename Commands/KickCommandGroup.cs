@@ -17,6 +17,9 @@ using Remora.Results;
 
 namespace Boyfriend.Commands;
 
+/// <summary>
+///     Handles the command to kick members of a guild: /kick.
+/// </summary>
 public class KickCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -68,9 +71,8 @@ public class KickCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
-        var cfg = data.Configuration;
-        Messages.Culture = data.Culture;
+        var cfg = await _dataService.GetConfiguration(guildId.Value);
+        Messages.Culture = cfg.GetCulture();
 
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
         if (!memberResult.IsSuccess) {

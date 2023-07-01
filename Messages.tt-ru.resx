@@ -255,9 +255,9 @@
     <data name="Ever" xml:space="preserve">
     <value>всегда</value>
   </data>
-    <data name="FeedbackMessagesCleared" xml:space="preserve">
-    <value>удалено {0} сообщений в {1}</value>
-  </data>
+    <data name="MessagesCleared" xml:space="preserve">
+        <value>вырезано {0} забавных сообщений</value>
+    </data>
     <data name="FeedbackMemberKicked" xml:space="preserve">
     <value>выгнан {0}: {1}</value>
   </data>
@@ -515,5 +515,8 @@
     </data>
     <data name="UserAlreadyMuted" xml:space="preserve">
         <value>этот шизоид УЖЕ замучился</value>
+    </data>
+    <data name="MessageFrom" xml:space="preserve">
+        <value>от {0}</value>
     </data>
 </root>

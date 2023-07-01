@@ -255,9 +255,9 @@
     <data name="Ever" xml:space="preserve">
     <value>ever</value>
   </data>
-    <data name="FeedbackMessagesCleared" xml:space="preserve">
-    <value>Deleted {0} messages in {1}</value>
-  </data>
+    <data name="MessagesCleared" xml:space="preserve">
+        <value>Cleared {0} messages</value>
+    </data>
     <data name="FeedbackMemberKicked" xml:space="preserve">
     <value>Kicked {0}: {1}</value>
   </data>
@@ -515,5 +515,8 @@
     </data>
     <data name="UserAlreadyMuted" xml:space="preserve">
         <value>This user is already muted!</value>
+    </data>
+    <data name="MessageFrom" xml:space="preserve">
+        <value>From {0}:</value>
     </data>
 </root>
