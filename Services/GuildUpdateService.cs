@@ -1,6 +1,5 @@
 using Boyfriend.Data;
 using Boyfriend.Services.Data;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Objects;
@@ -34,26 +33,27 @@ public class GuildUpdateService : BackgroundService {
     private readonly List<Activity> _activityList = new(1) { new Activity("with Remora.Discord", ActivityType.Game) };
 
     private readonly IDiscordRestChannelAPI             _channelApi;
+    private readonly DiscordGatewayClient               _client;
     private readonly GuildDataService                   _dataService;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly IDiscordRestGuildAPI               _guildApi;
     private readonly ILogger<GuildUpdateService>        _logger;
-    private readonly IServiceProvider                   _provider;
     private readonly IDiscordRestUserAPI                _userApi;
     private readonly UtilityService                     _utility;
-    private          DateTimeOffset                     _nextSongAt = DateTimeOffset.MinValue;
-    private          uint                               _nextSongIndex;
+
+    private DateTimeOffset _nextSongAt = DateTimeOffset.MinValue;
+    private uint           _nextSongIndex;
 
     public GuildUpdateService(
-        IDiscordRestChannelAPI channelApi, GuildDataService dataService, IDiscordRestGuildScheduledEventAPI eventApi,
-        IDiscordRestGuildAPI   guildApi,   ILogger<GuildUpdateService> logger, IServiceProvider provider,
-        IDiscordRestUserAPI    userApi,    UtilityService utility) {
+        IDiscordRestChannelAPI             channelApi, DiscordGatewayClient client, GuildDataService dataService,
+        IDiscordRestGuildScheduledEventAPI eventApi, IDiscordRestGuildAPI guildApi, ILogger<GuildUpdateService> logger,
+        IDiscordRestUserAPI                userApi, UtilityService utility) {
         _channelApi = channelApi;
+        _client = client;
         _dataService = dataService;
         _eventApi = eventApi;
         _guildApi = guildApi;
         _logger = logger;
-        _provider = provider;
         _userApi = userApi;
         _utility = utility;
     }
@@ -73,8 +73,7 @@ public class GuildUpdateService : BackgroundService {
             if (guildIds.Count > 0 && DateTimeOffset.UtcNow >= _nextSongAt) {
                 var nextSong = SongList[_nextSongIndex];
                 _activityList[0] = new Activity(nextSong.Name, ActivityType.Listening);
-                var client = _provider.GetRequiredService<DiscordGatewayClient>();
-                client.SubmitCommand(
+                _client.SubmitCommand(
                     new UpdatePresence(
                         UserStatus.Online, false, DateTimeOffset.UtcNow, _activityList));
                 _nextSongAt = DateTimeOffset.UtcNow.Add(nextSong.Duration);

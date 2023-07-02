@@ -54,10 +54,9 @@ public class GuildCreateResponder : IResponder<IGuildCreate> {
         Messages.Culture = guildConfig.GetCulture();
         var i = Random.Shared.Next(1, 4);
 
-        var embed = new EmbedBuilder()
+        var embed = new EmbedBuilder().WithSmallTitle(currentUser.GetTag(), currentUser)
             .WithTitle($"Beep{i}".Localized())
             .WithDescription(Messages.Ready)
-            .WithUserFooter(currentUser)
             .WithCurrentTimestamp()
             .WithColour(ColorsList.Blue)
             .Build();

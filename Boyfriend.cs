@@ -78,7 +78,8 @@ public class Boyfriend {
                         .WithCommandGroup<BanCommandGroup>()
                         .WithCommandGroup<ClearCommandGroup>()
                         .WithCommandGroup<KickCommandGroup>()
-                        .WithCommandGroup<MuteCommandGroup>();
+                        .WithCommandGroup<MuteCommandGroup>()
+                        .WithCommandGroup<PingCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
