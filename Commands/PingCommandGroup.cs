@@ -36,6 +36,12 @@ public class PingCommandGroup : CommandGroup {
         _userApi = userApi;
     }
 
+    /// <summary>
+    ///     A slash command that shows time taken for the gateway to respond to the last heartbeat.
+    /// </summary>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
     [Command("ping", "пинг")]
     [Description("получает задержку")]
     public async Task<Result> GetPingAsync() {
@@ -60,12 +66,6 @@ public class PingCommandGroup : CommandGroup {
             latency = DateTimeOffset.UtcNow.Subtract(lastMessage.Single().Timestamp).TotalMilliseconds;
         }
 
-        // var embed = new EmbedBuilder().WithTitle($"Beep{Random.Shared.Next(1, 4)}".Localized())
-        //     .WithDescription($"{latency:F0}{Messages.Milliseconds}")
-        //     .WithColour(ColorsList.Green)
-        //     .WithUserFooter(currentUser)
-        //     .WithCurrentTimestamp()
-        //     .Build();
         var embed = new EmbedBuilder().WithSmallTitle(currentUser.GetTag(), currentUser)
             .WithTitle($"Beep{Random.Shared.Next(1, 4)}".Localized())
             .WithDescription($"{latency:F0}{Messages.Milliseconds}")

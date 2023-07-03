@@ -75,6 +75,7 @@ public class Boyfriend {
                         .AddSingleton<UtilityService>()
                         .AddHostedService<GuildUpdateService>()
                         .AddCommandTree()
+                        .WithCommandGroup<AboutCommandGroup>()
                         .WithCommandGroup<BanCommandGroup>()
                         .WithCommandGroup<ClearCommandGroup>()
                         .WithCommandGroup<KickCommandGroup>()
