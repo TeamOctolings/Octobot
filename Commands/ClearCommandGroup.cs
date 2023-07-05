@@ -64,7 +64,7 @@ public class ClearCommandGroup : CommandGroup {
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value);
+        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         Messages.Culture = cfg.GetCulture();
 
         var idList = new List<Snowflake>(messages.Count);

@@ -19,21 +19,20 @@ namespace Boyfriend.Commands;
 ///     Handles the command to show information about this bot: /about
 /// </summary>
 public class AboutCommandGroup : CommandGroup {
-    private readonly ICommandContext        _context;
-    private readonly GuildDataService       _dataService;
-    private readonly FeedbackService        _feedbackService;
-    private readonly IDiscordRestUserAPI    _userApi;
+    private static readonly string[]            Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
+    private readonly        ICommandContext     _context;
+    private readonly        GuildDataService    _dataService;
+    private readonly        FeedbackService     _feedbackService;
+    private readonly        IDiscordRestUserAPI _userApi;
 
     public AboutCommandGroup(
-        ICommandContext context, GuildDataService dataService,
+        ICommandContext context,         GuildDataService    dataService,
         FeedbackService feedbackService, IDiscordRestUserAPI userApi) {
         _context = context;
         _dataService = dataService;
         _feedbackService = feedbackService;
         _userApi = userApi;
     }
-
-    private static readonly string[] Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
 
     /// <summary>
     ///     A slash command that shows information about this bot.
@@ -52,25 +51,22 @@ public class AboutCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value);
+        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
         Messages.Culture = cfg.GetCulture();
 
         var builder = new StringBuilder().AppendLine(Markdown.Bold(Messages.AboutTitleDevelopers));
+        foreach (var dev in Developers)
+            builder.AppendLine($"@{dev} — {$"AboutDeveloper@{dev}".Localized()}");
 
-        foreach (var dev in Developers) {
-            builder.Append($"@{dev} — ")
-                   .AppendLine($"AboutDeveloper@{dev}".Localized());
-        }
         builder.AppendLine()
-               .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
-               .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
-
-        var description = builder.ToString();
+            .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
+            .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
-            .WithDescription(description)
+            .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl("https://media.discordapp.net/attachments/837385840946053181/1125009665592393738/boyfriend.png")
+            .WithImageUrl(
+                "https://media.discordapp.net/attachments/837385840946053181/1125009665592393738/boyfriend.png")
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
