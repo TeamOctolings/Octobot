@@ -44,7 +44,7 @@ public class PingCommandGroup : CommandGroup {
     /// </returns>
     [Command("ping", "пинг")]
     [Description("получает задержку")]
-    public async Task<Result> GetPingAsync() {
+    public async Task<Result> SendPingAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));

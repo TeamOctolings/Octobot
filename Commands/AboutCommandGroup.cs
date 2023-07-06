@@ -42,7 +42,7 @@ public class AboutCommandGroup : CommandGroup {
     /// </returns>
     [Command("about")]
     [Description("отображает список разработчиков")]
-    public async Task<Result> GetPingAsync() {
+    public async Task<Result> SendAboutBotAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
