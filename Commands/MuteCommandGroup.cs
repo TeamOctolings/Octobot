@@ -9,7 +9,6 @@ using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
-using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
@@ -69,13 +68,9 @@ public class MuteCommandGroup : CommandGroup {
         [Description("причина зачем глушить")] string reason,
         [Description("продолжительность мута")]
         TimeSpan duration) {
-        // Data checks
-        if (!_context.TryGetGuildID(out var guildId))
-            return Result.FromError(new ArgumentNullError(nameof(guildId)));
-        if (!_context.TryGetUserID(out var userId))
-            return Result.FromError(new ArgumentNullError(nameof(userId)));
-        if (!_context.TryGetChannelID(out var channelId))
-            return Result.FromError(new ArgumentNullError(nameof(channelId)));
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+            return Result.FromError(
+                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
