@@ -456,9 +456,9 @@
     <data name="MissingReminderText" xml:space="preserve">
     <value>You need to specify reminder text!</value>
   </data>
-    <data name="FeedbackReminderAdded" xml:space="preserve">
-    <value>OK, I'll mention you on &lt;t:{0}:f&gt;</value>
-  </data>
+    <data name="DescriptionReminderCreated" xml:space="preserve">
+        <value>OK, I'll mention you on {0}</value>
+    </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>You need to specify when I should send you the reminder!</value>
   </data>
@@ -537,4 +537,13 @@
     <data name="AboutDeveloper@neroduckale" xml:space="preserve">
     <value>developer</value>
   </data>
+    <data name="ReminderCreated" xml:space="preserve">
+        <value>Reminder for {0} created</value>
+    </data>
+    <data name="Reminder" xml:space="preserve">
+        <value>Reminder for {0}</value>
+    </data>
+    <data name="DescriptionReminder" xml:space="preserve">
+        <value>You asked me to remind you {0}</value>
+    </data>
 </root>

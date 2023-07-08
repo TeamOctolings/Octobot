@@ -456,9 +456,9 @@
     <data name="MissingReminderText" xml:space="preserve">
     <value>для крафта напоминалки нужен текст</value>
   </data>
-    <data name="FeedbackReminderAdded" xml:space="preserve">
-    <value>вас понял, упоминание будет &lt;t:{0}:f&gt;</value>
-  </data>
+    <data name="DescriptionReminderCreated" xml:space="preserve">
+        <value>вас понял, упоминание будет {0}</value>
+    </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>шизоид у меня на часах такого нету</value>
   </data>
@@ -537,4 +537,13 @@
     <data name="AboutDeveloper@Octol1ttle" xml:space="preserve">
     <value>САМЫЙ ВАЖНЫЙ чел написавший кода больше всех (99.99%)</value>
   </data>
+    <data name="ReminderCreated" xml:space="preserve">
+        <value>напоминалка для {0} скрафченА</value>
+    </data>
+    <data name="Reminder" xml:space="preserve">
+        <value>напоминалка для {0}</value>
+    </data>
+    <data name="DescriptionReminder" xml:space="preserve">
+        <value>ты хотел чтоб я напомнил тебе {0}</value>
+    </data>
 </root>

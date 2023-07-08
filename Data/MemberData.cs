@@ -14,4 +14,5 @@ public class MemberData {
     public ulong           Id          { get; }
     public DateTimeOffset? BannedUntil { get; set; }
     public List<Snowflake> Roles       { get; set; } = new();
+    public List<Reminder>  Reminders   { get; }      = new();
 }

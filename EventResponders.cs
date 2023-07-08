@@ -1,5 +1,5 @@
 using Boyfriend.Data;
-using Boyfriend.Services.Data;
+using Boyfriend.Services;
 using DiffPlex.DiffBuilder;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Gateway.Events;

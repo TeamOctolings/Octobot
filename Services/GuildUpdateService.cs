@@ -1,5 +1,4 @@
 using Boyfriend.Data;
-using Boyfriend.Services.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Objects;
@@ -95,11 +94,12 @@ public class GuildUpdateService : BackgroundService {
     ///     This method does the following:
     ///     <list type="bullet">
     ///         <item>Automatically unbans users once their ban period has expired.</item>
-    ///         <item>Automatically grants users the guild's <see cref="GuildConfiguration.DefaultRole"/> if one is set.</item>
+    ///         <item>Automatically grants members the guild's <see cref="GuildConfiguration.DefaultRole"/> if one is set.</item>
     ///         <item>Sends reminders about an upcoming scheduled event.</item>
     ///         <item>Automatically starts scheduled events if <see cref="GuildConfiguration.AutoStartEvents"/> is enabled.</item>
     ///         <item>Sends scheduled event start notifications.</item>
     ///         <item>Sends scheduled event completion notifications.</item>
+    ///         <item>Sends reminders to members.</item>
     ///     </list>
     ///     This is done here and not in a <see cref="IResponder{TGatewayEvent}" /> for the following reasons:
     ///     <list type="bullet">
@@ -118,19 +118,45 @@ public class GuildUpdateService : BackgroundService {
         var defaultRoleSnowflake = data.Configuration.DefaultRole.ToDiscordSnowflake();
 
         foreach (var memberData in data.MemberData.Values) {
-            var userIdSnowflake = memberData.Id.ToDiscordSnowflake();
+            var userId = memberData.Id.ToDiscordSnowflake();
+
             if (defaultRoleSnowflake.Value is not 0 && !memberData.Roles.Contains(defaultRoleSnowflake))
                 _ = _guildApi.AddGuildMemberRoleAsync(
-                    guildId, userIdSnowflake, defaultRoleSnowflake, ct: ct);
+                    guildId, userId, defaultRoleSnowflake, ct: ct);
 
             if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
                 var unbanResult = await _guildApi.RemoveGuildBanAsync(
-                    guildId, userIdSnowflake, Messages.PunishmentExpired.EncodeHeader(), ct);
+                    guildId, userId, Messages.PunishmentExpired.EncodeHeader(), ct);
                 if (unbanResult.IsSuccess)
                     memberData.BannedUntil = null;
                 else
                     _logger.LogWarning(
                         "Error in automatic user unban request.\n{ErrorMessage}", unbanResult.Error.Message);
+            }
+
+            var userResult = await _userApi.GetUserAsync(userId, ct);
+            if (!userResult.IsDefined(out var user)) continue;
+
+            for (var i = memberData.Reminders.Count - 1; i >= 0; i--) {
+                var reminder = memberData.Reminders[i];
+                if (DateTimeOffset.UtcNow < reminder.RemindAt) continue;
+
+                var embed = new EmbedBuilder().WithSmallTitle(
+                        string.Format(Messages.Reminder, user.GetTag()), user)
+                    .WithDescription(
+                        string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
+                    .WithColour(ColorsList.Magenta)
+                    .Build();
+
+                if (!embed.IsDefined(out var built)) continue;
+
+                var messageResult = await _channelApi.CreateMessageAsync(
+                    reminder.Channel, Mention.User(user), embeds: new[] { built }, ct: ct);
+                if (!messageResult.IsSuccess)
+                    _logger.LogWarning(
+                        "Error in reminder send.\n{ErrorMessage}", messageResult.Error.Message);
+
+                memberData.Reminders.Remove(reminder);
             }
         }
 

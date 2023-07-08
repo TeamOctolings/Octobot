@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Boyfriend.Services.Data;
+using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;

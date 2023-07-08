@@ -1,8 +1,5 @@
 ﻿using System.Drawing;
 
-// TODO: remove this when all colors are used
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend;
 
 /// <summary>

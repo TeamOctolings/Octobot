@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest.Core;
 
-namespace Boyfriend.Services.Data;
+namespace Boyfriend.Services;
 
 /// <summary>
 ///     Handles saving, loading, initializing and providing <see cref="GuildData" />.

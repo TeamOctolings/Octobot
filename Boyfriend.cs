@@ -1,6 +1,5 @@
 using Boyfriend.Commands;
 using Boyfriend.Services;
-using Boyfriend.Services.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -80,7 +79,8 @@ public class Boyfriend {
                         .WithCommandGroup<ClearCommandGroup>()
                         .WithCommandGroup<KickCommandGroup>()
                         .WithCommandGroup<MuteCommandGroup>()
-                        .WithCommandGroup<PingCommandGroup>();
+                        .WithCommandGroup<PingCommandGroup>()
+                        .WithCommandGroup<RemindCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
