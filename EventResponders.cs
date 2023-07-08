@@ -208,6 +208,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
 
 /// <summary>
 ///     Handles sending a guild's <see cref="GuildConfiguration.WelcomeMessage" /> if one is set.
+///     If <see cref="GuildConfiguration.ReturnRolesOnRejoin"/> is enabled, roles will be returned.
 /// </summary>
 /// <seealso cref="GuildConfiguration.WelcomeMessage" />
 public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
@@ -223,19 +224,22 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
     }
 
     public async Task<Result> RespondAsync(IGuildMemberAdd gatewayEvent, CancellationToken ct = default) {
-        var guildConfiguration = await _dataService.GetConfiguration(gatewayEvent.GuildID, ct);
-        if (guildConfiguration.PublicFeedbackChannel is 0)
-            return Result.FromSuccess();
-        if (guildConfiguration.WelcomeMessage is "off" or "disable" or "disabled")
-            return Result.FromSuccess();
-
-        Messages.Culture = guildConfiguration.GetCulture();
-        var welcomeMessage = guildConfiguration.WelcomeMessage is "default" or "reset"
-            ? Messages.DefaultWelcomeMessage
-            : guildConfiguration.WelcomeMessage;
-
         if (!gatewayEvent.User.IsDefined(out var user))
             return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.User)));
+        var data = await _dataService.GetData(gatewayEvent.GuildID, ct);
+        var cfg = data.Configuration;
+        if (cfg.PublicFeedbackChannel is 0 || cfg.WelcomeMessage is "off" or "disable" or "disabled")
+            return Result.FromSuccess();
+        if (cfg.ReturnRolesOnRejoin) {
+            var result = await _guildApi.ModifyGuildMemberAsync(
+                gatewayEvent.GuildID, user.ID, roles: data.GetMemberData(user.ID).Roles, ct: ct);
+            if (!result.IsSuccess) return Result.FromError(result.Error);
+        }
+
+        Messages.Culture = data.Culture;
+        var welcomeMessage = cfg.WelcomeMessage is "default" or "reset"
+            ? Messages.DefaultWelcomeMessage
+            : cfg.WelcomeMessage;
 
         var guildResult = await _guildApi.GetGuildAsync(gatewayEvent.GuildID, ct: ct);
         if (!guildResult.IsDefined(out var guild)) return Result.FromError(guildResult);
@@ -249,7 +253,7 @@ public class GuildMemberAddResponder : IResponder<IGuildMemberAdd> {
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            guildConfiguration.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { built },
+            cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { built },
             allowedMentions: Boyfriend.NoMentions, ct: ct);
     }
 }

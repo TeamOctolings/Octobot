@@ -141,6 +141,7 @@ public class BanCommandGroup : CommandGroup {
             var memberData = data.GetMemberData(target.ID);
             memberData.BannedUntil
                 = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
+            memberData.Roles.Clear();
 
             responseEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserBanned, target.GetTag()), target)

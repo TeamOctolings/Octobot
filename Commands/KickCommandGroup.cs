@@ -71,7 +71,8 @@ public class KickCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var cfg = data.Configuration;
         Messages.Culture = cfg.GetCulture();
 
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
@@ -123,6 +124,7 @@ public class KickCommandGroup : CommandGroup {
                 ct: CancellationToken);
             if (!kickResult.IsSuccess)
                 return Result.FromError(kickResult.Error);
+            data.GetMemberData(target.ID).Roles.Clear();
 
             responseEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserKicked, target.GetTag()), target)

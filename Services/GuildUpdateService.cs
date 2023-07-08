@@ -146,7 +146,8 @@ public class GuildUpdateService : BackgroundService {
                 var storedEvent = data.ScheduledEvents[scheduledEvent.ID.Value];
                 if (storedEvent.Status == scheduledEvent.Status) {
                     if (DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime) {
-                        if (scheduledEvent.Status is not GuildScheduledEventStatus.Active) {
+                        if (data.Configuration.AutoStartEvents
+                            && scheduledEvent.Status is not GuildScheduledEventStatus.Active) {
                             var startResult = await _eventApi.ModifyGuildScheduledEventAsync(
                                 guildId, scheduledEvent.ID,
                                 status: GuildScheduledEventStatus.Active, ct: ct);
@@ -155,9 +156,10 @@ public class GuildUpdateService : BackgroundService {
                                     "Error in automatic scheduled event start request.\n{ErrorMessage}",
                                     startResult.Error.Message);
                         }
-                    } else if (DateTimeOffset.UtcNow
-                               >= scheduledEvent.ScheduledStartTime - data.Configuration.EventEarlyNotificationOffset
-                               && !storedEvent.EarlyNotificationSent) {
+                    } else if (data.Configuration.EventEarlyNotificationOffset != TimeSpan.Zero
+                               && !storedEvent.EarlyNotificationSent
+                               && DateTimeOffset.UtcNow
+                               >= scheduledEvent.ScheduledStartTime - data.Configuration.EventEarlyNotificationOffset) {
                         var earlyResult = await SendScheduledEventUpdatedMessage(scheduledEvent, data, true, ct);
                         if (earlyResult.IsSuccess)
                             storedEvent.EarlyNotificationSent = true;
