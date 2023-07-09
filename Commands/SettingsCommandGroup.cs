@@ -5,11 +5,8 @@ using Boyfriend.Data;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
-using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
-using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Contexts;
-using Remora.Discord.Commands.Feedback.Messages;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
@@ -44,10 +41,9 @@ public class SettingsCommandGroup : CommandGroup {
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
-    [Command("settings list")]
+    [Command("settingslist")]
     [Description("Shows settings list for this server")]
-    [SuppressInteractionResponse(suppress: true)]
-    public async Task<Result> SendSettingsListAsync() {
+    public async Task<Result> ListSettingsAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -77,21 +73,21 @@ public class SettingsCommandGroup : CommandGroup {
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(
-            built, ct: CancellationToken, options: new FeedbackMessageOptions(MessageFlags: MessageFlags.Ephemeral));
+        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
     }
 
     /// <summary>
-    ///     A slash command that modifies per-guild settings.
+    /// A slash command that modifies per-guild settings.
     /// </summary>
-    /// <returns>
-    ///     A feedback sending result which may or may not have succeeded.
-    /// </returns>
+    /// <param name="setting">The setting to modify.</param>
+    /// <param name="value">The new value of the setting.</param>
+    /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("settings")]
     [Description("Change settings for this server")]
     public async Task<Result> EditSettingsAsync(
-        [Description("настройка")] string setting,
-        [Description("значение")]  string value) {
+        [Description("The setting whose value you want to change")]
+        string setting,
+        [Description("Setting value")] string value) {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -144,10 +140,10 @@ public class SettingsCommandGroup : CommandGroup {
         var builder = new StringBuilder();
 
         builder.Append(Markdown.InlineCode(setting))
-               .Append($" {Messages.SettingIsNow} ")
-               .Append(Markdown.InlineCode(value));
+            .Append($" {Messages.SettingIsNow} ")
+            .Append(Markdown.InlineCode(value));
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfulyChanged, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfullyChanged, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();

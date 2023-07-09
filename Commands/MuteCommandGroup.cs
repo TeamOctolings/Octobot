@@ -44,16 +44,16 @@ public class MuteCommandGroup : CommandGroup {
     }
 
     /// <summary>
-    ///     A slash command that mutes a Discord user with the specified reason.
+    ///     A slash command that mutes a Discord member with the specified reason.
     /// </summary>
-    /// <param name="target">The user to mute.</param>
-    /// <param name="duration">The duration for this mute. The user will be automatically unmuted after this duration.</param>
+    /// <param name="target">The member to mute.</param>
+    /// <param name="duration">The duration for this mute. The member will be automatically unmuted after this duration.</param>
     /// <param name="reason">
     ///     The reason for this mute. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
     /// </param>
     /// <returns>
-    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
+    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the member
     ///     was muted and vice-versa.
     /// </returns>
     /// <seealso cref="UnmuteUserAsync" />
@@ -63,10 +63,9 @@ public class MuteCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Mute member")]
     public async Task<Result> MuteUserAsync(
-        [Description("Member to mute")]     IUser  target,
-        [Description("Mute reason")] string reason,
-        [Description("Mute duration")]
-        TimeSpan duration) {
+        [Description("Member to mute")] IUser    target,
+        [Description("Mute reason")]    string   reason,
+        [Description("Mute duration")]  TimeSpan duration) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -156,15 +155,15 @@ public class MuteCommandGroup : CommandGroup {
     }
 
     /// <summary>
-    ///     A slash command that unmutes a Discord user with the specified reason.
+    ///     A slash command that unmutes a Discord member with the specified reason.
     /// </summary>
-    /// <param name="target">The user to unmute.</param>
+    /// <param name="target">The member to unmute.</param>
     /// <param name="reason">
     ///     The reason for this unmute. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
     /// </param>
     /// <returns>
-    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
+    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the member
     ///     was unmuted and vice-versa.
     /// </returns>
     /// <seealso cref="MuteUserAsync" />
@@ -175,10 +174,8 @@ public class MuteCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Unmute member")]
     public async Task<Result> UnmuteUserAsync(
-        [Description("Member to unmute")]
-        IUser target,
-        [Description("Unmute reason")]
-        string reason) {
+        [Description("Member to unmute")] IUser  target,
+        [Description("Unmute reason")]    string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
