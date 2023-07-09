@@ -181,8 +181,8 @@
     <value>Роль мута</value>
   </data>
     <data name="LanguageNotSupported" xml:space="preserve">
-    <value>Язык не поддерживается! Поддерживаемые языки:</value>
-  </data>
+        <value>Язык не поддерживается! </value>
+    </data>
     <data name="Yes" xml:space="preserve">
     <value>Да</value>
   </data>
@@ -554,5 +554,8 @@
     </data>
     <data name="SettingNotChanged" xml:space="preserve">
         <value>Настройка не редактирована</value>
+    </data>
+    <data name="SettingIsNow" xml:space="preserve">
+        <value>теперь имеет значение</value>
     </data>
 </root>

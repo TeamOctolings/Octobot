@@ -699,7 +699,7 @@ namespace Boyfriend {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Language not supported! Supported languages:.
+        ///   Looks up a localized string similar to Language not supported!.
         /// </summary>
         internal static string LanguageNotSupported {
             get {
@@ -893,6 +893,15 @@ namespace Boyfriend {
         internal static string SettingDoesntExist {
             get {
                 return ResourceManager.GetString("SettingDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is now.
+        /// </summary>
+        internal static string SettingIsNow {
+            get {
+                return ResourceManager.GetString("SettingIsNow", resourceCulture);
             }
         }
         

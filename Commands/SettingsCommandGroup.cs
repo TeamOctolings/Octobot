@@ -21,7 +21,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles the command to show information about this bot: /about
+///     Handles the commands to list and modify per-guild settings: /settings and /settings list.
 /// </summary>
 public class SettingsCommandGroup : CommandGroup {
     private readonly ICommandContext     _context;
@@ -38,8 +38,14 @@ public class SettingsCommandGroup : CommandGroup {
         _userApi = userApi;
     }
 
-    [Command("settingslist")]
-    [Description("ХАХАХАХАХАХ я ебанулся")]
+    /// <summary>
+    ///     A slash command that lists current per-guild settings.
+    /// </summary>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
+    [Command("settings list")]
+    [Description("Shows settings list for this server")]
     [SuppressInteractionResponse(suppress: true)]
     public async Task<Result> SendSettingsListAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
@@ -76,13 +82,13 @@ public class SettingsCommandGroup : CommandGroup {
     }
 
     /// <summary>
-    ///     A slash command that shows information about this bot.
+    ///     A slash command that modifies per-guild settings.
     /// </summary>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("settings")]
-    [Description("редактирует НАСТРОЙКИ ХАХАХАХАХА")]
+    [Description("Change settings for this server")]
     public async Task<Result> EditSettingsAsync(
         [Description("настройка")] string setting,
         [Description("значение")]  string value) {
@@ -135,7 +141,14 @@ public class SettingsCommandGroup : CommandGroup {
             return (Result)await _feedbackService.SendContextualEmbedAsync(failedBuilt, ct: CancellationToken);
         }
 
+        var builder = new StringBuilder();
+
+        builder.Append(Markdown.InlineCode(setting))
+               .Append($" {Messages.SettingIsNow} ")
+               .Append(Markdown.InlineCode(value));
+
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfulyChanged, currentUser)
+            .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);

@@ -51,9 +51,9 @@ public class ClearCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]
-    [Description("удаляет сообщения")]
+    [Description("Remove multiple messages")]
     public async Task<Result> ClearMessagesAsync(
-        [Description("сколько удалять")] [MinValue(2)] [MaxValue(100)]
+        [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(

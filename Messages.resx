@@ -184,8 +184,8 @@
     <value>Mute role</value>
   </data>
     <data name="LanguageNotSupported" xml:space="preserve">
-    <value>Language not supported! Supported languages:</value>
-  </data>
+        <value>Language not supported!</value>
+    </data>
     <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
@@ -554,5 +554,8 @@
     </data>
     <data name="SettingNotChanged" xml:space="preserve">
         <value>Setting not changed</value>
+    </data>
+    <data name="SettingIsNow" xml:space="preserve">
+        <value>is now</value>
     </data>
 </root>

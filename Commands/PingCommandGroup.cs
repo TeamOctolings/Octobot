@@ -43,7 +43,7 @@ public class PingCommandGroup : CommandGroup {
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("ping", "пинг")]
-    [Description("получает задержку")]
+    [Description("Get bot latency")]
     public async Task<Result> SendPingAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
             return Result.FromError(

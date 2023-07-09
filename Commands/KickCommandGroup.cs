@@ -57,10 +57,10 @@ public class KickCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.KickMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
-    [Description("кикает юзера")]
+    [Description("Kick member")]
     public async Task<Result> KickUserAsync(
-        [Description("юзер кого кикать")]     IUser  target,
-        [Description("причина зачем кикать")] string reason) {
+        [Description("Member to kick")]     IUser  target,
+        [Description("Kick reason")] string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));

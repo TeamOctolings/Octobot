@@ -16,7 +16,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles the command to show information about this bot: /about
+///     Handles the command to show information about this bot: /about.
 /// </summary>
 public class AboutCommandGroup : CommandGroup {
     private static readonly string[]            Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
@@ -41,7 +41,7 @@ public class AboutCommandGroup : CommandGroup {
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("about")]
-    [Description("отображает список разработчиков")]
+    [Description("Shows Boyfriend's developers")]
     public async Task<Result> SendAboutBotAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
@@ -59,8 +59,8 @@ public class AboutCommandGroup : CommandGroup {
             builder.AppendLine($"@{dev} — {$"AboutDeveloper@{dev}".Localized()}");
 
         builder.AppendLine()
-            .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
-            .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
+               .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
+               .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())

@@ -34,7 +34,7 @@ public class RemindCommandGroup : CommandGroup {
     }
 
     [Command("remind")]
-    [Description("крафтит напоминалки")]
+    [Description("Create a reminder")]
     public async Task<Result> AddReminderAsync(TimeSpan duration, string text) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(

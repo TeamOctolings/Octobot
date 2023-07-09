@@ -61,11 +61,11 @@ public class MuteCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
-    [Description("глушит юзера")]
+    [Description("Mute member")]
     public async Task<Result> MuteUserAsync(
-        [Description("юзер кого глушить")]     IUser  target,
-        [Description("причина зачем глушить")] string reason,
-        [Description("продолжительность мута")]
+        [Description("Member to mute")]     IUser  target,
+        [Description("Mute reason")] string reason,
+        [Description("Mute duration")]
         TimeSpan duration) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
@@ -173,11 +173,11 @@ public class MuteCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
-    [Description("разрешает юзеру снова говорить")]
+    [Description("Unmute member")]
     public async Task<Result> UnmuteUserAsync(
-        [Description("юзер кого раззамучивать")]
+        [Description("Member to unmute")]
         IUser target,
-        [Description("причина зачем раззамучивать")]
+        [Description("Unmute reason")]
         string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(

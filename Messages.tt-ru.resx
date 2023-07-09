@@ -184,8 +184,8 @@
     <value>звание замученного</value>
   </data>
     <data name="LanguageNotSupported" xml:space="preserve">
-    <value>такого языка нету, ты шо, есть только такие:</value>
-  </data>
+        <value>такого языка нету...</value>
+    </data>
     <data name="Yes" xml:space="preserve">
     <value>да</value>
   </data>
@@ -554,5 +554,8 @@
     </data>
     <data name="SettingNotChanged" xml:space="preserve">
         <value>прикол сдох</value>
+    </data>
+    <data name="SettingIsNow" xml:space="preserve">
+        <value>стало</value>
     </data>
 </root>

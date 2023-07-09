@@ -61,11 +61,11 @@ public class BanCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
-    [Description("банит юзера")]
+    [Description("Ban user")]
     public async Task<Result> BanUserAsync(
-        [Description("юзер кого банить")]     IUser  target,
-        [Description("причина зачем банить")] string reason,
-        [Description("продолжительность бана")]
+        [Description("User to ban")]     IUser  target,
+        [Description("Ban reason")] string reason,
+        [Description("Ban duration")]
         TimeSpan? duration = null) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
@@ -197,10 +197,10 @@ public class BanCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
-    [Description("разбанит юзера")]
+    [Description("Unban user")]
     public async Task<Result> UnbanUserAsync(
-        [Description("юзер кого разбанить")] IUser target,
-        [Description("причина зачем разбанить")]
+        [Description("User to unban")] IUser target,
+        [Description("Unban reason")]
         string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
