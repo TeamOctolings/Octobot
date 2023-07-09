@@ -143,7 +143,7 @@ public class SettingsCommandGroup : CommandGroup {
             .Append($" {Messages.SettingIsNow} ")
             .Append(Markdown.InlineCode(value));
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfulyChanged, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfullyChanged, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();
