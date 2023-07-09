@@ -24,10 +24,10 @@ namespace Boyfriend.Commands;
 ///     Handles the command to show information about this bot: /about
 /// </summary>
 public class SettingsCommandGroup : CommandGroup {
-    private readonly        ICommandContext     _context;
-    private readonly        GuildDataService    _dataService;
-    private readonly        FeedbackService     _feedbackService;
-    private readonly        IDiscordRestUserAPI _userApi;
+    private readonly ICommandContext     _context;
+    private readonly GuildDataService    _dataService;
+    private readonly FeedbackService     _feedbackService;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public SettingsCommandGroup(
         ICommandContext context,         GuildDataService    dataService,
@@ -57,14 +57,12 @@ public class SettingsCommandGroup : CommandGroup {
 
         foreach (var setting in typeof(GuildConfiguration).GetProperties()) {
             builder.Append(Markdown.InlineCode(setting.Name))
-                   .Append(": ");
+                .Append(": ");
             var something = setting.GetValue(cfg);
-            if (something.GetType() == typeof(List<GuildConfiguration.NotificationReceiver>)) {
+            if (something!.GetType() == typeof(List<GuildConfiguration.NotificationReceiver>)) {
                 var list = (something as List<GuildConfiguration.NotificationReceiver>);
-                builder.AppendLine(string.Join(", ", list.Select(v => Markdown.InlineCode(v.ToString()))));
-            } else {
-                builder.AppendLine(Markdown.InlineCode(something.ToString()));
-            }
+                builder.AppendLine(string.Join(", ", list!.Select(v => Markdown.InlineCode(v.ToString()))));
+            } else { builder.AppendLine(Markdown.InlineCode(something.ToString()!)); }
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
@@ -73,8 +71,10 @@ public class SettingsCommandGroup : CommandGroup {
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken, options: new FeedbackMessageOptions(MessageFlags: MessageFlags.Ephemeral));
+        return (Result)await _feedbackService.SendContextualEmbedAsync(
+            built, ct: CancellationToken, options: new FeedbackMessageOptions(MessageFlags: MessageFlags.Ephemeral));
     }
+
     /// <summary>
     ///     A slash command that shows information about this bot.
     /// </summary>
@@ -101,7 +101,7 @@ public class SettingsCommandGroup : CommandGroup {
 
         try {
             foreach (var prop in typeof(GuildConfiguration).GetProperties())
-                if (setting.ToLower() == prop.Name.ToLower())
+                if (string.Equals(setting, prop.Name, StringComparison.CurrentCultureIgnoreCase))
                     property = prop;
             if (property == null || !property.CanWrite)
                 throw new ApplicationException(Messages.SettingDoesntExist);
