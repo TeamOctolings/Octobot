@@ -18,9 +18,6 @@ jobs:
       contents: read
       security-events: write
 
-    strategy:
-      fail-fast: false
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -29,8 +26,8 @@ jobs:
       run: dotnet restore
 
     - name: ReSharper CLI InspectCode
-      uses: muno92/resharper_inspectcode@1.6.13
+      uses: muno92/resharper_inspectcode@1.7.1
       with:
         solutionPath: ./Boyfriend.sln
-        ignoreIssueType: InvertIf
+        ignoreIssueType: InvertIf, ConvertIfStatementToReturnStatement, ConvertIfStatementToSwitchStatement
         solutionWideAnalysis: true

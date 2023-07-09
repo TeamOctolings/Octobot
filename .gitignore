@@ -1,6 +1,5 @@
 .idea/
 *.user
-token.txt
 bin/
 obj/
 /packages/
