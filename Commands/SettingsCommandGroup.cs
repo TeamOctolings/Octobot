@@ -43,7 +43,7 @@ public class SettingsCommandGroup : CommandGroup {
     /// </returns>
     [Command("settingslist")]
     [Description("Shows settings list for this server")]
-    public async Task<Result> SendSettingsListAsync() {
+    public async Task<Result> ListSettingsAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
