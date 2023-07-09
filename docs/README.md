@@ -14,7 +14,7 @@
 ![CodeFactor](https://img.shields.io/codefactor/grade/github/TeamOctolings/Boyfriend)
 
 Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and
-Discord.Net
+Remora.Discord
 
 ## Features
 

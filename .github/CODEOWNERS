@@ -1,4 +1,2 @@
 *                   @TeamOctolings/boyfriend
-.github/CODEOWNERS  @TeamOctolings/boyfriend-admins
-/docs/              @mctaylors
-Messages.tt-ru.resx @mctaylors
+/docs/              @TeamOctolings/boyfriend-docs
