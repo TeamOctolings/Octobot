@@ -1,5 +1,8 @@
 <p align="center">
-<img src="https://github.com/TeamOctolings/Boyfriend/assets/95250141/aa155ad7-c958-4a4f-a1f9-28b3570dc1bb" alt="Boyfriend logo" width="75%"/>
+<img src="https://github.com/TeamOctolings/Boyfriend/docs/assets/boyfriend-dark.png#gh-light-mode-only" 
+    alt="Boyfriend logo" width="75%"/>
+<img src="https://github.com/TeamOctolings/Boyfriend/docs/assets/boyfriend-light.png#gh-dark-mode-only" 
+    alt="Boyfriend logo" width="75%"/>
 </p>
 
 ![GitHub License](https://img.shields.io/github/license/TeamOctolings/Boyfriend)
