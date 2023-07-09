@@ -63,10 +63,9 @@ public class BanCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Ban user")]
     public async Task<Result> BanUserAsync(
-        [Description("User to ban")]     IUser  target,
-        [Description("Ban reason")] string reason,
-        [Description("Ban duration")]
-        TimeSpan? duration = null) {
+        [Description("User to ban")]  IUser     target,
+        [Description("Ban reason")]   string    reason,
+        [Description("Ban duration")] TimeSpan? duration = null) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -199,9 +198,8 @@ public class BanCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Unban user")]
     public async Task<Result> UnbanUserAsync(
-        [Description("User to unban")] IUser target,
-        [Description("Unban reason")]
-        string reason) {
+        [Description("User to unban")] IUser  target,
+        [Description("Unban reason")]  string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));

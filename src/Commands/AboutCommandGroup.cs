@@ -59,8 +59,8 @@ public class AboutCommandGroup : CommandGroup {
             builder.AppendLine($"@{dev} — {$"AboutDeveloper@{dev}".Localized()}");
 
         builder.AppendLine()
-               .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
-               .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
+            .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
+            .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())

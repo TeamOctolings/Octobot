@@ -125,13 +125,17 @@ public static class Extensions {
     }
 
     /// <summary>
-    ///     Sanitizes a string (see <see cref="SanitizeForBlockCode" />) and formats the string with block code.
+    /// Sanitizes a string (see <see cref="SanitizeForBlockCode" />) and formats the string to use Markdown Block Code formatting with a specified
+    /// language for syntax highlighting.
     /// </summary>
     /// <param name="s">The string to sanitize and format.</param>
-    /// <returns>The sanitized string formatted with <see cref="Markdown.BlockCode(string)" />.</returns>
-    public static string InBlockCode(this string s) {
+    /// <param name="language"></param>
+    /// <returns>The sanitized string formatted to use Markdown Block Code with a specified
+    /// language for syntax highlighting.</returns>
+    public static string InBlockCode(this string s, string language = "") {
         s = s.SanitizeForBlockCode();
-        return $"```{s.SanitizeForBlockCode()}{(s.EndsWith("`") || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
+        return
+            $"```{language}\n{s.SanitizeForBlockCode()}{(s.EndsWith("`") || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
     }
 
     public static string Localized(this string key) {
@@ -159,7 +163,7 @@ public static class Extensions {
                 builder.AppendLine(line.Text);
         }
 
-        return InBlockCode(builder.ToString());
+        return InBlockCode(builder.ToString(), "diff");
     }
 
     public static string GetTag(this IUser user) {
