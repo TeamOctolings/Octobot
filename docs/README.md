@@ -1,7 +1,7 @@
 <p align="center">
-<img src="https://github.com/TeamOctolings/Boyfriend/docs/assets/boyfriend-dark.png#gh-light-mode-only" 
+<img src="https://github.com/TeamOctolings/Boyfriend/blob/milestone-commit/docs/assets/boyfriend-dark.png#gh-light-mode-only" 
     alt="Boyfriend logo" width="75%"/>
-<img src="https://github.com/TeamOctolings/Boyfriend/docs/assets/boyfriend-light.png#gh-dark-mode-only" 
+<img src="https://github.com/TeamOctolings/Boyfriend/blob/milestone-commit/docs/assets/boyfriend-light.png#gh-dark-mode-only" 
     alt="Boyfriend logo" width="75%"/>
 </p>
 
