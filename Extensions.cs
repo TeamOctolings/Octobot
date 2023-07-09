@@ -159,7 +159,7 @@ public static class Extensions {
                 builder.AppendLine(line.Text);
         }
 
-        return Markdown.BlockCode(builder.ToString().SanitizeForBlockCode(), "diff");
+        return InBlockCode(builder.ToString());
     }
 
     public static string GetTag(this IUser user) {

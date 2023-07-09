@@ -42,15 +42,15 @@ public class KickCommandGroup : CommandGroup {
     }
 
     /// <summary>
-    ///     A slash command that kicks a Discord user with the specified reason.
+    ///     A slash command that kicks a Discord member with the specified reason.
     /// </summary>
-    /// <param name="target">The user to kick.</param>
+    /// <param name="target">The member to kick.</param>
     /// <param name="reason">
     ///     The reason for this kick. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.RemoveGuildMemberAsync" />.
     /// </param>
     /// <returns>
-    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
+    ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the member
     ///     was kicked and vice-versa.
     /// </returns>
     [Command("kick", "кик")]
@@ -59,8 +59,8 @@ public class KickCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
     [Description("Kick member")]
     public async Task<Result> KickUserAsync(
-        [Description("Member to kick")]     IUser  target,
-        [Description("Kick reason")] string reason) {
+        [Description("Member to kick")] IUser  target,
+        [Description("Kick reason")]    string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));

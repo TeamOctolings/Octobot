@@ -549,7 +549,7 @@
     <data name="SettingsListTitle" xml:space="preserve">
         <value>Boyfriend's Settings</value>
     </data>
-    <data name="SettingSuccessfulyChanged" xml:space="preserve">
+    <data name="SettingSuccessfullyChanged" xml:space="preserve">
         <value>Setting successfuly changed</value>
     </data>
     <data name="SettingNotChanged" xml:space="preserve">

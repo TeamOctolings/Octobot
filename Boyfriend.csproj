@@ -24,26 +24,4 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
         <PackageReference Include="Remora.Discord" Version="2023.3.0" />
     </ItemGroup>
-
-    <!--    TODO: remove this when done -->
-    <ItemGroup>
-        <Compile Remove="old\**" />
-        <Compile Update="Messages.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Messages.resx</DependentUpon>
-        </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Remove="old\**" />
-        <EmbeddedResource Update="Messages.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Messages.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Remove="old\**" />
-    </ItemGroup>
 </Project>

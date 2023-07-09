@@ -43,6 +43,6 @@ the most effective way possible.
 [JetBrains](https://www.jetbrains.com/), creators of [ReSharper](https://www.jetbrains.com/resharper)
 and [Rider](https://www.jetbrains.com/rider), supports Boyfriend with one of
 their [Open Source Licenses](https://jb.gg/OpenSourceSupport).
-Rider is the recommended IDE when working with Boyfriend, and most of the Boyfriend team uses it.
+Rider is the recommended IDE when working with Boyfriend, and everyone on the Boyfriend team uses it.
 Additionally, ReSharper command-line tools made by JetBrains are used for status checks on pull requests to ensure code
 quality even when not using ReSharper or Rider.

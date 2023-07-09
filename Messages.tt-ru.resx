@@ -549,7 +549,7 @@
     <data name="SettingsListTitle" xml:space="preserve">
         <value>приколы Boyfriend</value>
     </data>
-    <data name="SettingSuccessfulyChanged" xml:space="preserve">
+    <data name="SettingSuccessfullyChanged" xml:space="preserve">
         <value>прикол редактирован</value>
     </data>
     <data name="SettingNotChanged" xml:space="preserve">

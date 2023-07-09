@@ -33,9 +33,18 @@ public class RemindCommandGroup : CommandGroup {
         _userApi = userApi;
     }
 
+    /// <summary>
+    ///     A slash command that schedules a reminder with the specified text.
+    /// </summary>
+    /// <param name="in">The period of time which must pass before the reminder will be sent.</param>
+    /// <param name="message">The text of the reminder.</param>
+    /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
     [Description("Create a reminder")]
-    public async Task<Result> AddReminderAsync(TimeSpan duration, string text) {
+    public async Task<Result> AddReminderAsync(
+        [Description("After what period of time mention the reminder")]
+        TimeSpan @in,
+        [Description("Reminder message")] string message) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -44,13 +53,13 @@ public class RemindCommandGroup : CommandGroup {
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var remindAt = DateTimeOffset.UtcNow.Add(duration);
+        var remindAt = DateTimeOffset.UtcNow.Add(@in);
 
         (await _dataService.GetMemberData(guildId.Value, userId.Value, CancellationToken)).Reminders.Add(
             new Reminder {
                 RemindAt = remindAt,
                 Channel = channelId.Value,
-                Text = text
+                Text = message
             });
 
         var embed = new EmbedBuilder().WithSmallTitle(string.Format(Messages.ReminderCreated, user.GetTag()), user)
