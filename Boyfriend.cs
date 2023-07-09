@@ -80,7 +80,8 @@ public class Boyfriend {
                         .WithCommandGroup<KickCommandGroup>()
                         .WithCommandGroup<MuteCommandGroup>()
                         .WithCommandGroup<PingCommandGroup>()
-                        .WithCommandGroup<RemindCommandGroup>();
+                        .WithCommandGroup<RemindCommandGroup>()
+                        .WithCommandGroup<SettingsCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());

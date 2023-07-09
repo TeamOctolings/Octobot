@@ -546,4 +546,13 @@
     <data name="DescriptionReminder" xml:space="preserve">
         <value>You asked me to remind you {0}</value>
     </data>
+    <data name="SettingsListTitle" xml:space="preserve">
+        <value>Boyfriend's Settings</value>
+    </data>
+    <data name="SettingSuccessfulyChanged" xml:space="preserve">
+        <value>Setting successfuly changed</value>
+    </data>
+    <data name="SettingNotChanged" xml:space="preserve">
+        <value>Setting not changed</value>
+    </data>
 </root>

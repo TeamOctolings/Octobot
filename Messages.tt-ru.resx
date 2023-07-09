@@ -546,4 +546,13 @@
     <data name="DescriptionReminder" xml:space="preserve">
         <value>ты хотел чтоб я напомнил тебе {0}</value>
     </data>
+    <data name="SettingsListTitle" xml:space="preserve">
+        <value>приколы Boyfriend</value>
+    </data>
+    <data name="SettingSuccessfulyChanged" xml:space="preserve">
+        <value>прикол редактирован</value>
+    </data>
+    <data name="SettingNotChanged" xml:space="preserve">
+        <value>прикол сдох</value>
+    </data>
 </root>
