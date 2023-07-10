@@ -104,16 +104,11 @@ public class UtilityService : IHostedService {
     }
 
     /// <summary>
-    ///     Gets the string mentioning all <see cref="GuildSettings.NotificationReceiver" />s related to a scheduled
+    ///     Gets the string mentioning the <see cref="GuildSettings.EventNotificationRole"/> and event subscribers related to a scheduled
     ///     event.
     /// </summary>
-    /// <remarks>
-    ///     If the guild settings enables <see cref="GuildSettings.NotificationReceiver.Role" />, then the
-    ///     <see cref="GuildSettings.EventNotificationRole" /> will also be mentioned.
-    /// </remarks>
     /// <param name="scheduledEvent">
-    ///     The scheduled event whose subscribers will be mentioned if the guild settings enables
-    ///     <see cref="GuildSettings.NotificationReceiver.Interested" />.
+    ///     The scheduled event whose subscribers will be mentioned.
     /// </param>
     /// <param name="settings">The settings of the guild containing the scheduled event</param>
     /// <param name="ct">The cancellation token for this operation.</param>

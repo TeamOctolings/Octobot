@@ -4,7 +4,7 @@ using Remora.Results;
 namespace Boyfriend.Data.Options;
 
 public interface IOption {
-    string Name { get; init; }
+    string Name { get; }
     object GetAsObject(JsonNode settings);
     Result Set(JsonNode         settings, string from);
 }

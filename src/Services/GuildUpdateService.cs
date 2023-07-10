@@ -302,7 +302,7 @@ public class GuildUpdateService : BackgroundService {
     }
 
     /// <summary>
-    ///     Handles sending a notification, mentioning the <see cref="GuildSettings.EventStartedReceivers" />s,
+    ///     Handles sending a notification, mentioning the <see cref="GuildSettings.EventNotificationRole"/> and event subscribers,
     ///     when a scheduled event is about to start, has started or completed
     ///     in a guild's <see cref="GuildSettings.EventNotificationChannel" /> if one is set.
     /// </summary>

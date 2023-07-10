@@ -15,7 +15,6 @@ public class Option<T> : IOption {
         DefaultValue = defaultValue;
     }
 
-    public Type   Type { get; set; } = typeof(T);
     public string Name { get; init; }
 
     public object GetAsObject(JsonNode settings) {
