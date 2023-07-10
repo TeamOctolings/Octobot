@@ -15,7 +15,7 @@ public class Option<T> : IOption {
         DefaultValue = defaultValue;
     }
 
-    public string Name { get; init; }
+    public string Name { get; }
 
     public object GetAsObject(JsonNode settings) {
         return Get(settings)!;
