@@ -1,9 +1,7 @@
-using Remora.Rest.Core;
-
 namespace Boyfriend.Data;
 
 public struct Reminder {
-    public DateTimeOffset RemindAt;
+    public DateTimeOffset At;
     public string         Text;
-    public Snowflake      Channel;
+    public ulong          Channel;
 }

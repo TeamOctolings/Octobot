@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.Text.Json.Nodes;
 using Remora.Rest.Core;
 
 namespace Boyfriend.Data;
@@ -8,28 +8,25 @@ namespace Boyfriend.Data;
 /// </summary>
 /// <remarks>This information is stored on disk as a JSON file.</remarks>
 public class GuildData {
-    public readonly GuildConfiguration Configuration;
-    public readonly string             ConfigurationPath;
-
     public readonly Dictionary<ulong, MemberData> MemberData;
     public readonly string                        MemberDataPath;
 
     public readonly Dictionary<ulong, ScheduledEventData> ScheduledEvents;
     public readonly string                                ScheduledEventsPath;
+    public readonly JsonNode                              Settings;
+    public readonly string                                SettingsPath;
 
     public GuildData(
-        GuildConfiguration                    configuration,   string configurationPath,
+        JsonNode                              settings,        string settingsPath,
         Dictionary<ulong, ScheduledEventData> scheduledEvents, string scheduledEventsPath,
         Dictionary<ulong, MemberData>         memberData,      string memberDataPath) {
-        Configuration = configuration;
-        ConfigurationPath = configurationPath;
+        Settings = settings;
+        SettingsPath = settingsPath;
         ScheduledEvents = scheduledEvents;
         ScheduledEventsPath = scheduledEventsPath;
         MemberData = memberData;
         MemberDataPath = memberDataPath;
     }
-
-    public CultureInfo Culture => Configuration.GetCulture();
 
     public MemberData GetMemberData(Snowflake userId) {
         if (MemberData.TryGetValue(userId.Value, out var existing)) return existing;

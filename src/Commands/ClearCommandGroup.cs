@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Text;
+using Boyfriend.Data;
+using Boyfriend.locale;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -64,8 +66,8 @@ public class ClearCommandGroup : CommandGroup {
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId.Value)).AppendLine();
@@ -93,7 +95,8 @@ public class ClearCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var title = string.Format(Messages.MessagesCleared, amount.ToString());
-        if (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value) {
+        if (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+            && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(title, currentUser)
                 .WithDescription(description)
                 .WithActionFooter(user)
@@ -105,9 +108,9 @@ public class ClearCommandGroup : CommandGroup {
                 return Result.FromError(logEmbed);
 
             // Not awaiting to reduce response time
-            if (cfg.PrivateFeedbackChannel != channelId.Value)
+            if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
-                    cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { logBuilt },
+                    GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { logBuilt },
                     ct: CancellationToken);
         }
 

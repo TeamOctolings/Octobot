@@ -56,11 +56,11 @@ public class Boyfriend {
                                                       | GatewayIntents.GuildMembers
                                                       | GatewayIntents.GuildScheduledEvents);
                     services.Configure<CacheSettings>(
-                        settings => {
-                            settings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
-                            settings.SetDefaultSlidingExpiration(TimeSpan.FromMinutes(30));
-                            settings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7));
-                            settings.SetSlidingExpiration<IMessage>(TimeSpan.FromDays(7));
+                        cSettings => {
+                            cSettings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
+                            cSettings.SetDefaultSlidingExpiration(TimeSpan.FromMinutes(30));
+                            cSettings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7));
+                            cSettings.SetSlidingExpiration<IMessage>(TimeSpan.FromDays(7));
                         });
 
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>()

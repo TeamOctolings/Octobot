@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Remora.Discord.API.Abstractions.Objects;
@@ -103,38 +104,37 @@ public class UtilityService : IHostedService {
     }
 
     /// <summary>
-    ///     Gets the string mentioning all <see cref="GuildConfiguration.NotificationReceiver" />s related to a scheduled
+    ///     Gets the string mentioning all <see cref="GuildSettings.NotificationReceiver" />s related to a scheduled
     ///     event.
     /// </summary>
     /// <remarks>
-    ///     If the guild configuration enables <see cref="GuildConfiguration.NotificationReceiver.Role" />, then the
-    ///     <see cref="GuildConfiguration.EventNotificationRole" /> will also be mentioned.
+    ///     If the guild settings enables <see cref="GuildSettings.NotificationReceiver.Role" />, then the
+    ///     <see cref="GuildSettings.EventNotificationRole" /> will also be mentioned.
     /// </remarks>
     /// <param name="scheduledEvent">
-    ///     The scheduled event whose subscribers will be mentioned if the guild configuration enables
-    ///     <see cref="GuildConfiguration.NotificationReceiver.Interested" />.
+    ///     The scheduled event whose subscribers will be mentioned if the guild settings enables
+    ///     <see cref="GuildSettings.NotificationReceiver.Interested" />.
     /// </param>
-    /// <param name="config">The configuration of the guild containing the scheduled event</param>
+    /// <param name="settings">The settings of the guild containing the scheduled event</param>
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns>A result containing the string which may or may not have succeeded.</returns>
     public async Task<Result<string>> GetEventNotificationMentions(
-        IGuildScheduledEvent scheduledEvent, GuildConfiguration config, CancellationToken ct = default) {
+        IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default) {
         var builder = new StringBuilder();
-        var receivers = config.EventStartedReceivers;
-        var role = config.EventNotificationRole.ToDiscordSnowflake();
+        var role = GuildSettings.EventNotificationRole.Get(settings);
         var usersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
             scheduledEvent.GuildID, scheduledEvent.ID, withMember: true, ct: ct);
         if (!usersResult.IsDefined(out var users)) return Result<string>.FromError(usersResult);
 
-        if (receivers.Contains(GuildConfiguration.NotificationReceiver.Role) && role.Value is not 0)
+        if (role.Value is not 0)
             builder.Append($"{Mention.Role(role)} ");
-        if (receivers.Contains(GuildConfiguration.NotificationReceiver.Interested))
-            builder = users.Where(
-                    user => {
-                        if (!user.GuildMember.IsDefined(out var member)) return true;
-                        return !member.Roles.Contains(role);
-                    })
-                .Aggregate(builder, (current, user) => current.Append($"{Mention.User(user.User)} "));
+
+        builder = users.Where(
+                user => {
+                    if (!user.GuildMember.IsDefined(out var member)) return true;
+                    return !member.Roles.Contains(role);
+                })
+            .Aggregate(builder, (current, user) => current.Append($"{Mention.User(user.User)} "));
         return builder.ToString();
     }
 }

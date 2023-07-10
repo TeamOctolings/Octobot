@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Text;
+using Boyfriend.Data;
+using Boyfriend.locale;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -76,8 +78,8 @@ public class BanCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var data = await _dataService.GetData(guildId.Value, CancellationToken);
-        var cfg = data.Configuration;
-        Messages.Culture = data.Culture;
+        var cfg = data.Settings;
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (existingBanResult.IsDefined()) {
@@ -145,8 +147,10 @@ public class BanCommandGroup : CommandGroup {
                     string.Format(Messages.UserBanned, target.GetTag()), target)
                 .WithColour(ColorsList.Green).Build();
 
-            if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
-                || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+            if ((!GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+                 && GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
+                || (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+                    && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserBanned, target.GetTag()), target)
                     .WithDescription(description)
@@ -160,14 +164,14 @@ public class BanCommandGroup : CommandGroup {
 
                 var builtArray = new[] { logBuilt };
                 // Not awaiting to reduce response time
-                if (cfg.PublicFeedbackChannel != channelId.Value)
+                if (GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
-                        cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: builtArray,
                         ct: CancellationToken);
-                if (cfg.PrivateFeedbackChannel != cfg.PublicFeedbackChannel
-                    && cfg.PrivateFeedbackChannel != channelId.Value)
+                if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != GuildSettings.PublicFeedbackChannel.Get(cfg)
+                    && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
-                        cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: builtArray,
                         ct: CancellationToken);
             }
         }
@@ -209,8 +213,8 @@ public class BanCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (!existingBanResult.IsDefined()) {
@@ -238,8 +242,10 @@ public class BanCommandGroup : CommandGroup {
                 string.Format(Messages.UserUnbanned, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
-            || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+        if ((!GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+             && GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
+            || (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+                && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserUnbanned, target.GetTag()), target)
                 .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
@@ -254,14 +260,14 @@ public class BanCommandGroup : CommandGroup {
             var builtArray = new[] { logBuilt };
 
             // Not awaiting to reduce response time
-            if (cfg.PublicFeedbackChannel != channelId.Value)
+            if (GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
-                    cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                    GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: builtArray,
                     ct: CancellationToken);
-            if (cfg.PrivateFeedbackChannel != cfg.PublicFeedbackChannel
-                && cfg.PrivateFeedbackChannel != channelId.Value)
+            if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != GuildSettings.PublicFeedbackChannel.Get(cfg)
+                && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
-                    cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                    GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: builtArray,
                     ct: CancellationToken);
         }
 

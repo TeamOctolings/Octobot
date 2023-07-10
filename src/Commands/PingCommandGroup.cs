@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using Boyfriend.Data;
+using Boyfriend.locale;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -53,8 +55,8 @@ public class PingCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0) {

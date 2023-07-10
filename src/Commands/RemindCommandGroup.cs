@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Boyfriend.Data;
+using Boyfriend.locale;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -57,8 +58,8 @@ public class RemindCommandGroup : CommandGroup {
 
         (await _dataService.GetMemberData(guildId.Value, userId.Value, CancellationToken)).Reminders.Add(
             new Reminder {
-                RemindAt = remindAt,
-                Channel = channelId.Value,
+                At = remindAt,
+                Channel = channelId.Value.Value,
                 Text = message
             });
 

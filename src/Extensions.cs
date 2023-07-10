@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
+using Boyfriend.locale;
 using DiffPlex.DiffBuilder.Model;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;
@@ -170,9 +171,10 @@ public static class Extensions {
         return user.Discriminator is 0000 ? $"@{user.Username}" : $"{user.Username}#{user.Discriminator:0000}";
     }
 
-    public static Snowflake ToDiscordSnowflake(this ulong id) {
+    public static Snowflake ToSnowflake(this ulong id) {
         return DiscordSnowflake.New(id);
     }
+
 
     public static TResult? MaxOrDefault<TSource, TResult>(
         this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
@@ -189,5 +191,9 @@ public static class Extensions {
         return context.TryGetGuildID(out guildId)
                && context.TryGetChannelID(out channelId)
                && context.TryGetUserID(out userId);
+    }
+
+    public static bool Empty(this Snowflake snowflake) {
+        return snowflake.Value is 0;
     }
 }
