@@ -331,6 +331,7 @@ public class MessageCreateResponder : IResponder<IMessageCreate> {
                 "пон" =>
                     "https://cdn.discordapp.com/attachments/837385840946053181/1087236080950055023/vUORS10xPaY-1.jpg",
                 "++++" => "#",
+                "осу"  => "https://github.com/ppy/osu",
                 _      => default(Optional<string>)
             });
         return Task.FromResult(Result.FromSuccess());
