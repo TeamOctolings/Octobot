@@ -6,7 +6,10 @@ using Boyfriend.Services;
 using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Commands.Attributes;
+using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
@@ -57,6 +60,10 @@ public class SettingsCommandGroup : CommandGroup {
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("settingslist")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
+    [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
     public async Task<Result> ListSettingsAsync() {
@@ -95,6 +102,10 @@ public class SettingsCommandGroup : CommandGroup {
     /// <param name="value">The new value of the setting.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("settings")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
+    [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Change settings for this server")]
     [UsedImplicitly]
     public async Task<Result> EditSettingsAsync(

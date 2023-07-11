@@ -48,6 +48,8 @@ public class ClearCommandGroup : CommandGroup {
     ///     were cleared and vice-versa.
     /// </returns>
     [Command("clear", "очистить")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]

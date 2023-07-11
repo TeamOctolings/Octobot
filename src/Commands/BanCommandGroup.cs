@@ -8,6 +8,7 @@ using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
+using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
@@ -58,6 +59,8 @@ public class BanCommandGroup : CommandGroup {
     /// </returns>
     /// <seealso cref="UnbanUserAsync" />
     [Command("ban", "бан")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
@@ -196,6 +199,8 @@ public class BanCommandGroup : CommandGroup {
     /// <seealso cref="BanUserAsync" />
     /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
     [Command("unban")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]

@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
@@ -39,6 +40,7 @@ public class RemindCommandGroup : CommandGroup {
     /// <param name="message">The text of the reminder.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
+    [DiscordDefaultDMPermission(false)]
     [Description("Create a reminder")]
     [UsedImplicitly]
     public async Task<Result> AddReminderAsync(
