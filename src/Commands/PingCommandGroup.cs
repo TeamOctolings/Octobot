@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
@@ -15,6 +16,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles the command to get the time taken for the gateway to respond to the last heartbeat: /ping
 /// </summary>
+[UsedImplicitly]
 public class PingCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly DiscordGatewayClient   _client;
@@ -42,6 +44,7 @@ public class PingCommandGroup : CommandGroup {
     /// </returns>
     [Command("ping", "пинг")]
     [Description("Get bot latency")]
+    [UsedImplicitly]
     public async Task<Result> SendPingAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
             return Result.FromError(

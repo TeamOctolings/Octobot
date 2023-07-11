@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -19,6 +20,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles commands related to ban management: /ban and /unban.
 /// </summary>
+[UsedImplicitly]
 public class BanCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -60,6 +62,7 @@ public class BanCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Ban user")]
+    [UsedImplicitly]
     public async Task<Result> BanUserAsync(
         [Description("User to ban")]  IUser     target,
         [Description("Ban reason")]   string    reason,
@@ -197,6 +200,7 @@ public class BanCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Unban user")]
+    [UsedImplicitly]
     public async Task<Result> UnbanUserAsync(
         [Description("User to unban")] IUser  target,
         [Description("Unban reason")]  string reason) {

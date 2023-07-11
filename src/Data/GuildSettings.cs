@@ -1,4 +1,5 @@
 using Boyfriend.Data.Options;
+using Boyfriend.Responders;
 using Remora.Discord.API.Abstractions.Objects;
 
 namespace Boyfriend.Data;
@@ -19,14 +20,14 @@ public static class GuildSettings {
     ///         <item><see cref="Messages.DefaultWelcomeMessage" /> will be sent if set to "default" or "reset"</item>
     ///     </list>
     /// </remarks>
-    /// <seealso cref="GuildMemberAddResponder" />
+    /// <seealso cref="GuildMemberJoinedResponder" />
     public static readonly Option<string> WelcomeMessage = new("WelcomeMessage", "default");
 
     /// <summary>
     ///     Controls whether or not the <see cref="Messages.Ready" /> message should be sent
     ///     in <see cref="PrivateFeedbackChannel" /> on startup.
     /// </summary>
-    /// <seealso cref="GuildCreateResponder" />
+    /// <seealso cref="GuildLoadedResponder" />
     public static readonly BoolOption ReceiveStartupMessages = new("ReceiveStartupMessages", false);
 
     public static readonly BoolOption RemoveRolesOnMute = new("RemoveRolesOnMute", false);

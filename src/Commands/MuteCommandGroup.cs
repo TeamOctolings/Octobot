@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -19,6 +20,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles commands related to mute management: /mute and /unmute.
 /// </summary>
+[UsedImplicitly]
 public class MuteCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -60,6 +62,7 @@ public class MuteCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Mute member")]
+    [UsedImplicitly]
     public async Task<Result> MuteUserAsync(
         [Description("Member to mute")] IUser    target,
         [Description("Mute reason")]    string   reason,
@@ -173,6 +176,7 @@ public class MuteCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Unmute member")]
+    [UsedImplicitly]
     public async Task<Result> UnmuteUserAsync(
         [Description("Member to unmute")] IUser  target,
         [Description("Unmute reason")]    string reason) {

@@ -2,6 +2,7 @@
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
@@ -16,6 +17,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles the command to show information about this bot: /about.
 /// </summary>
+[UsedImplicitly]
 public class AboutCommandGroup : CommandGroup {
     private static readonly string[]            Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
     private readonly        ICommandContext     _context;
@@ -40,6 +42,7 @@ public class AboutCommandGroup : CommandGroup {
     /// </returns>
     [Command("about")]
     [Description("Shows Boyfriend's developers")]
+    [UsedImplicitly]
     public async Task<Result> SendAboutBotAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(

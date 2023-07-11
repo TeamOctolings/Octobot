@@ -3,6 +3,7 @@ using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Data.Options;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
@@ -17,6 +18,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles the commands to list and modify per-guild settings: /settings and /settings list.
 /// </summary>
+[UsedImplicitly]
 public class SettingsCommandGroup : CommandGroup {
     private static readonly IOption[] AllOptions = {
         GuildSettings.Language,
@@ -56,6 +58,7 @@ public class SettingsCommandGroup : CommandGroup {
     /// </returns>
     [Command("settingslist")]
     [Description("Shows settings list for this server")]
+    [UsedImplicitly]
     public async Task<Result> ListSettingsAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
@@ -93,6 +96,7 @@ public class SettingsCommandGroup : CommandGroup {
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("settings")]
     [Description("Change settings for this server")]
+    [UsedImplicitly]
     public async Task<Result> EditSettingsAsync(
         [Description("The setting whose value you want to change")]
         string setting,

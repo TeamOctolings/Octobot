@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
@@ -15,6 +16,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles the command to manage reminders: /remind
 /// </summary>
+[UsedImplicitly]
 public class RemindCommandGroup : CommandGroup {
     private readonly ICommandContext     _context;
     private readonly GuildDataService    _dataService;
@@ -38,6 +40,7 @@ public class RemindCommandGroup : CommandGroup {
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
     [Description("Create a reminder")]
+    [UsedImplicitly]
     public async Task<Result> AddReminderAsync(
         [Description("After what period of time mention the reminder")]
         TimeSpan @in,

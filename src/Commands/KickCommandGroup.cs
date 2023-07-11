@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -17,6 +18,7 @@ namespace Boyfriend.Commands;
 /// <summary>
 ///     Handles the command to kick members of a guild: /kick.
 /// </summary>
+[UsedImplicitly]
 public class KickCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -56,6 +58,7 @@ public class KickCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.KickMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
     [Description("Kick member")]
+    [UsedImplicitly]
     public async Task<Result> KickUserAsync(
         [Description("Member to kick")] IUser  target,
         [Description("Kick reason")]    string reason) {

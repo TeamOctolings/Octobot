@@ -67,11 +67,12 @@ public class Boyfriend {
                         // Init
                         .AddDiscordCaching()
                         .AddDiscordCommands(true)
+                        // Interactions
                         .AddInteractivity()
+                        .AddInteractionGroup<InteractionResponders>()
                         // Slash command event handlers
                         .AddPreparationErrorEvent<ErrorLoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
-                        .AddInteractionGroup<InteractionResponders>()
                         // Services
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
