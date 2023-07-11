@@ -277,7 +277,6 @@ public class GuildUpdateService : BackgroundService {
             .WithTitle(scheduledEvent.Name)
             .WithDescription(embedDescription)
             .WithEventCover(scheduledEvent.ID, scheduledEvent.Image)
-            .WithUserFooter(currentUser)
             .WithCurrentTimestamp()
             .WithColour(ColorsList.White)
             .Build();
