@@ -9,13 +9,20 @@ public class TimeSpanOption : Option<TimeSpan> {
 
     public TimeSpanOption(string name, TimeSpan defaultValue) : base(name, defaultValue) { }
 
-    public override Result Set(JsonNode settings, string from) {
-        var task = Parser.TryParseAsync(from).AsTask().GetAwaiter().GetResult();
+    public override TimeSpan Get(JsonNode settings) {
+        var property = settings[Name];
+        return property != null ? ParseTimeSpan(property.GetValue<string>()).Entity : DefaultValue;
+    }
 
-        if (!task.IsDefined(out var span))
+    public override Result Set(JsonNode settings, string from) {
+        if (!ParseTimeSpan(from).IsDefined(out var span))
             return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue));
 
         settings[Name] = span.ToString();
         return Result.FromSuccess();
+    }
+
+    private static Result<TimeSpan> ParseTimeSpan(string from) {
+        return Parser.TryParseAsync(from).AsTask().GetAwaiter().GetResult();
     }
 }
