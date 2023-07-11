@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
-using Boyfriend.locale;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
 namespace Boyfriend.Data.Options;
@@ -14,6 +14,10 @@ public class LanguageOption : Option<CultureInfo> {
     };
 
     public LanguageOption(string name, string defaultValue) : base(name, CultureInfoCache[defaultValue]) { }
+
+    public override string Display(JsonNode settings) {
+        return Markdown.InlineCode(settings[Name]?.GetValue<string>() ?? "en");
+    }
 
     /// <inheritdoc />
     public override CultureInfo Get(JsonNode settings) {

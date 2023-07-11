@@ -4,9 +4,6 @@ using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Interactivity;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend;
 
 /// <summary>

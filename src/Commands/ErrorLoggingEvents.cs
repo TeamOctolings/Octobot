@@ -3,8 +3,6 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Services;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>

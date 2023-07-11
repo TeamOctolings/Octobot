@@ -1,5 +1,4 @@
 using Boyfriend.Data.Options;
-using Boyfriend.locale;
 using Remora.Discord.API.Abstractions.Objects;
 
 namespace Boyfriend.Data;

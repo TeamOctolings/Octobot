@@ -2,7 +2,6 @@
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Data.Options;
-using Boyfriend.locale;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -12,9 +11,6 @@ using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
-
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
 
 namespace Boyfriend.Commands;
 
@@ -77,8 +73,7 @@ public class SettingsCommandGroup : CommandGroup {
         foreach (var option in AllOptions) {
             builder.Append(Markdown.InlineCode(option.Name))
                 .Append(": ");
-            var something = option.GetAsObject(cfg);
-            builder.AppendLine(Markdown.InlineCode(something.ToString()!));
+            builder.AppendLine(option.Display(cfg));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
@@ -131,7 +126,7 @@ public class SettingsCommandGroup : CommandGroup {
 
         builder.Append(Markdown.InlineCode(option.Name))
             .Append($" {Messages.SettingIsNow} ")
-            .Append(Markdown.InlineCode(option.GetAsObject(cfg).ToString()!));
+            .Append(Markdown.InlineCode(option.Display(cfg)));
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfullyChanged, currentUser)
             .WithDescription(builder.ToString())

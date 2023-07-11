@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
-using Boyfriend.locale;
 using DiffPlex.DiffBuilder.Model;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;

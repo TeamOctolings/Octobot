@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
 namespace Boyfriend.Data.Options;
@@ -7,7 +8,8 @@ namespace Boyfriend.Data.Options;
 ///     Represents an per-guild option.
 /// </summary>
 /// <typeparam name="T">The type of the option.</typeparam>
-public class Option<T> : IOption {
+public class Option<T> : IOption
+where T : notnull {
     internal readonly T DefaultValue;
 
     public Option(string name, T defaultValue) {
@@ -17,8 +19,8 @@ public class Option<T> : IOption {
 
     public string Name { get; }
 
-    public object GetAsObject(JsonNode settings) {
-        return Get(settings)!;
+    public virtual string Display(JsonNode settings) {
+        return Markdown.InlineCode(Get(settings).ToString()!);
     }
 
     /// <summary>

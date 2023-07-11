@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using Boyfriend.locale;
 using Remora.Commands.Parsers;
 using Remora.Results;
 

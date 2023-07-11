@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Text;
 using Boyfriend.Data;
-using Boyfriend.locale;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -16,14 +16,12 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>
 ///     Handles the command to clear messages in a channel: /clear.
 /// </summary>
+[UsedImplicitly]
 public class ClearCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -54,6 +52,7 @@ public class ClearCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]
     [Description("Remove multiple messages")]
+    [UsedImplicitly]
     public async Task<Result> ClearMessagesAsync(
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount) {

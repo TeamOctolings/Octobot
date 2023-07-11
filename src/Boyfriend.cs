@@ -64,15 +64,19 @@ public class Boyfriend {
                         });
 
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>()
+                        // Init
                         .AddDiscordCaching()
                         .AddDiscordCommands(true)
+                        .AddInteractivity()
+                        // Slash command event handlers
                         .AddPreparationErrorEvent<ErrorLoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
-                        .AddInteractivity()
                         .AddInteractionGroup<InteractionResponders>()
+                        // Services
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
                         .AddHostedService<GuildUpdateService>()
+                        // Slash commands
                         .AddCommandTree()
                         .WithCommandGroup<AboutCommandGroup>()
                         .WithCommandGroup<BanCommandGroup>()

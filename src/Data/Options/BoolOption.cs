@@ -1,11 +1,14 @@
 using System.Text.Json.Nodes;
-using Boyfriend.locale;
 using Remora.Results;
 
 namespace Boyfriend.Data.Options;
 
 public class BoolOption : Option<bool> {
     public BoolOption(string name, bool defaultValue) : base(name, defaultValue) { }
+
+    public override string Display(JsonNode settings) {
+        return Get(settings) ? Messages.Yes : Messages.No;
+    }
 
     public override Result Set(JsonNode settings, string from) {
         if (!TryParseBool(from, out var value))

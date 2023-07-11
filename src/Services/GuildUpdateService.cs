@@ -1,6 +1,5 @@
 using System.Text.Json.Nodes;
 using Boyfriend.Data;
-using Boyfriend.locale;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Objects;

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using Boyfriend.Data;
-using Boyfriend.locale;
 using Boyfriend.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -12,9 +11,6 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Results;
-
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
 
 namespace Boyfriend.Commands;
 
