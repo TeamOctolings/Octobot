@@ -141,7 +141,7 @@ public class SettingsCommandGroup : CommandGroup {
 
         builder.Append(Markdown.InlineCode(option.Name))
             .Append($" {Messages.SettingIsNow} ")
-            .Append(Markdown.InlineCode(option.Display(cfg)));
+            .Append(option.Display(cfg));
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfullyChanged, currentUser)
             .WithDescription(builder.ToString())

@@ -12,7 +12,7 @@ public class TimeSpanOption : Option<TimeSpan> {
     public override Result Set(JsonNode settings, string from) {
         var task = Parser.TryParseAsync(from).AsTask().GetAwaiter().GetResult();
 
-        if (task.IsDefined(out var span))
+        if (!task.IsDefined(out var span))
             return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue));
 
         settings[Name] = span.ToString();
