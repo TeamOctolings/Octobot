@@ -228,8 +228,6 @@ public class GuildUpdateService : BackgroundService {
     /// <returns>A notification sending result which may or may not have succeeded.</returns>
     private async Task<Result> SendScheduledEventCreatedMessage(
         IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default) {
-        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
 
         if (!scheduledEvent.CreatorID.IsDefined(out var creatorId))
             return Result.FromError(new ArgumentNullError(nameof(scheduledEvent.CreatorID)));
