@@ -24,8 +24,7 @@ public class MessageCreateResponder : IResponder<IMessageCreate> {
                 "whoami"  => "`nobody`",
                 "сука !!" => "`root`",
                 "воооо"   => "`removing /...`",
-                "пон" =>
-                    "https://cdn.discordapp.com/attachments/837385840946053181/1087236080950055023/vUORS10xPaY-1.jpg",
+                "пон" => "https://cdn.upload.systems/uploads/2LNfUSwM.jpg",
                 "++++" => "#",
                 "осу"  => "https://github.com/ppy/osu",
                 _      => default(Optional<string>)
