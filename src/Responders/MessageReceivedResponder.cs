@@ -20,7 +20,7 @@ public class MessageCreateResponder : IResponder<IMessageCreate> {
 
     public Task<Result> RespondAsync(IMessageCreate gatewayEvent, CancellationToken ct = default) {
         _ = _channelApi.CreateMessageAsync(
-            gatewayEvent.ChannelID, ct: ct, content: gatewayEvent.Content switch {
+            gatewayEvent.ChannelID, ct: ct, content: gatewayEvent.Content.ToLower() switch {
                 "whoami"  => "`nobody`",
                 "сука !!" => "`root`",
                 "воооо"   => "`removing /...`",
