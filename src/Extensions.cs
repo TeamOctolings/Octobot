@@ -174,7 +174,6 @@ public static class Extensions {
         return DiscordSnowflake.New(id);
     }
 
-
     public static TResult? MaxOrDefault<TSource, TResult>(
         this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
         var list = source.ToList();
