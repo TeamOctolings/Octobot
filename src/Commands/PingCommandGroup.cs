@@ -77,8 +77,7 @@ public class PingCommandGroup : CommandGroup {
             .WithColour(latency < 250 ? ColorsList.Green : latency < 500 ? ColorsList.Yellow : ColorsList.Red)
             .WithCurrentTimestamp()
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
     }
 }

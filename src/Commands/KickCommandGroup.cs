@@ -83,10 +83,7 @@ public class KickCommandGroup : CommandGroup {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            if (!embed.IsDefined(out var alreadyBuilt))
-                return Result.FromError(embed);
-
-            return (Result)await _feedbackService.SendContextualEmbedAsync(alreadyBuilt, ct: CancellationToken);
+            return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
         var interactionResult
@@ -162,9 +159,6 @@ public class KickCommandGroup : CommandGroup {
             }
         }
 
-        if (!responseEmbed.IsDefined(out var built))
-            return Result.FromError(responseEmbed);
-
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(responseEmbed, CancellationToken);
     }
 }

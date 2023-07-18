@@ -90,9 +90,8 @@ public class SettingsCommandGroup : CommandGroup {
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Default)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
     }
 
     /// <summary>
@@ -132,9 +131,8 @@ public class SettingsCommandGroup : CommandGroup {
                 .WithDescription(setResult.Error.Message)
                 .WithColour(ColorsList.Red)
                 .Build();
-            if (!failedEmbed.IsDefined(out var failedBuilt)) return Result.FromError(failedEmbed);
 
-            return (Result)await _feedbackService.SendContextualEmbedAsync(failedBuilt, ct: CancellationToken);
+            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
         }
 
         var builder = new StringBuilder();
@@ -147,8 +145,7 @@ public class SettingsCommandGroup : CommandGroup {
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
     }
 }
