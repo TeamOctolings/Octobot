@@ -5,6 +5,8 @@ using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Commands.Attributes;
+using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
@@ -44,6 +46,8 @@ public class PingCommandGroup : CommandGroup {
     /// </returns>
     [Command("ping", "пинг")]
     [Description("Get bot latency")]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> SendPingAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
