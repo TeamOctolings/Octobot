@@ -66,8 +66,7 @@ public class AboutCommandGroup : CommandGroup {
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl(
-                "https://media.discordapp.net/attachments/837385840946053181/1125009665592393738/boyfriend.png")
+            .WithImageUrl("https://cdn.upload.systems/uploads/JFAaX5vr.png")
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
