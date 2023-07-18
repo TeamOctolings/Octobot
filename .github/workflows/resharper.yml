@@ -4,9 +4,11 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
+    branches: [ "master" ]
+  merge_group:
+    types: [checks_requested]
+  push:
     branches: [ "master" ]
 
 jobs:

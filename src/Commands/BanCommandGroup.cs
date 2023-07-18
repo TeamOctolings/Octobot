@@ -1,11 +1,14 @@
 using System.ComponentModel;
 using System.Text;
+using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
+using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
@@ -13,14 +16,12 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>
 ///     Handles commands related to ban management: /ban and /unban.
 /// </summary>
+[UsedImplicitly]
 public class BanCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -58,10 +59,13 @@ public class BanCommandGroup : CommandGroup {
     /// </returns>
     /// <seealso cref="UnbanUserAsync" />
     [Command("ban", "бан")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Ban user")]
+    [UsedImplicitly]
     public async Task<Result> BanUserAsync(
         [Description("User to ban")]  IUser     target,
         [Description("Ban reason")]   string    reason,
@@ -76,8 +80,8 @@ public class BanCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var data = await _dataService.GetData(guildId.Value, CancellationToken);
-        var cfg = data.Configuration;
-        Messages.Culture = data.Culture;
+        var cfg = data.Settings;
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (existingBanResult.IsDefined()) {
@@ -145,8 +149,10 @@ public class BanCommandGroup : CommandGroup {
                     string.Format(Messages.UserBanned, target.GetTag()), target)
                 .WithColour(ColorsList.Green).Build();
 
-            if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
-                || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+            if ((!GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+                 && GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
+                || (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+                    && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserBanned, target.GetTag()), target)
                     .WithDescription(description)
@@ -160,14 +166,14 @@ public class BanCommandGroup : CommandGroup {
 
                 var builtArray = new[] { logBuilt };
                 // Not awaiting to reduce response time
-                if (cfg.PublicFeedbackChannel != channelId.Value)
+                if (GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
-                        cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: builtArray,
                         ct: CancellationToken);
-                if (cfg.PrivateFeedbackChannel != cfg.PublicFeedbackChannel
-                    && cfg.PrivateFeedbackChannel != channelId.Value)
+                if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != GuildSettings.PublicFeedbackChannel.Get(cfg)
+                    && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
-                        cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: builtArray,
                         ct: CancellationToken);
             }
         }
@@ -193,10 +199,13 @@ public class BanCommandGroup : CommandGroup {
     /// <seealso cref="BanUserAsync" />
     /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
     [Command("unban")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.BanMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Unban user")]
+    [UsedImplicitly]
     public async Task<Result> UnbanUserAsync(
         [Description("User to unban")] IUser  target,
         [Description("Unban reason")]  string reason) {
@@ -209,8 +218,8 @@ public class BanCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId.Value, target.ID, CancellationToken);
         if (!existingBanResult.IsDefined()) {
@@ -238,8 +247,10 @@ public class BanCommandGroup : CommandGroup {
                 string.Format(Messages.UserUnbanned, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
-            || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+        if ((!GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+             && GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
+            || (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+                && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(
                     string.Format(Messages.UserUnbanned, target.GetTag()), target)
                 .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
@@ -254,14 +265,14 @@ public class BanCommandGroup : CommandGroup {
             var builtArray = new[] { logBuilt };
 
             // Not awaiting to reduce response time
-            if (cfg.PublicFeedbackChannel != channelId.Value)
+            if (GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
-                    cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                    GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: builtArray,
                     ct: CancellationToken);
-            if (cfg.PrivateFeedbackChannel != cfg.PublicFeedbackChannel
-                && cfg.PrivateFeedbackChannel != channelId.Value)
+            if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != GuildSettings.PublicFeedbackChannel.Get(cfg)
+                && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
-                    cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                    GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: builtArray,
                     ct: CancellationToken);
         }
 

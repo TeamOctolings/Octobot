@@ -1,12 +1,6 @@
-<picture>
-
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/95250141/206895339-ef5510c8-8b30-4887-b89c-5dc14a24b18a.png">
-
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/95250141/206895340-3415d97d-91fd-4fb6-8c17-4e1bf340e1df.png">
-
-  <img alt="Boyfriend Logo" src="https://user-images.githubusercontent.com/95250141/206895339-ef5510c8-8b30-4887-b89c-5dc14a24b18a.png">
-
-</picture>
+<p align="center">
+    <img src="https://cdn.upload.systems/uploads/v40uV9K1.png" alt="Boyfriend logo" width="75%"/>
+</p>
 
 ![GitHub License](https://img.shields.io/github/license/TeamOctolings/Boyfriend)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TeamOctolings/Boyfriend/.github/workflows/resharper.yml?branch=master)

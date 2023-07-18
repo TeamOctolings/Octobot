@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
@@ -9,14 +11,12 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>
 ///     Handles the command to get the time taken for the gateway to respond to the last heartbeat: /ping
 /// </summary>
+[UsedImplicitly]
 public class PingCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly DiscordGatewayClient   _client;
@@ -44,6 +44,7 @@ public class PingCommandGroup : CommandGroup {
     /// </returns>
     [Command("ping", "пинг")]
     [Description("Get bot latency")]
+    [UsedImplicitly]
     public async Task<Result> SendPingAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
             return Result.FromError(
@@ -53,8 +54,8 @@ public class PingCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0) {

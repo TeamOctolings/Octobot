@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Remora.Discord.API.Abstractions.Rest;
@@ -36,8 +37,8 @@ public class GuildDataService : IHostedService {
     private async Task SaveAsync(CancellationToken ct) {
         var tasks = new List<Task>();
         foreach (var data in _datas.Values) {
-            await using var configStream = File.OpenWrite(data.ConfigurationPath);
-            tasks.Add(JsonSerializer.SerializeAsync(configStream, data.Configuration, cancellationToken: ct));
+            await using var settingsStream = File.OpenWrite(data.SettingsPath);
+            tasks.Add(JsonSerializer.SerializeAsync(settingsStream, data.Settings, cancellationToken: ct));
 
             await using var eventsStream = File.OpenWrite(data.ScheduledEventsPath);
             tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
@@ -58,17 +59,16 @@ public class GuildDataService : IHostedService {
     private async Task<GuildData> InitializeData(Snowflake guildId, CancellationToken ct = default) {
         var idString = $"{guildId}";
         var memberDataPath = $"{guildId}/MemberData";
-        var configurationPath = $"{guildId}/Configuration.json";
+        var settingsPath = $"{guildId}/Settings.json";
         var scheduledEventsPath = $"{guildId}/ScheduledEvents.json";
         if (!Directory.Exists(idString)) Directory.CreateDirectory(idString);
         if (!Directory.Exists(memberDataPath)) Directory.CreateDirectory(memberDataPath);
-        if (!File.Exists(configurationPath)) await File.WriteAllTextAsync(configurationPath, "{}", ct);
+        if (!File.Exists(settingsPath)) await File.WriteAllTextAsync(settingsPath, "{}", ct);
         if (!File.Exists(scheduledEventsPath)) await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
 
-        await using var configurationStream = File.OpenRead(configurationPath);
-        var configuration
-            = JsonSerializer.DeserializeAsync<GuildConfiguration>(
-                configurationStream, cancellationToken: ct);
+        await using var settingsStream = File.OpenRead(settingsPath);
+        var jsonSettings
+            = JsonNode.Parse(settingsStream);
 
         await using var eventsStream = File.OpenRead(scheduledEventsPath);
         var events
@@ -80,23 +80,23 @@ public class GuildDataService : IHostedService {
             await using var dataStream = File.OpenRead(dataPath);
             var data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
             if (data is null) continue;
-            var memberResult = await _guildApi.GetGuildMemberAsync(guildId, data.Id.ToDiscordSnowflake(), ct);
+            var memberResult = await _guildApi.GetGuildMemberAsync(guildId, data.Id.ToSnowflake(), ct);
             if (memberResult.IsSuccess)
-                data.Roles = memberResult.Entity.Roles.ToList();
+                data.Roles = memberResult.Entity.Roles.ToList().ConvertAll(r => r.Value);
 
             memberData.Add(data.Id, data);
         }
 
         var finalData = new GuildData(
-            await configuration ?? new GuildConfiguration(), configurationPath,
+            jsonSettings ?? new JsonObject(), settingsPath,
             await events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
             memberData, memberDataPath);
         while (!_datas.ContainsKey(guildId)) _datas.TryAdd(guildId, finalData);
         return finalData;
     }
 
-    public async Task<GuildConfiguration> GetConfiguration(Snowflake guildId, CancellationToken ct = default) {
-        return (await GetData(guildId, ct)).Configuration;
+    public async Task<JsonNode> GetSettings(Snowflake guildId, CancellationToken ct = default) {
+        return (await GetData(guildId, ct)).Settings;
     }
 
     public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {

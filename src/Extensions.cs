@@ -170,7 +170,7 @@ public static class Extensions {
         return user.Discriminator is 0000 ? $"@{user.Username}" : $"{user.Username}#{user.Discriminator:0000}";
     }
 
-    public static Snowflake ToDiscordSnowflake(this ulong id) {
+    public static Snowflake ToSnowflake(this ulong id) {
         return DiscordSnowflake.New(id);
     }
 
@@ -189,5 +189,9 @@ public static class Extensions {
         return context.TryGetGuildID(out guildId)
                && context.TryGetChannelID(out channelId)
                && context.TryGetUserID(out userId);
+    }
+
+    public static bool Empty(this Snowflake snowflake) {
+        return snowflake.Value is 0;
     }
 }

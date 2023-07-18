@@ -56,23 +56,28 @@ public class Boyfriend {
                                                       | GatewayIntents.GuildMembers
                                                       | GatewayIntents.GuildScheduledEvents);
                     services.Configure<CacheSettings>(
-                        settings => {
-                            settings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
-                            settings.SetDefaultSlidingExpiration(TimeSpan.FromMinutes(30));
-                            settings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7));
-                            settings.SetSlidingExpiration<IMessage>(TimeSpan.FromDays(7));
+                        cSettings => {
+                            cSettings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
+                            cSettings.SetDefaultSlidingExpiration(TimeSpan.FromMinutes(30));
+                            cSettings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7));
+                            cSettings.SetSlidingExpiration<IMessage>(TimeSpan.FromDays(7));
                         });
 
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>()
+                        // Init
                         .AddDiscordCaching()
                         .AddDiscordCommands(true)
-                        .AddPreparationErrorEvent<ErrorLoggingPreparationErrorEvent>()
-                        .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
+                        // Interactions
                         .AddInteractivity()
                         .AddInteractionGroup<InteractionResponders>()
+                        // Slash command event handlers
+                        .AddPreparationErrorEvent<ErrorLoggingPreparationErrorEvent>()
+                        .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
+                        // Services
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
                         .AddHostedService<GuildUpdateService>()
+                        // Slash commands
                         .AddCommandTree()
                         .WithCommandGroup<AboutCommandGroup>()
                         .WithCommandGroup<BanCommandGroup>()

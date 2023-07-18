@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Text;
+using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
@@ -10,14 +12,12 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>
 ///     Handles the command to show information about this bot: /about.
 /// </summary>
+[UsedImplicitly]
 public class AboutCommandGroup : CommandGroup {
     private static readonly string[]            Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
     private readonly        ICommandContext     _context;
@@ -42,6 +42,7 @@ public class AboutCommandGroup : CommandGroup {
     /// </returns>
     [Command("about")]
     [Description("Shows Boyfriend's developers")]
+    [UsedImplicitly]
     public async Task<Result> SendAboutBotAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
@@ -51,8 +52,8 @@ public class AboutCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var builder = new StringBuilder().AppendLine(Markdown.Bold(Messages.AboutTitleDevelopers));
         foreach (var dev in Developers)
@@ -65,8 +66,7 @@ public class AboutCommandGroup : CommandGroup {
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl(
-                "https://media.discordapp.net/attachments/837385840946053181/1125009665592393738/boyfriend.png")
+            .WithImageUrl("https://cdn.upload.systems/uploads/JFAaX5vr.png")
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 

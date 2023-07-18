@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Text;
+using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -14,14 +16,12 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>
 ///     Handles the command to clear messages in a channel: /clear.
 /// </summary>
+[UsedImplicitly]
 public class ClearCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -48,10 +48,13 @@ public class ClearCommandGroup : CommandGroup {
     ///     were cleared and vice-versa.
     /// </returns>
     [Command("clear", "очистить")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]
     [Description("Remove multiple messages")]
+    [UsedImplicitly]
     public async Task<Result> ClearMessagesAsync(
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount) {
@@ -64,8 +67,8 @@ public class ClearCommandGroup : CommandGroup {
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
 
-        var cfg = await _dataService.GetConfiguration(guildId.Value, CancellationToken);
-        Messages.Culture = cfg.GetCulture();
+        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId.Value)).AppendLine();
@@ -93,7 +96,8 @@ public class ClearCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var title = string.Format(Messages.MessagesCleared, amount.ToString());
-        if (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value) {
+        if (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+            && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value) {
             var logEmbed = new EmbedBuilder().WithSmallTitle(title, currentUser)
                 .WithDescription(description)
                 .WithActionFooter(user)
@@ -105,9 +109,9 @@ public class ClearCommandGroup : CommandGroup {
                 return Result.FromError(logEmbed);
 
             // Not awaiting to reduce response time
-            if (cfg.PrivateFeedbackChannel != channelId.Value)
+            if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                 _ = _channelApi.CreateMessageAsync(
-                    cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: new[] { logBuilt },
+                    GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { logBuilt },
                     ct: CancellationToken);
         }
 

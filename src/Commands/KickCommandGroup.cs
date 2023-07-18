@@ -1,24 +1,25 @@
 ﻿using System.ComponentModel;
+using Boyfriend.Data;
 using Boyfriend.Services;
+using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
+using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend.Commands;
 
 /// <summary>
 ///     Handles the command to kick members of a guild: /kick.
 /// </summary>
+[UsedImplicitly]
 public class KickCommandGroup : CommandGroup {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext        _context;
@@ -54,10 +55,13 @@ public class KickCommandGroup : CommandGroup {
     ///     was kicked and vice-versa.
     /// </returns>
     [Command("kick", "кик")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.KickMembers)]
+    [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.KickMembers)]
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
     [Description("Kick member")]
+    [UsedImplicitly]
     public async Task<Result> KickUserAsync(
         [Description("Member to kick")] IUser  target,
         [Description("Kick reason")]    string reason) {
@@ -71,8 +75,8 @@ public class KickCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         var data = await _dataService.GetData(guildId.Value, CancellationToken);
-        var cfg = data.Configuration;
-        Messages.Culture = cfg.GetCulture();
+        var cfg = data.Settings;
+        Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
         if (!memberResult.IsSuccess) {
@@ -129,8 +133,10 @@ public class KickCommandGroup : CommandGroup {
                     string.Format(Messages.UserKicked, target.GetTag()), target)
                 .WithColour(ColorsList.Green).Build();
 
-            if ((cfg.PublicFeedbackChannel is not 0 && cfg.PublicFeedbackChannel != channelId.Value)
-                || (cfg.PrivateFeedbackChannel is not 0 && cfg.PrivateFeedbackChannel != channelId.Value)) {
+            if ((!GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+                 && GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
+                || (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+                    && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)) {
                 var logEmbed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.UserKicked, target.GetTag()), target)
                     .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
@@ -144,14 +150,14 @@ public class KickCommandGroup : CommandGroup {
 
                 var builtArray = new[] { logBuilt };
                 // Not awaiting to reduce response time
-                if (cfg.PublicFeedbackChannel != channelId.Value)
+                if (GuildSettings.PublicFeedbackChannel.Get(cfg) != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
-                        cfg.PublicFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: builtArray,
                         ct: CancellationToken);
-                if (cfg.PrivateFeedbackChannel != cfg.PublicFeedbackChannel
-                    && cfg.PrivateFeedbackChannel != channelId.Value)
+                if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != GuildSettings.PublicFeedbackChannel.Get(cfg)
+                    && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
                     _ = _channelApi.CreateMessageAsync(
-                        cfg.PrivateFeedbackChannel.ToDiscordSnowflake(), embeds: builtArray,
+                        GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: builtArray,
                         ct: CancellationToken);
             }
         }

@@ -1,17 +1,16 @@
+using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.Commands.Feedback.Messages;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Interactivity;
 using Remora.Results;
 
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnusedMember.Global
-
 namespace Boyfriend;
 
 /// <summary>
 ///     Handles responding to various interactions.
 /// </summary>
+[UsedImplicitly]
 public class InteractionResponders : InteractionGroup {
     private readonly FeedbackService _feedbackService;
 
@@ -25,6 +24,7 @@ public class InteractionResponders : InteractionGroup {
     /// <param name="state">The ID of the guild and scheduled event, encoded as "guildId:eventId".</param>
     /// <returns>An ephemeral feedback sending result which may or may not have succeeded.</returns>
     [Button("scheduled-event-details")]
+    [UsedImplicitly]
     public async Task<Result> OnStatefulButtonClicked(string? state = null) {
         if (state is null) return Result.FromError(new ArgumentNullError(nameof(state)));
 

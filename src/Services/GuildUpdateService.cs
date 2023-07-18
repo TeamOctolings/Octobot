@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -94,9 +95,9 @@ public class GuildUpdateService : BackgroundService {
     ///     This method does the following:
     ///     <list type="bullet">
     ///         <item>Automatically unbans users once their ban period has expired.</item>
-    ///         <item>Automatically grants members the guild's <see cref="GuildConfiguration.DefaultRole"/> if one is set.</item>
+    ///         <item>Automatically grants members the guild's <see cref="GuildSettings.DefaultRole"/> if one is set.</item>
     ///         <item>Sends reminders about an upcoming scheduled event.</item>
-    ///         <item>Automatically starts scheduled events if <see cref="GuildConfiguration.AutoStartEvents"/> is enabled.</item>
+    ///         <item>Automatically starts scheduled events if <see cref="GuildSettings.AutoStartEvents"/> is enabled.</item>
     ///         <item>Sends scheduled event start notifications.</item>
     ///         <item>Sends scheduled event completion notifications.</item>
     ///         <item>Sends reminders to members.</item>
@@ -114,15 +115,15 @@ public class GuildUpdateService : BackgroundService {
     /// <param name="ct">The cancellation token for this operation.</param>
     private async Task TickGuildAsync(Snowflake guildId, CancellationToken ct = default) {
         var data = await _dataService.GetData(guildId, ct);
-        Messages.Culture = data.Culture;
-        var defaultRoleSnowflake = data.Configuration.DefaultRole.ToDiscordSnowflake();
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        var defaultRole = GuildSettings.DefaultRole.Get(data.Settings);
 
         foreach (var memberData in data.MemberData.Values) {
-            var userId = memberData.Id.ToDiscordSnowflake();
+            var userId = memberData.Id.ToSnowflake();
 
-            if (defaultRoleSnowflake.Value is not 0 && !memberData.Roles.Contains(defaultRoleSnowflake))
+            if (defaultRole.Value is not 0 && !memberData.Roles.Contains(defaultRole.Value))
                 _ = _guildApi.AddGuildMemberRoleAsync(
-                    guildId, userId, defaultRoleSnowflake, ct: ct);
+                    guildId, userId, defaultRole, ct: ct);
 
             if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
                 var unbanResult = await _guildApi.RemoveGuildBanAsync(
@@ -139,7 +140,7 @@ public class GuildUpdateService : BackgroundService {
 
             for (var i = memberData.Reminders.Count - 1; i >= 0; i--) {
                 var reminder = memberData.Reminders[i];
-                if (DateTimeOffset.UtcNow < reminder.RemindAt) continue;
+                if (DateTimeOffset.UtcNow < reminder.At) continue;
 
                 var embed = new EmbedBuilder().WithSmallTitle(
                         string.Format(Messages.Reminder, user.GetTag()), user)
@@ -151,7 +152,7 @@ public class GuildUpdateService : BackgroundService {
                 if (!embed.IsDefined(out var built)) continue;
 
                 var messageResult = await _channelApi.CreateMessageAsync(
-                    reminder.Channel, Mention.User(user), embeds: new[] { built }, ct: ct);
+                    reminder.Channel.ToSnowflake(), Mention.User(user), embeds: new[] { built }, ct: ct);
                 if (!messageResult.IsSuccess)
                     _logger.LogWarning(
                         "Error in reminder send.\n{ErrorMessage}", messageResult.Error.Message);
@@ -163,7 +164,7 @@ public class GuildUpdateService : BackgroundService {
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
         if (!eventsResult.IsDefined(out var events)) return;
 
-        if (data.Configuration.EventNotificationChannel is 0) return;
+        if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty()) return;
 
         foreach (var scheduledEvent in events) {
             if (!data.ScheduledEvents.ContainsKey(scheduledEvent.ID.Value)) {
@@ -172,7 +173,7 @@ public class GuildUpdateService : BackgroundService {
                 var storedEvent = data.ScheduledEvents[scheduledEvent.ID.Value];
                 if (storedEvent.Status == scheduledEvent.Status) {
                     if (DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime) {
-                        if (data.Configuration.AutoStartEvents
+                        if (GuildSettings.AutoStartEvents.Get(data.Settings)
                             && scheduledEvent.Status is not GuildScheduledEventStatus.Active) {
                             var startResult = await _eventApi.ModifyGuildScheduledEventAsync(
                                 guildId, scheduledEvent.ID,
@@ -182,10 +183,11 @@ public class GuildUpdateService : BackgroundService {
                                     "Error in automatic scheduled event start request.\n{ErrorMessage}",
                                     startResult.Error.Message);
                         }
-                    } else if (data.Configuration.EventEarlyNotificationOffset != TimeSpan.Zero
+                    } else if (GuildSettings.EventEarlyNotificationOffset.Get(data.Settings) != TimeSpan.Zero
                                && !storedEvent.EarlyNotificationSent
                                && DateTimeOffset.UtcNow
-                               >= scheduledEvent.ScheduledStartTime - data.Configuration.EventEarlyNotificationOffset) {
+                               >= scheduledEvent.ScheduledStartTime
+                               - GuildSettings.EventEarlyNotificationOffset.Get(data.Settings)) {
                         var earlyResult = await SendScheduledEventUpdatedMessage(scheduledEvent, data, true, ct);
                         if (earlyResult.IsSuccess)
                             storedEvent.EarlyNotificationSent = true;
@@ -203,7 +205,7 @@ public class GuildUpdateService : BackgroundService {
 
             var result = scheduledEvent.Status switch {
                 GuildScheduledEventStatus.Scheduled =>
-                    await SendScheduledEventCreatedMessage(scheduledEvent, data.Configuration, ct),
+                    await SendScheduledEventCreatedMessage(scheduledEvent, data.Settings, ct),
                 GuildScheduledEventStatus.Active or GuildScheduledEventStatus.Completed =>
                     await SendScheduledEventUpdatedMessage(scheduledEvent, data, false, ct),
                 _ => Result.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.Status)))
@@ -215,19 +217,17 @@ public class GuildUpdateService : BackgroundService {
     }
 
     /// <summary>
-    ///     Handles sending a notification, mentioning the <see cref="GuildConfiguration.EventNotificationRole" /> if one is
+    ///     Handles sending a notification, mentioning the <see cref="GuildSettings.EventNotificationRole" /> if one is
     ///     set,
     ///     when a scheduled event is created
-    ///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
+    ///     in a guild's <see cref="GuildSettings.EventNotificationChannel" /> if one is set.
     /// </summary>
     /// <param name="scheduledEvent">The scheduled event that has just been created.</param>
-    /// <param name="config">The configuration of the guild containing the scheduled event.</param>
+    /// <param name="settings">The settings of the guild containing the scheduled event.</param>
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns>A notification sending result which may or may not have succeeded.</returns>
     private async Task<Result> SendScheduledEventCreatedMessage(
-        IGuildScheduledEvent scheduledEvent, GuildConfiguration config, CancellationToken ct = default) {
-        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
+        IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default) {
 
         if (!scheduledEvent.CreatorID.IsDefined(out var creatorId))
             return Result.FromError(new ArgumentNullError(nameof(scheduledEvent.CreatorID)));
@@ -275,14 +275,13 @@ public class GuildUpdateService : BackgroundService {
             .WithTitle(scheduledEvent.Name)
             .WithDescription(embedDescription)
             .WithEventCover(scheduledEvent.ID, scheduledEvent.Image)
-            .WithUserFooter(currentUser)
             .WithCurrentTimestamp()
             .WithColour(ColorsList.White)
             .Build();
         if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        var roleMention = config.EventNotificationRole is not 0
-            ? Mention.Role(config.EventNotificationRole.ToDiscordSnowflake())
+        var roleMention = !GuildSettings.EventNotificationRole.Get(settings).Empty()
+            ? Mention.Role(GuildSettings.EventNotificationRole.Get(settings))
             : string.Empty;
 
         var button = new ButtonComponent(
@@ -294,14 +293,14 @@ public class GuildUpdateService : BackgroundService {
         );
 
         return (Result)await _channelApi.CreateMessageAsync(
-            config.EventNotificationChannel.ToDiscordSnowflake(), roleMention, embeds: new[] { built },
+            GuildSettings.EventNotificationChannel.Get(settings), roleMention, embeds: new[] { built },
             components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
     }
 
     /// <summary>
-    ///     Handles sending a notification, mentioning the <see cref="GuildConfiguration.EventStartedReceivers" />s,
+    ///     Handles sending a notification, mentioning the <see cref="GuildSettings.EventNotificationRole"/> and event subscribers,
     ///     when a scheduled event is about to start, has started or completed
-    ///     in a guild's <see cref="GuildConfiguration.EventNotificationChannel" /> if one is set.
+    ///     in a guild's <see cref="GuildSettings.EventNotificationChannel" /> if one is set.
     /// </summary>
     /// <param name="scheduledEvent">The scheduled event that is about to start, has started or completed.</param>
     /// <param name="data">The data for the guild containing the scheduled event.</param>
@@ -353,7 +352,7 @@ public class GuildUpdateService : BackgroundService {
                     }
 
                     var contentResult = await _utility.GetEventNotificationMentions(
-                        scheduledEvent, data.Configuration, ct);
+                        scheduledEvent, data.Settings, ct);
                     if (!contentResult.IsDefined(out content))
                         return Result.FromError(contentResult);
 
@@ -383,7 +382,7 @@ public class GuildUpdateService : BackgroundService {
         if (!result.IsDefined(out var built)) return Result.FromError(result);
 
         return (Result)await _channelApi.CreateMessageAsync(
-            data.Configuration.EventNotificationChannel.ToDiscordSnowflake(),
+            GuildSettings.EventNotificationChannel.Get(data.Settings),
             content ?? default(Optional<string>), embeds: new[] { built }, ct: ct);
     }
 }
