@@ -6,6 +6,8 @@ using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Commands.Attributes;
+using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
@@ -41,6 +43,8 @@ public class AboutCommandGroup : CommandGroup {
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("about")]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
     [Description("Shows Boyfriend's developers")]
     [UsedImplicitly]
     public async Task<Result> SendAboutBotAsync() {
