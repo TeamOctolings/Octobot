@@ -1,4 +1,5 @@
 using Boyfriend.Commands;
+using Boyfriend.Commands.Events;
 using Boyfriend.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,7 +72,7 @@ public class Boyfriend {
                         .AddInteractivity()
                         .AddInteractionGroup<InteractionResponders>()
                         // Slash command event handlers
-                        .AddPreparationErrorEvent<ErrorLoggingPreparationErrorEvent>()
+                        .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
                         // Services
                         .AddSingleton<GuildDataService>()
