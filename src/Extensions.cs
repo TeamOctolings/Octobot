@@ -7,9 +7,11 @@ using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Extensions;
+using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
+using Remora.Results;
 
 namespace Boyfriend;
 
@@ -51,10 +53,9 @@ public static class Extensions {
     /// <param name="builder">The builder to add the small title to.</param>
     /// <param name="text">The text of the small title.</param>
     /// <param name="avatarSource">The user whose avatar to use in the small title.</param>
-    /// <param name="url">The URL that will be opened if a user clicks on the small title.</param>
     /// <returns>The builder with the added small title in the author field.</returns>
     public static EmbedBuilder WithSmallTitle(
-        this EmbedBuilder builder, string text, IUser? avatarSource = null, string? url = default) {
+        this EmbedBuilder builder, string text, IUser? avatarSource = null) {
         Uri? avatarUrl = null;
         if (avatarSource is not null) {
             var avatarUrlResult = CDN.GetUserAvatarUrl(avatarSource, imageSize: 256);
@@ -64,7 +65,7 @@ public static class Extensions {
                 : CDN.GetDefaultUserAvatarUrl(avatarSource, imageSize: 256).Entity;
         }
 
-        builder.Author = new EmbedAuthorBuilder(text, url, avatarUrl?.AbsoluteUri);
+        builder.Author = new EmbedAuthorBuilder(text, iconUrl: avatarUrl?.AbsoluteUri);
         return builder;
     }
 
@@ -191,7 +192,35 @@ public static class Extensions {
                && context.TryGetUserID(out userId);
     }
 
+    /// <summary>
+    ///     Checks whether this Snowflake has any value set.
+    /// </summary>
+    /// <param name="snowflake">The Snowflake to check.</param>
+    /// <returns>true if the Snowflake has no value set or it's set to 0, false otherwise.</returns>
     public static bool Empty(this Snowflake snowflake) {
         return snowflake.Value is 0;
+    }
+
+    /// <summary>
+    ///     Checks whether this snowflake is empty (see <see cref="Empty" />) or it's equal to
+    ///     <paramref name="anotherSnowflake" />
+    /// </summary>
+    /// <param name="snowflake">The Snowflake to check for emptiness</param>
+    /// <param name="anotherSnowflake">The Snowflake to check for equality with <paramref name="snowflake" />.</param>
+    /// <returns>
+    ///     true if <paramref name="snowflake" /> is empty or is equal to <paramref name="anotherSnowflake" />, false
+    ///     otherwise.
+    /// </returns>
+    /// <seealso cref="Empty" />
+    public static bool EmptyOrEqualTo(this Snowflake snowflake, Snowflake anotherSnowflake) {
+        return snowflake.Empty() || snowflake == anotherSnowflake;
+    }
+
+    public static async Task<Result> SendContextualEmbedResultAsync(
+        this FeedbackService feedback, Result<Embed> embedResult, CancellationToken ct = default) {
+        if (!embedResult.IsDefined(out var embed))
+            return Result.FromError(embedResult);
+
+        return (Result)await feedback.SendContextualEmbedAsync(embed, ct: ct);
     }
 }

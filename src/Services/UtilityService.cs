@@ -4,6 +4,7 @@ using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
@@ -15,15 +16,18 @@ namespace Boyfriend.Services;
 ///     of some Discord APIs.
 /// </summary>
 public class UtilityService : IHostedService {
+    private readonly IDiscordRestChannelAPI             _channelApi;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly IDiscordRestGuildAPI               _guildApi;
     private readonly IDiscordRestUserAPI                _userApi;
 
     public UtilityService(
-        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, IDiscordRestGuildScheduledEventAPI eventApi) {
+        IDiscordRestChannelAPI channelApi, IDiscordRestGuildScheduledEventAPI eventApi, IDiscordRestGuildAPI guildApi,
+        IDiscordRestUserAPI    userApi) {
+        _channelApi = channelApi;
+        _eventApi = eventApi;
         _guildApi = guildApi;
         _userApi = userApi;
-        _eventApi = eventApi;
     }
 
     public Task StartAsync(CancellationToken ct) {
@@ -131,5 +135,52 @@ public class UtilityService : IHostedService {
                 })
             .Aggregate(builder, (current, user) => current.Append($"{Mention.User(user.User)} "));
         return builder.ToString();
+    }
+
+    /// <summary>
+    ///     Logs an action in the <see cref="GuildSettings.PublicFeedbackChannel" /> and
+    ///     <see cref="GuildSettings.PrivateFeedbackChannel" />.
+    /// </summary>
+    /// <param name="cfg">The guild configuration.</param>
+    /// <param name="channelId">The ID of the channel where the action was executed.</param>
+    /// <param name="title">The title for the embed.</param>
+    /// <param name="avatar">The user whose avatar will be displayed next to the <paramref name="title" /> of the embed.</param>
+    /// <param name="description">The description of the embed.</param>
+    /// <param name="user">The user who performed the action.</param>
+    /// <param name="ct">The cancellation token for this operation.</param>
+    /// <returns></returns>
+    public Result LogActionAsync(
+        JsonNode cfg,  Snowflake         channelId, string title, IUser avatar, string description,
+        IUser    user, CancellationToken ct = default) {
+        var publicChannel = GuildSettings.PublicFeedbackChannel.Get(cfg);
+        var privateChannel = GuildSettings.PrivateFeedbackChannel.Get(cfg);
+        if (GuildSettings.PublicFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId)
+            && GuildSettings.PrivateFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId))
+            return Result.FromSuccess();
+
+        var logEmbed = new EmbedBuilder().WithSmallTitle(title, avatar)
+            .WithDescription(description)
+            .WithActionFooter(user)
+            .WithCurrentTimestamp()
+            .WithColour(ColorsList.Green)
+            .Build();
+
+        if (!logEmbed.IsDefined(out var logBuilt))
+            return Result.FromError(logEmbed);
+
+        var builtArray = new[] { logBuilt };
+
+        // Not awaiting to reduce response time
+        if (publicChannel != channelId.Value)
+            _ = _channelApi.CreateMessageAsync(
+                publicChannel, embeds: builtArray,
+                ct: ct);
+        if (privateChannel != publicChannel
+            && privateChannel != channelId.Value)
+            _ = _channelApi.CreateMessageAsync(
+                privateChannel, embeds: builtArray,
+                ct: ct);
+
+        return Result.FromSuccess();
     }
 }

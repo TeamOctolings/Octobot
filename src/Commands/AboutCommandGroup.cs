@@ -72,8 +72,7 @@ public class AboutCommandGroup : CommandGroup {
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.upload.systems/uploads/JFAaX5vr.png")
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
     }
 }

@@ -117,8 +117,7 @@ public class ClearCommandGroup : CommandGroup {
 
         var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
             .WithColour(ColorsList.Green).Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
 
-        return (Result)await _feedbackService.SendContextualEmbedAsync(built, ct: CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
     }
 }
