@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
@@ -163,7 +162,7 @@ public class GuildUpdateService : BackgroundService {
             var guildUser = _guildApi.GetGuildMemberAsync(guildId, userId, ct);
 
             var tag = guildUser.Result.Entity.Nickname.ToString();
-            var symbols = new char[16] { "~"[0], "`"[0], "!"[0], "@"[0], "#"[0], "$"[0], "%"[0], "^"[0], "&"[0], "*"[0], "("[0], ")"[0], "_"[0], "-"[0], "+"[0], "="[0]};
+            var symbols = new char[] { "~"[0], "`"[0], "!"[0], "@"[0], "#"[0], "$"[0], "%"[0], "^"[0], "&"[0], "*"[0], "("[0], ")"[0], "_"[0], "-"[0], "+"[0], "="[0]};
             foreach (var symbol in symbols) {
                 if (tag[0] == symbol) {
 
