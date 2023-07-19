@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
@@ -159,6 +160,19 @@ public class GuildUpdateService : BackgroundService {
 
                 memberData.Reminders.Remove(reminder);
             }
+            var guildUser = _guildApi.GetGuildMemberAsync(guildId, userId, ct);
+
+            var tag = guildUser.Result.Entity.Nickname.ToString();
+            var symbols = new char[16] { "~"[0], "`"[0], "!"[0], "@"[0], "#"[0], "$"[0], "%"[0], "^"[0], "&"[0], "*"[0], "("[0], ")"[0], "_"[0], "-"[0], "+"[0], "="[0]};
+            foreach (var symbol in symbols) {
+                if (tag[0] == symbol) {
+
+
+                    var rename = await _guildApi.ModifyGuildMemberAsync(guildId, userId, "nickname" ,ct: ct);
+
+
+                }
+            }
         }
 
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
@@ -202,6 +216,8 @@ public class GuildUpdateService : BackgroundService {
 
                 storedEvent.Status = scheduledEvent.Status;
             }
+
+
 
             var result = scheduledEvent.Status switch {
                 GuildScheduledEventStatus.Scheduled =>
