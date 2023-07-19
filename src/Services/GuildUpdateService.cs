@@ -167,10 +167,7 @@ public class GuildUpdateService : BackgroundService {
             foreach (var symbol in symbols) {
                 if (tag[0] == symbol) {
 
-
-                    var rename = await _guildApi.ModifyGuildMemberAsync(guildId, userId, "nickname" ,ct: ct);
-
-
+                    await _guildApi.ModifyGuildMemberAsync(guildId, userId, "nickname", ct: ct);
                 }
             }
         }
