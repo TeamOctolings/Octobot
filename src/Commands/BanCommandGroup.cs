@@ -91,8 +91,7 @@ public class BanCommandGroup : CommandGroup {
         IUser target, string reason, TimeSpan? duration, IGuild guild, Snowflake channelId,
         IUser user,   IUser  currentUser) {
         var data = await _dataService.GetData(guild.ID, CancellationToken);
-        var cfg = data.Settings;
-        Messages.Culture = GuildSettings.Language.Get(cfg);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guild.ID, target.ID, CancellationToken);
         if (existingBanResult.IsDefined()) {
@@ -152,7 +151,8 @@ public class BanCommandGroup : CommandGroup {
                 title, target)
             .WithColour(ColorsList.Green).Build();
 
-        var logResult = _utility.LogActionAsync(cfg, channelId, user, title, description, target, CancellationToken);
+        var logResult = _utility.LogActionAsync(
+            data.Settings, channelId, user, title, description, target, CancellationToken);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
