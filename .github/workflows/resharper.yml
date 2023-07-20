@@ -28,7 +28,7 @@ jobs:
       run: dotnet restore
 
     - name: ReSharper CLI InspectCode
-      uses: muno92/resharper_inspectcode@1.7.1
+      uses: muno92/resharper_inspectcode@1.8.0
       with:
         solutionPath: ./Boyfriend.sln
         ignoreIssueType: InvertIf, ConvertIfStatementToSwitchStatement
