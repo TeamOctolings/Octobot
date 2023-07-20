@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -122,16 +123,11 @@ public class GuildUpdateService : BackgroundService {
             var userResult = await _userApi.GetUserAsync(memberData.Id.ToSnowflake(), ct);
             if (!userResult.IsDefined(out var user)) return;
 
-            var guildUser = _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
+            var guildUser = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
 
-            var tag = guildUser.Result.Entity.Nickname.ToString();
-            var symbols = new[] { "~"[0], "`"[0], "!"[0], "@"[0], "#"[0], "$"[0], "%"[0], "^"[0], "&"[0], "*"[0], "("[0], ")"[0], "_"[0], "-"[0], "+"[0], "="[0]};
-            foreach (var symbol in symbols) {
-                if (tag[0] == symbol) {
-
-                    await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, "nickname", ct: ct);
-                }
-            }
+            var pattern = new Regex(@"^[~`!?@#№$%^&*:;.,()<>{}\[\]\-_=+/\\|']*(.*)");
+            var match = pattern.Match(guildUser.Entity.Nickname.ToString());
+            await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, match.Groups[1].ToString(), ct: ct);
             await TickMemberAsync(guildId, user, memberData, defaultRole, ct);
         }
 
