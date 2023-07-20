@@ -154,15 +154,15 @@ public class UtilityService : IHostedService {
     /// </summary>
     /// <param name="cfg">The guild configuration.</param>
     /// <param name="channelId">The ID of the channel where the action was executed.</param>
-    /// <param name="title">The title for the embed.</param>
-    /// <param name="avatar">The user whose avatar will be displayed next to the <paramref name="title" /> of the embed.</param>
-    /// <param name="description">The description of the embed.</param>
     /// <param name="user">The user who performed the action.</param>
+    /// <param name="title">The title for the embed.</param>
+    /// <param name="description">The description of the embed.</param>
+    /// <param name="avatar">The user whose avatar will be displayed next to the <paramref name="title" /> of the embed.</param>
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns></returns>
     public Result LogActionAsync(
-        JsonNode cfg,  Snowflake         channelId, string title, IUser avatar, string description,
-        IUser    user, CancellationToken ct = default) {
+        JsonNode          cfg, Snowflake channelId, IUser user, string title, string description, IUser avatar,
+        CancellationToken ct = default) {
         var publicChannel = GuildSettings.PublicFeedbackChannel.Get(cfg);
         var privateChannel = GuildSettings.PrivateFeedbackChannel.Get(cfg);
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId)

@@ -46,15 +46,13 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
         if (!auditLogResult.IsDefined(out var auditLogPage)) return Result.FromError(auditLogResult);
 
         var auditLog = auditLogPage.AuditLogEntries.Single();
-        if (!auditLog.Options.IsDefined(out var options))
-            return Result.FromError(new ArgumentNullError(nameof(auditLog.Options)));
 
-        var user = message.Author;
-        if (options.ChannelID == gatewayEvent.ChannelID
-            && DateTimeOffset.UtcNow.Subtract(auditLog.ID.Timestamp).TotalSeconds <= 2) {
-            var userResult = await _userApi.GetUserAsync(auditLog.UserID!.Value, ct);
-            if (!userResult.IsDefined(out user)) return Result.FromError(userResult);
-        }
+        var userResult = Result<IUser>.FromSuccess(message.Author);
+        if (auditLog.Options.Value.ChannelID == gatewayEvent.ChannelID
+            && DateTimeOffset.UtcNow.Subtract(auditLog.ID.Timestamp).TotalSeconds <= 2)
+            userResult = await _userApi.GetUserAsync(auditLog.UserID!.Value, ct);
+
+        if (!userResult.IsDefined(out var user)) return Result.FromError(userResult);
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
