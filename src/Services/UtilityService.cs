@@ -64,13 +64,10 @@ public class UtilityService : IHostedService {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result<string?>.FromError(currentUserResult);
-        if (currentUser.ID == targetId)
-            return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: ct);
         if (!guildResult.IsDefined(out var guild))
             return Result<string?>.FromError(guildResult);
-        if (targetId == guild.OwnerID) return Result<string?>.FromSuccess($"UserCannot{action}Owner".Localized());
 
         var targetMemberResult = await _guildApi.GetGuildMemberAsync(guildId, targetId, ct);
         if (!targetMemberResult.IsDefined(out var targetMember))
@@ -84,6 +81,25 @@ public class UtilityService : IHostedService {
         if (!rolesResult.IsDefined(out var roles))
             return Result<string?>.FromError(rolesResult);
 
+        var interacterResult = await _guildApi.GetGuildMemberAsync(guildId, interacterId, ct);
+        return interacterResult.IsDefined(out var interacter)
+            ? CheckInteractions(action, guild, roles, targetMember, currentMember, interacter)
+            : Result<string?>.FromError(interacterResult);
+    }
+
+    private static Result<string?> CheckInteractions(
+        string action, IGuild guild, IReadOnlyList<IRole> roles, IGuildMember targetMember, IGuildMember currentMember,
+        IGuildMember interacter) {
+        if (!targetMember.User.IsDefined(out var targetUser))
+            return Result<string?>.FromError(new ArgumentNullError(nameof(targetMember.User)));
+        if (!interacter.User.IsDefined(out var interacterUser))
+            return Result<string?>.FromError(new ArgumentNullError(nameof(interacter.User)));
+
+        if (currentMember.User == targetMember.User)
+            return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
+
+        if (targetUser.ID == guild.OwnerID) return Result<string?>.FromSuccess($"UserCannot{action}Owner".Localized());
+
         var targetRoles = roles.Where(r => targetMember.Roles.Contains(r.ID)).ToList();
         var botRoles = roles.Where(r => currentMember.Roles.Contains(r.ID));
 
@@ -91,20 +107,15 @@ public class UtilityService : IHostedService {
         if (targetBotRoleDiff >= 0)
             return Result<string?>.FromSuccess($"BotCannot{action}Target".Localized());
 
-        if (interacterId == guild.OwnerID)
+        if (interacterUser.ID == guild.OwnerID)
             return Result<string?>.FromSuccess(null);
-
-        var interacterResult = await _guildApi.GetGuildMemberAsync(guildId, interacterId, ct);
-        if (!interacterResult.IsDefined(out var interacter))
-            return Result<string?>.FromError(interacterResult);
 
         var interacterRoles = roles.Where(r => interacter.Roles.Contains(r.ID));
         var targetInteracterRoleDiff
             = targetRoles.MaxOrDefault(r => r.Position) - interacterRoles.MaxOrDefault(r => r.Position);
-        if (targetInteracterRoleDiff >= 0)
-            return Result<string?>.FromSuccess($"UserCannot{action}Target".Localized());
-
-        return Result<string?>.FromSuccess(null);
+        return targetInteracterRoleDiff < 0
+            ? Result<string?>.FromSuccess(null)
+            : Result<string?>.FromSuccess($"UserCannot{action}Target".Localized());
     }
 
     /// <summary>
@@ -143,15 +154,15 @@ public class UtilityService : IHostedService {
     /// </summary>
     /// <param name="cfg">The guild configuration.</param>
     /// <param name="channelId">The ID of the channel where the action was executed.</param>
-    /// <param name="title">The title for the embed.</param>
-    /// <param name="avatar">The user whose avatar will be displayed next to the <paramref name="title" /> of the embed.</param>
-    /// <param name="description">The description of the embed.</param>
     /// <param name="user">The user who performed the action.</param>
+    /// <param name="title">The title for the embed.</param>
+    /// <param name="description">The description of the embed.</param>
+    /// <param name="avatar">The user whose avatar will be displayed next to the <paramref name="title" /> of the embed.</param>
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns></returns>
     public Result LogActionAsync(
-        JsonNode cfg,  Snowflake         channelId, string title, IUser avatar, string description,
-        IUser    user, CancellationToken ct = default) {
+        JsonNode          cfg, Snowflake channelId, IUser user, string title, string description, IUser avatar,
+        CancellationToken ct = default) {
         var publicChannel = GuildSettings.PublicFeedbackChannel.Get(cfg);
         var privateChannel = GuildSettings.PrivateFeedbackChannel.Get(cfg);
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId)
