@@ -302,11 +302,11 @@ public class GuildUpdateService : BackgroundService {
         IGuildScheduledEvent scheduledEvent, string eventDescription) {
         Result<string> embedDescription;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.EntityMetadata)));
         if (!scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime)));
         if (!metadata.Location.IsDefined(out var location))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(metadata.Location)));
 
         embedDescription = $"{eventDescription}\n\n{Markdown.BlockQuote(
             string.Format(
@@ -398,7 +398,7 @@ public class GuildUpdateService : BackgroundService {
     private static Result<string> GetLocalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent) {
         Result<string> embedDescription;
         if (!scheduledEvent.ChannelID.AsOptional().IsDefined(out var channelId))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ChannelID)));
 
         embedDescription = string.Format(
             Messages.DescriptionLocalEventStarted,
@@ -410,11 +410,11 @@ public class GuildUpdateService : BackgroundService {
     private static Result<string> GetExternalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent) {
         Result<string> embedDescription;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.EntityMetadata)));
         if (!scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime)));
         if (!metadata.Location.IsDefined(out var location))
-            return embedDescription;
+            return Result<string>.FromError(new ArgumentNullError(nameof(metadata.Location)));
 
         embedDescription = string.Format(
             Messages.DescriptionExternalEventStarted,
