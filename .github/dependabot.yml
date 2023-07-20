@@ -12,8 +12,6 @@ updates:
     allow:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
-    assignees:
-      - "Octol1ttle"
     labels:
       - "type: dependencies"
 
@@ -24,8 +22,5 @@ updates:
     allow:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
-    # Add assignees
-    assignees:
-      - "Octol1ttle"
     labels:
       - "type: dependencies"

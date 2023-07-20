@@ -31,6 +31,6 @@ public class InteractionResponders : InteractionGroup {
         var idArray = state.Split(':');
         return (Result)await _feedbackService.SendContextualAsync(
             $"https://discord.com/events/{idArray[0]}/{idArray[1]}",
-            options: new FeedbackMessageOptions(MessageFlags: MessageFlags.Ephemeral));
+            options: new FeedbackMessageOptions(MessageFlags: MessageFlags.Ephemeral), ct: CancellationToken);
     }
 }
