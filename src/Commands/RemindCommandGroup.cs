@@ -4,6 +4,7 @@ using Boyfriend.Services;
 using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
@@ -11,6 +12,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
+using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Commands;
@@ -45,7 +47,7 @@ public class RemindCommandGroup : CommandGroup {
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
-    public async Task<Result> AddReminderAsync(
+    public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
         TimeSpan @in,
         [Description("Reminder message")] string message) {
@@ -57,12 +59,21 @@ public class RemindCommandGroup : CommandGroup {
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await AddReminderAsync(@in, message, data, channelId.Value, user, CancellationToken);
+    }
+
+    private async Task<Result> AddReminderAsync(
+        TimeSpan  @in,       string message, GuildData         data,
+        Snowflake channelId, IUser  user,    CancellationToken ct = default) {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
 
-        (await _dataService.GetMemberData(guildId.Value, userId.Value, CancellationToken)).Reminders.Add(
+        data.GetMemberData(user.ID).Reminders.Add(
             new Reminder {
                 At = remindAt,
-                Channel = channelId.Value.Value,
+                Channel = channelId.Value,
                 Text = message
             });
 
@@ -71,6 +82,6 @@ public class RemindCommandGroup : CommandGroup {
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }
