@@ -152,7 +152,9 @@ public class BanCommandGroup : CommandGroup {
                 title, target)
             .WithColour(ColorsList.Green).Build();
 
-        _utility.LogActionAsync(cfg, channelId, title, target, description, user, CancellationToken);
+        var logResult = _utility.LogActionAsync(cfg, channelId, user, title, description, target, CancellationToken);
+        if (!logResult.IsSuccess)
+            return Result.FromError(logResult.Error);
 
         return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
     }
@@ -222,7 +224,7 @@ public class BanCommandGroup : CommandGroup {
 
         var title = string.Format(Messages.UserUnbanned, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
-        var logResult = _utility.LogActionAsync(cfg, channelId, title, target, description, user, CancellationToken);
+        var logResult = _utility.LogActionAsync(cfg, channelId, user, title, description, target, CancellationToken);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 

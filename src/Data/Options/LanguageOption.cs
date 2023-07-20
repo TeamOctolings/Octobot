@@ -27,9 +27,8 @@ public class LanguageOption : Option<CultureInfo> {
 
     /// <inheritdoc />
     public override Result Set(JsonNode settings, string from) {
-        if (!CultureInfoCache.ContainsKey(from.ToLowerInvariant()))
-            return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.LanguageNotSupported));
-
-        return base.Set(settings, from.ToLowerInvariant());
+        return CultureInfoCache.ContainsKey(from.ToLowerInvariant())
+            ? base.Set(settings, from.ToLowerInvariant())
+            : Result.FromError(new ArgumentInvalidError(nameof(from), Messages.LanguageNotSupported));
     }
 }
