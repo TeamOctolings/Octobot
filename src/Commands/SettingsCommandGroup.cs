@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Boyfriend.Data.Options;
 using Boyfriend.Services;
@@ -66,7 +67,7 @@ public class SettingsCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
-    public async Task<Result> ListSettingsAsync() {
+    public async Task<Result> ExecuteSettingsListAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -78,6 +79,10 @@ public class SettingsCommandGroup : CommandGroup {
         var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
+        return await SendSettingsListAsync(cfg, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser currentUser, CancellationToken ct = default) {
         var builder = new StringBuilder();
 
         foreach (var option in AllOptions) {
@@ -91,7 +96,7 @@ public class SettingsCommandGroup : CommandGroup {
             .WithColour(ColorsList.Default)
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -107,7 +112,7 @@ public class SettingsCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Change settings for this server")]
     [UsedImplicitly]
-    public async Task<Result> EditSettingsAsync(
+    public async Task<Result> ExecuteSettingsAsync(
         [Description("The setting whose value you want to change")]
         string setting,
         [Description("Setting value")] string value) {
@@ -119,33 +124,38 @@ public class SettingsCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
-        Messages.Culture = GuildSettings.Language.Get(cfg);
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
+        return await EditSettingAsync(setting, value, data, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> EditSettingAsync(
+        string setting, string value, GuildData data, IUser currentUser, CancellationToken ct = default) {
         var option = AllOptions.Single(
             o => string.Equals(setting, o.Name, StringComparison.InvariantCultureIgnoreCase));
 
-        var setResult = option.Set(cfg, value);
+        var setResult = option.Set(data.Settings, value);
         if (!setResult.IsSuccess) {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.SettingNotChanged, currentUser)
                 .WithDescription(setResult.Error.Message)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
+            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var builder = new StringBuilder();
 
         builder.Append(Markdown.InlineCode(option.Name))
             .Append($" {Messages.SettingIsNow} ")
-            .Append(option.Display(cfg));
+            .Append(option.Display(data.Settings));
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfullyChanged, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }

@@ -5,6 +5,7 @@ using Boyfriend.Services;
 using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
@@ -47,7 +48,7 @@ public class AboutCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [Description("Shows Boyfriend's developers")]
     [UsedImplicitly]
-    public async Task<Result> SendAboutBotAsync() {
+    public async Task<Result> ExecuteAboutAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -59,6 +60,10 @@ public class AboutCommandGroup : CommandGroup {
         var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
+        return await SendAboutBotAsync(currentUser, CancellationToken);
+    }
+
+    private async Task<Result> SendAboutBotAsync(IUser currentUser, CancellationToken ct = default) {
         var builder = new StringBuilder().AppendLine(Markdown.Bold(Messages.AboutTitleDevelopers));
         foreach (var dev in Developers)
             builder.AppendLine($"@{dev} — {$"AboutDeveloper@{dev}".Localized()}");
@@ -73,6 +78,6 @@ public class AboutCommandGroup : CommandGroup {
             .WithImageUrl("https://cdn.upload.systems/uploads/JFAaX5vr.png")
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }

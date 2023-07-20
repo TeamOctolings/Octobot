@@ -90,13 +90,14 @@ public class KickCommandGroup : CommandGroup {
             return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await KickUserAsync(target, reason, guild, channelId.Value, data, user, currentUser);
+        return await KickUserAsync(target, reason, guild, channelId.Value, data, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> KickUserAsync(
-        IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser user, IUser currentUser) {
+        IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser user, IUser currentUser,
+        CancellationToken ct = default) {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, user.ID, target.ID, "Kick", CancellationToken);
+            = await _utility.CheckInteractionsAsync(guild.ID, user.ID, target.ID, "Kick", ct);
         if (!interactionResult.IsSuccess)
             return Result.FromError(interactionResult);
 
@@ -104,10 +105,10 @@ public class KickCommandGroup : CommandGroup {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
+            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
-        var dmChannelResult = await _userApi.CreateDMAsync(target.ID, CancellationToken);
+        var dmChannelResult = await _userApi.CreateDMAsync(target.ID, ct);
         if (dmChannelResult.IsDefined(out var dmChannel)) {
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereKicked)
@@ -119,12 +120,12 @@ public class KickCommandGroup : CommandGroup {
 
             if (!dmEmbed.IsDefined(out var dmBuilt))
                 return Result.FromError(dmEmbed);
-            await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: CancellationToken);
+            await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: ct);
         }
 
         var kickResult = await _guildApi.RemoveGuildMemberAsync(
             guild.ID, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
-            CancellationToken);
+            ct);
         if (!kickResult.IsSuccess)
             return Result.FromError(kickResult.Error);
         data.GetMemberData(target.ID).Roles.Clear();
@@ -132,7 +133,7 @@ public class KickCommandGroup : CommandGroup {
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, CancellationToken);
+            data.Settings, channelId, user, title, description, target, ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
@@ -140,6 +141,6 @@ public class KickCommandGroup : CommandGroup {
                 string.Format(Messages.UserKicked, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }

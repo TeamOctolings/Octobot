@@ -4,6 +4,7 @@ using Boyfriend.Services;
 using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
@@ -11,6 +12,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway;
+using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Commands;
@@ -49,7 +51,7 @@ public class PingCommandGroup : CommandGroup {
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
-    public async Task<Result> SendPingAsync() {
+    public async Task<Result> ExecutePingAsync() {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -61,11 +63,16 @@ public class PingCommandGroup : CommandGroup {
         var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
+        return await SendLatencyAsync(channelId.Value, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> SendLatencyAsync(
+        Snowflake channelId, IUser currentUser, CancellationToken ct = default) {
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0) {
             // No heartbeat has occurred, estimate latency from local time and "Boyfriend is thinking..." message
             var lastMessageResult = await _channelApi.GetChannelMessagesAsync(
-                channelId.Value, limit: 1, ct: CancellationToken);
+                channelId, limit: 1, ct: ct);
             if (!lastMessageResult.IsDefined(out var lastMessage))
                 return Result.FromError(lastMessageResult);
             latency = DateTimeOffset.UtcNow.Subtract(lastMessage.Single().Timestamp).TotalMilliseconds;
@@ -78,6 +85,6 @@ public class PingCommandGroup : CommandGroup {
             .WithCurrentTimestamp()
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }

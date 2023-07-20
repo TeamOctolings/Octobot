@@ -91,15 +91,16 @@ public class MuteCommandGroup : CommandGroup {
             return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await MuteUserAsync(target, reason, duration, guildId.Value, data, channelId.Value, user, currentUser);
+        return await MuteUserAsync(
+            target, reason, duration, guildId.Value, data, channelId.Value, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> MuteUserAsync(
-        IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
-        IUser user,   IUser  currentUser) {
+        IUser target, string reason,      TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
+        IUser user,   IUser  currentUser, CancellationToken ct = default) {
         var interactionResult
             = await _utility.CheckInteractionsAsync(
-                guildId, user.ID, target.ID, "Mute", CancellationToken);
+                guildId, user.ID, target.ID, "Mute", ct);
         if (!interactionResult.IsSuccess)
             return Result.FromError(interactionResult);
 
@@ -107,13 +108,13 @@ public class MuteCommandGroup : CommandGroup {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
+            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
-            communicationDisabledUntil: until, ct: CancellationToken);
+            communicationDisabledUntil: until, ct: ct);
         if (!muteResult.IsSuccess)
             return Result.FromError(muteResult.Error);
 
@@ -124,7 +125,7 @@ public class MuteCommandGroup : CommandGroup {
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, CancellationToken);
+            data.Settings, channelId, user, title, description, target, ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
@@ -132,7 +133,7 @@ public class MuteCommandGroup : CommandGroup {
                 string.Format(Messages.UserMuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -185,15 +186,16 @@ public class MuteCommandGroup : CommandGroup {
             return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await UnmuteUserAsync(target, reason, guildId.Value, data, channelId.Value, user, currentUser);
+        return await UnmuteUserAsync(
+            target, reason, guildId.Value, data, channelId.Value, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> UnmuteUserAsync(
-        IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
-        IUser currentUser) {
+        IUser target,      string            reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
+        IUser currentUser, CancellationToken ct = default) {
         var interactionResult
             = await _utility.CheckInteractionsAsync(
-                guildId, user.ID, target.ID, "Unmute", CancellationToken);
+                guildId, user.ID, target.ID, "Unmute", ct);
         if (!interactionResult.IsSuccess)
             return Result.FromError(interactionResult);
 
@@ -201,19 +203,19 @@ public class MuteCommandGroup : CommandGroup {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
+            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
-            communicationDisabledUntil: null, ct: CancellationToken);
+            communicationDisabledUntil: null, ct: ct);
         if (!unmuteResult.IsSuccess)
             return Result.FromError(unmuteResult.Error);
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, CancellationToken);
+            data.Settings, channelId, user, title, description, target, ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
@@ -221,6 +223,6 @@ public class MuteCommandGroup : CommandGroup {
                 string.Format(Messages.UserUnmuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }

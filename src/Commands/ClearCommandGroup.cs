@@ -76,15 +76,15 @@ public class ClearCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        return await ClearMessagesAsync(amount, guildId.Value, channelId.Value, messages, user, currentUser);
+        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await ClearMessagesAsync(amount, data, channelId.Value, messages, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> ClearMessagesAsync(
-        int   amount, Snowflake guildId, Snowflake channelId, IReadOnlyList<IMessage> messages,
-        IUser user,   IUser     currentUser) {
-        var cfg = await _dataService.GetSettings(guildId, CancellationToken);
-        Messages.Culture = GuildSettings.Language.Get(cfg);
-
+        int   amount, GuildData data,        Snowflake         channelId, IReadOnlyList<IMessage> messages,
+        IUser user,   IUser     currentUser, CancellationToken ct = default) {
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
         for (var i = messages.Count - 1; i >= 1; i--) { // '>= 1' to skip last message ('Boyfriend is thinking...')
@@ -98,18 +98,18 @@ public class ClearCommandGroup : CommandGroup {
         var description = builder.ToString();
 
         var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
-            channelId, idList, user.GetTag().EncodeHeader(), CancellationToken);
+            channelId, idList, user.GetTag().EncodeHeader(), ct);
         if (!deleteResult.IsSuccess)
             return Result.FromError(deleteResult.Error);
 
         var logResult = _utility.LogActionAsync(
-            cfg, channelId, user, title, description, currentUser, CancellationToken);
+            data.Settings, channelId, user, title, description, currentUser, ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
         var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
 }
