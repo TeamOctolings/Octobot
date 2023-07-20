@@ -122,14 +122,14 @@ public class GuildUpdateService : BackgroundService {
             var userResult = await _userApi.GetUserAsync(memberData.Id.ToSnowflake(), ct);
             if (!userResult.IsDefined(out var user)) return;
 
-            var guildUser = _guildApi.GetGuildMemberAsync(guildId, userId, ct);
+            var guildUser = _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
 
             var tag = guildUser.Result.Entity.Nickname.ToString();
             var symbols = new[] { "~"[0], "`"[0], "!"[0], "@"[0], "#"[0], "$"[0], "%"[0], "^"[0], "&"[0], "*"[0], "("[0], ")"[0], "_"[0], "-"[0], "+"[0], "="[0]};
             foreach (var symbol in symbols) {
                 if (tag[0] == symbol) {
 
-                    await _guildApi.ModifyGuildMemberAsync(guildId, userId, "nickname", ct: ct);
+                    await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, "nickname", ct: ct);
                 }
             }
             await TickMemberAsync(guildId, user, memberData, defaultRole, ct);
