@@ -5,7 +5,6 @@
 ![GitHub License](https://img.shields.io/github/license/TeamOctolings/Boyfriend)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/TeamOctolings/Boyfriend/.github/workflows/resharper.yml?branch=master)
 ![GitHub last commit](https://img.shields.io/github/last-commit/TeamOctolings/Boyfriend)
-![CodeFactor](https://img.shields.io/codefactor/grade/github/TeamOctolings/Boyfriend)
 
 Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and
 Remora.Discord
