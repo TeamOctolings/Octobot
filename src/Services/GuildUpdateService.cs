@@ -20,7 +20,7 @@ namespace Boyfriend.Services;
 /// <summary>
 ///     Handles executing guild updates (also called "ticks") once per second.
 /// </summary>
-public class GuildUpdateService : BackgroundService {
+public partial class GuildUpdateService : BackgroundService {
     private static readonly (string Name, TimeSpan Duration)[] SongList = {
         ("UNDEAD CORPORATION - The Empress", new TimeSpan(0, 4, 34)),
         ("UNDEAD CORPORATION - Everything will freeze", new TimeSpan(0, 3, 17)),
@@ -125,7 +125,7 @@ public class GuildUpdateService : BackgroundService {
 
             var guildUser = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
 
-            var pattern = new Regex(@"^[~`!?@#№$%^&*:;.,()<>{}\[\]\-_=+/\\|']*(.*)");
+            var pattern = IllegalCharsRegex();
             var match = pattern.Match(guildUser.Entity.Nickname.ToString());
             await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, match.Groups[1].ToString(), ct: ct);
             await TickMemberAsync(guildId, user, memberData, defaultRole, ct);
@@ -137,6 +137,9 @@ public class GuildUpdateService : BackgroundService {
         else if (!GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
             await TickScheduledEventsAsync(guildId, data, eventsResult.Entity, ct);
     }
+
+    [GeneratedRegex("^[~`!?@#№$%^&*:;.,()<>{}\\[\\]\\-_=+/\\\\|']*(.*)")]
+    private static partial Regex IllegalCharsRegex();
 
     private async Task TickScheduledEventsAsync(
         Snowflake guildId, GuildData data, IEnumerable<IGuildScheduledEvent> events, CancellationToken ct) {
