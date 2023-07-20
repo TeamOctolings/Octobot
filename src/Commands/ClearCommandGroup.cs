@@ -28,15 +28,17 @@ public class ClearCommandGroup : CommandGroup {
     private readonly GuildDataService       _dataService;
     private readonly FeedbackService        _feedbackService;
     private readonly IDiscordRestUserAPI    _userApi;
+    private readonly UtilityService         _utility;
 
     public ClearCommandGroup(
         IDiscordRestChannelAPI channelApi,      ICommandContext     context, GuildDataService dataService,
-        FeedbackService        feedbackService, IDiscordRestUserAPI userApi) {
+        FeedbackService        feedbackService, IDiscordRestUserAPI userApi, UtilityService   utility) {
         _channelApi = channelApi;
         _context = context;
         _dataService = dataService;
         _feedbackService = feedbackService;
         _userApi = userApi;
+        _utility = utility;
     }
 
     /// <summary>
@@ -55,7 +57,7 @@ public class ClearCommandGroup : CommandGroup {
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]
     [Description("Remove multiple messages")]
     [UsedImplicitly]
-    public async Task<Result> ClearMessagesAsync(
+    public async Task<Result> ExecuteClear(
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
@@ -66,12 +68,25 @@ public class ClearCommandGroup : CommandGroup {
             channelId.Value, limit: amount + 1, ct: CancellationToken);
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
+        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+            return Result.FromError(userResult);
+        // The current user's avatar is used when sending messages
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+            return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        return await ClearMessagesAsync(amount, guildId.Value, channelId.Value, messages, user, currentUser);
+    }
+
+    private async Task<Result> ClearMessagesAsync(
+        int   amount, Snowflake guildId, Snowflake channelId, IReadOnlyList<IMessage> messages,
+        IUser user,   IUser     currentUser) {
+        var cfg = await _dataService.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var idList = new List<Snowflake>(messages.Count);
-        var builder = new StringBuilder().AppendLine(Mention.Channel(channelId.Value)).AppendLine();
+        var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
         for (var i = messages.Count - 1; i >= 1; i--) { // '>= 1' to skip last message ('Boyfriend is thinking...')
             var message = messages[i];
             idList.Add(message.ID);
@@ -79,41 +94,18 @@ public class ClearCommandGroup : CommandGroup {
             builder.Append(message.Content.InBlockCode());
         }
 
+        var title = string.Format(Messages.MessagesCleared, amount.ToString());
         var description = builder.ToString();
 
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
-        if (!userResult.IsDefined(out var user))
-            return Result.FromError(userResult);
-
         var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
-            channelId.Value, idList, user.GetTag().EncodeHeader(), CancellationToken);
+            channelId, idList, user.GetTag().EncodeHeader(), CancellationToken);
         if (!deleteResult.IsSuccess)
             return Result.FromError(deleteResult.Error);
 
-        // The current user's avatar is used when sending messages
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
-            return Result.FromError(currentUserResult);
-
-        var title = string.Format(Messages.MessagesCleared, amount.ToString());
-        if (!GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
-            && GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value) {
-            var logEmbed = new EmbedBuilder().WithSmallTitle(title, currentUser)
-                .WithDescription(description)
-                .WithActionFooter(user)
-                .WithCurrentTimestamp()
-                .WithColour(ColorsList.Red)
-                .Build();
-
-            if (!logEmbed.IsDefined(out var logBuilt))
-                return Result.FromError(logEmbed);
-
-            // Not awaiting to reduce response time
-            if (GuildSettings.PrivateFeedbackChannel.Get(cfg) != channelId.Value)
-                _ = _channelApi.CreateMessageAsync(
-                    GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { logBuilt },
-                    ct: CancellationToken);
-        }
+        var logResult = _utility.LogActionAsync(
+            cfg, channelId, user, title, description, currentUser, CancellationToken);
+        if (!logResult.IsSuccess)
+            return Result.FromError(logResult.Error);
 
         var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
             .WithColour(ColorsList.Green).Build();
