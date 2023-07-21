@@ -259,7 +259,7 @@ public partial class GuildUpdateService : BackgroundService {
         return Task.CompletedTask;
     }
 
-    [GeneratedRegex("[^A-zА-я0-9]")]
+    [GeneratedRegex("[^0-9A-zЁА-яё]")]
     private static partial Regex IllegalCharsRegex();
 
     private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct) {
