@@ -141,6 +141,7 @@ public partial class GuildUpdateService : BackgroundService {
                 };
                 nickname = nicknames[random.Next(nicknames.Count)];
             }
+
             await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, nickname, ct: ct);
             await TickMemberAsync(guildId, user, memberData, defaultRole, ct);
         }
@@ -182,86 +183,6 @@ public partial class GuildUpdateService : BackgroundService {
                     "Error handling scheduled event status update.\n{ErrorMessage}",
                     statusChangedResponseResult.Error.Message);
         }
-    }
-
-    private async Task TickScheduledEventAsync(
-        Snowflake         guildId, GuildData data, IGuildScheduledEvent scheduledEvent, ScheduledEventData eventData,
-        CancellationToken ct) {
-        if (DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime) {
-            await TryAutoStartEventAsync(guildId, data, scheduledEvent, ct);
-            return;
-        }
-
-        if (GuildSettings.EventEarlyNotificationOffset.Get(data.Settings) == TimeSpan.Zero
-            || eventData.EarlyNotificationSent
-            || DateTimeOffset.UtcNow
-            < scheduledEvent.ScheduledStartTime
-            - GuildSettings.EventEarlyNotificationOffset.Get(data.Settings)) return;
-
-        var earlyResult = await SendEarlyEventNotificationAsync(scheduledEvent, data, ct);
-        if (earlyResult.IsSuccess) {
-            eventData.EarlyNotificationSent = true;
-            return;
-        }
-
-        _logger.LogWarning(
-            "Error in scheduled event early notification sender.\n{ErrorMessage}",
-            earlyResult.Error.Message);
-    }
-
-    private async Task TryAutoStartEventAsync(
-        Snowflake guildId, GuildData data, IGuildScheduledEvent scheduledEvent, CancellationToken ct) {
-        if (GuildSettings.AutoStartEvents.Get(data.Settings)
-            && scheduledEvent.Status is not GuildScheduledEventStatus.Active) {
-            var startResult = await _eventApi.ModifyGuildScheduledEventAsync(
-                guildId, scheduledEvent.ID,
-                status: GuildScheduledEventStatus.Active, ct: ct);
-            if (!startResult.IsSuccess)
-                _logger.LogWarning(
-                    "Error in automatic scheduled event start request.\n{ErrorMessage}",
-                    startResult.Error.Message);
-        }
-    }
-
-    private async Task TickMemberAsync(
-        Snowflake guildId, IUser user, MemberData memberData, Snowflake defaultRole, CancellationToken ct) {
-        if (defaultRole.Value is not 0 && !memberData.Roles.Contains(defaultRole.Value))
-            _ = _guildApi.AddGuildMemberRoleAsync(
-                guildId, user.ID, defaultRole, ct: ct);
-
-        if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
-            var unbanResult = await _guildApi.RemoveGuildBanAsync(
-                guildId, user.ID, Messages.PunishmentExpired.EncodeHeader(), ct);
-            if (unbanResult.IsSuccess)
-                memberData.BannedUntil = null;
-            else
-                _logger.LogWarning(
-                    "Error in automatic user unban request.\n{ErrorMessage}", unbanResult.Error.Message);
-        }
-
-        for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
-            await TickReminderAsync(memberData.Reminders[i], user, memberData, ct);
-    }
-
-    private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct) {
-        if (DateTimeOffset.UtcNow < reminder.At) return;
-
-        var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.Reminder, user.GetTag()), user)
-            .WithDescription(
-                string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
-            .WithColour(ColorsList.Magenta)
-            .Build();
-
-        if (!embed.IsDefined(out var built)) return;
-
-        var messageResult = await _channelApi.CreateMessageAsync(
-            reminder.Channel.ToSnowflake(), Mention.User(user), embeds: new[] { built }, ct: ct);
-        if (!messageResult.IsSuccess)
-            _logger.LogWarning(
-                "Error in reminder send.\n{ErrorMessage}", messageResult.Error.Message);
-
-        memberData.Reminders.Remove(reminder);
     }
 
     private async Task TickScheduledEventAsync(
