@@ -123,26 +123,6 @@ public partial class GuildUpdateService : BackgroundService {
             var userResult = await _userApi.GetUserAsync(memberData.Id.ToSnowflake(), ct);
             if (!userResult.IsDefined(out var user)) return;
 
-            var guildUser = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
-            var random = new Random();
-
-            var pattern = IllegalCharsRegex();
-            var match = pattern.Match(guildUser.Entity.Nickname.ToString());
-            var nickname = match.Groups[1].Value;
-            if (match.Groups[1].Value is "") {
-                var nicknames = new List<string> {
-                    "Albatross", "Alpha", "Anchor", "Banjo", "Bell", "Beta", "Blackbird", "Bulldog", "Canary",
-                    "Cat", "Calf", "Cyclone", "Daisy", "Dalmatian", "Dart", "Delta", "Diamond", "Donkey", "Duck",
-                    "Emu", "Eclipse", "Flamingo", "Flute", "Frog", "Goose", "Hatchet", "Heron", "Husky", "Hurricane",
-                    "Iceberg", "Iguana", "Kiwi", "Kite", "Lamb", "Lily", "Macaw", "Manatee", "Maple", "Mask",
-                    "Nautilus", "Ostrich", "Octopus", "Pelican", "Puffin", "Pyramid", "Rattle", "Robin", "Rose",
-                    "Salmon", "Seal", "Shark", "Sheep", "Snake", "Sonar", "Stump", "Sparrow", "Toaster", "Toucan",
-                    "Torus", "Violet", "Vortex", "Vulture", "Wagon", "Whale", "Woodpecker", "Zebra", "Zigzag"
-                };
-                nickname = nicknames[random.Next(nicknames.Count)];
-            }
-
-            await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, nickname, ct: ct);
             await TickMemberAsync(guildId, user, memberData, defaultRole, ct);
         }
 
@@ -242,6 +222,24 @@ public partial class GuildUpdateService : BackgroundService {
 
         for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
             await TickReminderAsync(memberData.Reminders[i], user, memberData, ct);
+
+        var guildUser = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
+
+        var generalNicknames = new List<string> {
+            "Albatross", "Alpha", "Anchor", "Banjo", "Bell", "Beta", "Blackbird", "Bulldog", "Canary",
+            "Cat", "Calf", "Cyclone", "Daisy", "Dalmatian", "Dart", "Delta", "Diamond", "Donkey", "Duck",
+            "Emu", "Eclipse", "Flamingo", "Flute", "Frog", "Goose", "Hatchet", "Heron", "Husky", "Hurricane",
+            "Iceberg", "Iguana", "Kiwi", "Kite", "Lamb", "Lily", "Macaw", "Manatee", "Maple", "Mask",
+            "Nautilus", "Ostrich", "Octopus", "Pelican", "Puffin", "Pyramid", "Rattle", "Robin", "Rose",
+            "Salmon", "Seal", "Shark", "Sheep", "Snake", "Sonar", "Stump", "Sparrow", "Toaster", "Toucan",
+            "Torus", "Violet", "Vortex", "Vulture", "Wagon", "Whale", "Woodpecker", "Zebra", "Zigzag"
+        };
+        var pattern = IllegalCharsRegex();
+        var match = pattern.Match(guildUser.ToString() ?? user.Username);
+        var nickname = match.Groups[1].Value;
+        if (match.Groups[1].Value is "") nickname = generalNicknames[Random.Shared.Next(generalNicknames.Count)];
+
+        await _guildApi.ModifyGuildMemberAsync(guildId, user.ID, nickname, ct: ct);
     }
 
     private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct) {
