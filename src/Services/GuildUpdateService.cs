@@ -144,9 +144,6 @@ public partial class GuildUpdateService : BackgroundService {
             await TickScheduledEventsAsync(guildId, data, eventsResult.Entity, ct);
     }
 
-    [GeneratedRegex("[^A-zА-я0-9]")]
-    private static partial Regex IllegalCharsRegex();
-
     private async Task TickScheduledEventsAsync(
         Snowflake guildId, GuildData data, IEnumerable<IGuildScheduledEvent> events, CancellationToken ct) {
         foreach (var scheduledEvent in events) {
@@ -261,6 +258,9 @@ public partial class GuildUpdateService : BackgroundService {
             ct: ct);
         return Task.CompletedTask;
     }
+
+    [GeneratedRegex("[^A-zА-я0-9]")]
+    private static partial Regex IllegalCharsRegex();
 
     private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct) {
         if (DateTimeOffset.UtcNow < reminder.At) return;
