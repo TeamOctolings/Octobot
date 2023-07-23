@@ -103,7 +103,7 @@ public class ClearCommandGroup : CommandGroup {
             return Result.FromError(deleteResult.Error);
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, currentUser, ct);
+            data.Settings, channelId, user, title, description, currentUser, ColorsList.Red, false, ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 

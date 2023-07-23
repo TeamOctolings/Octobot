@@ -133,7 +133,7 @@ public class KickCommandGroup : CommandGroup {
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ct);
+            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
