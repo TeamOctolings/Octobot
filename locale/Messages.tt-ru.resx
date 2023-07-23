@@ -567,4 +567,10 @@
     <data name="PagesAllowed" xml:space="preserve">
         <value>ну а если быть точнее, тут всего страниц</value>
     </data>
+    <data name="Next" xml:space="preserve">
+        <value>следующее</value>
+    </data>
+    <data name="Previous" xml:space="preserve">
+        <value>предыдущее</value>
+    </data>
 </root>

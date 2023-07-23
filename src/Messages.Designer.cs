@@ -965,5 +965,17 @@ namespace Boyfriend {
                 return ResourceManager.GetString("PagesAllowed", resourceCulture);
             }
         }
+
+        internal static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+
+        internal static string Previous {
+            get {
+                return ResourceManager.GetString("Previous", resourceCulture);
+            }
+        }
     }
 }

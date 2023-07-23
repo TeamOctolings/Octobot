@@ -85,6 +85,7 @@ public class SettingsCommandGroup : CommandGroup {
 
     private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser currentUser, int page, CancellationToken ct = default) {
         var builder = new StringBuilder();
+        var footer = new StringBuilder();
         const int optionsPerList = 7;
         var totalPages = (AllOptions.Length + optionsPerList - 1)/optionsPerList;
         for (var i = optionsPerList * page - optionsPerList; i <= optionsPerList * page - 1; i++) {
@@ -96,10 +97,14 @@ public class SettingsCommandGroup : CommandGroup {
                     .AppendLine();
             } catch { /* hilariously ignored */ }
         }
+
+        footer.Append($"{Messages.Page} {page}/{totalPages} ");
+        for (var i = 1; i <= totalPages; i++) footer.Append(i == page ? "●" : "○");
+
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Default)
-            .WithFooter($"{Messages.Page}: {page}/{totalPages}")
+            .WithFooter(footer.ToString())
             .Build();
 
         if (optionsPerList * page - optionsPerList >= AllOptions.Length) {
