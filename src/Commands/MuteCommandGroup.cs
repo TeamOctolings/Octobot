@@ -125,7 +125,7 @@ public class MuteCommandGroup : CommandGroup {
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ct);
+            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
@@ -215,7 +215,7 @@ public class MuteCommandGroup : CommandGroup {
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ct);
+            data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
