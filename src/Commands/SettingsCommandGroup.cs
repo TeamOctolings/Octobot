@@ -31,14 +31,14 @@ public class SettingsCommandGroup : CommandGroup {
         GuildSettings.RemoveRolesOnMute,
         GuildSettings.ReturnRolesOnRejoin,
         GuildSettings.AutoStartEvents,
+        GuildSettings.RenameHoistedUsers,
         GuildSettings.PublicFeedbackChannel,
         GuildSettings.PrivateFeedbackChannel,
         GuildSettings.EventNotificationChannel,
         GuildSettings.DefaultRole,
         GuildSettings.MuteRole,
         GuildSettings.EventNotificationRole,
-        GuildSettings.EventEarlyNotificationOffset,
-        GuildSettings.RenameHoistedUsers
+        GuildSettings.EventEarlyNotificationOffset
     };
 
     private readonly ICommandContext     _context;

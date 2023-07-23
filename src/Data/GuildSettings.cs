@@ -41,6 +41,11 @@ public static class GuildSettings {
     public static readonly BoolOption AutoStartEvents = new("AutoStartEvents", false);
 
     /// <summary>
+    ///     Controls the editing of the display name in the guild when the user tries to hoist themselves.
+    /// </summary>
+    public static readonly BoolOption RenameHoistedUsers = new("RenameHoistedUsers", false);
+
+    /// <summary>
     ///     Controls what channel should all public messages be sent to.
     /// </summary>
     public static readonly SnowflakeOption PublicFeedbackChannel = new("PublicFeedbackChannel");
@@ -60,9 +65,4 @@ public static class GuildSettings {
     /// </summary>
     public static readonly TimeSpanOption EventEarlyNotificationOffset = new(
         "EventEarlyNotificationOffset", TimeSpan.Zero);
-
-    /// <summary>
-    ///     Controls the editing of the display name in the guild when the user tries to hoist themselves.
-    /// </summary>
-    public static readonly BoolOption RenameHoistedUsers = new("RenameHoistedUsers", false);
 }
