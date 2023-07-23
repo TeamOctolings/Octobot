@@ -231,8 +231,8 @@ public partial class GuildUpdateService : BackgroundService {
 
         for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
             await TickReminderAsync(memberData.Reminders[i], user, memberData, ct);
-
-        await FilterNicknameAsync(guildId, user, member, ct);
+        var cfg = await _dataService.GetSettings(guildId, ct);
+        if (GuildSettings.RenameHoistedUsers.Get(cfg)) await FilterNicknameAsync(guildId, user, member, ct);
     }
 
     private Task FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member, CancellationToken ct) {

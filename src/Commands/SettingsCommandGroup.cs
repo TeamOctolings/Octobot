@@ -37,7 +37,8 @@ public class SettingsCommandGroup : CommandGroup {
         GuildSettings.DefaultRole,
         GuildSettings.MuteRole,
         GuildSettings.EventNotificationRole,
-        GuildSettings.EventEarlyNotificationOffset
+        GuildSettings.EventEarlyNotificationOffset,
+        GuildSettings.RenameHoistedUsers
     };
 
     private readonly ICommandContext     _context;

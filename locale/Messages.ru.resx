@@ -558,4 +558,7 @@
     <data name="SettingIsNow" xml:space="preserve">
         <value>теперь имеет значение</value>
     </data>
+    <data name="SettingsRenameHoistedUsers" xml:space="preserve">
+        <value>Переименовывать участников, которые пытаются поднять себя</value>
+    </data>
 </root>
