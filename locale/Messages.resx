@@ -168,7 +168,7 @@
     <data name="CurrentSettings" xml:space="preserve">
     <value>Current settings:</value>
   </data>
-    <data name="SettingsLang" xml:space="preserve">
+    <data name="SettingsLanguage" xml:space="preserve">
     <value>Language</value>
   </data>
     <data name="SettingsPrefix" xml:space="preserve">
@@ -557,5 +557,14 @@
     </data>
     <data name="SettingIsNow" xml:space="preserve">
         <value>is now</value>
+    </data>
+    <data name="Page" xml:space="preserve">
+        <value>page</value>
+    </data>
+    <data name="PageNotFound" xml:space="preserve">
+        <value>Page not found!</value>
+    </data>
+    <data name="PagesAllowed" xml:space="preserve">
+        <value>There are total pages</value>
     </data>
 </root>
