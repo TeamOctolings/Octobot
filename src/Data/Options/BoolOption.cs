@@ -19,12 +19,13 @@ public class BoolOption : Option<bool> {
     }
 
     private static bool TryParseBool(string from, out bool value) {
+        from = from.ToLower();
         value = false;
         switch (from) {
-            case "1" or "y" or "yes" or "д" or "да":
+            case "true" or "1" or "y" or "yes" or "д" or "да":
                 value = true;
                 return true;
-            case "0" or "n" or "no" or "н" or "не" or "нет":
+            case "false" or "0" or "n" or "no" or "н" or "не" or "нет" or "нъет":
                 value = false;
                 return true;
             default:
