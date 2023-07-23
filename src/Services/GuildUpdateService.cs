@@ -134,7 +134,7 @@ public partial class GuildUpdateService : BackgroundService {
             if (!guildMemberResult.IsDefined(out var guildMember)) return;
             if (!guildMember.User.IsDefined(out var user)) return;
 
-            await TickMemberAsync(guildId, user, guildMember, memberData, defaultRole, ct);
+            await TickMemberAsync(guildId, user, guildMember, memberData, defaultRole, data.Settings, ct);
         }
 
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
@@ -214,7 +214,7 @@ public partial class GuildUpdateService : BackgroundService {
 
     private async Task TickMemberAsync(
         Snowflake         guildId, IUser user, IGuildMember member, MemberData memberData, Snowflake defaultRole,
-        CancellationToken ct) {
+        JsonNode cfg, CancellationToken ct) {
         if (defaultRole.Value is not 0 && !memberData.Roles.Contains(defaultRole.Value))
             _ = _guildApi.AddGuildMemberRoleAsync(
                 guildId, user.ID, defaultRole, ct: ct);
@@ -231,7 +231,6 @@ public partial class GuildUpdateService : BackgroundService {
 
         for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
             await TickReminderAsync(memberData.Reminders[i], user, memberData, ct);
-        var cfg = await _dataService.GetSettings(guildId, ct);
         if (GuildSettings.RenameHoistedUsers.Get(cfg)) await FilterNicknameAsync(guildId, user, member, ct);
     }
 
