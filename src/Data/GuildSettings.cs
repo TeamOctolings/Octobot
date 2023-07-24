@@ -41,6 +41,11 @@ public static class GuildSettings {
     public static readonly BoolOption AutoStartEvents = new("AutoStartEvents", false);
 
     /// <summary>
+    ///     Controls whether or not users who try to hoist themselves should be renamed.
+    /// </summary>
+    public static readonly BoolOption RenameHoistedUsers = new("RenameHoistedUsers", false);
+
+    /// <summary>
     ///     Controls what channel should all public messages be sent to.
     /// </summary>
     public static readonly SnowflakeOption PublicFeedbackChannel = new("PublicFeedbackChannel");

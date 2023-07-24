@@ -558,6 +558,9 @@
     <data name="SettingIsNow" xml:space="preserve">
         <value>is now</value>
     </data>
+    <data name="SettingsRenameHoistedUsers" xml:space="preserve">
+        <value>Rename members who attempt to hoist themselves</value>
+    </data>
     <data name="Page" xml:space="preserve">
         <value>page</value>
     </data>

@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ namespace Boyfriend.Services;
 /// <summary>
 ///     Handles executing guild updates (also called "ticks") once per second.
 /// </summary>
-public class GuildUpdateService : BackgroundService {
+public partial class GuildUpdateService : BackgroundService {
     private static readonly (string Name, TimeSpan Duration)[] SongList = {
         ("UNDEAD CORPORATION - The Empress", new TimeSpan(0, 4, 34)),
         ("UNDEAD CORPORATION - Everything will freeze", new TimeSpan(0, 3, 17)),
@@ -28,6 +29,16 @@ public class GuildUpdateService : BackgroundService {
         ("IA - A Tale of Six Trillion Years and a Night", new TimeSpan(0, 3, 40)),
         ("Manuel - Gas Gas Gas", new TimeSpan(0, 3, 17)),
         ("Camellia - Flamewall", new TimeSpan(0, 6, 50))
+    };
+
+    private static readonly string[] GenericNicknames = {
+        "Albatross", "Alpha", "Anchor", "Banjo", "Bell", "Beta", "Blackbird", "Bulldog", "Canary",
+        "Cat", "Calf", "Cyclone", "Daisy", "Dalmatian", "Dart", "Delta", "Diamond", "Donkey", "Duck",
+        "Emu", "Eclipse", "Flamingo", "Flute", "Frog", "Goose", "Hatchet", "Heron", "Husky", "Hurricane",
+        "Iceberg", "Iguana", "Kiwi", "Kite", "Lamb", "Lily", "Macaw", "Manatee", "Maple", "Mask",
+        "Nautilus", "Ostrich", "Octopus", "Pelican", "Puffin", "Pyramid", "Rattle", "Robin", "Rose",
+        "Salmon", "Seal", "Shark", "Sheep", "Snake", "Sonar", "Stump", "Sparrow", "Toaster", "Toucan",
+        "Torus", "Violet", "Vortex", "Vulture", "Wagon", "Whale", "Woodpecker", "Zebra", "Zigzag"
     };
 
     private readonly List<Activity> _activityList = new(1) { new Activity("with Remora.Discord", ActivityType.Game) };
@@ -119,10 +130,11 @@ public class GuildUpdateService : BackgroundService {
 
         var defaultRole = GuildSettings.DefaultRole.Get(data.Settings);
         foreach (var memberData in data.MemberData.Values) {
-            var userResult = await _userApi.GetUserAsync(memberData.Id.ToSnowflake(), ct);
-            if (!userResult.IsDefined(out var user)) return;
+            var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, memberData.Id.ToSnowflake(), ct);
+            if (!guildMemberResult.IsDefined(out var guildMember)) return;
+            if (!guildMember.User.IsDefined(out var user)) return;
 
-            await TickMemberAsync(guildId, user, memberData, defaultRole, ct);
+            await TickMemberAsync(guildId, user, guildMember, memberData, defaultRole, data.Settings, ct);
         }
 
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
@@ -201,7 +213,8 @@ public class GuildUpdateService : BackgroundService {
     }
 
     private async Task TickMemberAsync(
-        Snowflake guildId, IUser user, MemberData memberData, Snowflake defaultRole, CancellationToken ct) {
+        Snowflake         guildId, IUser user, IGuildMember member, MemberData memberData, Snowflake defaultRole,
+        JsonNode cfg, CancellationToken ct) {
         if (defaultRole.Value is not 0 && !memberData.Roles.Contains(defaultRole.Value))
             _ = _guildApi.AddGuildMemberRoleAsync(
                 guildId, user.ID, defaultRole, ct: ct);
@@ -218,7 +231,35 @@ public class GuildUpdateService : BackgroundService {
 
         for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
             await TickReminderAsync(memberData.Reminders[i], user, memberData, ct);
+        if (GuildSettings.RenameHoistedUsers.Get(cfg)) await FilterNicknameAsync(guildId, user, member, ct);
     }
+
+    private Task FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member, CancellationToken ct) {
+        var currentNickname = member.Nickname.IsDefined(out var nickname)
+            ? nickname
+            : user.GlobalName ?? user.Username;
+        var characterList = currentNickname.ToList();
+        var usernameChanged = false;
+        foreach (var character in currentNickname)
+            if (IllegalCharsRegex().IsMatch(character.ToString())) {
+                characterList.Remove(character);
+                usernameChanged = true;
+            } else { break; }
+
+        if (!usernameChanged) return Task.CompletedTask;
+        var newNickname = string.Concat(characterList.ToArray());
+
+        _ = _guildApi.ModifyGuildMemberAsync(
+            guildId, user.ID,
+            !string.IsNullOrWhiteSpace(newNickname)
+                ? newNickname
+                : GenericNicknames[Random.Shared.Next(GenericNicknames.Length)],
+            ct: ct);
+        return Task.CompletedTask;
+    }
+
+    [GeneratedRegex("[^0-9A-zЁА-яё]")]
+    private static partial Regex IllegalCharsRegex();
 
     private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct) {
         if (DateTimeOffset.UtcNow < reminder.At) return;
