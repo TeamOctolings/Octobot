@@ -77,10 +77,10 @@ public class BanCommandGroup : CommandGroup {
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
-        var guildResult = await _guildApi.GetGuildAsync(guildId.Value, ct: CancellationToken);
+        var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
             return Result.FromError(guildResult);
 
@@ -88,7 +88,7 @@ public class BanCommandGroup : CommandGroup {
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await BanUserAsync(
-            target, reason, duration, guild, data, channelId.Value, user, currentUser, CancellationToken);
+            target, reason, duration, guild, data, channelId, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> BanUserAsync(
@@ -193,15 +193,15 @@ public class BanCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
         // Needed to get the tag and avatar
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await UnbanUserAsync(
-            target, reason, guildId.Value, data, channelId.Value, user, currentUser, CancellationToken);
+            target, reason, guildId, data, channelId, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> UnbanUserAsync(

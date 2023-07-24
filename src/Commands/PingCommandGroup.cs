@@ -60,10 +60,10 @@ public class PingCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        var cfg = await _dataService.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendLatencyAsync(channelId.Value, currentUser, CancellationToken);
+        return await SendLatencyAsync(channelId, currentUser, CancellationToken);
     }
 
     private async Task<Result> SendLatencyAsync(

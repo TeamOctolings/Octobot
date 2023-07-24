@@ -76,7 +76,7 @@ public class SettingsCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        var cfg = await _dataService.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
         return await SendSettingsListAsync(cfg, currentUser, CancellationToken);
@@ -124,7 +124,7 @@ public class SettingsCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await EditSettingAsync(setting, value, data, currentUser, CancellationToken);
