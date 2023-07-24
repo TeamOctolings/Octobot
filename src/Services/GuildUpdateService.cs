@@ -237,7 +237,7 @@ public partial class GuildUpdateService : BackgroundService {
     private Task FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member, CancellationToken ct) {
         var currentNickname = member.Nickname.IsDefined(out var nickname)
             ? nickname
-            : user.Username;
+            : user.GlobalName ?? user.Username;
         var characterList = currentNickname.ToList();
         var usernameChanged = false;
         foreach (var character in currentNickname)
