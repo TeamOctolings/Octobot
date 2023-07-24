@@ -65,10 +65,10 @@ public class ClearCommandGroup : CommandGroup {
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
 
         var messagesResult = await _channelApi.GetChannelMessagesAsync(
-            channelId.Value, limit: amount + 1, ct: CancellationToken);
+            channelId, limit: amount + 1, ct: CancellationToken);
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
         // The current user's avatar is used when sending messages
@@ -76,10 +76,10 @@ public class ClearCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ClearMessagesAsync(amount, data, channelId.Value, messages, user, currentUser, CancellationToken);
+        return await ClearMessagesAsync(amount, data, channelId, messages, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> ClearMessagesAsync(
@@ -103,7 +103,7 @@ public class ClearCommandGroup : CommandGroup {
             return Result.FromError(deleteResult.Error);
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, currentUser, ct);
+            data.Settings, channelId, user, title, description, currentUser, ColorsList.Red, false, ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 

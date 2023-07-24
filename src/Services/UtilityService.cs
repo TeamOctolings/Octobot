@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Text;
 using System.Text.Json.Nodes;
 using Boyfriend.Data;
@@ -158,11 +159,13 @@ public class UtilityService : IHostedService {
     /// <param name="title">The title for the embed.</param>
     /// <param name="description">The description of the embed.</param>
     /// <param name="avatar">The user whose avatar will be displayed next to the <paramref name="title" /> of the embed.</param>
+    /// <param name="color">The color of the embed.</param>
+    /// <param name="isPublic">Whether or not the embed should be sent in <see cref="GuildSettings.PublicFeedbackChannel"/></param>
     /// <param name="ct">The cancellation token for this operation.</param>
-    /// <returns></returns>
+    /// <returns>A result which has succeeded.</returns>
     public Result LogActionAsync(
-        JsonNode          cfg, Snowflake channelId, IUser user, string title, string description, IUser avatar,
-        CancellationToken ct = default) {
+        JsonNode cfg,   Snowflake channelId,       IUser user, string title, string description, IUser avatar,
+        Color    color, bool      isPublic = true, CancellationToken ct = default) {
         var publicChannel = GuildSettings.PublicFeedbackChannel.Get(cfg);
         var privateChannel = GuildSettings.PrivateFeedbackChannel.Get(cfg);
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId)
@@ -173,7 +176,7 @@ public class UtilityService : IHostedService {
             .WithDescription(description)
             .WithActionFooter(user)
             .WithCurrentTimestamp()
-            .WithColour(ColorsList.Green)
+            .WithColour(color)
             .Build();
 
         if (!logEmbed.IsDefined(out var logBuilt))
@@ -182,12 +185,12 @@ public class UtilityService : IHostedService {
         var builtArray = new[] { logBuilt };
 
         // Not awaiting to reduce response time
-        if (publicChannel != channelId.Value)
+        if (isPublic && publicChannel != channelId)
             _ = _channelApi.CreateMessageAsync(
                 publicChannel, embeds: builtArray,
                 ct: ct);
         if (privateChannel != publicChannel
-            && privateChannel != channelId.Value)
+            && privateChannel != channelId)
             _ = _channelApi.CreateMessageAsync(
                 privateChannel, embeds: builtArray,
                 ct: ct);

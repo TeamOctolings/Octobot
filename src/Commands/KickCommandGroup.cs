@@ -72,17 +72,17 @@ public class KickCommandGroup : CommandGroup {
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
-        var guildResult = await _guildApi.GetGuildAsync(guildId.Value, ct: CancellationToken);
+        var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
             return Result.FromError(guildResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
         if (!memberResult.IsSuccess) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
@@ -90,7 +90,7 @@ public class KickCommandGroup : CommandGroup {
             return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await KickUserAsync(target, reason, guild, channelId.Value, data, user, currentUser, CancellationToken);
+        return await KickUserAsync(target, reason, guild, channelId, data, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> KickUserAsync(
@@ -133,7 +133,7 @@ public class KickCommandGroup : CommandGroup {
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ct);
+            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 

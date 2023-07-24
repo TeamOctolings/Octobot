@@ -76,14 +76,14 @@ public class MuteCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
         if (!memberResult.IsSuccess) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
@@ -92,7 +92,7 @@ public class MuteCommandGroup : CommandGroup {
         }
 
         return await MuteUserAsync(
-            target, reason, duration, guildId.Value, data, channelId.Value, user, currentUser, CancellationToken);
+            target, reason, duration, guildId, data, channelId, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> MuteUserAsync(
@@ -125,7 +125,7 @@ public class MuteCommandGroup : CommandGroup {
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ct);
+            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 
@@ -171,14 +171,14 @@ public class MuteCommandGroup : CommandGroup {
             return Result.FromError(currentUserResult);
 
         // Needed to get the tag and avatar
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        var memberResult = await _guildApi.GetGuildMemberAsync(guildId.Value, target.ID, CancellationToken);
+        var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
         if (!memberResult.IsSuccess) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
@@ -187,7 +187,7 @@ public class MuteCommandGroup : CommandGroup {
         }
 
         return await UnmuteUserAsync(
-            target, reason, guildId.Value, data, channelId.Value, user, currentUser, CancellationToken);
+            target, reason, guildId, data, channelId, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> UnmuteUserAsync(
@@ -215,7 +215,7 @@ public class MuteCommandGroup : CommandGroup {
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ct);
+            data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
             return Result.FromError(logResult.Error);
 

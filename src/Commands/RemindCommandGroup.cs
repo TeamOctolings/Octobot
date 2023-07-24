@@ -55,14 +55,14 @@ public class RemindCommandGroup : CommandGroup {
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
 
-        var userResult = await _userApi.GetUserAsync(userId.Value, CancellationToken);
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
             return Result.FromError(userResult);
 
-        var data = await _dataService.GetData(guildId.Value, CancellationToken);
+        var data = await _dataService.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, message, data, channelId.Value, user, CancellationToken);
+        return await AddReminderAsync(@in, message, data, channelId, user, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(
