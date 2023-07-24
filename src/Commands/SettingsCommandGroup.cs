@@ -31,6 +31,7 @@ public class SettingsCommandGroup : CommandGroup {
         GuildSettings.RemoveRolesOnMute,
         GuildSettings.ReturnRolesOnRejoin,
         GuildSettings.AutoStartEvents,
+        GuildSettings.RenameHoistedUsers,
         GuildSettings.PublicFeedbackChannel,
         GuildSettings.PrivateFeedbackChannel,
         GuildSettings.EventNotificationChannel,

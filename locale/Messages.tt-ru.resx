@@ -558,4 +558,7 @@
     <data name="SettingIsNow" xml:space="preserve">
         <value>стало</value>
     </data>
+    <data name="SettingsRenameHoistedUsers" xml:space="preserve">
+        <value>переобувать шизоидов пытающихся поднять себя в табе</value>
+    </data>
 </root>
