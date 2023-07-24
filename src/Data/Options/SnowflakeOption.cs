@@ -1,11 +1,12 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Data.Options;
 
-public class SnowflakeOption : Option<Snowflake> {
+public partial class SnowflakeOption : Option<Snowflake> {
     public SnowflakeOption(string name) : base(name, 0UL.ToSnowflake()) { }
 
     public override string Display(JsonNode settings) {
@@ -18,10 +19,13 @@ public class SnowflakeOption : Option<Snowflake> {
     }
 
     public override Result Set(JsonNode settings, string from) {
-        if (!ulong.TryParse(from, out var parsed))
+        if (!ulong.TryParse(NonNumbers().Replace(from, ""), out var parsed))
             return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue));
 
         settings[Name] = parsed;
         return Result.FromSuccess();
     }
+
+    [GeneratedRegex("[^0-9]")]
+    private static partial Regex NonNumbers();
 }

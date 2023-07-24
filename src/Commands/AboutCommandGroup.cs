@@ -57,7 +57,7 @@ public class AboutCommandGroup : CommandGroup {
         if (!currentUserResult.IsDefined(out var currentUser))
             return Result.FromError(currentUserResult);
 
-        var cfg = await _dataService.GetSettings(guildId.Value, CancellationToken);
+        var cfg = await _dataService.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
         return await SendAboutBotAsync(currentUser, CancellationToken);

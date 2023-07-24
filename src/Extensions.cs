@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using DiffPlex.DiffBuilder.Model;
@@ -182,11 +181,10 @@ public static class Extensions {
     }
 
     public static bool TryGetContextIDs(
-        this                    ICommandContext context,   [NotNullWhen(true)] out Snowflake? guildId,
-        [NotNullWhen(true)] out Snowflake?      channelId, [NotNullWhen(true)] out Snowflake? userId) {
-        guildId = null;
-        channelId = null;
-        userId = null;
+        this ICommandContext context,   out Snowflake guildId,
+        out  Snowflake       channelId, out Snowflake userId) {
+        channelId = default;
+        userId = default;
         return context.TryGetGuildID(out guildId)
                && context.TryGetChannelID(out channelId)
                && context.TryGetUserID(out userId);
