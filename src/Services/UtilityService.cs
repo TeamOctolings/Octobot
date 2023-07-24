@@ -185,12 +185,12 @@ public class UtilityService : IHostedService {
         var builtArray = new[] { logBuilt };
 
         // Not awaiting to reduce response time
-        if (isPublic && publicChannel != channelId.Value)
+        if (isPublic && publicChannel != channelId)
             _ = _channelApi.CreateMessageAsync(
                 publicChannel, embeds: builtArray,
                 ct: ct);
         if (privateChannel != publicChannel
-            && privateChannel != channelId.Value)
+            && privateChannel != channelId)
             _ = _channelApi.CreateMessageAsync(
                 privateChannel, embeds: builtArray,
                 ct: ct);
