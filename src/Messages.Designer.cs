@@ -947,5 +947,35 @@ namespace Boyfriend {
                 return ResourceManager.GetString("SettingIsNow", resourceCulture);
             }
         }
+
+        internal static string Page {
+            get {
+                return ResourceManager.GetString("Page", resourceCulture);
+            }
+        }
+
+        internal static string PageNotFound {
+            get {
+                return ResourceManager.GetString("PageNotFound", resourceCulture);
+            }
+        }
+
+        internal static string PagesAllowed {
+            get {
+                return ResourceManager.GetString("PagesAllowed", resourceCulture);
+            }
+        }
+
+        internal static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+
+        internal static string Previous {
+            get {
+                return ResourceManager.GetString("Previous", resourceCulture);
+            }
+        }
     }
 }

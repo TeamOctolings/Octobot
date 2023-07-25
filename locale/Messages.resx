@@ -168,7 +168,7 @@
     <data name="CurrentSettings" xml:space="preserve">
     <value>Current settings:</value>
   </data>
-    <data name="SettingsLang" xml:space="preserve">
+    <data name="SettingsLanguage" xml:space="preserve">
     <value>Language</value>
   </data>
     <data name="SettingsPrefix" xml:space="preserve">
@@ -560,5 +560,20 @@
     </data>
     <data name="SettingsRenameHoistedUsers" xml:space="preserve">
         <value>Rename members who attempt to hoist themselves</value>
+    </data>
+    <data name="Page" xml:space="preserve">
+        <value>page</value>
+    </data>
+    <data name="PageNotFound" xml:space="preserve">
+        <value>Page not found!</value>
+    </data>
+    <data name="PagesAllowed" xml:space="preserve">
+        <value>There are total pages</value>
+    </data>
+    <data name="Next" xml:space="preserve">
+        <value>Next</value>
+    </data>
+    <data name="Previous" xml:space="preserve">
+        <value>Previous</value>
     </data>
 </root>

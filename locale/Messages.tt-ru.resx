@@ -168,7 +168,7 @@
     <data name="CurrentSettings" xml:space="preserve">
     <value>настройки:</value>
   </data>
-    <data name="SettingsLang" xml:space="preserve">
+    <data name="SettingsLanguage" xml:space="preserve">
     <value>язык</value>
   </data>
     <data name="SettingsPrefix" xml:space="preserve">
@@ -560,5 +560,20 @@
     </data>
     <data name="SettingsRenameHoistedUsers" xml:space="preserve">
         <value>переобувать шизоидов пытающихся поднять себя в табе</value>
+    </data>
+    <data name="Page" xml:space="preserve">
+        <value>это страница</value>
+    </data>
+    <data name="PageNotFound" xml:space="preserve">
+        <value>если я был бы html, я бы сказал 404</value>
+    </data>
+    <data name="PagesAllowed" xml:space="preserve">
+        <value>ну а если быть точнее, тут всего страниц</value>
+    </data>
+    <data name="Next" xml:space="preserve">
+        <value>следующее</value>
+    </data>
+    <data name="Previous" xml:space="preserve">
+        <value>предыдущее</value>
     </data>
 </root>

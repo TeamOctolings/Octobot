@@ -165,7 +165,7 @@
     <data name="CurrentSettings" xml:space="preserve">
     <value>Текущие настройки:</value>
   </data>
-    <data name="SettingsLang" xml:space="preserve">
+    <data name="SettingsLanguage" xml:space="preserve">
     <value>Язык</value>
   </data>
     <data name="SettingsPrefix" xml:space="preserve">
@@ -433,8 +433,8 @@
     <value>Я не смог найти этого пользователя ни в одном из серверов, в которых я есть. Проверь правильность ID и нахождение пользователя на этом сервере максимум 30 дней назад</value>
   </data>
     <data name="SettingsDefaultRole" xml:space="preserve">
-    <value>Общая роль</value>
-  </data>
+        <value>Роль по умолчанию</value>
+    </data>
     <data name="CommandDescriptionRemind" xml:space="preserve">
     <value>Добавляет напоминание</value>
   </data>
@@ -560,5 +560,20 @@
     </data>
     <data name="SettingsRenameHoistedUsers" xml:space="preserve">
         <value>Переименовывать участников, которые пытаются поднять себя</value>
+    </data>
+    <data name="Page" xml:space="preserve">
+        <value>страница</value>
+    </data>
+    <data name="PageNotFound" xml:space="preserve">
+        <value>Страница не найдена!</value>
+    </data>
+    <data name="PagesAllowed" xml:space="preserve">
+        <value>Всего страниц существует</value>
+    </data>
+    <data name="Next" xml:space="preserve">
+        <value>Далее</value>
+    </data>
+    <data name="Previous" xml:space="preserve">
+        <value>Назад</value>
     </data>
 </root>

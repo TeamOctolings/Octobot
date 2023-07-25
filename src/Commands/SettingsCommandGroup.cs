@@ -68,7 +68,8 @@ public class SettingsCommandGroup : CommandGroup {
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteSettingsListAsync() {
+    public async Task<Result> ExecuteSettingsListAsync(
+        [Description("Settings list page")] int page) {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
             return Result.FromError(
                 new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
@@ -80,22 +81,39 @@ public class SettingsCommandGroup : CommandGroup {
         var cfg = await _dataService.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendSettingsListAsync(cfg, currentUser, CancellationToken);
+        return await SendSettingsListAsync(cfg, currentUser, page, CancellationToken);
     }
 
-    private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser currentUser, CancellationToken ct = default) {
+    private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser currentUser, int page, CancellationToken ct = default) {
         var builder = new StringBuilder();
-
-        foreach (var option in AllOptions) {
-            builder.Append(Markdown.InlineCode(option.Name))
-                .Append(": ");
-            builder.AppendLine(option.Display(cfg));
+        var footer = new StringBuilder();
+        const int optionsPerList = 7;
+        var totalPages = (AllOptions.Length + optionsPerList - 1)/optionsPerList;
+        for (var i = optionsPerList * page - optionsPerList; i <= optionsPerList * page - 1; i++) {
+            try {
+                builder.AppendLine($"Settings{AllOptions[i].Name}".Localized())
+                    .Append(Markdown.InlineCode(AllOptions[i].Name))
+                    .Append(": ")
+                    .AppendLine(AllOptions[i].Display(cfg))
+                    .AppendLine();
+            } catch { /* hilariously ignored */ }
         }
+
+        footer.Append($"{Messages.Page} {page}/{totalPages} ");
+        for (var i = 1; i <= totalPages; i++) footer.Append(i == page ? "●" : "○");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Default)
+            .WithFooter(footer.ToString())
             .Build();
+
+        if (optionsPerList * page - optionsPerList >= AllOptions.Length) {
+            embed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, currentUser)
+                .WithDescription($"{Messages.PagesAllowed}: {Markdown.Bold(totalPages.ToString())}")
+                .WithColour(ColorsList.Red)
+                .Build();
+        }
 
         return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
     }
