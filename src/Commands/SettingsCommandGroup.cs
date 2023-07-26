@@ -88,10 +88,12 @@ public class SettingsCommandGroup : CommandGroup {
         var description = new StringBuilder();
         var footer = new StringBuilder();
 
-        const int optionsPerList = 10;
-        var totalPages = (AllOptions.Length + optionsPerList - 1)/optionsPerList;
-        var firstOptionOnPage = optionsPerList * page - optionsPerList;
-        var lastOptionOnPage = optionsPerList * page - 1;
+        const int optionsPerPage = 10;
+
+        var totalPages = (AllOptions.Length + optionsPerPage - 1)/optionsPerPage;
+        var lastOptionOnPage = optionsPerPage * page;
+        var firstOptionOnPage = lastOptionOnPage - optionsPerPage;
+        var condition = lastOptionOnPage > AllOptions.Length ? AllOptions.Length : lastOptionOnPage;
 
         if (firstOptionOnPage >= AllOptions.Length) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, currentUser)
@@ -102,21 +104,15 @@ public class SettingsCommandGroup : CommandGroup {
             return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
         } else {
             footer.Append($"{Messages.Page} {page}/{totalPages} ");
-            for (var i = 1; i <= totalPages; i++) footer.Append(i == page ? "●" : "○");
+            for (var i = 0; i < totalPages; i++) footer.Append(i + 1 == page ? "●" : "○");
 
-            for (var i = firstOptionOnPage; i <= lastOptionOnPage; i++) {
-                try {
-                    var optionName = AllOptions[i].Name;
-                    var optionValue = AllOptions[i].Display(cfg);
+            for (var i = firstOptionOnPage; i < condition; i++) {
+                var optionName = AllOptions[i].Name;
+                var optionValue = AllOptions[i].Display(cfg);
 
-                    description.AppendLine($"- {$"Settings{optionName}".Localized()}")
-                        .Append(" - ")
-                        .Append(Markdown.InlineCode(optionName))
-                        .Append(": ")
-                        .AppendLine(optionValue);
-                } catch (IndexOutOfRangeException) {
-                     // Ignoring IndexOutOfRangeException in order to continue showing the list of settings if the options are over
-                }
+                description.AppendLine($"- {$"Settings{optionName}".Localized()}")
+                    .Append($" - {Markdown.InlineCode(optionName)}: ")
+                    .AppendLine(optionValue);
             }
 
             var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
