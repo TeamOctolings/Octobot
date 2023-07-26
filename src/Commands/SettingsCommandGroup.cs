@@ -90,10 +90,9 @@ public class SettingsCommandGroup : CommandGroup {
 
         const int optionsPerPage = 10;
 
-        var totalPages = (AllOptions.Length + optionsPerPage - 1)/optionsPerPage;
-        var lastOptionOnPage = optionsPerPage * page;
-        var firstOptionOnPage = lastOptionOnPage - optionsPerPage;
-        var condition = lastOptionOnPage > AllOptions.Length ? AllOptions.Length : lastOptionOnPage;
+        var totalPages = (AllOptions.Length + optionsPerPage - 1) / optionsPerPage;
+        var lastOptionOnPage = Math.Min(optionsPerPage * page, AllOptions.Length);
+        var firstOptionOnPage = optionsPerPage * page - optionsPerPage;
 
         if (firstOptionOnPage >= AllOptions.Length) {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, currentUser)
@@ -106,7 +105,7 @@ public class SettingsCommandGroup : CommandGroup {
             footer.Append($"{Messages.Page} {page}/{totalPages} ");
             for (var i = 0; i < totalPages; i++) footer.Append(i + 1 == page ? "●" : "○");
 
-            for (var i = firstOptionOnPage; i < condition; i++) {
+            for (var i = firstOptionOnPage; i < lastOptionOnPage; i++) {
                 var optionName = AllOptions[i].Name;
                 var optionValue = AllOptions[i].Display(cfg);
 
