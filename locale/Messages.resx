@@ -562,13 +562,13 @@
         <value>Rename members who attempt to hoist themselves</value>
     </data>
     <data name="Page" xml:space="preserve">
-        <value>page</value>
+        <value>Page</value>
     </data>
     <data name="PageNotFound" xml:space="preserve">
         <value>Page not found!</value>
     </data>
     <data name="PagesAllowed" xml:space="preserve">
-        <value>There are total pages</value>
+        <value>There are {0} total pages</value>
     </data>
     <data name="Next" xml:space="preserve">
         <value>Next</value>

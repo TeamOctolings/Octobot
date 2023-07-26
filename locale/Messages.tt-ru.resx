@@ -568,7 +568,7 @@
         <value>если я был бы html, я бы сказал 404</value>
     </data>
     <data name="PagesAllowed" xml:space="preserve">
-        <value>ну а если быть точнее, тут всего страниц</value>
+        <value>ну а если быть точнее, тут всего {0} страниц(-ы)</value>
     </data>
     <data name="Next" xml:space="preserve">
         <value>следующее</value>

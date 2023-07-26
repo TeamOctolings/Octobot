@@ -85,37 +85,43 @@ public class SettingsCommandGroup : CommandGroup {
     }
 
     private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser currentUser, int page, CancellationToken ct = default) {
-        var builder = new StringBuilder();
+        var description = new StringBuilder();
         var footer = new StringBuilder();
-        const int optionsPerList = 7;
-        var totalPages = (AllOptions.Length + optionsPerList - 1)/optionsPerList;
-        for (var i = optionsPerList * page - optionsPerList; i <= optionsPerList * page - 1; i++) {
-            try {
-                builder.AppendLine($"Settings{AllOptions[i].Name}".Localized())
-                    .Append(Markdown.InlineCode(AllOptions[i].Name))
-                    .Append(": ")
-                    .AppendLine(AllOptions[i].Display(cfg))
-                    .AppendLine();
-            } catch { /* hilariously ignored */ }
-        }
 
-        footer.Append($"{Messages.Page} {page}/{totalPages} ");
-        for (var i = 1; i <= totalPages; i++) footer.Append(i == page ? "●" : "○");
+        const int optionsPerPage = 10;
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
-            .WithDescription(builder.ToString())
-            .WithColour(ColorsList.Default)
-            .WithFooter(footer.ToString())
-            .Build();
+        var totalPages = (AllOptions.Length + optionsPerPage - 1) / optionsPerPage;
+        var lastOptionOnPage = Math.Min(optionsPerPage * page, AllOptions.Length);
+        var firstOptionOnPage = optionsPerPage * page - optionsPerPage;
 
-        if (optionsPerList * page - optionsPerList >= AllOptions.Length) {
-            embed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, currentUser)
-                .WithDescription($"{Messages.PagesAllowed}: {Markdown.Bold(totalPages.ToString())}")
+        if (firstOptionOnPage >= AllOptions.Length) {
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, currentUser)
+                .WithDescription(string.Format(Messages.PagesAllowed, Markdown.Bold(totalPages.ToString())))
                 .WithColour(ColorsList.Red)
                 .Build();
-        }
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+            return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        } else {
+            footer.Append($"{Messages.Page} {page}/{totalPages} ");
+            for (var i = 0; i < totalPages; i++) footer.Append(i + 1 == page ? "●" : "○");
+
+            for (var i = firstOptionOnPage; i < lastOptionOnPage; i++) {
+                var optionName = AllOptions[i].Name;
+                var optionValue = AllOptions[i].Display(cfg);
+
+                description.AppendLine($"- {$"Settings{optionName}".Localized()}")
+                    .Append($" - {Markdown.InlineCode(optionName)}: ")
+                    .AppendLine(optionValue);
+            }
+
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
+                .WithDescription(description.ToString())
+                .WithColour(ColorsList.Default)
+                .WithFooter(footer.ToString())
+                .Build();
+
+            return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        }
     }
 
     /// <summary>
