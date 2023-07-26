@@ -19,7 +19,7 @@ public class BoolOption : Option<bool> {
     }
 
     private static bool TryParseBool(string from, out bool value) {
-        from = from.ToLower();
+        from = from.ToLowerInvariant();
         value = false;
         switch (from) {
             case "true" or "1" or "y" or "yes" or "д" or "да":
