@@ -562,13 +562,13 @@
         <value>Переименовывать участников, которые пытаются поднять себя</value>
     </data>
     <data name="Page" xml:space="preserve">
-        <value>страница</value>
+        <value>Страница</value>
     </data>
     <data name="PageNotFound" xml:space="preserve">
         <value>Страница не найдена!</value>
     </data>
     <data name="PagesAllowed" xml:space="preserve">
-        <value>Всего страниц существует</value>
+        <value>Всего есть {0} страниц(-ы)</value>
     </data>
     <data name="Next" xml:space="preserve">
         <value>Далее</value>
