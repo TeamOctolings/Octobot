@@ -26,7 +26,7 @@ public class InteractionResponders : InteractionGroup {
     [Button("scheduled-event-details")]
     [UsedImplicitly]
     public async Task<Result> OnStatefulButtonClicked(string? state = null) {
-        if (state is null) return Result.FromError(new ArgumentNullError(nameof(state)));
+        if (state is null) return new ArgumentNullError(nameof(state));
 
         var idArray = state.Split(':');
         return (Result)await _feedbackService.SendContextualAsync(

@@ -71,8 +71,7 @@ public class BanCommandGroup : CommandGroup {
         [Description("Ban reason")]   string    reason,
         [Description("Ban duration")] TimeSpan? duration = null) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
@@ -186,8 +185,7 @@ public class BanCommandGroup : CommandGroup {
         [Description("User to unban")] IUser  target,
         [Description("Unban reason")]  string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))

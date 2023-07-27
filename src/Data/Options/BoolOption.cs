@@ -12,7 +12,7 @@ public class BoolOption : Option<bool> {
 
     public override Result Set(JsonNode settings, string from) {
         if (!TryParseBool(from, out var value))
-            return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue));
+            return new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue);
 
         settings[Name] = value;
         return Result.FromSuccess();

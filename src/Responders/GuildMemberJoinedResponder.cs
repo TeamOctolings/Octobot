@@ -29,7 +29,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd> {
 
     public async Task<Result> RespondAsync(IGuildMemberAdd gatewayEvent, CancellationToken ct = default) {
         if (!gatewayEvent.User.IsDefined(out var user))
-            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.User)));
+            return new ArgumentNullError(nameof(gatewayEvent.User));
         var data = await _dataService.GetData(gatewayEvent.GuildID, ct);
         var cfg = data.Settings;
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()

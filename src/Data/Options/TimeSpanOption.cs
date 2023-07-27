@@ -16,7 +16,7 @@ public class TimeSpanOption : Option<TimeSpan> {
 
     public override Result Set(JsonNode settings, string from) {
         if (!ParseTimeSpan(from).IsDefined(out var span))
-            return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue));
+            return new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue);
 
         settings[Name] = span.ToString();
         return Result.FromSuccess();

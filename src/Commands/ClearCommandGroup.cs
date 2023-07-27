@@ -61,8 +61,7 @@ public class ClearCommandGroup : CommandGroup {
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
 
         var messagesResult = await _channelApi.GetChannelMessagesAsync(
             channelId, limit: amount + 1, ct: CancellationToken);
