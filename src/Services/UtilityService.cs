@@ -92,9 +92,9 @@ public class UtilityService : IHostedService {
         string action, IGuild guild, IReadOnlyList<IRole> roles, IGuildMember targetMember, IGuildMember currentMember,
         IGuildMember interacter) {
         if (!targetMember.User.IsDefined(out var targetUser))
-            return Result<string?>.FromError(new ArgumentNullError(nameof(targetMember.User)));
+            return new ArgumentNullError(nameof(targetMember.User));
         if (!interacter.User.IsDefined(out var interacterUser))
-            return Result<string?>.FromError(new ArgumentNullError(nameof(interacter.User)));
+            return new ArgumentNullError(nameof(interacter.User));
 
         if (currentMember.User == targetMember.User)
             return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
