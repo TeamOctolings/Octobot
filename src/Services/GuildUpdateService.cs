@@ -163,7 +163,7 @@ public partial class GuildUpdateService : BackgroundService {
                     await SendScheduledEventCreatedMessage(scheduledEvent, data.Settings, ct),
                 GuildScheduledEventStatus.Active or GuildScheduledEventStatus.Completed =>
                     await SendScheduledEventUpdatedMessage(scheduledEvent, data, ct),
-                _ => Result.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.Status)))
+                _ => new ArgumentOutOfRangeError(nameof(scheduledEvent.Status))
             };
 
             if (!statusChangedResponseResult.IsSuccess)
@@ -295,7 +295,7 @@ public partial class GuildUpdateService : BackgroundService {
     private async Task<Result> SendScheduledEventCreatedMessage(
         IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default) {
         if (!scheduledEvent.Creator.IsDefined(out var creator))
-            return Result.FromError(new ArgumentNullError(nameof(scheduledEvent.Creator)));
+            return new ArgumentNullError(nameof(scheduledEvent.Creator));
 
         Result<string> embedDescriptionResult;
         var eventDescription = scheduledEvent.Description is { HasValue: true, Value: not null }
@@ -306,7 +306,7 @@ public partial class GuildUpdateService : BackgroundService {
                 GetLocalEventCreatedEmbedDescription(scheduledEvent, eventDescription),
             GuildScheduledEventEntityType.External => GetExternalScheduledEventCreatedEmbedDescription(
                 scheduledEvent, eventDescription),
-            _ => Result<string>.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.EntityType)))
+            _ => new ArgumentOutOfRangeError(nameof(scheduledEvent.EntityType))
         };
 
         if (!embedDescriptionResult.IsDefined(out var embedDescription))
@@ -343,11 +343,11 @@ public partial class GuildUpdateService : BackgroundService {
         IGuildScheduledEvent scheduledEvent, string eventDescription) {
         Result<string> embedDescription;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
-            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.EntityMetadata)));
+            return new ArgumentNullError(nameof(scheduledEvent.EntityMetadata));
         if (!scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
-            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime)));
+            return new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime));
         if (!metadata.Location.IsDefined(out var location))
-            return Result<string>.FromError(new ArgumentNullError(nameof(metadata.Location)));
+            return new ArgumentNullError(nameof(metadata.Location));
 
         embedDescription = $"{eventDescription}\n\n{Markdown.BlockQuote(
             string.Format(
@@ -362,7 +362,7 @@ public partial class GuildUpdateService : BackgroundService {
     private static Result<string> GetLocalEventCreatedEmbedDescription(
         IGuildScheduledEvent scheduledEvent, string eventDescription) {
         if (!scheduledEvent.ChannelID.AsOptional().IsDefined(out var channelId))
-            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ChannelID)));
+            return new ArgumentNullError(nameof(scheduledEvent.ChannelID));
 
         return $"{eventDescription}\n\n{Markdown.BlockQuote(
             string.Format(
@@ -390,7 +390,7 @@ public partial class GuildUpdateService : BackgroundService {
                 GuildScheduledEventEntityType.StageInstance or GuildScheduledEventEntityType.Voice =>
                     GetLocalEventStartedEmbedDescription(scheduledEvent),
                 GuildScheduledEventEntityType.External => GetExternalEventStartedEmbedDescription(scheduledEvent),
-                _ => Result<string>.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.EntityType)))
+                _ => new ArgumentOutOfRangeError(nameof(scheduledEvent.EntityType))
             };
 
             var contentResult = await _utility.GetEventNotificationMentions(
@@ -414,7 +414,7 @@ public partial class GuildUpdateService : BackgroundService {
         }
 
         if (scheduledEvent.Status != GuildScheduledEventStatus.Completed)
-            return Result.FromError(new ArgumentOutOfRangeError(nameof(scheduledEvent.Status)));
+            return new ArgumentOutOfRangeError(nameof(scheduledEvent.Status));
         data.ScheduledEvents.Remove(scheduledEvent.ID.Value);
 
         var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, scheduledEvent.Name))
@@ -439,7 +439,7 @@ public partial class GuildUpdateService : BackgroundService {
     private static Result<string> GetLocalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent) {
         Result<string> embedDescription;
         if (!scheduledEvent.ChannelID.AsOptional().IsDefined(out var channelId))
-            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ChannelID)));
+            return new ArgumentNullError(nameof(scheduledEvent.ChannelID));
 
         embedDescription = string.Format(
             Messages.DescriptionLocalEventStarted,
@@ -451,11 +451,11 @@ public partial class GuildUpdateService : BackgroundService {
     private static Result<string> GetExternalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent) {
         Result<string> embedDescription;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
-            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.EntityMetadata)));
+            return new ArgumentNullError(nameof(scheduledEvent.EntityMetadata));
         if (!scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
-            return Result<string>.FromError(new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime)));
+            return new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime));
         if (!metadata.Location.IsDefined(out var location))
-            return Result<string>.FromError(new ArgumentNullError(nameof(metadata.Location)));
+            return new ArgumentNullError(nameof(metadata.Location));
 
         embedDescription = string.Format(
             Messages.DescriptionExternalEventStarted,

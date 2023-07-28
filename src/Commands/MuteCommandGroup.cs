@@ -68,8 +68,7 @@ public class MuteCommandGroup : CommandGroup {
         [Description("Mute reason")]    string   reason,
         [Description("Mute duration")]  TimeSpan duration) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
@@ -162,8 +161,7 @@ public class MuteCommandGroup : CommandGroup {
         [Description("Member to unmute")] IUser  target,
         [Description("Unmute reason")]    string reason) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);

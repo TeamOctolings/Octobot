@@ -71,8 +71,7 @@ public class SettingsCommandGroup : CommandGroup {
     public async Task<Result> ExecuteSettingsListAsync(
         [Description("Settings list page")] int page) {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
@@ -142,8 +141,7 @@ public class SettingsCommandGroup : CommandGroup {
         string setting,
         [Description("Setting value")] string value) {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))

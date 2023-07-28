@@ -52,8 +52,7 @@ public class RemindCommandGroup : CommandGroup {
         TimeSpan @in,
         [Description("Reminder message")] string message) {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
-            return Result.FromError(
-                new ArgumentNullError(nameof(_context), "Unable to retrieve necessary IDs from command context"));
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
 
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))

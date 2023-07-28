@@ -20,7 +20,7 @@ public partial class SnowflakeOption : Option<Snowflake> {
 
     public override Result Set(JsonNode settings, string from) {
         if (!ulong.TryParse(NonNumbers().Replace(from, ""), out var parsed))
-            return Result.FromError(new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue));
+            return new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue);
 
         settings[Name] = parsed;
         return Result.FromSuccess();

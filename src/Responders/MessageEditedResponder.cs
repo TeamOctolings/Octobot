@@ -45,9 +45,9 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
             return Result.FromSuccess(); // The message wasn't actually edited
 
         if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
-            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ChannelID)));
+            return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
         if (!gatewayEvent.ID.IsDefined(out var messageId))
-            return Result.FromError(new ArgumentNullError(nameof(gatewayEvent.ID)));
+            return new ArgumentNullError(nameof(gatewayEvent.ID));
 
         var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
         var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
