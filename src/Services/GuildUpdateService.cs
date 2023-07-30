@@ -33,7 +33,7 @@ public partial class GuildUpdateService : BackgroundService {
         ("SCATTLE - Hypertension", new TimeSpan(0, 3, 18)),
         ("KEYGEN CHURCH - Tenebre Rosso Sangue", new TimeSpan(0, 3, 53)),
         ("Chipzel - Swing Me Another 6", new TimeSpan(0, 5, 32)),
-        ("Floex - The Glasshouse With Butterfly", new TimeSpan(0, 3, 35))
+        ("Noisecream - Mist of Rage", new TimeSpan(0, 2, 25))
     };
 
     private static readonly string[] GenericNicknames = {
