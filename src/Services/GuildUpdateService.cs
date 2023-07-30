@@ -28,7 +28,12 @@ public partial class GuildUpdateService : BackgroundService {
         ("Splatoon 3 - Seep and Destroy", new TimeSpan(0, 2, 42)),
         ("IA - A Tale of Six Trillion Years and a Night", new TimeSpan(0, 3, 40)),
         ("Manuel - Gas Gas Gas", new TimeSpan(0, 3, 17)),
-        ("Camellia - Flamewall", new TimeSpan(0, 6, 50))
+        ("Camellia - Flamewall", new TimeSpan(0, 6, 50)),
+        ("Fall Guys - Fall 'n' Roll", new TimeSpan(0, 3, 14)),
+        ("Super Meat Boy - Hypertension", new TimeSpan(0, 1, 28)),
+        ("KEYGEN CHURCH - Tenebre Rosso Sangue", new TimeSpan(0, 3, 53)),
+        ("Chipzel - Swing Me Another 6", new TimeSpan(0, 5, 32)),
+        ("Floex - The Glasshouse With Butterfly", new TimeSpan(0, 3, 35))
     };
 
     private static readonly string[] GenericNicknames = {
