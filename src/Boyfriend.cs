@@ -18,6 +18,7 @@ using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Hosting.Extensions;
 using Remora.Discord.Interactivity.Extensions;
 using Remora.Rest.Core;
+using Serilog.Extensions.Logging;
 
 namespace Boyfriend;
 
@@ -99,6 +100,8 @@ public class Boyfriend {
                              outputTemplate: "{Timestamp:o} [{Level:u4}] {Message} {NewLine}{Exception}")
                     .AddFilter("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)
                     .AddFilter("System.Net.Http.HttpClient.*.ClientHandler", LogLevel.Warning)
+                    .AddFilter<SerilogLoggerProvider>("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)
+                    .AddFilter<SerilogLoggerProvider>("System.Net.Http.HttpClient.*.ClientHandler", LogLevel.Warning)
             );
     }
 }
