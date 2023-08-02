@@ -180,15 +180,7 @@ public sealed class UtilityService : IHostedService
         }
 
         builder = users.Where(
-                user =>
-                {
-                    if (!user.GuildMember.IsDefined(out var member))
-                    {
-                        return true;
-                    }
-
-                    return !member.Roles.Contains(role);
-                })
+                user => user.GuildMember.IsDefined(out var member) && !member.Roles.Contains(role))
             .Aggregate(builder, (current, user) => current.Append($"{Mention.User(user.User)} "));
         return builder.ToString();
     }

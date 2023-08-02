@@ -35,9 +35,9 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
     public async Task<Result> RespondAsync(IGuildCreate gatewayEvent, CancellationToken ct = default)
     {
-        if (!gatewayEvent.Guild.IsT0)
+        if (!gatewayEvent.Guild.IsT0) // Guild is not IAvailableGuild
         {
-            return Result.FromSuccess(); // Guild is not IAvailableGuild
+            return Result.FromSuccess();
         }
 
         var guild = gatewayEvent.Guild.AsT0;

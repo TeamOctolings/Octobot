@@ -100,9 +100,8 @@ public class ClearCommandGroup : CommandGroup
     {
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
-        for (var i = messages.Count - 1; i >= 1; i--)
+        for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Boyfriend is thinking...')
         {
-            // '>= 1' to skip last message ('Boyfriend is thinking...')
             var message = messages[i];
             idList.Add(message.ID);
             builder.AppendLine(string.Format(Messages.MessageFrom, Mention.User(message.Author)));

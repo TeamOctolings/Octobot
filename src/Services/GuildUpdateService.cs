@@ -165,8 +165,10 @@ public sealed partial class GuildUpdateService : BackgroundService
         if (!eventsResult.IsSuccess)
         {
             _logger.LogWarning("Error retrieving scheduled events.\n{ErrorMessage}", eventsResult.Error.Message);
+            return;
         }
-        else if (!GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
+
+        if (!GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
             await TickScheduledEventsAsync(guildId, data, eventsResult.Entity, ct);
         }
@@ -272,15 +274,14 @@ public sealed partial class GuildUpdateService : BackgroundService
         {
             var unbanResult = await _guildApi.RemoveGuildBanAsync(
                 guildId, user.ID, Messages.PunishmentExpired.EncodeHeader(), ct);
-            if (unbanResult.IsSuccess)
-            {
-                memberData.BannedUntil = null;
-            }
-            else
+            if (!unbanResult.IsSuccess)
             {
                 _logger.LogWarning(
                     "Error in automatic user unban request.\n{ErrorMessage}", unbanResult.Error.Message);
+                return;
             }
+
+            memberData.BannedUntil = null;
         }
 
         for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
@@ -307,8 +308,10 @@ public sealed partial class GuildUpdateService : BackgroundService
             {
                 characterList.Remove(character);
                 usernameChanged = true;
+                continue;
             }
-            else { break; }
+
+            break;
         }
 
         if (!usernameChanged)
