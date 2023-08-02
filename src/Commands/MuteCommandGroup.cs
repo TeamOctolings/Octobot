@@ -22,20 +22,22 @@ namespace Boyfriend.Commands;
 ///     Handles commands related to mute management: /mute and /unmute.
 /// </summary>
 [UsedImplicitly]
-public class MuteCommandGroup : CommandGroup {
-    private readonly ICommandContext      _context;
-    private readonly GuildDataService     _dataService;
-    private readonly FeedbackService      _feedbackService;
+public class MuteCommandGroup : CommandGroup
+{
+    private readonly ICommandContext _context;
+    private readonly FeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
-    private readonly IDiscordRestUserAPI  _userApi;
-    private readonly UtilityService       _utility;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
+    private readonly UtilityService _utility;
 
     public MuteCommandGroup(
-        ICommandContext      context,  GuildDataService    dataService, FeedbackService feedbackService,
-        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,     UtilityService  utility) {
+        ICommandContext context, GuildDataService guildData, FeedbackService feedback,
+        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, UtilityService utility)
+    {
         _context = context;
-        _dataService = dataService;
-        _feedbackService = feedbackService;
+        _guildData = guildData;
+        _feedback = feedback;
         _guildApi = guildApi;
         _userApi = userApi;
         _utility = utility;
@@ -64,30 +66,38 @@ public class MuteCommandGroup : CommandGroup {
     [Description("Mute member")]
     [UsedImplicitly]
     public async Task<Result> ExecuteMute(
-        [Description("Member to mute")] IUser    target,
-        [Description("Mute reason")]    string   reason,
-        [Description("Mute duration")]  TimeSpan duration) {
+        [Description("Member to mute")] IUser target,
+        [Description("Mute reason")] string reason,
+        [Description("Mute duration")] TimeSpan duration)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
 
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
 
-        var data = await _dataService.GetData(guildId, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
-        if (!memberResult.IsSuccess) {
+        if (!memberResult.IsSuccess)
+        {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
         return await MuteUserAsync(
@@ -95,19 +105,23 @@ public class MuteCommandGroup : CommandGroup {
     }
 
     private async Task<Result> MuteUserAsync(
-        IUser target, string reason,      TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
-        IUser user,   IUser  currentUser, CancellationToken ct = default) {
+        IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
+        IUser user, IUser currentUser, CancellationToken ct = default)
+    {
         var interactionResult
             = await _utility.CheckInteractionsAsync(
                 guildId, user.ID, target.ID, "Mute", ct);
         if (!interactionResult.IsSuccess)
+        {
             return Result.FromError(interactionResult);
+        }
 
-        if (interactionResult.Entity is not null) {
+        if (interactionResult.Entity is not null)
+        {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
@@ -115,7 +129,9 @@ public class MuteCommandGroup : CommandGroup {
             guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: until, ct: ct);
         if (!muteResult.IsSuccess)
+        {
             return Result.FromError(muteResult.Error);
+        }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
         var description = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
@@ -126,13 +142,15 @@ public class MuteCommandGroup : CommandGroup {
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
+        {
             return Result.FromError(logResult.Error);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserMuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -148,7 +166,7 @@ public class MuteCommandGroup : CommandGroup {
     ///     was unmuted and vice-versa.
     /// </returns>
     /// <seealso cref="ExecuteMute" />
-    /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
+    /// <seealso cref="GuildUpdateService.TickGuildAsync" />
     [Command("unmute", "размут")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ModerateMembers)]
     [DiscordDefaultDMPermission(false)]
@@ -158,30 +176,38 @@ public class MuteCommandGroup : CommandGroup {
     [Description("Unmute member")]
     [UsedImplicitly]
     public async Task<Result> ExecuteUnmute(
-        [Description("Member to unmute")] IUser  target,
-        [Description("Unmute reason")]    string reason) {
+        [Description("Member to unmute")] IUser target,
+        [Description("Unmute reason")] string reason)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
 
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
 
         // Needed to get the tag and avatar
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
 
-        var data = await _dataService.GetData(guildId, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
-        if (!memberResult.IsSuccess) {
+        if (!memberResult.IsSuccess)
+        {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
         return await UnmuteUserAsync(
@@ -189,38 +215,46 @@ public class MuteCommandGroup : CommandGroup {
     }
 
     private async Task<Result> UnmuteUserAsync(
-        IUser target,      string            reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
-        IUser currentUser, CancellationToken ct = default) {
+        IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
+        IUser currentUser, CancellationToken ct = default)
+    {
         var interactionResult
             = await _utility.CheckInteractionsAsync(
                 guildId, user.ID, target.ID, "Unmute", ct);
         if (!interactionResult.IsSuccess)
+        {
             return Result.FromError(interactionResult);
+        }
 
-        if (interactionResult.Entity is not null) {
+        if (interactionResult.Entity is not null)
+        {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: null, ct: ct);
         if (!unmuteResult.IsSuccess)
+        {
             return Result.FromError(unmuteResult.Error);
+        }
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
+        {
             return Result.FromError(logResult.Error);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnmuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

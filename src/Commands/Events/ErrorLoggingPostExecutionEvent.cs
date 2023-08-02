@@ -11,10 +11,12 @@ namespace Boyfriend.Commands.Events;
 ///     Handles error logging for slash command groups.
 /// </summary>
 [UsedImplicitly]
-public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent {
+public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
+{
     private readonly ILogger<ErrorLoggingPostExecutionEvent> _logger;
 
-    public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger) {
+    public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger)
+    {
         _logger = logger;
     }
 
@@ -27,11 +29,15 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent {
     /// <param name="ct">The cancellation token for this operation. Unused.</param>
     /// <returns>A result which has succeeded.</returns>
     public Task<Result> AfterExecutionAsync(
-        ICommandContext context, IResult commandResult, CancellationToken ct = default) {
-        if (!commandResult.IsSuccess && !commandResult.Error.IsUserOrEnvironmentError()) {
+        ICommandContext context, IResult commandResult, CancellationToken ct = default)
+    {
+        if (!commandResult.IsSuccess && !commandResult.Error.IsUserOrEnvironmentError())
+        {
             _logger.LogWarning("Error in slash command execution.\n{ErrorMessage}", commandResult.Error.Message);
             if (commandResult.Error is ExceptionError exerr)
+            {
                 _logger.LogError(exerr.Exception, "An exception has been thrown");
+            }
         }
 
         return Task.FromResult(Result.FromSuccess());

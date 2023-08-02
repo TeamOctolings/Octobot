@@ -21,18 +21,20 @@ namespace Boyfriend.Commands;
 ///     Handles the command to manage reminders: /remind
 /// </summary>
 [UsedImplicitly]
-public class RemindCommandGroup : CommandGroup {
-    private readonly ICommandContext     _context;
-    private readonly GuildDataService    _dataService;
-    private readonly FeedbackService     _feedbackService;
+public class RemindCommandGroup : CommandGroup
+{
+    private readonly ICommandContext _context;
+    private readonly FeedbackService _feedback;
+    private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
 
     public RemindCommandGroup(
-        ICommandContext     context, GuildDataService dataService, FeedbackService feedbackService,
-        IDiscordRestUserAPI userApi) {
+        ICommandContext context, GuildDataService guildData, FeedbackService feedback,
+        IDiscordRestUserAPI userApi)
+    {
         _context = context;
-        _dataService = dataService;
-        _feedbackService = feedbackService;
+        _guildData = guildData;
+        _feedback = feedback;
         _userApi = userApi;
     }
 
@@ -50,27 +52,34 @@ public class RemindCommandGroup : CommandGroup {
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
         TimeSpan @in,
-        [Description("Reminder message")] string message) {
+        [Description("Reminder message")] string message)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
 
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
 
-        var data = await _dataService.GetData(guildId, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await AddReminderAsync(@in, message, data, channelId, user, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(
-        TimeSpan  @in,       string message, GuildData         data,
-        Snowflake channelId, IUser  user,    CancellationToken ct = default) {
+        TimeSpan @in, string message, GuildData data,
+        Snowflake channelId, IUser user, CancellationToken ct = default)
+    {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
 
         data.GetMemberData(user.ID).Reminders.Add(
-            new Reminder {
+            new Reminder
+            {
                 At = remindAt,
                 Channel = channelId.Value,
                 Text = message
@@ -81,6 +90,6 @@ public class RemindCommandGroup : CommandGroup {
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

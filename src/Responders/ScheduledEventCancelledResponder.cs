@@ -14,21 +14,26 @@ namespace Boyfriend.Responders;
 ///     in a guild's <see cref="GuildSettings.EventNotificationChannel" /> if one is set.
 /// </summary>
 [UsedImplicitly]
-public class GuildScheduledEventDeleteResponder : IResponder<IGuildScheduledEventDelete> {
+public class GuildScheduledEventDeleteResponder : IResponder<IGuildScheduledEventDelete>
+{
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService       _dataService;
+    private readonly GuildDataService _guildData;
 
-    public GuildScheduledEventDeleteResponder(IDiscordRestChannelAPI channelApi, GuildDataService dataService) {
+    public GuildScheduledEventDeleteResponder(IDiscordRestChannelAPI channelApi, GuildDataService guildData)
+    {
         _channelApi = channelApi;
-        _dataService = dataService;
+        _guildData = guildData;
     }
 
-    public async Task<Result> RespondAsync(IGuildScheduledEventDelete gatewayEvent, CancellationToken ct = default) {
-        var guildData = await _dataService.GetData(gatewayEvent.GuildID, ct);
+    public async Task<Result> RespondAsync(IGuildScheduledEventDelete gatewayEvent, CancellationToken ct = default)
+    {
+        var guildData = await _guildData.GetData(gatewayEvent.GuildID, ct);
         guildData.ScheduledEvents.Remove(gatewayEvent.ID.Value);
 
         if (GuildSettings.EventNotificationChannel.Get(guildData.Settings).Empty())
+        {
             return Result.FromSuccess();
+        }
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.EventCancelled, gatewayEvent.Name))
@@ -37,7 +42,10 @@ public class GuildScheduledEventDeleteResponder : IResponder<IGuildScheduledEven
             .WithCurrentTimestamp()
             .Build();
 
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+        if (!embed.IsDefined(out var built))
+        {
+            return Result.FromError(embed);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.EventNotificationChannel.Get(guildData.Settings), embeds: new[] { built }, ct: ct);

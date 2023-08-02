@@ -20,23 +20,25 @@ namespace Boyfriend.Commands;
 ///     Handles the command to kick members of a guild: /kick.
 /// </summary>
 [UsedImplicitly]
-public class KickCommandGroup : CommandGroup {
+public class KickCommandGroup : CommandGroup
+{
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly ICommandContext        _context;
-    private readonly GuildDataService       _dataService;
-    private readonly FeedbackService        _feedbackService;
-    private readonly IDiscordRestGuildAPI   _guildApi;
-    private readonly IDiscordRestUserAPI    _userApi;
-    private readonly UtilityService         _utility;
+    private readonly ICommandContext _context;
+    private readonly FeedbackService _feedback;
+    private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
+    private readonly UtilityService _utility;
 
     public KickCommandGroup(
-        ICommandContext context,         IDiscordRestChannelAPI channelApi, GuildDataService    dataService,
-        FeedbackService feedbackService, IDiscordRestGuildAPI   guildApi,   IDiscordRestUserAPI userApi,
-        UtilityService  utility) {
+        ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
+        FeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
+        UtilityService utility)
+    {
         _context = context;
         _channelApi = channelApi;
-        _dataService = dataService;
-        _feedbackService = feedbackService;
+        _guildData = guildData;
+        _feedback = feedback;
         _guildApi = guildApi;
         _userApi = userApi;
         _utility = utility;
@@ -63,30 +65,43 @@ public class KickCommandGroup : CommandGroup {
     [Description("Kick member")]
     [UsedImplicitly]
     public async Task<Result> ExecuteKick(
-        [Description("Member to kick")] IUser  target,
-        [Description("Kick reason")]    string reason) {
+        [Description("Member to kick")] IUser target,
+        [Description("Kick reason")] string reason)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
+
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
+
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
+        {
             return Result.FromError(guildResult);
+        }
 
-        var data = await _dataService.GetData(guildId, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
-        if (!memberResult.IsSuccess) {
+        if (!memberResult.IsSuccess)
+        {
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(embed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
         return await KickUserAsync(target, reason, guild, channelId, data, user, currentUser, CancellationToken);
@@ -94,21 +109,26 @@ public class KickCommandGroup : CommandGroup {
 
     private async Task<Result> KickUserAsync(
         IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser user, IUser currentUser,
-        CancellationToken ct = default) {
+        CancellationToken ct = default)
+    {
         var interactionResult
             = await _utility.CheckInteractionsAsync(guild.ID, user.ID, target.ID, "Kick", ct);
         if (!interactionResult.IsSuccess)
+        {
             return Result.FromError(interactionResult);
+        }
 
-        if (interactionResult.Entity is not null) {
+        if (interactionResult.Entity is not null)
+        {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var dmChannelResult = await _userApi.CreateDMAsync(target.ID, ct);
-        if (dmChannelResult.IsDefined(out var dmChannel)) {
+        if (dmChannelResult.IsDefined(out var dmChannel))
+        {
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereKicked)
                 .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
@@ -118,7 +138,10 @@ public class KickCommandGroup : CommandGroup {
                 .Build();
 
             if (!dmEmbed.IsDefined(out var dmBuilt))
+            {
                 return Result.FromError(dmEmbed);
+            }
+
             await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: ct);
         }
 
@@ -126,7 +149,10 @@ public class KickCommandGroup : CommandGroup {
             guild.ID, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct);
         if (!kickResult.IsSuccess)
+        {
             return Result.FromError(kickResult.Error);
+        }
+
         data.GetMemberData(target.ID).Roles.Clear();
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
@@ -134,12 +160,14 @@ public class KickCommandGroup : CommandGroup {
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
+        {
             return Result.FromError(logResult.Error);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserKicked, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

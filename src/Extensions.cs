@@ -14,14 +14,16 @@ using Remora.Results;
 
 namespace Boyfriend;
 
-public static class Extensions {
+public static class Extensions
+{
     /// <summary>
     ///     Adds a footer with the <paramref name="user" />'s avatar and tag (@username or username#0000).
     /// </summary>
     /// <param name="builder">The builder to add the footer to.</param>
     /// <param name="user">The user whose tag and avatar to add.</param>
     /// <returns>The builder with the added footer.</returns>
-    public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user) {
+    public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user)
+    {
         var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
         var avatarUrl = avatarUrlResult.IsSuccess
             ? avatarUrlResult.Entity.AbsoluteUri
@@ -36,7 +38,8 @@ public static class Extensions {
     /// <param name="builder">The builder to add the footer to.</param>
     /// <param name="user">The user that performed the action whose tag and avatar to use.</param>
     /// <returns>The builder with the added footer.</returns>
-    public static EmbedBuilder WithActionFooter(this EmbedBuilder builder, IUser user) {
+    public static EmbedBuilder WithActionFooter(this EmbedBuilder builder, IUser user)
+    {
         var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
         var avatarUrl = avatarUrlResult.IsSuccess
             ? avatarUrlResult.Entity.AbsoluteUri
@@ -54,9 +57,11 @@ public static class Extensions {
     /// <param name="avatarSource">The user whose avatar to use in the small title.</param>
     /// <returns>The builder with the added small title in the author field.</returns>
     public static EmbedBuilder WithSmallTitle(
-        this EmbedBuilder builder, string text, IUser? avatarSource = null) {
+        this EmbedBuilder builder, string text, IUser? avatarSource = null)
+    {
         Uri? avatarUrl = null;
-        if (avatarSource is not null) {
+        if (avatarSource is not null)
+        {
             var avatarUrlResult = CDN.GetUserAvatarUrl(avatarSource, imageSize: 256);
 
             avatarUrl = avatarUrlResult.IsSuccess
@@ -74,7 +79,8 @@ public static class Extensions {
     /// <param name="builder">The builder to add the footer to.</param>
     /// <param name="guild">The guild whose name and icon to use.</param>
     /// <returns>The builder with the added footer.</returns>
-    public static EmbedBuilder WithGuildFooter(this EmbedBuilder builder, IGuild guild) {
+    public static EmbedBuilder WithGuildFooter(this EmbedBuilder builder, IGuild guild)
+    {
         var iconUrlResult = CDN.GetGuildIconUrl(guild, imageSize: 256);
         var iconUrl = iconUrlResult.IsSuccess
             ? iconUrlResult.Entity.AbsoluteUri
@@ -89,7 +95,8 @@ public static class Extensions {
     /// <param name="builder">The builder to add the title to.</param>
     /// <param name="guild">The guild whose name and icon to use.</param>
     /// <returns>The builder with the added title.</returns>
-    public static EmbedBuilder WithGuildTitle(this EmbedBuilder builder, IGuild guild) {
+    public static EmbedBuilder WithGuildTitle(this EmbedBuilder builder, IGuild guild)
+    {
         var iconUrlResult = CDN.GetGuildIconUrl(guild, imageSize: 256);
         var iconUrl = iconUrlResult.IsSuccess
             ? iconUrlResult.Entity.AbsoluteUri
@@ -107,8 +114,12 @@ public static class Extensions {
     /// <param name="imageHashOptional">The Optional containing the image hash.</param>
     /// <returns>The builder with the added cover image.</returns>
     public static EmbedBuilder WithEventCover(
-        this EmbedBuilder builder, Snowflake eventId, Optional<IImageHash?> imageHashOptional) {
-        if (!imageHashOptional.IsDefined(out var imageHash)) return builder;
+        this EmbedBuilder builder, Snowflake eventId, Optional<IImageHash?> imageHashOptional)
+    {
+        if (!imageHashOptional.IsDefined(out var imageHash))
+        {
+            return builder;
+        }
 
         var iconUrlResult = CDN.GetGuildScheduledEventCoverUrl(eventId, imageHash, imageSize: 1024);
         return iconUrlResult.IsDefined(out var iconUrl) ? builder.WithImageUrl(iconUrl.AbsoluteUri) : builder;
@@ -120,25 +131,31 @@ public static class Extensions {
     /// </summary>
     /// <param name="s">The string to sanitize.</param>
     /// <returns>The sanitized string that can be safely used in <see cref="Markdown.BlockCode(string)" />.</returns>
-    private static string SanitizeForBlockCode(this string s) {
+    private static string SanitizeForBlockCode(this string s)
+    {
         return s.Replace("```", "​`​`​`​");
     }
 
     /// <summary>
-    /// Sanitizes a string (see <see cref="SanitizeForBlockCode" />) and formats the string to use Markdown Block Code formatting with a specified
-    /// language for syntax highlighting.
+    ///     Sanitizes a string (see <see cref="SanitizeForBlockCode" />) and formats the string to use Markdown Block Code
+    ///     formatting with a specified
+    ///     language for syntax highlighting.
     /// </summary>
     /// <param name="s">The string to sanitize and format.</param>
     /// <param name="language"></param>
-    /// <returns>The sanitized string formatted to use Markdown Block Code with a specified
-    /// language for syntax highlighting.</returns>
-    public static string InBlockCode(this string s, string language = "") {
+    /// <returns>
+    ///     The sanitized string formatted to use Markdown Block Code with a specified
+    ///     language for syntax highlighting.
+    /// </returns>
+    public static string InBlockCode(this string s, string language = "")
+    {
         s = s.SanitizeForBlockCode();
         return
-            $"```{language}\n{s.SanitizeForBlockCode()}{(s.EndsWith("`") || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
+            $"```{language}\n{s.SanitizeForBlockCode()}{(s.EndsWith("`", StringComparison.Ordinal) || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
     }
 
-    public static string Localized(this string key) {
+    public static string Localized(this string key)
+    {
         return Messages.ResourceManager.GetString(key, Messages.Culture) ?? key;
     }
 
@@ -148,41 +165,56 @@ public static class Extensions {
     /// <remarks>Used when encountering "Request headers must contain only ASCII characters".</remarks>
     /// <param name="s">The string to encode.</param>
     /// <returns>An encoded string with spaces kept intact.</returns>
-    public static string EncodeHeader(this string s) {
+    public static string EncodeHeader(this string s)
+    {
         return WebUtility.UrlEncode(s).Replace('+', ' ');
     }
 
-    public static string AsMarkdown(this DiffPaneModel model) {
+    public static string AsMarkdown(this DiffPaneModel model)
+    {
         var builder = new StringBuilder();
-        foreach (var line in model.Lines) {
+        foreach (var line in model.Lines)
+        {
             if (line.Type is ChangeType.Deleted)
+            {
                 builder.Append("-- ");
+            }
+
             if (line.Type is ChangeType.Inserted)
+            {
                 builder.Append("++ ");
+            }
+
             if (line.Type is not ChangeType.Imaginary)
+            {
                 builder.AppendLine(line.Text);
+            }
         }
 
         return InBlockCode(builder.ToString(), "diff");
     }
 
-    public static string GetTag(this IUser user) {
+    public static string GetTag(this IUser user)
+    {
         return user.Discriminator is 0000 ? $"@{user.Username}" : $"{user.Username}#{user.Discriminator:0000}";
     }
 
-    public static Snowflake ToSnowflake(this ulong id) {
+    public static Snowflake ToSnowflake(this ulong id)
+    {
         return DiscordSnowflake.New(id);
     }
 
     public static TResult? MaxOrDefault<TSource, TResult>(
-        this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
+        this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+    {
         var list = source.ToList();
         return list.Any() ? list.Max(selector) : default;
     }
 
     public static bool TryGetContextIDs(
-        this ICommandContext context,   out Snowflake guildId,
-        out  Snowflake       channelId, out Snowflake userId) {
+        this ICommandContext context, out Snowflake guildId,
+        out Snowflake channelId, out Snowflake userId)
+    {
         channelId = default;
         userId = default;
         return context.TryGetGuildID(out guildId)
@@ -195,7 +227,8 @@ public static class Extensions {
     /// </summary>
     /// <param name="snowflake">The Snowflake to check.</param>
     /// <returns>true if the Snowflake has no value set or it's set to 0, false otherwise.</returns>
-    public static bool Empty(this Snowflake snowflake) {
+    public static bool Empty(this Snowflake snowflake)
+    {
         return snowflake.Value is 0;
     }
 
@@ -210,14 +243,18 @@ public static class Extensions {
     ///     otherwise.
     /// </returns>
     /// <seealso cref="Empty" />
-    public static bool EmptyOrEqualTo(this Snowflake snowflake, Snowflake anotherSnowflake) {
+    public static bool EmptyOrEqualTo(this Snowflake snowflake, Snowflake anotherSnowflake)
+    {
         return snowflake.Empty() || snowflake == anotherSnowflake;
     }
 
     public static async Task<Result> SendContextualEmbedResultAsync(
-        this FeedbackService feedback, Result<Embed> embedResult, CancellationToken ct = default) {
+        this FeedbackService feedback, Result<Embed> embedResult, CancellationToken ct = default)
+    {
         if (!embedResult.IsDefined(out var embed))
+        {
             return Result.FromError(embedResult);
+        }
 
         return (Result)await feedback.SendContextualEmbedAsync(embed, ct: ct);
     }

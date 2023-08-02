@@ -11,39 +11,47 @@ namespace Boyfriend.Services;
 /// <summary>
 ///     Handles saving, loading, initializing and providing <see cref="GuildData" />.
 /// </summary>
-public class GuildDataService : IHostedService {
+public sealed class GuildDataService : IHostedService
+{
     private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
-    private readonly IDiscordRestGuildAPI                       _guildApi;
+    private readonly IDiscordRestGuildAPI _guildApi;
 
     // https://github.com/dotnet/aspnetcore/issues/39139
     public GuildDataService(
-        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi) {
+        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi)
+    {
         _guildApi = guildApi;
         lifetime.ApplicationStopping.Register(ApplicationStopping);
     }
 
-    public Task StartAsync(CancellationToken ct) {
+    public Task StartAsync(CancellationToken ct)
+    {
         return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken ct) {
+    public Task StopAsync(CancellationToken ct)
+    {
         return Task.CompletedTask;
     }
 
-    private void ApplicationStopping() {
+    private void ApplicationStopping()
+    {
         SaveAsync(CancellationToken.None).GetAwaiter().GetResult();
     }
 
-    private async Task SaveAsync(CancellationToken ct) {
+    private async Task SaveAsync(CancellationToken ct)
+    {
         var tasks = new List<Task>();
-        foreach (var data in _datas.Values) {
+        foreach (var data in _datas.Values)
+        {
             await using var settingsStream = File.OpenWrite(data.SettingsPath);
             tasks.Add(JsonSerializer.SerializeAsync(settingsStream, data.Settings, cancellationToken: ct));
 
             await using var eventsStream = File.OpenWrite(data.ScheduledEventsPath);
             tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
 
-            foreach (var memberData in data.MemberData.Values) {
+            foreach (var memberData in data.MemberData.Values)
+            {
                 await using var memberDataStream = File.OpenWrite($"{data.MemberDataPath}/{memberData.Id}.json");
                 tasks.Add(JsonSerializer.SerializeAsync(memberDataStream, memberData, cancellationToken: ct));
             }
@@ -52,19 +60,36 @@ public class GuildDataService : IHostedService {
         await Task.WhenAll(tasks);
     }
 
-    public async Task<GuildData> GetData(Snowflake guildId, CancellationToken ct = default) {
+    public async Task<GuildData> GetData(Snowflake guildId, CancellationToken ct = default)
+    {
         return _datas.TryGetValue(guildId, out var data) ? data : await InitializeData(guildId, ct);
     }
 
-    private async Task<GuildData> InitializeData(Snowflake guildId, CancellationToken ct = default) {
+    private async Task<GuildData> InitializeData(Snowflake guildId, CancellationToken ct = default)
+    {
         var idString = $"{guildId}";
         var memberDataPath = $"{guildId}/MemberData";
         var settingsPath = $"{guildId}/Settings.json";
         var scheduledEventsPath = $"{guildId}/ScheduledEvents.json";
-        if (!Directory.Exists(idString)) Directory.CreateDirectory(idString);
-        if (!Directory.Exists(memberDataPath)) Directory.CreateDirectory(memberDataPath);
-        if (!File.Exists(settingsPath)) await File.WriteAllTextAsync(settingsPath, "{}", ct);
-        if (!File.Exists(scheduledEventsPath)) await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
+        if (!Directory.Exists(idString))
+        {
+            Directory.CreateDirectory(idString);
+        }
+
+        if (!Directory.Exists(memberDataPath))
+        {
+            Directory.CreateDirectory(memberDataPath);
+        }
+
+        if (!File.Exists(settingsPath))
+        {
+            await File.WriteAllTextAsync(settingsPath, "{}", ct);
+        }
+
+        if (!File.Exists(scheduledEventsPath))
+        {
+            await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
+        }
 
         await using var settingsStream = File.OpenRead(settingsPath);
         var jsonSettings
@@ -76,13 +101,20 @@ public class GuildDataService : IHostedService {
                 eventsStream, cancellationToken: ct);
 
         var memberData = new Dictionary<ulong, MemberData>();
-        foreach (var dataPath in Directory.GetFiles(memberDataPath)) {
+        foreach (var dataPath in Directory.GetFiles(memberDataPath))
+        {
             await using var dataStream = File.OpenRead(dataPath);
             var data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
-            if (data is null) continue;
+            if (data is null)
+            {
+                continue;
+            }
+
             var memberResult = await _guildApi.GetGuildMemberAsync(guildId, data.Id.ToSnowflake(), ct);
             if (memberResult.IsSuccess)
+            {
                 data.Roles = memberResult.Entity.Roles.ToList().ConvertAll(r => r.Value);
+            }
 
             memberData.Add(data.Id, data);
         }
@@ -91,19 +123,26 @@ public class GuildDataService : IHostedService {
             jsonSettings ?? new JsonObject(), settingsPath,
             await events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
             memberData, memberDataPath);
-        while (!_datas.ContainsKey(guildId)) _datas.TryAdd(guildId, finalData);
+        while (!_datas.ContainsKey(guildId))
+        {
+            _datas.TryAdd(guildId, finalData);
+        }
+
         return finalData;
     }
 
-    public async Task<JsonNode> GetSettings(Snowflake guildId, CancellationToken ct = default) {
+    public async Task<JsonNode> GetSettings(Snowflake guildId, CancellationToken ct = default)
+    {
         return (await GetData(guildId, ct)).Settings;
     }
 
-    public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default) {
+    public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default)
+    {
         return (await GetData(guildId, ct)).GetMemberData(userId);
     }
 
-    public ICollection<Snowflake> GetGuildIds() {
+    public ICollection<Snowflake> GetGuildIds()
+    {
         return _datas.Keys;
     }
 }

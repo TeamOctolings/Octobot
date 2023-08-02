@@ -21,19 +21,21 @@ namespace Boyfriend.Commands;
 ///     Handles the command to show information about this bot: /about.
 /// </summary>
 [UsedImplicitly]
-public class AboutCommandGroup : CommandGroup {
-    private static readonly string[]            Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
-    private readonly        ICommandContext     _context;
-    private readonly        GuildDataService    _dataService;
-    private readonly        FeedbackService     _feedbackService;
-    private readonly        IDiscordRestUserAPI _userApi;
+public class AboutCommandGroup : CommandGroup
+{
+    private static readonly string[] Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
+    private readonly ICommandContext _context;
+    private readonly FeedbackService _feedback;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public AboutCommandGroup(
-        ICommandContext context,         GuildDataService    dataService,
-        FeedbackService feedbackService, IDiscordRestUserAPI userApi) {
+        ICommandContext context, GuildDataService guildData,
+        FeedbackService feedback, IDiscordRestUserAPI userApi)
+    {
         _context = context;
-        _dataService = dataService;
-        _feedbackService = feedbackService;
+        _guildData = guildData;
+        _feedback = feedback;
         _userApi = userApi;
     }
 
@@ -48,24 +50,32 @@ public class AboutCommandGroup : CommandGroup {
     [RequireContext(ChannelContext.Guild)]
     [Description("Shows Boyfriend's developers")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteAboutAsync() {
+    public async Task<Result> ExecuteAboutAsync()
+    {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
 
-        var cfg = await _dataService.GetSettings(guildId, CancellationToken);
+        var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
         return await SendAboutBotAsync(currentUser, CancellationToken);
     }
 
-    private async Task<Result> SendAboutBotAsync(IUser currentUser, CancellationToken ct = default) {
+    private async Task<Result> SendAboutBotAsync(IUser currentUser, CancellationToken ct = default)
+    {
         var builder = new StringBuilder().AppendLine(Markdown.Bold(Messages.AboutTitleDevelopers));
         foreach (var dev in Developers)
+        {
             builder.AppendLine($"@{dev} — {$"AboutDeveloper@{dev}".Localized()}");
+        }
 
         builder.AppendLine()
             .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
@@ -77,6 +87,6 @@ public class AboutCommandGroup : CommandGroup {
             .WithImageUrl("https://cdn.upload.systems/uploads/JFAaX5vr.png")
             .Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

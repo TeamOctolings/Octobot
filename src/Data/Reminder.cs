@@ -1,7 +1,8 @@
 namespace Boyfriend.Data;
 
-public struct Reminder {
+public struct Reminder
+{
     public DateTimeOffset At;
-    public string         Text;
-    public ulong          Channel;
+    public string Text;
+    public ulong Channel;
 }

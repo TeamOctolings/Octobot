@@ -3,25 +3,31 @@ using Remora.Results;
 
 namespace Boyfriend.Data.Options;
 
-public class BoolOption : Option<bool> {
+public sealed class BoolOption : Option<bool>
+{
     public BoolOption(string name, bool defaultValue) : base(name, defaultValue) { }
 
-    public override string Display(JsonNode settings) {
+    public override string Display(JsonNode settings)
+    {
         return Get(settings) ? Messages.Yes : Messages.No;
     }
 
-    public override Result Set(JsonNode settings, string from) {
+    public override Result Set(JsonNode settings, string from)
+    {
         if (!TryParseBool(from, out var value))
+        {
             return new ArgumentInvalidError(nameof(from), Messages.InvalidSettingValue);
+        }
 
         settings[Name] = value;
         return Result.FromSuccess();
     }
 
-    private static bool TryParseBool(string from, out bool value) {
-        from = from.ToLowerInvariant();
+    private static bool TryParseBool(string from, out bool value)
+    {
         value = false;
-        switch (from) {
+        switch (from.ToLowerInvariant())
+        {
             case "true" or "1" or "y" or "yes" or "д" or "да":
                 value = true;
                 return true;

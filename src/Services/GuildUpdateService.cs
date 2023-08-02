@@ -20,8 +20,10 @@ namespace Boyfriend.Services;
 /// <summary>
 ///     Handles executing guild updates (also called "ticks") once per second.
 /// </summary>
-public partial class GuildUpdateService : BackgroundService {
-    private static readonly (string Name, TimeSpan Duration)[] SongList = {
+public sealed partial class GuildUpdateService : BackgroundService
+{
+    private static readonly (string Name, TimeSpan Duration)[] SongList =
+    {
         ("UNDEAD CORPORATION - The Empress", new TimeSpan(0, 4, 34)),
         ("UNDEAD CORPORATION - Everything will freeze", new TimeSpan(0, 3, 17)),
         ("Splatoon 3 - Rockagilly Blues (Yoko & the Gold Bazookas)", new TimeSpan(0, 3, 37)),
@@ -36,7 +38,8 @@ public partial class GuildUpdateService : BackgroundService {
         ("Noisecream - Mist of Rage", new TimeSpan(0, 2, 25))
     };
 
-    private static readonly string[] GenericNicknames = {
+    private static readonly string[] GenericNicknames =
+    {
         "Albatross", "Alpha", "Anchor", "Banjo", "Bell", "Beta", "Blackbird", "Bulldog", "Canary",
         "Cat", "Calf", "Cyclone", "Daisy", "Dalmatian", "Dart", "Delta", "Diamond", "Donkey", "Duck",
         "Emu", "Eclipse", "Flamingo", "Flute", "Frog", "Goose", "Hatchet", "Heron", "Husky", "Hurricane",
@@ -48,25 +51,26 @@ public partial class GuildUpdateService : BackgroundService {
 
     private readonly List<Activity> _activityList = new(1) { new Activity("with Remora.Discord", ActivityType.Game) };
 
-    private readonly IDiscordRestChannelAPI             _channelApi;
-    private readonly DiscordGatewayClient               _client;
-    private readonly GuildDataService                   _dataService;
+    private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly DiscordGatewayClient _client;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
-    private readonly IDiscordRestGuildAPI               _guildApi;
-    private readonly ILogger<GuildUpdateService>        _logger;
-    private readonly IDiscordRestUserAPI                _userApi;
-    private readonly UtilityService                     _utility;
+    private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService _guildData;
+    private readonly ILogger<GuildUpdateService> _logger;
+    private readonly IDiscordRestUserAPI _userApi;
+    private readonly UtilityService _utility;
 
     private DateTimeOffset _nextSongAt = DateTimeOffset.MinValue;
-    private uint           _nextSongIndex;
+    private uint _nextSongIndex;
 
     public GuildUpdateService(
-        IDiscordRestChannelAPI             channelApi, DiscordGatewayClient client, GuildDataService dataService,
+        IDiscordRestChannelAPI channelApi, DiscordGatewayClient client, GuildDataService guildData,
         IDiscordRestGuildScheduledEventAPI eventApi, IDiscordRestGuildAPI guildApi, ILogger<GuildUpdateService> logger,
-        IDiscordRestUserAPI                userApi, UtilityService utility) {
+        IDiscordRestUserAPI userApi, UtilityService utility)
+    {
         _channelApi = channelApi;
         _client = client;
-        _dataService = dataService;
+        _guildData = guildData;
         _eventApi = eventApi;
         _guildApi = guildApi;
         _logger = logger;
@@ -76,17 +80,20 @@ public partial class GuildUpdateService : BackgroundService {
 
     /// <summary>
     ///     Activates a periodic timer with a 1 second interval and adds guild update tasks on each timer tick.
-    ///     Additionally, updates the current presence with songs from <see cref="SongList"/>.
+    ///     Additionally, updates the current presence with songs from <see cref="SongList" />.
     /// </summary>
     /// <remarks>If update tasks take longer than 1 second, the next timer tick will be skipped.</remarks>
     /// <param name="ct">The cancellation token for this operation.</param>
-    protected override async Task ExecuteAsync(CancellationToken ct) {
+    protected override async Task ExecuteAsync(CancellationToken ct)
+    {
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
         var tasks = new List<Task>();
 
-        while (await timer.WaitForNextTickAsync(ct)) {
-            var guildIds = _dataService.GetGuildIds();
-            if (guildIds.Count > 0 && DateTimeOffset.UtcNow >= _nextSongAt) {
+        while (await timer.WaitForNextTickAsync(ct))
+        {
+            var guildIds = _guildData.GetGuildIds();
+            if (guildIds.Count > 0 && DateTimeOffset.UtcNow >= _nextSongAt)
+            {
                 var nextSong = SongList[_nextSongIndex];
                 _activityList[0] = new Activity(nextSong.Name, ActivityType.Listening);
                 _client.SubmitCommand(
@@ -94,7 +101,10 @@ public partial class GuildUpdateService : BackgroundService {
                         UserStatus.Online, false, DateTimeOffset.UtcNow, _activityList));
                 _nextSongAt = DateTimeOffset.UtcNow.Add(nextSong.Duration);
                 _nextSongIndex++;
-                if (_nextSongIndex >= SongList.Length) _nextSongIndex = 0;
+                if (_nextSongIndex >= SongList.Length)
+                {
+                    _nextSongIndex = 0;
+                }
             }
 
             tasks.AddRange(guildIds.Select(id => TickGuildAsync(id, ct)));
@@ -111,9 +121,9 @@ public partial class GuildUpdateService : BackgroundService {
     ///     This method does the following:
     ///     <list type="bullet">
     ///         <item>Automatically unbans users once their ban period has expired.</item>
-    ///         <item>Automatically grants members the guild's <see cref="GuildSettings.DefaultRole"/> if one is set.</item>
+    ///         <item>Automatically grants members the guild's <see cref="GuildSettings.DefaultRole" /> if one is set.</item>
     ///         <item>Sends reminders about an upcoming scheduled event.</item>
-    ///         <item>Automatically starts scheduled events if <see cref="GuildSettings.AutoStartEvents"/> is enabled.</item>
+    ///         <item>Automatically starts scheduled events if <see cref="GuildSettings.AutoStartEvents" /> is enabled.</item>
     ///         <item>Sends scheduled event start notifications.</item>
     ///         <item>Sends scheduled event completion notifications.</item>
     ///         <item>Sends reminders to members.</item>
@@ -129,41 +139,60 @@ public partial class GuildUpdateService : BackgroundService {
     /// </remarks>
     /// <param name="guildId">The ID of the guild to update.</param>
     /// <param name="ct">The cancellation token for this operation.</param>
-    private async Task TickGuildAsync(Snowflake guildId, CancellationToken ct = default) {
-        var data = await _dataService.GetData(guildId, ct);
+    private async Task TickGuildAsync(Snowflake guildId, CancellationToken ct = default)
+    {
+        var data = await _guildData.GetData(guildId, ct);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         var defaultRole = GuildSettings.DefaultRole.Get(data.Settings);
-        foreach (var memberData in data.MemberData.Values) {
+        foreach (var memberData in data.MemberData.Values)
+        {
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, memberData.Id.ToSnowflake(), ct);
-            if (!guildMemberResult.IsDefined(out var guildMember)) return;
-            if (!guildMember.User.IsDefined(out var user)) return;
+            if (!guildMemberResult.IsDefined(out var guildMember))
+            {
+                return;
+            }
+
+            if (!guildMember.User.IsDefined(out var user))
+            {
+                return;
+            }
 
             await TickMemberAsync(guildId, user, guildMember, memberData, defaultRole, data.Settings, ct);
         }
 
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
         if (!eventsResult.IsSuccess)
+        {
             _logger.LogWarning("Error retrieving scheduled events.\n{ErrorMessage}", eventsResult.Error.Message);
+        }
         else if (!GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
+        {
             await TickScheduledEventsAsync(guildId, data, eventsResult.Entity, ct);
+        }
     }
 
     private async Task TickScheduledEventsAsync(
-        Snowflake guildId, GuildData data, IEnumerable<IGuildScheduledEvent> events, CancellationToken ct) {
-        foreach (var scheduledEvent in events) {
+        Snowflake guildId, GuildData data, IEnumerable<IGuildScheduledEvent> events, CancellationToken ct)
+    {
+        foreach (var scheduledEvent in events)
+        {
             if (!data.ScheduledEvents.ContainsKey(scheduledEvent.ID.Value))
+            {
                 data.ScheduledEvents.Add(scheduledEvent.ID.Value, new ScheduledEventData(scheduledEvent.Status));
+            }
 
             var storedEvent = data.ScheduledEvents[scheduledEvent.ID.Value];
-            if (storedEvent.Status == scheduledEvent.Status) {
+            if (storedEvent.Status == scheduledEvent.Status)
+            {
                 await TickScheduledEventAsync(guildId, data, scheduledEvent, storedEvent, ct);
                 continue;
             }
 
             storedEvent.Status = scheduledEvent.Status;
 
-            var statusChangedResponseResult = storedEvent.Status switch {
+            var statusChangedResponseResult = storedEvent.Status switch
+            {
                 GuildScheduledEventStatus.Scheduled =>
                     await SendScheduledEventCreatedMessage(scheduledEvent, data.Settings, ct),
                 GuildScheduledEventStatus.Active or GuildScheduledEventStatus.Completed =>
@@ -172,16 +201,20 @@ public partial class GuildUpdateService : BackgroundService {
             };
 
             if (!statusChangedResponseResult.IsSuccess)
+            {
                 _logger.LogWarning(
                     "Error handling scheduled event status update.\n{ErrorMessage}",
                     statusChangedResponseResult.Error.Message);
+            }
         }
     }
 
     private async Task TickScheduledEventAsync(
-        Snowflake         guildId, GuildData data, IGuildScheduledEvent scheduledEvent, ScheduledEventData eventData,
-        CancellationToken ct) {
-        if (DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime) {
+        Snowflake guildId, GuildData data, IGuildScheduledEvent scheduledEvent, ScheduledEventData eventData,
+        CancellationToken ct)
+    {
+        if (DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime)
+        {
             await TryAutoStartEventAsync(guildId, data, scheduledEvent, ct);
             return;
         }
@@ -190,10 +223,14 @@ public partial class GuildUpdateService : BackgroundService {
             || eventData.EarlyNotificationSent
             || DateTimeOffset.UtcNow
             < scheduledEvent.ScheduledStartTime
-            - GuildSettings.EventEarlyNotificationOffset.Get(data.Settings)) return;
+            - GuildSettings.EventEarlyNotificationOffset.Get(data.Settings))
+        {
+            return;
+        }
 
         var earlyResult = await SendEarlyEventNotificationAsync(scheduledEvent, data, ct);
-        if (earlyResult.IsSuccess) {
+        if (earlyResult.IsSuccess)
+        {
             eventData.EarlyNotificationSent = true;
             return;
         }
@@ -204,54 +241,81 @@ public partial class GuildUpdateService : BackgroundService {
     }
 
     private async Task TryAutoStartEventAsync(
-        Snowflake guildId, GuildData data, IGuildScheduledEvent scheduledEvent, CancellationToken ct) {
+        Snowflake guildId, GuildData data, IGuildScheduledEvent scheduledEvent, CancellationToken ct)
+    {
         if (GuildSettings.AutoStartEvents.Get(data.Settings)
-            && scheduledEvent.Status is not GuildScheduledEventStatus.Active) {
+            && scheduledEvent.Status is not GuildScheduledEventStatus.Active)
+        {
             var startResult = await _eventApi.ModifyGuildScheduledEventAsync(
                 guildId, scheduledEvent.ID,
                 status: GuildScheduledEventStatus.Active, ct: ct);
             if (!startResult.IsSuccess)
+            {
                 _logger.LogWarning(
                     "Error in automatic scheduled event start request.\n{ErrorMessage}",
                     startResult.Error.Message);
+            }
         }
     }
 
     private async Task TickMemberAsync(
-        Snowflake         guildId, IUser user, IGuildMember member, MemberData memberData, Snowflake defaultRole,
-        JsonNode cfg, CancellationToken ct) {
+        Snowflake guildId, IUser user, IGuildMember member, MemberData memberData, Snowflake defaultRole,
+        JsonNode cfg, CancellationToken ct)
+    {
         if (defaultRole.Value is not 0 && !memberData.Roles.Contains(defaultRole.Value))
+        {
             _ = _guildApi.AddGuildMemberRoleAsync(
                 guildId, user.ID, defaultRole, ct: ct);
+        }
 
-        if (DateTimeOffset.UtcNow > memberData.BannedUntil) {
+        if (DateTimeOffset.UtcNow > memberData.BannedUntil)
+        {
             var unbanResult = await _guildApi.RemoveGuildBanAsync(
                 guildId, user.ID, Messages.PunishmentExpired.EncodeHeader(), ct);
             if (unbanResult.IsSuccess)
+            {
                 memberData.BannedUntil = null;
+            }
             else
+            {
                 _logger.LogWarning(
                     "Error in automatic user unban request.\n{ErrorMessage}", unbanResult.Error.Message);
+            }
         }
 
         for (var i = memberData.Reminders.Count - 1; i >= 0; i--)
+        {
             await TickReminderAsync(memberData.Reminders[i], user, memberData, ct);
-        if (GuildSettings.RenameHoistedUsers.Get(cfg)) await FilterNicknameAsync(guildId, user, member, ct);
+        }
+
+        if (GuildSettings.RenameHoistedUsers.Get(cfg))
+        {
+            await FilterNicknameAsync(guildId, user, member, ct);
+        }
     }
 
-    private Task FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member, CancellationToken ct) {
+    private Task FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member, CancellationToken ct)
+    {
         var currentNickname = member.Nickname.IsDefined(out var nickname)
             ? nickname
             : user.GlobalName ?? user.Username;
         var characterList = currentNickname.ToList();
         var usernameChanged = false;
         foreach (var character in currentNickname)
-            if (IllegalCharsRegex().IsMatch(character.ToString())) {
+        {
+            if (IllegalChars().IsMatch(character.ToString()))
+            {
                 characterList.Remove(character);
                 usernameChanged = true;
-            } else { break; }
+            }
+            else { break; }
+        }
 
-        if (!usernameChanged) return Task.CompletedTask;
+        if (!usernameChanged)
+        {
+            return Task.CompletedTask;
+        }
+
         var newNickname = string.Concat(characterList.ToArray());
 
         _ = _guildApi.ModifyGuildMemberAsync(
@@ -264,10 +328,14 @@ public partial class GuildUpdateService : BackgroundService {
     }
 
     [GeneratedRegex("[^0-9A-zЁА-яё]")]
-    private static partial Regex IllegalCharsRegex();
+    private static partial Regex IllegalChars();
 
-    private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct) {
-        if (DateTimeOffset.UtcNow < reminder.At) return;
+    private async Task TickReminderAsync(Reminder reminder, IUser user, MemberData memberData, CancellationToken ct)
+    {
+        if (DateTimeOffset.UtcNow < reminder.At)
+        {
+            return;
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
@@ -276,13 +344,18 @@ public partial class GuildUpdateService : BackgroundService {
             .WithColour(ColorsList.Magenta)
             .Build();
 
-        if (!embed.IsDefined(out var built)) return;
+        if (!embed.IsDefined(out var built))
+        {
+            return;
+        }
 
         var messageResult = await _channelApi.CreateMessageAsync(
             reminder.Channel.ToSnowflake(), Mention.User(user), embeds: new[] { built }, ct: ct);
         if (!messageResult.IsSuccess)
+        {
             _logger.LogWarning(
                 "Error in reminder send.\n{ErrorMessage}", messageResult.Error.Message);
+        }
 
         memberData.Reminders.Remove(reminder);
     }
@@ -298,15 +371,19 @@ public partial class GuildUpdateService : BackgroundService {
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns>A notification sending result which may or may not have succeeded.</returns>
     private async Task<Result> SendScheduledEventCreatedMessage(
-        IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default) {
+        IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default)
+    {
         if (!scheduledEvent.Creator.IsDefined(out var creator))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.Creator));
+        }
 
         Result<string> embedDescriptionResult;
         var eventDescription = scheduledEvent.Description is { HasValue: true, Value: not null }
             ? scheduledEvent.Description.Value
             : string.Empty;
-        embedDescriptionResult = scheduledEvent.EntityType switch {
+        embedDescriptionResult = scheduledEvent.EntityType switch
+        {
             GuildScheduledEventEntityType.StageInstance or GuildScheduledEventEntityType.Voice =>
                 GetLocalEventCreatedEmbedDescription(scheduledEvent, eventDescription),
             GuildScheduledEventEntityType.External => GetExternalScheduledEventCreatedEmbedDescription(
@@ -315,7 +392,9 @@ public partial class GuildUpdateService : BackgroundService {
         };
 
         if (!embedDescriptionResult.IsDefined(out var embedDescription))
+        {
             return Result.FromError(embedDescriptionResult);
+        }
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.EventCreatedTitle, creator.GetTag()), creator)
@@ -325,7 +404,10 @@ public partial class GuildUpdateService : BackgroundService {
             .WithCurrentTimestamp()
             .WithColour(ColorsList.White)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+        if (!embed.IsDefined(out var built))
+        {
+            return Result.FromError(embed);
+        }
 
         var roleMention = !GuildSettings.EventNotificationRole.Get(settings).Empty()
             ? Mention.Role(GuildSettings.EventNotificationRole.Get(settings))
@@ -345,14 +427,23 @@ public partial class GuildUpdateService : BackgroundService {
     }
 
     private static Result<string> GetExternalScheduledEventCreatedEmbedDescription(
-        IGuildScheduledEvent scheduledEvent, string eventDescription) {
+        IGuildScheduledEvent scheduledEvent, string eventDescription)
+    {
         Result<string> embedDescription;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.EntityMetadata));
+        }
+
         if (!scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime));
+        }
+
         if (!metadata.Location.IsDefined(out var location))
+        {
             return new ArgumentNullError(nameof(metadata.Location));
+        }
 
         embedDescription = $"{eventDescription}\n\n{Markdown.BlockQuote(
             string.Format(
@@ -365,9 +456,12 @@ public partial class GuildUpdateService : BackgroundService {
     }
 
     private static Result<string> GetLocalEventCreatedEmbedDescription(
-        IGuildScheduledEvent scheduledEvent, string eventDescription) {
+        IGuildScheduledEvent scheduledEvent, string eventDescription)
+    {
         if (!scheduledEvent.ChannelID.AsOptional().IsDefined(out var channelId))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.ChannelID));
+        }
 
         return $"{eventDescription}\n\n{Markdown.BlockQuote(
             string.Format(
@@ -378,7 +472,8 @@ public partial class GuildUpdateService : BackgroundService {
     }
 
     /// <summary>
-    ///     Handles sending a notification, mentioning the <see cref="GuildSettings.EventNotificationRole"/> and event subscribers,
+    ///     Handles sending a notification, mentioning the <see cref="GuildSettings.EventNotificationRole" /> and event
+    ///     subscribers,
     ///     when a scheduled event has started or completed
     ///     in a guild's <see cref="GuildSettings.EventNotificationChannel" /> if one is set.
     /// </summary>
@@ -387,11 +482,14 @@ public partial class GuildUpdateService : BackgroundService {
     /// <param name="ct">The cancellation token for this operation</param>
     /// <returns>A reminder/notification sending result which may or may not have succeeded.</returns>
     private async Task<Result> SendScheduledEventUpdatedMessage(
-        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct = default) {
-        if (scheduledEvent.Status == GuildScheduledEventStatus.Active) {
+        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct = default)
+    {
+        if (scheduledEvent.Status == GuildScheduledEventStatus.Active)
+        {
             data.ScheduledEvents[scheduledEvent.ID.Value].ActualStartTime = DateTimeOffset.UtcNow;
 
-            var embedDescriptionResult = scheduledEvent.EntityType switch {
+            var embedDescriptionResult = scheduledEvent.EntityType switch
+            {
                 GuildScheduledEventEntityType.StageInstance or GuildScheduledEventEntityType.Voice =>
                     GetLocalEventStartedEmbedDescription(scheduledEvent),
                 GuildScheduledEventEntityType.External => GetExternalEventStartedEmbedDescription(scheduledEvent),
@@ -401,9 +499,14 @@ public partial class GuildUpdateService : BackgroundService {
             var contentResult = await _utility.GetEventNotificationMentions(
                 scheduledEvent, data.Settings, ct);
             if (!contentResult.IsDefined(out var content))
+            {
                 return Result.FromError(contentResult);
+            }
+
             if (!embedDescriptionResult.IsDefined(out var embedDescription))
+            {
                 return Result.FromError(embedDescriptionResult);
+            }
 
             var startedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventStarted, scheduledEvent.Name))
                 .WithDescription(embedDescription)
@@ -411,7 +514,10 @@ public partial class GuildUpdateService : BackgroundService {
                 .WithCurrentTimestamp()
                 .Build();
 
-            if (!startedEmbed.IsDefined(out var startedBuilt)) return Result.FromError(startedEmbed);
+            if (!startedEmbed.IsDefined(out var startedBuilt))
+            {
+                return Result.FromError(startedEmbed);
+            }
 
             return (Result)await _channelApi.CreateMessageAsync(
                 GuildSettings.EventNotificationChannel.Get(data.Settings),
@@ -419,7 +525,10 @@ public partial class GuildUpdateService : BackgroundService {
         }
 
         if (scheduledEvent.Status != GuildScheduledEventStatus.Completed)
+        {
             return new ArgumentOutOfRangeError(nameof(scheduledEvent.Status));
+        }
+
         data.ScheduledEvents.Remove(scheduledEvent.ID.Value);
 
         var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, scheduledEvent.Name))
@@ -434,17 +543,22 @@ public partial class GuildUpdateService : BackgroundService {
             .Build();
 
         if (!completedEmbed.IsDefined(out var completedBuilt))
+        {
             return Result.FromError(completedEmbed);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
             embeds: new[] { completedBuilt }, ct: ct);
     }
 
-    private static Result<string> GetLocalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent) {
+    private static Result<string> GetLocalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent)
+    {
         Result<string> embedDescription;
         if (!scheduledEvent.ChannelID.AsOptional().IsDefined(out var channelId))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.ChannelID));
+        }
 
         embedDescription = string.Format(
             Messages.DescriptionLocalEventStarted,
@@ -453,14 +567,23 @@ public partial class GuildUpdateService : BackgroundService {
         return embedDescription;
     }
 
-    private static Result<string> GetExternalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent) {
+    private static Result<string> GetExternalEventStartedEmbedDescription(IGuildScheduledEvent scheduledEvent)
+    {
         Result<string> embedDescription;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.EntityMetadata));
+        }
+
         if (!scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out var endTime))
+        {
             return new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime));
+        }
+
         if (!metadata.Location.IsDefined(out var location))
+        {
             return new ArgumentNullError(nameof(metadata.Location));
+        }
 
         embedDescription = string.Format(
             Messages.DescriptionExternalEventStarted,
@@ -471,14 +594,20 @@ public partial class GuildUpdateService : BackgroundService {
     }
 
     private async Task<Result> SendEarlyEventNotificationAsync(
-        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct) {
+        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct)
+    {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
 
         var contentResult = await _utility.GetEventNotificationMentions(
             scheduledEvent, data.Settings, ct);
         if (!contentResult.IsDefined(out var content))
+        {
             return Result.FromError(contentResult);
+        }
 
         var earlyResult = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.EventEarlyNotification, scheduledEvent.Name), currentUser)
@@ -486,7 +615,10 @@ public partial class GuildUpdateService : BackgroundService {
             .WithCurrentTimestamp()
             .Build();
 
-        if (!earlyResult.IsDefined(out var earlyBuilt)) return Result.FromError(earlyResult);
+        if (!earlyResult.IsDefined(out var earlyBuilt))
+        {
+            return Result.FromError(earlyResult);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
