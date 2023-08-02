@@ -11,11 +11,13 @@ namespace Boyfriend;
 ///     Handles responding to various interactions.
 /// </summary>
 [UsedImplicitly]
-public class InteractionResponders : InteractionGroup {
-    private readonly FeedbackService _feedbackService;
+public class InteractionResponders : InteractionGroup
+{
+    private readonly FeedbackService _feedback;
 
-    public InteractionResponders(FeedbackService feedbackService) {
-        _feedbackService = feedbackService;
+    public InteractionResponders(FeedbackService feedback)
+    {
+        _feedback = feedback;
     }
 
     /// <summary>
@@ -25,11 +27,15 @@ public class InteractionResponders : InteractionGroup {
     /// <returns>An ephemeral feedback sending result which may or may not have succeeded.</returns>
     [Button("scheduled-event-details")]
     [UsedImplicitly]
-    public async Task<Result> OnStatefulButtonClicked(string? state = null) {
-        if (state is null) return new ArgumentNullError(nameof(state));
+    public async Task<Result> OnStatefulButtonClicked(string? state = null)
+    {
+        if (state is null)
+        {
+            return new ArgumentNullError(nameof(state));
+        }
 
         var idArray = state.Split(':');
-        return (Result)await _feedbackService.SendContextualAsync(
+        return (Result)await _feedback.SendContextualAsync(
             $"https://discord.com/events/{idArray[0]}/{idArray[1]}",
             options: new FeedbackMessageOptions(MessageFlags: MessageFlags.Ephemeral), ct: CancellationToken);
     }

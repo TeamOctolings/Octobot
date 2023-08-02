@@ -16,35 +16,49 @@ namespace Boyfriend.Responders;
 ///     has <see cref="GuildSettings.ReceiveStartupMessages" /> enabled
 /// </summary>
 [UsedImplicitly]
-public class GuildLoadedResponder : IResponder<IGuildCreate> {
-    private readonly IDiscordRestChannelAPI        _channelApi;
-    private readonly GuildDataService              _dataService;
+public class GuildLoadedResponder : IResponder<IGuildCreate>
+{
+    private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _guildData;
     private readonly ILogger<GuildLoadedResponder> _logger;
-    private readonly IDiscordRestUserAPI           _userApi;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public GuildLoadedResponder(
-        IDiscordRestChannelAPI channelApi, GuildDataService dataService, ILogger<GuildLoadedResponder> logger,
-        IDiscordRestUserAPI    userApi) {
+        IDiscordRestChannelAPI channelApi, GuildDataService guildData, ILogger<GuildLoadedResponder> logger,
+        IDiscordRestUserAPI userApi)
+    {
         _channelApi = channelApi;
-        _dataService = dataService;
+        _guildData = guildData;
         _logger = logger;
         _userApi = userApi;
     }
 
-    public async Task<Result> RespondAsync(IGuildCreate gatewayEvent, CancellationToken ct = default) {
-        if (!gatewayEvent.Guild.IsT0) return Result.FromSuccess(); // Guild is not IAvailableGuild
+    public async Task<Result> RespondAsync(IGuildCreate gatewayEvent, CancellationToken ct = default)
+    {
+        if (!gatewayEvent.Guild.IsT0) // Guild is not IAvailableGuild
+        {
+            return Result.FromSuccess();
+        }
 
         var guild = gatewayEvent.Guild.AsT0;
         _logger.LogInformation("Joined guild \"{Name}\"", guild.Name);
 
-        var cfg = await _dataService.GetSettings(guild.ID, ct);
+        var cfg = await _guildData.GetSettings(guild.ID, ct);
         if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
+        {
             return Result.FromSuccess();
+        }
+
         if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        {
             return Result.FromSuccess();
+        }
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
         var i = Random.Shared.Next(1, 4);
@@ -55,7 +69,10 @@ public class GuildLoadedResponder : IResponder<IGuildCreate> {
             .WithCurrentTimestamp()
             .WithColour(ColorsList.Blue)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+        if (!embed.IsDefined(out var built))
+        {
+            return Result.FromError(embed);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built }, ct: ct);

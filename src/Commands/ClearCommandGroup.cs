@@ -22,21 +22,23 @@ namespace Boyfriend.Commands;
 ///     Handles the command to clear messages in a channel: /clear.
 /// </summary>
 [UsedImplicitly]
-public class ClearCommandGroup : CommandGroup {
+public class ClearCommandGroup : CommandGroup
+{
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly ICommandContext        _context;
-    private readonly GuildDataService       _dataService;
-    private readonly FeedbackService        _feedbackService;
-    private readonly IDiscordRestUserAPI    _userApi;
-    private readonly UtilityService         _utility;
+    private readonly ICommandContext _context;
+    private readonly FeedbackService _feedback;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
+    private readonly UtilityService _utility;
 
     public ClearCommandGroup(
-        IDiscordRestChannelAPI channelApi,      ICommandContext     context, GuildDataService dataService,
-        FeedbackService        feedbackService, IDiscordRestUserAPI userApi, UtilityService   utility) {
+        IDiscordRestChannelAPI channelApi, ICommandContext context, GuildDataService guildData,
+        FeedbackService feedback, IDiscordRestUserAPI userApi, UtilityService utility)
+    {
         _channelApi = channelApi;
         _context = context;
-        _dataService = dataService;
-        _feedbackService = feedbackService;
+        _guildData = guildData;
+        _feedback = feedback;
         _userApi = userApi;
         _utility = utility;
     }
@@ -59,34 +61,47 @@ public class ClearCommandGroup : CommandGroup {
     [UsedImplicitly]
     public async Task<Result> ExecuteClear(
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
-        int amount) {
+        int amount)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
 
         var messagesResult = await _channelApi.GetChannelMessagesAsync(
             channelId, limit: amount + 1, ct: CancellationToken);
         if (!messagesResult.IsDefined(out var messages))
+        {
             return Result.FromError(messagesResult);
+        }
+
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
+
         // The current user's avatar is used when sending messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
 
-        var data = await _dataService.GetData(guildId, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await ClearMessagesAsync(amount, data, channelId, messages, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> ClearMessagesAsync(
-        int   amount, GuildData data,        Snowflake         channelId, IReadOnlyList<IMessage> messages,
-        IUser user,   IUser     currentUser, CancellationToken ct = default) {
+        int amount, GuildData data, Snowflake channelId, IReadOnlyList<IMessage> messages,
+        IUser user, IUser currentUser, CancellationToken ct = default)
+    {
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
-        for (var i = messages.Count - 1; i >= 1; i--) { // '>= 1' to skip last message ('Boyfriend is thinking...')
+        for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Boyfriend is thinking...')
+        {
             var message = messages[i];
             idList.Add(message.ID);
             builder.AppendLine(string.Format(Messages.MessageFrom, Mention.User(message.Author)));
@@ -99,16 +114,20 @@ public class ClearCommandGroup : CommandGroup {
         var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
             channelId, idList, user.GetTag().EncodeHeader(), ct);
         if (!deleteResult.IsSuccess)
+        {
             return Result.FromError(deleteResult.Error);
+        }
 
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, currentUser, ColorsList.Red, false, ct);
         if (!logResult.IsSuccess)
+        {
             return Result.FromError(logResult.Error);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

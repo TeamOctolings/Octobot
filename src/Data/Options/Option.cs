@@ -9,18 +9,21 @@ namespace Boyfriend.Data.Options;
 /// </summary>
 /// <typeparam name="T">The type of the option.</typeparam>
 public class Option<T> : IOption
-where T : notnull {
-    internal readonly T DefaultValue;
+    where T : notnull
+{
+    protected readonly T DefaultValue;
 
-    public Option(string name, T defaultValue) {
+    public Option(string name, T defaultValue)
+    {
         Name = name;
         DefaultValue = defaultValue;
     }
 
     public string Name { get; }
 
-    public virtual string Display(JsonNode settings) {
-        return Markdown.InlineCode(Get(settings).ToString()!);
+    public virtual string Display(JsonNode settings)
+    {
+        return Markdown.InlineCode(Get(settings).ToString() ?? throw new InvalidOperationException());
     }
 
     /// <summary>
@@ -29,7 +32,8 @@ where T : notnull {
     /// <param name="settings">The <see cref="JsonNode" /> to set the value to.</param>
     /// <param name="from">The string from which the new value of the option will be parsed.</param>
     /// <returns>A value setting result which may or may not have succeeded.</returns>
-    public virtual Result Set(JsonNode settings, string from) {
+    public virtual Result Set(JsonNode settings, string from)
+    {
         settings[Name] = from;
         return Result.FromSuccess();
     }
@@ -39,7 +43,8 @@ where T : notnull {
     /// </summary>
     /// <param name="settings">The <see cref="JsonNode" /> to get the value from.</param>
     /// <returns>The value of the option.</returns>
-    public virtual T Get(JsonNode settings) {
+    public virtual T Get(JsonNode settings)
+    {
         var property = settings[Name];
         return property != null ? property.GetValue<T>() : DefaultValue;
     }

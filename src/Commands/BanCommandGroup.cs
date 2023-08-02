@@ -22,23 +22,25 @@ namespace Boyfriend.Commands;
 ///     Handles commands related to ban management: /ban and /unban.
 /// </summary>
 [UsedImplicitly]
-public class BanCommandGroup : CommandGroup {
+public class BanCommandGroup : CommandGroup
+{
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly ICommandContext        _context;
-    private readonly GuildDataService       _dataService;
-    private readonly FeedbackService        _feedbackService;
-    private readonly IDiscordRestGuildAPI   _guildApi;
-    private readonly IDiscordRestUserAPI    _userApi;
-    private readonly UtilityService         _utility;
+    private readonly ICommandContext _context;
+    private readonly FeedbackService _feedback;
+    private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
+    private readonly UtilityService _utility;
 
     public BanCommandGroup(
-        ICommandContext context,         IDiscordRestChannelAPI channelApi, GuildDataService    dataService,
-        FeedbackService feedbackService, IDiscordRestGuildAPI   guildApi,   IDiscordRestUserAPI userApi,
-        UtilityService  utility) {
+        ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
+        FeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
+        UtilityService utility)
+    {
         _context = context;
         _channelApi = channelApi;
-        _dataService = dataService;
-        _feedbackService = feedbackService;
+        _guildData = guildData;
+        _feedback = feedback;
         _guildApi = guildApi;
         _userApi = userApi;
         _utility = utility;
@@ -67,23 +69,35 @@ public class BanCommandGroup : CommandGroup {
     [Description("Ban user")]
     [UsedImplicitly]
     public async Task<Result> ExecuteBanAsync(
-        [Description("User to ban")]  IUser     target,
-        [Description("Ban reason")]   string    reason,
-        [Description("Ban duration")] TimeSpan? duration = null) {
+        [Description("User to ban")] IUser target,
+        [Description("Ban reason")] string reason,
+        [Description("Ban duration")] TimeSpan? duration = null)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
+
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
+
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
+        {
             return Result.FromError(guildResult);
+        }
 
-        var data = await _dataService.GetData(guild.ID, CancellationToken);
+        var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await BanUserAsync(
@@ -91,39 +105,48 @@ public class BanCommandGroup : CommandGroup {
     }
 
     private async Task<Result> BanUserAsync(
-        IUser target, string reason,      TimeSpan?         duration, IGuild guild, GuildData data, Snowflake channelId,
-        IUser user,   IUser  currentUser, CancellationToken ct = default) {
+        IUser target, string reason, TimeSpan? duration, IGuild guild, GuildData data, Snowflake channelId,
+        IUser user, IUser currentUser, CancellationToken ct = default)
+    {
         var existingBanResult = await _guildApi.GetGuildBanAsync(guild.ID, target.ID, ct);
-        if (existingBanResult.IsDefined()) {
+        if (existingBanResult.IsDefined())
+        {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var interactionResult
             = await _utility.CheckInteractionsAsync(guild.ID, user.ID, target.ID, "Ban", ct);
         if (!interactionResult.IsSuccess)
+        {
             return Result.FromError(interactionResult);
+        }
 
-        if (interactionResult.Entity is not null) {
+        if (interactionResult.Entity is not null)
+        {
             var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(errorEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
         }
 
         var builder = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason));
         if (duration is not null)
+        {
             builder.Append(
                 string.Format(
                     Messages.DescriptionActionExpiresAt,
                     Markdown.Timestamp(DateTimeOffset.UtcNow.Add(duration.Value))));
+        }
+
         var title = string.Format(Messages.UserBanned, target.GetTag());
         var description = builder.ToString();
 
         var dmChannelResult = await _userApi.CreateDMAsync(target.ID, ct);
-        if (dmChannelResult.IsDefined(out var dmChannel)) {
+        if (dmChannelResult.IsDefined(out var dmChannel))
+        {
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereBanned)
                 .WithDescription(description)
@@ -133,7 +156,10 @@ public class BanCommandGroup : CommandGroup {
                 .Build();
 
             if (!dmEmbed.IsDefined(out var dmBuilt))
+            {
                 return Result.FromError(dmEmbed);
+            }
+
             await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: ct);
         }
 
@@ -141,7 +167,10 @@ public class BanCommandGroup : CommandGroup {
             guild.ID, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct: ct);
         if (!banResult.IsSuccess)
+        {
             return Result.FromError(banResult.Error);
+        }
+
         var memberData = data.GetMemberData(target.ID);
         memberData.BannedUntil
             = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
@@ -154,9 +183,11 @@ public class BanCommandGroup : CommandGroup {
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
+        {
             return Result.FromError(logResult.Error);
+        }
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -172,7 +203,7 @@ public class BanCommandGroup : CommandGroup {
     ///     was unbanned and vice-versa.
     /// </returns>
     /// <seealso cref="ExecuteBanAsync" />
-    /// <seealso cref="GuildUpdateService.TickGuildAsync"/>
+    /// <seealso cref="GuildUpdateService.TickGuildAsync" />
     [Command("unban")]
     [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
     [DiscordDefaultDMPermission(false)]
@@ -182,20 +213,29 @@ public class BanCommandGroup : CommandGroup {
     [Description("Unban user")]
     [UsedImplicitly]
     public async Task<Result> ExecuteUnban(
-        [Description("User to unban")] IUser  target,
-        [Description("Unban reason")]  string reason) {
+        [Description("User to unban")] IUser target,
+        [Description("Unban reason")] string reason)
+    {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
         // The current user's avatar is used when sending error messages
         var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!currentUserResult.IsDefined(out var currentUser))
+        {
             return Result.FromError(currentUserResult);
+        }
+
         // Needed to get the tag and avatar
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
         if (!userResult.IsDefined(out var user))
+        {
             return Result.FromError(userResult);
+        }
 
-        var data = await _dataService.GetData(guildId, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
         return await UnbanUserAsync(
@@ -203,21 +243,25 @@ public class BanCommandGroup : CommandGroup {
     }
 
     private async Task<Result> UnbanUserAsync(
-        IUser target,      string            reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
-        IUser currentUser, CancellationToken ct = default) {
+        IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
+        IUser currentUser, CancellationToken ct = default)
+    {
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, target.ID, ct);
-        if (!existingBanResult.IsDefined()) {
+        if (!existingBanResult.IsDefined())
+        {
             var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, currentUser)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedbackService.SendContextualEmbedResultAsync(errorEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
         }
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
             guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct);
         if (!unbanResult.IsSuccess)
+        {
             return Result.FromError(unbanResult.Error);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnbanned, target.GetTag()), target)
@@ -228,8 +272,10 @@ public class BanCommandGroup : CommandGroup {
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
+        {
             return Result.FromError(logResult.Error);
+        }
 
-        return await _feedbackService.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

@@ -16,43 +16,68 @@ namespace Boyfriend.Responders;
 ///     to a guild's <see cref="GuildSettings.PrivateFeedbackChannel" /> if one is set.
 /// </summary>
 [UsedImplicitly]
-public class MessageDeletedResponder : IResponder<IMessageDelete> {
+public class MessageDeletedResponder : IResponder<IMessageDelete>
+{
     private readonly IDiscordRestAuditLogAPI _auditLogApi;
-    private readonly IDiscordRestChannelAPI  _channelApi;
-    private readonly GuildDataService        _dataService;
-    private readonly IDiscordRestUserAPI     _userApi;
+    private readonly IDiscordRestChannelAPI _channelApi;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public MessageDeletedResponder(
         IDiscordRestAuditLogAPI auditLogApi, IDiscordRestChannelAPI channelApi,
-        GuildDataService        dataService, IDiscordRestUserAPI    userApi) {
+        GuildDataService guildData, IDiscordRestUserAPI userApi)
+    {
         _auditLogApi = auditLogApi;
         _channelApi = channelApi;
-        _dataService = dataService;
+        _guildData = guildData;
         _userApi = userApi;
     }
 
-    public async Task<Result> RespondAsync(IMessageDelete gatewayEvent, CancellationToken ct = default) {
-        if (!gatewayEvent.GuildID.IsDefined(out var guildId)) return Result.FromSuccess();
+    public async Task<Result> RespondAsync(IMessageDelete gatewayEvent, CancellationToken ct = default)
+    {
+        if (!gatewayEvent.GuildID.IsDefined(out var guildId))
+        {
+            return Result.FromSuccess();
+        }
 
-        var cfg = await _dataService.GetSettings(guildId, ct);
-        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()) return Result.FromSuccess();
+        var cfg = await _guildData.GetSettings(guildId, ct);
+        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        {
+            return Result.FromSuccess();
+        }
 
         var messageResult = await _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
-        if (!messageResult.IsDefined(out var message)) return Result.FromError(messageResult);
-        if (string.IsNullOrWhiteSpace(message.Content)) return Result.FromSuccess();
+        if (!messageResult.IsDefined(out var message))
+        {
+            return Result.FromError(messageResult);
+        }
+
+        if (string.IsNullOrWhiteSpace(message.Content))
+        {
+            return Result.FromSuccess();
+        }
 
         var auditLogResult = await _auditLogApi.GetGuildAuditLogAsync(
             guildId, actionType: AuditLogEvent.MessageDelete, limit: 1, ct: ct);
-        if (!auditLogResult.IsDefined(out var auditLogPage)) return Result.FromError(auditLogResult);
+        if (!auditLogResult.IsDefined(out var auditLogPage))
+        {
+            return Result.FromError(auditLogResult);
+        }
 
         var auditLog = auditLogPage.AuditLogEntries.Single();
 
         var userResult = Result<IUser>.FromSuccess(message.Author);
-        if (auditLog.Options.Value.ChannelID == gatewayEvent.ChannelID
+        if (auditLog.UserID is not null
+            && auditLog.Options.Value.ChannelID == gatewayEvent.ChannelID
             && DateTimeOffset.UtcNow.Subtract(auditLog.ID.Timestamp).TotalSeconds <= 2)
-            userResult = await _userApi.GetUserAsync(auditLog.UserID!.Value, ct);
+        {
+            userResult = await _userApi.GetUserAsync(auditLog.UserID.Value, ct);
+        }
 
-        if (!userResult.IsDefined(out var user)) return Result.FromError(userResult);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
@@ -67,7 +92,10 @@ public class MessageDeletedResponder : IResponder<IMessageDelete> {
             .WithTimestamp(message.Timestamp)
             .WithColour(ColorsList.Red)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+        if (!embed.IsDefined(out var built))
+        {
+            return Result.FromError(embed);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },

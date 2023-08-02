@@ -18,42 +18,68 @@ namespace Boyfriend.Responders;
 ///     to a guild's <see cref="GuildSettings.PrivateFeedbackChannel" /> if one is set.
 /// </summary>
 [UsedImplicitly]
-public class MessageEditedResponder : IResponder<IMessageUpdate> {
-    private readonly CacheService           _cacheService;
+public class MessageEditedResponder : IResponder<IMessageUpdate>
+{
+    private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService       _dataService;
-    private readonly IDiscordRestUserAPI    _userApi;
+    private readonly GuildDataService _guildData;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public MessageEditedResponder(
-        CacheService        cacheService, IDiscordRestChannelAPI channelApi, GuildDataService dataService,
-        IDiscordRestUserAPI userApi) {
+        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
+        IDiscordRestUserAPI userApi)
+    {
         _cacheService = cacheService;
         _channelApi = channelApi;
-        _dataService = dataService;
+        _guildData = guildData;
         _userApi = userApi;
     }
 
-    public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default) {
+    public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default)
+    {
         if (!gatewayEvent.GuildID.IsDefined(out var guildId))
+        {
             return Result.FromSuccess();
-        var cfg = await _dataService.GetSettings(guildId, ct);
+        }
+
+        var cfg = await _guildData.GetSettings(guildId, ct);
         if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        {
             return Result.FromSuccess();
+        }
+
         if (!gatewayEvent.Content.IsDefined(out var newContent))
+        {
             return Result.FromSuccess();
+        }
+
         if (!gatewayEvent.EditedTimestamp.IsDefined(out var timestamp))
+        {
             return Result.FromSuccess(); // The message wasn't actually edited
+        }
 
         if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
+        {
             return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
+        }
+
         if (!gatewayEvent.ID.IsDefined(out var messageId))
+        {
             return new ArgumentNullError(nameof(gatewayEvent.ID));
+        }
 
         var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
         var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
             cacheKey, ct);
-        if (!messageResult.IsDefined(out var message)) return Result.FromError(messageResult);
-        if (message.Content == newContent) return Result.FromSuccess();
+        if (!messageResult.IsDefined(out var message))
+        {
+            return Result.FromError(messageResult);
+        }
+
+        if (message.Content == newContent)
+        {
+            return Result.FromSuccess();
+        }
 
         // Custom event responders are called earlier than responders responsible for message caching
         // This means that subsequent edit logs may contain the wrong content
@@ -67,7 +93,10 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
         _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
 
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser)) return Result.FromError(currentUserResult);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
 
         var diff = InlineDiffBuilder.Diff(message.Content, newContent);
 
@@ -80,7 +109,10 @@ public class MessageEditedResponder : IResponder<IMessageUpdate> {
             .WithTimestamp(timestamp.Value)
             .WithColour(ColorsList.Yellow)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+        if (!embed.IsDefined(out var built))
+        {
+            return Result.FromError(embed);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },

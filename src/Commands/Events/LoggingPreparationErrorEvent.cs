@@ -11,10 +11,12 @@ namespace Boyfriend.Commands.Events;
 ///     Handles error logging for slash commands that couldn't be successfully prepared.
 /// </summary>
 [UsedImplicitly]
-public class LoggingPreparationErrorEvent : IPreparationErrorEvent {
+public class LoggingPreparationErrorEvent : IPreparationErrorEvent
+{
     private readonly ILogger<LoggingPreparationErrorEvent> _logger;
 
-    public LoggingPreparationErrorEvent(ILogger<LoggingPreparationErrorEvent> logger) {
+    public LoggingPreparationErrorEvent(ILogger<LoggingPreparationErrorEvent> logger)
+    {
         _logger = logger;
     }
 
@@ -27,11 +29,15 @@ public class LoggingPreparationErrorEvent : IPreparationErrorEvent {
     /// <param name="ct">The cancellation token for this operation. Unused.</param>
     /// <returns>A result which has succeeded.</returns>
     public Task<Result> PreparationFailed(
-        IOperationContext context, IResult preparationResult, CancellationToken ct = default) {
-        if (!preparationResult.IsSuccess && !preparationResult.Error.IsUserOrEnvironmentError()) {
+        IOperationContext context, IResult preparationResult, CancellationToken ct = default)
+    {
+        if (!preparationResult.IsSuccess && !preparationResult.Error.IsUserOrEnvironmentError())
+        {
             _logger.LogWarning("Error in slash command preparation.\n{ErrorMessage}", preparationResult.Error.Message);
             if (preparationResult.Error is ExceptionError exerr)
+            {
                 _logger.LogError(exerr.Exception, "An exception has been thrown");
+            }
         }
 
         return Task.FromResult(Result.FromSuccess());

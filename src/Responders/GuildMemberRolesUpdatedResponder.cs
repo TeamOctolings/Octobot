@@ -11,15 +11,18 @@ namespace Boyfriend.Responders;
 ///     Handles updating <see cref="MemberData.Roles" /> when a guild member is updated.
 /// </summary>
 [UsedImplicitly]
-public class GuildMemberUpdateResponder : IResponder<IGuildMemberUpdate> {
-    private readonly GuildDataService _dataService;
+public class GuildMemberUpdateResponder : IResponder<IGuildMemberUpdate>
+{
+    private readonly GuildDataService _guildData;
 
-    public GuildMemberUpdateResponder(GuildDataService dataService) {
-        _dataService = dataService;
+    public GuildMemberUpdateResponder(GuildDataService guildData)
+    {
+        _guildData = guildData;
     }
 
-    public async Task<Result> RespondAsync(IGuildMemberUpdate gatewayEvent, CancellationToken ct = default) {
-        var memberData = await _dataService.GetMemberData(gatewayEvent.GuildID, gatewayEvent.User.ID, ct);
+    public async Task<Result> RespondAsync(IGuildMemberUpdate gatewayEvent, CancellationToken ct = default)
+    {
+        var memberData = await _guildData.GetMemberData(gatewayEvent.GuildID, gatewayEvent.User.ID, ct);
         memberData.Roles = gatewayEvent.Roles.ToList().ConvertAll(r => r.Value);
         return Result.FromSuccess();
     }

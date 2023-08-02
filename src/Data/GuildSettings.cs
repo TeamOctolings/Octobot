@@ -8,7 +8,8 @@ namespace Boyfriend.Data;
 ///     Contains all per-guild settings that can be set by a member
 ///     with <see cref="DiscordPermission.ManageGuild" /> using the /settings command
 /// </summary>
-public static class GuildSettings {
+public static class GuildSettings
+{
     public static readonly LanguageOption Language = new("Language", "en");
 
     /// <summary>
@@ -56,9 +57,9 @@ public static class GuildSettings {
     public static readonly SnowflakeOption PrivateFeedbackChannel = new("PrivateFeedbackChannel");
 
     public static readonly SnowflakeOption EventNotificationChannel = new("EventNotificationChannel");
-    public static readonly SnowflakeOption DefaultRole              = new("DefaultRole");
-    public static readonly SnowflakeOption MuteRole                 = new("MuteRole");
-    public static readonly SnowflakeOption EventNotificationRole    = new("EventNotificationRole");
+    public static readonly SnowflakeOption DefaultRole = new("DefaultRole");
+    public static readonly SnowflakeOption MuteRole = new("MuteRole");
+    public static readonly SnowflakeOption EventNotificationRole = new("EventNotificationRole");
 
     /// <summary>
     ///     Controls the amount of time before a scheduled event to send a reminder in <see cref="EventNotificationChannel" />.

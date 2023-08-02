@@ -22,11 +22,13 @@ using Serilog.Extensions.Logging;
 
 namespace Boyfriend;
 
-public class Boyfriend {
+public sealed class Boyfriend
+{
     public static readonly AllowedMentions NoMentions = new(
         Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
 
-    public static async Task Main(string[] args) {
+    public static async Task Main(string[] args)
+    {
         var host = CreateHostBuilder(args).UseConsoleLifetime().Build();
         var services = host.Services;
 
@@ -40,10 +42,12 @@ public class Boyfriend {
         await host.RunAsync();
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args) {
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
         return Host.CreateDefaultBuilder(args)
             .AddDiscordService(
-                services => {
+                services =>
+                {
                     var configuration = services.GetRequiredService<IConfiguration>();
 
                     return configuration.GetValue<string?>("BOT_TOKEN")
@@ -52,13 +56,18 @@ public class Boyfriend {
                                + "BOT_TOKEN environment variable to a valid token.");
                 }
             ).ConfigureServices(
-                (_, services) => {
+                (_, services) =>
+                {
                     services.Configure<DiscordGatewayClientOptions>(
-                        options => options.Intents |= GatewayIntents.MessageContents
-                                                      | GatewayIntents.GuildMembers
-                                                      | GatewayIntents.GuildScheduledEvents);
+                        options =>
+                        {
+                            options.Intents |= GatewayIntents.MessageContents
+                                               | GatewayIntents.GuildMembers
+                                               | GatewayIntents.GuildScheduledEvents;
+                        });
                     services.Configure<CacheSettings>(
-                        cSettings => {
+                        cSettings =>
+                        {
                             cSettings.SetDefaultAbsoluteExpiration(TimeSpan.FromHours(1));
                             cSettings.SetDefaultSlidingExpiration(TimeSpan.FromMinutes(30));
                             cSettings.SetAbsoluteExpiration<IMessage>(TimeSpan.FromDays(7));
@@ -92,12 +101,15 @@ public class Boyfriend {
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
-                    foreach (var responderType in responderTypes) services.AddResponder(responderType);
+                    foreach (var responderType in responderTypes)
+                    {
+                        services.AddResponder(responderType);
+                    }
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()
                     .AddFile("Logs/Boyfriend-{Date}.log",
-                             outputTemplate: "{Timestamp:o} [{Level:u4}] {Message} {NewLine}{Exception}")
+                        outputTemplate: "{Timestamp:o} [{Level:u4}] {Message} {NewLine}{Exception}")
                     .AddFilter("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)
                     .AddFilter("System.Net.Http.HttpClient.*.ClientHandler", LogLevel.Warning)
                     .AddFilter<SerilogLoggerProvider>("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)

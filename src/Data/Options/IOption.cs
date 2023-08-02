@@ -3,8 +3,9 @@ using Remora.Results;
 
 namespace Boyfriend.Data.Options;
 
-public interface IOption {
+public interface IOption
+{
     string Name { get; }
     string Display(JsonNode settings);
-    Result Set(JsonNode     settings, string from);
+    Result Set(JsonNode settings, string from);
 }

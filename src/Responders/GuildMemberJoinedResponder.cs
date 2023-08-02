@@ -15,31 +15,44 @@ namespace Boyfriend.Responders;
 /// </summary>
 /// <seealso cref="GuildSettings.WelcomeMessage" />
 [UsedImplicitly]
-public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd> {
+public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
+{
     private readonly IDiscordRestChannelAPI _channelApi;
-    private readonly GuildDataService       _dataService;
-    private readonly IDiscordRestGuildAPI   _guildApi;
+    private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService _guildData;
 
     public GuildMemberJoinedResponder(
-        IDiscordRestChannelAPI channelApi, GuildDataService dataService, IDiscordRestGuildAPI guildApi) {
+        IDiscordRestChannelAPI channelApi, GuildDataService guildData, IDiscordRestGuildAPI guildApi)
+    {
         _channelApi = channelApi;
-        _dataService = dataService;
+        _guildData = guildData;
         _guildApi = guildApi;
     }
 
-    public async Task<Result> RespondAsync(IGuildMemberAdd gatewayEvent, CancellationToken ct = default) {
+    public async Task<Result> RespondAsync(IGuildMemberAdd gatewayEvent, CancellationToken ct = default)
+    {
         if (!gatewayEvent.User.IsDefined(out var user))
+        {
             return new ArgumentNullError(nameof(gatewayEvent.User));
-        var data = await _dataService.GetData(gatewayEvent.GuildID, ct);
+        }
+
+        var data = await _guildData.GetData(gatewayEvent.GuildID, ct);
         var cfg = data.Settings;
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
             || GuildSettings.WelcomeMessage.Get(cfg) is "off" or "disable" or "disabled")
+        {
             return Result.FromSuccess();
-        if (GuildSettings.ReturnRolesOnRejoin.Get(cfg)) {
+        }
+
+        if (GuildSettings.ReturnRolesOnRejoin.Get(cfg))
+        {
             var result = await _guildApi.ModifyGuildMemberAsync(
                 gatewayEvent.GuildID, user.ID,
                 roles: data.GetMemberData(user.ID).Roles.ConvertAll(r => r.ToSnowflake()), ct: ct);
-            if (!result.IsSuccess) return Result.FromError(result.Error);
+            if (!result.IsSuccess)
+            {
+                return Result.FromError(result.Error);
+            }
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
@@ -48,7 +61,10 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd> {
             : GuildSettings.WelcomeMessage.Get(cfg);
 
         var guildResult = await _guildApi.GetGuildAsync(gatewayEvent.GuildID, ct: ct);
-        if (!guildResult.IsDefined(out var guild)) return Result.FromError(guildResult);
+        if (!guildResult.IsDefined(out var guild))
+        {
+            return Result.FromError(guildResult);
+        }
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(welcomeMessage, user.GetTag(), guild.Name), user)
@@ -56,7 +72,10 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd> {
             .WithTimestamp(gatewayEvent.JoinedAt)
             .WithColour(ColorsList.Green)
             .Build();
-        if (!embed.IsDefined(out var built)) return Result.FromError(embed);
+        if (!embed.IsDefined(out var built))
+        {
+            return Result.FromError(embed);
+        }
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: new[] { built },
