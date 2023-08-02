@@ -95,6 +95,8 @@ public class Boyfriend {
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()
+                    .AddFile("Logs/Boyfriend-{Date}.log",
+                             outputTemplate: "{Timestamp:o} [{Level:u4}] {Message} {NewLine}{Exception}")
                     .AddFilter("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)
                     .AddFilter("System.Net.Http.HttpClient.*.ClientHandler", LogLevel.Warning)
             );
