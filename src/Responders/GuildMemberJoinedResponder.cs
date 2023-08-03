@@ -38,12 +38,13 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 
         var data = await _guildData.GetData(gatewayEvent.GuildID, ct);
         var cfg = data.Settings;
+        var memberData = data.GetOrCreateMemberData(user.ID);
 
         if (GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
             var result = await _guildApi.ModifyGuildMemberAsync(
                 gatewayEvent.GuildID, user.ID,
-                roles: data.GetMemberData(user.ID).Roles.ConvertAll(r => r.ToSnowflake()), ct: ct);
+                roles: memberData.Roles.ConvertAll(r => r.ToSnowflake()), ct: ct);
             if (!result.IsSuccess)
             {
                 return Result.FromError(result.Error);

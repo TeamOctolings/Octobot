@@ -30,14 +30,14 @@ public sealed class GuildData
         MemberDataPath = memberDataPath;
     }
 
-    public MemberData GetMemberData(Snowflake userId)
+    public MemberData GetOrCreateMemberData(Snowflake userId)
     {
         if (MemberData.TryGetValue(userId.Value, out var existing))
         {
             return existing;
         }
 
-        var newData = new MemberData(userId.Value, null);
+        var newData = new MemberData(userId.Value);
         MemberData.Add(userId.Value, newData);
         return newData;
     }
