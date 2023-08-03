@@ -15,6 +15,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
+using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Commands;
@@ -47,15 +48,17 @@ public class SettingsCommandGroup : CommandGroup
     private readonly FeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
+    private readonly UtilityService _utility;
 
     public SettingsCommandGroup(
         ICommandContext context, GuildDataService guildData,
-        FeedbackService feedback, IDiscordRestUserAPI userApi)
+        FeedbackService feedback, IDiscordRestUserAPI userApi, UtilityService utility)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+        _utility = utility;
     }
 
     /// <summary>
@@ -156,7 +159,7 @@ public class SettingsCommandGroup : CommandGroup
         string setting,
         [Description("Setting value")] string value)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out _, out _))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
@@ -167,14 +170,21 @@ public class SettingsCommandGroup : CommandGroup
             return Result.FromError(currentUserResult);
         }
 
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
+
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await EditSettingAsync(setting, value, data, currentUser, CancellationToken);
+        return await EditSettingAsync(setting, value, data, channelId, user, currentUser, CancellationToken);
     }
 
     private async Task<Result> EditSettingAsync(
-        string setting, string value, GuildData data, IUser currentUser, CancellationToken ct = default)
+        string setting, string value, GuildData data, Snowflake channelId, IUser user, IUser currentUser,
+        CancellationToken ct = default)
     {
         var option = AllOptions.Single(
             o => string.Equals(setting, o.Name, StringComparison.InvariantCultureIgnoreCase));
@@ -195,9 +205,18 @@ public class SettingsCommandGroup : CommandGroup
         builder.Append(Markdown.InlineCode(option.Name))
             .Append($" {Messages.SettingIsNow} ")
             .Append(option.Display(data.Settings));
+        var title = Messages.SettingSuccessfullyChanged;
+        var description = builder.ToString();
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingSuccessfullyChanged, currentUser)
-            .WithDescription(builder.ToString())
+        var logResult = _utility.LogActionAsync(
+            data.Settings, channelId, user, title, description, currentUser, ColorsList.Magenta, false, ct);
+        if (!logResult.IsSuccess)
+        {
+            return Result.FromError(logResult.Error);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
+            .WithDescription(description)
             .WithColour(ColorsList.Green)
             .Build();
 
