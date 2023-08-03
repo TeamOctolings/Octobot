@@ -38,11 +38,6 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 
         var data = await _guildData.GetData(gatewayEvent.GuildID, ct);
         var cfg = data.Settings;
-        if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
-            || GuildSettings.WelcomeMessage.Get(cfg) is "off" or "disable" or "disabled")
-        {
-            return Result.FromSuccess();
-        }
 
         if (GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
@@ -53,6 +48,12 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             {
                 return Result.FromError(result.Error);
             }
+        }
+
+        if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+            || GuildSettings.WelcomeMessage.Get(cfg) is "off" or "disable" or "disabled")
+        {
+            return Result.FromSuccess();
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
