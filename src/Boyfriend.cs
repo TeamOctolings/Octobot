@@ -63,6 +63,7 @@ public sealed class Boyfriend
                         {
                             options.Intents |= GatewayIntents.MessageContents
                                                | GatewayIntents.GuildMembers
+                                               | GatewayIntents.GuildPresences
                                                | GatewayIntents.GuildScheduledEvents;
                         });
                     services.Configure<CacheSettings>(

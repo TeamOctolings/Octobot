@@ -71,15 +71,7 @@ public sealed class GuildDataService : IHostedService
         var memberDataPath = $"{guildId}/MemberData";
         var settingsPath = $"{guildId}/Settings.json";
         var scheduledEventsPath = $"{guildId}/ScheduledEvents.json";
-        if (!Directory.Exists(idString))
-        {
-            Directory.CreateDirectory(idString);
-        }
-
-        if (!Directory.Exists(memberDataPath))
-        {
-            Directory.CreateDirectory(memberDataPath);
-        }
+        Directory.CreateDirectory(idString);
 
         if (!File.Exists(settingsPath))
         {
@@ -101,9 +93,9 @@ public sealed class GuildDataService : IHostedService
                 eventsStream, cancellationToken: ct);
 
         var memberData = new Dictionary<ulong, MemberData>();
-        foreach (var dataPath in Directory.GetFiles(memberDataPath))
+        foreach (var dataFileInfo in Directory.CreateDirectory(memberDataPath).GetFiles())
         {
-            await using var dataStream = File.OpenRead(dataPath);
+            await using var dataStream = dataFileInfo.OpenRead();
             var data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
             if (data is null)
             {
@@ -123,10 +115,8 @@ public sealed class GuildDataService : IHostedService
             jsonSettings ?? new JsonObject(), settingsPath,
             await events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
             memberData, memberDataPath);
-        while (!_datas.ContainsKey(guildId))
-        {
-            _datas.TryAdd(guildId, finalData);
-        }
+
+        _datas.TryAdd(guildId, finalData);
 
         return finalData;
     }
@@ -138,7 +128,7 @@ public sealed class GuildDataService : IHostedService
 
     public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default)
     {
-        return (await GetData(guildId, ct)).GetMemberData(userId);
+        return (await GetData(guildId, ct)).GetOrCreateMemberData(userId);
     }
 
     public ICollection<Snowflake> GetGuildIds()

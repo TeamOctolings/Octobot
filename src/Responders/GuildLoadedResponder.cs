@@ -43,7 +43,13 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var guild = gatewayEvent.Guild.AsT0;
         _logger.LogInformation("Joined guild \"{Name}\"", guild.Name);
 
-        var cfg = await _guildData.GetSettings(guild.ID, ct);
+        var data = await _guildData.GetData(guild.ID, ct);
+        var cfg = data.Settings;
+        foreach (var member in guild.Members.Where(m => m.User.HasValue))
+        {
+            data.GetOrCreateMemberData(member.User.Value.ID);
+        }
+
         if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
             return Result.FromSuccess();

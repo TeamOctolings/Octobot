@@ -5,7 +5,7 @@ namespace Boyfriend.Data;
 /// </summary>
 public sealed class MemberData
 {
-    public MemberData(ulong id, DateTimeOffset? bannedUntil)
+    public MemberData(ulong id, DateTimeOffset? bannedUntil = null)
     {
         Id = id;
         BannedUntil = bannedUntil;

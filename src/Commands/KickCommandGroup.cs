@@ -153,7 +153,7 @@ public class KickCommandGroup : CommandGroup
             return Result.FromError(kickResult.Error);
         }
 
-        data.GetMemberData(target.ID).Roles.Clear();
+        data.GetOrCreateMemberData(target.ID).Roles.Clear();
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = string.Format(Messages.DescriptionActionReason, reason);

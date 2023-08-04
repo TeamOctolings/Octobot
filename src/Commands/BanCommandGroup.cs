@@ -171,7 +171,7 @@ public class BanCommandGroup : CommandGroup
             return Result.FromError(banResult.Error);
         }
 
-        var memberData = data.GetMemberData(target.ID);
+        var memberData = data.GetOrCreateMemberData(target.ID);
         memberData.BannedUntil
             = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
         memberData.Roles.Clear();

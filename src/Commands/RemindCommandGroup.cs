@@ -77,7 +77,7 @@ public class RemindCommandGroup : CommandGroup
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
 
-        data.GetMemberData(user.ID).Reminders.Add(
+        data.GetOrCreateMemberData(user.ID).Reminders.Add(
             new Reminder
             {
                 At = remindAt,
