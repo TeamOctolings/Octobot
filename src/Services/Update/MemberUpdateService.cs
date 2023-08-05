@@ -105,7 +105,8 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         if (!guildMember.User.IsDefined(out var user))
         {
-            return new ArgumentNullError(nameof(guildMember.User));
+            failedResults.AddIfFailed(new ArgumentNullError(nameof(guildMember.User)));
+            return failedResults.AggregateErrors();
         }
 
         for (var i = data.Reminders.Count - 1; i >= 0; i--)
