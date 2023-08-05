@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using Boyfriend.Services.Update;
 using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -166,7 +167,7 @@ public class MuteCommandGroup : CommandGroup
     ///     was unmuted and vice-versa.
     /// </returns>
     /// <seealso cref="ExecuteMute" />
-    /// <seealso cref="GuildUpdateService.TickGuildAsync" />
+    /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />
     [Command("unmute", "размут")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ModerateMembers)]
     [DiscordDefaultDMPermission(false)]

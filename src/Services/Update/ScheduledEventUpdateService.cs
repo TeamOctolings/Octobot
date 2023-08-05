@@ -114,7 +114,13 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromSuccess();
         }
 
-        return await SendEarlyEventNotificationAsync(scheduledEvent, data, ct);
+        var sendResult = await SendEarlyEventNotificationAsync(scheduledEvent, data, ct);
+        if (sendResult.IsSuccess)
+        {
+            eventData.EarlyNotificationSent = true;
+        }
+
+        return sendResult;
     }
 
     private async Task<Result> AutoStartEventAsync(
