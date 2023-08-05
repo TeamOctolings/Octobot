@@ -1,6 +1,7 @@
 using Boyfriend.Commands;
 using Boyfriend.Commands.Events;
 using Boyfriend.Services;
+using Boyfriend.Services.Update;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -88,7 +89,9 @@ public sealed class Boyfriend
                         // Services
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
-                        .AddHostedService<GuildUpdateService>()
+                        .AddHostedService<MemberUpdateService>()
+                        .AddHostedService<ScheduledEventUpdateService>()
+                        .AddHostedService<SongUpdateService>()
                         // Slash commands
                         .AddCommandTree()
                         .WithCommandGroup<AboutCommandGroup>()

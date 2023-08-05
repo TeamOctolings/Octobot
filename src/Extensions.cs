@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using DiffPlex.DiffBuilder.Model;
+using Microsoft.Extensions.Logging;
 using Remora.Discord.API;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
@@ -257,5 +258,79 @@ public static class Extensions
         }
 
         return (Result)await feedback.SendContextualEmbedAsync(embed, ct: ct);
+    }
+
+    /// <summary>
+    ///     Checks if the <paramref name="result" /> has failed due to an error that has resulted from neither invalid user
+    ///     input nor the execution environment and logs the error using the provided <paramref name="logger" />.
+    /// </summary>
+    /// <remarks>
+    ///     This has special behavior for <see cref="ExceptionError" /> - its exception will be passed to the
+    ///     <paramref name="logger" />
+    /// </remarks>
+    /// <param name="logger">The logger to use.</param>
+    /// <param name="result">The Result whose error check.</param>
+    /// <param name="message">The message to use if this result has failed.</param>
+    public static void LogResult(this ILogger logger, IResult result, string? message = "")
+    {
+        if (result.IsSuccess || result.Error.IsUserOrEnvironmentError())
+        {
+            return;
+        }
+
+        if (result.Error is ExceptionError exe)
+        {
+            logger.LogError(exe.Exception, "{ErrorMessage}", message);
+            return;
+        }
+
+        logger.LogWarning("{UserMessage}\n{ResultErrorMessage}", message, result.Error.Message);
+    }
+
+    public static void AddIfFailed(this List<Result> list, Result result)
+    {
+        if (!result.IsSuccess)
+        {
+            list.Add(result);
+        }
+    }
+
+    /// <summary>
+    ///     Return an appropriate result for a list of failed results. The list must only contain failed results.
+    /// </summary>
+    /// <param name="list">The list of failed results.</param>
+    /// <returns>
+    ///     A successful result if the list is empty, the only Result in the list, or <see cref="AggregateError" />
+    ///     containing all results from the list.
+    /// </returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static Result AggregateErrors(this List<Result> list)
+    {
+        return list.Count switch
+        {
+            0 => Result.FromSuccess(),
+            1 => list[0],
+            _ => new AggregateError(list.Cast<IResult>().ToArray())
+        };
+    }
+
+    public static Result TryGetExternalEventData(this IGuildScheduledEvent scheduledEvent, out DateTimeOffset endTime,
+        out string? location)
+    {
+        endTime = default;
+        location = default;
+        if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
+        {
+            return new ArgumentNullError(nameof(scheduledEvent.EntityMetadata));
+        }
+
+        if (!metadata.Location.IsDefined(out location))
+        {
+            return new ArgumentNullError(nameof(metadata.Location));
+        }
+
+        return scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out endTime)
+            ? Result.FromSuccess()
+            : new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime));
     }
 }

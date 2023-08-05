@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
+using Boyfriend.Services.Update;
 using JetBrains.Annotations;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -203,7 +204,7 @@ public class BanCommandGroup : CommandGroup
     ///     was unbanned and vice-versa.
     /// </returns>
     /// <seealso cref="ExecuteBanAsync" />
-    /// <seealso cref="GuildUpdateService.TickGuildAsync" />
+    /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />
     [Command("unban")]
     [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
     [DiscordDefaultDMPermission(false)]

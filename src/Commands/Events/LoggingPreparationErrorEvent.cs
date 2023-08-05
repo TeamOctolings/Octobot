@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.Commands.Contexts;
-using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Services;
 using Remora.Results;
 
@@ -31,14 +30,7 @@ public class LoggingPreparationErrorEvent : IPreparationErrorEvent
     public Task<Result> PreparationFailed(
         IOperationContext context, IResult preparationResult, CancellationToken ct = default)
     {
-        if (!preparationResult.IsSuccess && !preparationResult.Error.IsUserOrEnvironmentError())
-        {
-            _logger.LogWarning("Error in slash command preparation.\n{ErrorMessage}", preparationResult.Error.Message);
-            if (preparationResult.Error is ExceptionError exerr)
-            {
-                _logger.LogError(exerr.Exception, "An exception has been thrown");
-            }
-        }
+        _logger.LogResult(preparationResult, "Error in slash command preparation.");
 
         return Task.FromResult(Result.FromSuccess());
     }
