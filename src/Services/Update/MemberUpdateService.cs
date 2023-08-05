@@ -50,7 +50,7 @@ public sealed partial class MemberUpdateService : BackgroundService
             tasks.AddRange(guildIds.Select(async id =>
             {
                 var tickResult = await TickMemberDatasAsync(id, ct);
-                _logger.LogResult(tickResult);
+                _logger.LogResult(tickResult, $"Error in member data update for guild {id}.");
             }));
 
             await Task.WhenAll(tasks);

@@ -23,14 +23,14 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
     ///     Logs a warning using the injected <see cref="ILogger" /> if the <paramref name="commandResult" /> has not
     ///     succeeded.
     /// </summary>
-    /// <param name="context">The context of the slash command. Unused.</param>
+    /// <param name="context">The context of the slash command.</param>
     /// <param name="commandResult">The result whose success is checked.</param>
     /// <param name="ct">The cancellation token for this operation. Unused.</param>
     /// <returns>A result which has succeeded.</returns>
     public Task<Result> AfterExecutionAsync(
         ICommandContext context, IResult commandResult, CancellationToken ct = default)
     {
-        _logger.LogResult(commandResult, "Error in slash command execution.");
+        _logger.LogResult(commandResult, $"Error in slash command execution for /{context.Command.Command.Node.Key}.");
 
         return Task.FromResult(Result.FromSuccess());
     }

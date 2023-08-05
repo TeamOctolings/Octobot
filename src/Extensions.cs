@@ -280,7 +280,7 @@ public static class Extensions
 
         if (result.Error is ExceptionError exe)
         {
-            logger.LogError(exe.Exception, "{UserMessage}\n{ResultErrorMessage}", message, result.Error.Message);
+            logger.LogError(exe.Exception, "{ErrorMessage}", message);
             return;
         }
 

@@ -46,7 +46,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             tasks.AddRange(guildIds.Select(async id =>
             {
                 var tickResult = await TickScheduledEventsAsync(id, ct);
-                _logger.LogResult(tickResult);
+                _logger.LogResult(tickResult, $"Error in scheduled events update for guild {id}.");
             }));
 
             await Task.WhenAll(tasks);
