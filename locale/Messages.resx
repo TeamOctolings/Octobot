@@ -582,4 +582,13 @@
     <data name="Previous" xml:space="preserve">
         <value>Previous</value>
     </data>
+  <data name="ReminderList" xml:space="preserve">
+        <value>{0}'s reminders</value>
+    </data>
+  <data name="InvalidReminderIndex" xml:space="preserve">
+        <value>There's no reminder with that index!</value>
+    </data>
+  <data name="ReminderDeleted" xml:space="preserve">
+        <value>Reminder deleted</value>
+    </data>
 </root>

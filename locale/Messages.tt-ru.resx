@@ -582,4 +582,13 @@
     <data name="Previous" xml:space="preserve">
         <value>предыдущее</value>
     </data>
+    <data name="ReminderList" xml:space="preserve">
+        <value>напоминалки {0}</value>
+    </data>
+    <data name="InvalidReminderIndex" xml:space="preserve">
+        <value>у тебя нет напоминалки с этим индексом!</value>
+    </data>
+    <data name="ReminderDeleted" xml:space="preserve">
+        <value>напоминалка уничтожена</value>
+    </data>
 </root>

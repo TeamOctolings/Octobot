@@ -977,5 +977,23 @@ namespace Boyfriend {
                 return ResourceManager.GetString("Previous", resourceCulture);
             }
         }
+
+        internal static string ReminderList {
+            get {
+                return ResourceManager.GetString("ReminderList", resourceCulture);
+            }
+        }
+
+        internal static string InvalidReminderIndex {
+            get {
+                return ResourceManager.GetString("InvalidReminderIndex", resourceCulture);
+            }
+        }
+
+        internal static string ReminderDeleted {
+            get {
+                return ResourceManager.GetString("ReminderDeleted", resourceCulture);
+            }
+        }
     }
 }
