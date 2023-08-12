@@ -73,13 +73,14 @@ public class RemindCommandGroup : CommandGroup
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.AppendLine($"[{i}] {Markdown.InlineCode(reminder.Text)} ({Markdown.Timestamp(reminder.At)})");
+            builder.AppendLine(
+                $"- {Markdown.InlineCode(i.ToString())} - {Markdown.InlineCode(reminder.Text)} - {Markdown.Timestamp(reminder.At)}");
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderList, user.GetTag()), user)
             .WithDescription(builder.ToString())
-            .WithColour(ColorsList.Default)
+            .WithColour(ColorsList.Cyan)
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(
@@ -152,7 +153,7 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteDeleteReminderAsync(
-        int index)
+        [MinValue(0)] int index)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
@@ -171,7 +172,8 @@ public class RemindCommandGroup : CommandGroup
         return await DeleteReminderAsync(data.GetOrCreateMemberData(userId), index, currentUser, CancellationToken);
     }
 
-    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser currentUser, CancellationToken ct)
+    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser currentUser,
+        CancellationToken ct)
     {
         if (index >= data.Reminders.Count)
         {

@@ -586,7 +586,7 @@
         <value>Напоминания {0}</value>
     </data>
     <data name="InvalidReminderIndex" xml:space="preserve">
-        <value>У тебя нет упоминания с указанным индексом!</value>
+        <value>У тебя нет напоминания с указанным индексом!</value>
     </data>
     <data name="ReminderDeleted" xml:space="preserve">
         <value>Напоминание удалено</value>

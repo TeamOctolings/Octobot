@@ -589,6 +589,6 @@
         <value>у тебя нет напоминалки с этим индексом!</value>
     </data>
     <data name="ReminderDeleted" xml:space="preserve">
-        <value>напоминалка стёрта</value>
+        <value>напоминалка уничтожена</value>
     </data>
 </root>
