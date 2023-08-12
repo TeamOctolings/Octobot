@@ -62,9 +62,9 @@ public class SettingsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that lists current per-guild GuildSettings.
+    ///     A slash command that sends a page from the list of current GuildSettings.
     /// </summary>
-    /// <param name="page">The page number.</param>
+    /// <param name="page">The number of the page to send.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
