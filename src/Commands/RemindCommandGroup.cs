@@ -153,7 +153,9 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteDeleteReminderAsync(
-        [MinValue(0)] int index)
+        [Description("Index of reminder to delete")]
+        [MinValue(0)]
+        int index)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {

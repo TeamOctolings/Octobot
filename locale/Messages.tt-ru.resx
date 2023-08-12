@@ -253,11 +253,11 @@
     <value>оъмъомоъемъъео((((</value>
   </data>
     <data name="EventCancelled" xml:space="preserve">
-    <value>движуха "{0}" отменен!</value>
-  </data>
+        <value>движуха "{0}" отменена!</value>
+    </data>
     <data name="EventCompleted" xml:space="preserve">
-    <value>движуха "{0}" завершен!</value>
-  </data>
+        <value>движуха "{0}" завершена!</value>
+    </data>
     <data name="Ever" xml:space="preserve">
     <value>всегда</value>
   </data>

@@ -346,7 +346,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct)
     {
         var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        if (!currentUserResult.IsDefined(out _))
         {
             return Result.FromError(currentUserResult);
         }
@@ -359,11 +359,10 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         }
 
         var earlyResult = new EmbedBuilder()
-            .WithSmallTitle(
+            .WithDescription(
                 string.Format(Messages.EventEarlyNotification, scheduledEvent.Name,
-                    Markdown.Timestamp(scheduledEvent.ScheduledStartTime, TimestampStyle.RelativeTime)), currentUser)
+                    Markdown.Timestamp(scheduledEvent.ScheduledStartTime, TimestampStyle.RelativeTime)))
             .WithColour(ColorsList.Default)
-            .WithCurrentTimestamp()
             .Build();
 
         if (!earlyResult.IsDefined(out var earlyBuilt))
