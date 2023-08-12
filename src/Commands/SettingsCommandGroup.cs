@@ -62,8 +62,9 @@ public class SettingsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that lists current per-guild GuildSettings.
+    ///     A slash command that sends a page from the list of current GuildSettings.
     /// </summary>
+    /// <param name="page">The number of the page to send.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
@@ -75,7 +76,9 @@ public class SettingsCommandGroup : CommandGroup
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
     public async Task<Result> ExecuteSettingsListAsync(
-        [Description("Settings list page")] int page)
+        [Description("Settings list page")]
+        [MinValue(1)]
+        int page)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {
