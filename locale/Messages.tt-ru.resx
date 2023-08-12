@@ -433,7 +433,7 @@
     <value>я не могу его раззамутить...</value>
   </data>
     <data name="EventEarlyNotification" xml:space="preserve">
-    <value>{0}движуха {1} начнется &lt;t:{2}:R&gt;!</value>
+    <value>движуха "{0}" начнется {1}!</value>
   </data>
     <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
     <value>заранее пнуть в минутах до начала движухи</value>
