@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
 using JetBrains.Annotations;
@@ -36,6 +37,53 @@ public class RemindCommandGroup : CommandGroup
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+    }
+
+    /// <summary>
+    ///     A slash command that lists reminders of the user that called it.
+    /// </summary>
+    /// <returns>A feedback sending result which may or may not have succeeded.</returns>
+    [Command("listremind")]
+    [Description("List your reminders")]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteListReminderAsync()
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await ListRemindersAsync(data.GetOrCreateMemberData(userId), user, CancellationToken);
+    }
+
+    private async Task<Result> ListRemindersAsync(MemberData data, IUser user, CancellationToken ct)
+    {
+        var builder = new StringBuilder();
+        for (var i = 0; i < data.Reminders.Count; i++)
+        {
+            var reminder = data.Reminders[i];
+            builder.AppendLine($"[{i}] {Markdown.InlineCode(reminder.Text)} ({Markdown.Timestamp(reminder.At)})");
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.ReminderList, user.GetTag()), user)
+            .WithDescription(builder.ToString())
+            .WithColour(ColorsList.Default)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(
+            embed, ct);
     }
 
     /// <summary>
@@ -91,5 +139,56 @@ public class RemindCommandGroup : CommandGroup
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    /// <summary>
+    ///     A slash command that deletes a reminder using its index.
+    /// </summary>
+    /// <param name="index">The index of the reminder to delete.</param>
+    /// <returns>A feedback sending result which may or may not have succeeded.</returns>
+    [Command("delremind")]
+    [Description("Delete one of your reminders")]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteDeleteReminderAsync(
+        int index)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await DeleteReminderAsync(data.GetOrCreateMemberData(userId), index, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser currentUser, CancellationToken ct)
+    {
+        if (index >= data.Reminders.Count)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderIndex, currentUser)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
+        data.Reminders.RemoveAt(index);
+
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, currentUser)
+            .WithColour(ColorsList.Green)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(
+            embed, ct);
     }
 }
