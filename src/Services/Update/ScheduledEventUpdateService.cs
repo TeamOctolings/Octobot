@@ -19,18 +19,15 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<ScheduledEventUpdateService> _logger;
-    private readonly IDiscordRestUserAPI _userApi;
     private readonly UtilityService _utility;
 
     public ScheduledEventUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildScheduledEventAPI eventApi,
-        GuildDataService guildData, ILogger<ScheduledEventUpdateService> logger, IDiscordRestUserAPI userApi,
-        UtilityService utility)
+        GuildDataService guildData, ILogger<ScheduledEventUpdateService> logger, UtilityService utility)
     {
         _channelApi = channelApi;
         _eventApi = eventApi;
         _guildData = guildData;
         _logger = logger;
-        _userApi = userApi;
         _utility = utility;
     }
 
@@ -345,12 +342,6 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     private async Task<Result> SendEarlyEventNotificationAsync(
         IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct)
     {
-        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out _))
-        {
-            return Result.FromError(currentUserResult);
-        }
-
         var contentResult = await _utility.GetEventNotificationMentions(
             scheduledEvent, data.Settings, ct);
         if (!contentResult.IsDefined(out var content))
