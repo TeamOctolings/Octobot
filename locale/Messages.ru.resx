@@ -430,7 +430,7 @@
     <value>Я не могу вернуть из мута этого пользователя!</value>
   </data>
     <data name="EventEarlyNotification" xml:space="preserve">
-    <value>{0}Событие {1} начнется &lt;t:{2}:R&gt;!</value>
+    <value>Событие "{0}" начнется {1}!</value>
   </data>
     <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
     <value>Офсет отправки преждевременного уведомления о начале события</value>

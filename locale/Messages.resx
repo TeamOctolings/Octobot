@@ -433,7 +433,7 @@
     <value>You cannot unmute this user!</value>
   </data>
     <data name="EventEarlyNotification" xml:space="preserve">
-    <value>{0}Event {1} will start &lt;t:{2}:R&gt;!</value>
+    <value>Event "{0}" will start {1}!</value>
   </data>
     <data name="SettingsEventEarlyNotificationOffset" xml:space="preserve">
     <value>Early event start notification offset</value>

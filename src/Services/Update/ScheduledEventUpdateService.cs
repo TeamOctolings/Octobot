@@ -359,7 +359,9 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         }
 
         var earlyResult = new EmbedBuilder()
-            .WithSmallTitle(string.Format(Messages.EventEarlyNotification, scheduledEvent.Name), currentUser)
+            .WithSmallTitle(
+                string.Format(Messages.EventEarlyNotification, scheduledEvent.Name,
+                    Markdown.Timestamp(scheduledEvent.ScheduledStartTime, TimestampStyle.RelativeTime)), currentUser)
             .WithColour(ColorsList.Default)
             .WithCurrentTimestamp()
             .Build();
