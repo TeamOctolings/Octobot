@@ -68,7 +68,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         {
             if (!data.ScheduledEvents.ContainsKey(scheduledEvent.ID.Value))
             {
-                data.ScheduledEvents.Add(scheduledEvent.ID.Value, new ScheduledEventData(scheduledEvent.Status));
+                data.ScheduledEvents.Add(scheduledEvent.ID.Value, new ScheduledEventData(null));
             }
 
             var storedEvent = data.ScheduledEvents[scheduledEvent.ID.Value];
