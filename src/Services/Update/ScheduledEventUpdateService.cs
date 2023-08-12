@@ -79,9 +79,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
                 continue;
             }
 
-            storedEvent.Status = scheduledEvent.Status;
-
-            var statusChangedResponseResult = storedEvent.Status switch
+            var statusChangedResponseResult = scheduledEvent.Status switch
             {
                 GuildScheduledEventStatus.Scheduled =>
                     await SendScheduledEventCreatedMessage(scheduledEvent, data.Settings, ct),
@@ -89,6 +87,11 @@ public sealed class ScheduledEventUpdateService : BackgroundService
                     await SendScheduledEventUpdatedMessage(scheduledEvent, data, ct),
                 _ => new ArgumentOutOfRangeError(nameof(scheduledEvent.Status))
             };
+            if (statusChangedResponseResult.IsSuccess)
+            {
+                storedEvent.Status = scheduledEvent.Status;
+            }
+
             failedResults.AddIfFailed(statusChangedResponseResult);
         }
 
