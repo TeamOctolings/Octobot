@@ -1,0 +1,51 @@
+name: "Publish and deploy"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ "test" ]
+
+jobs:
+  upload-solution:
+    name: Upload Boyfriend to production
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Restore dependencies and tools
+        run: dotnet restore
+
+      - name: Publish solution
+        run: dotnet publish -c Release -r linux-x64 --no-self-contained -p:PublishReadyToRun=true
+
+      - name: Quit currently running instance
+        run: |
+          ssh $SSH_USER@$SSH_HOST pkill --signal SIGQUIT Boyfriend
+        shell: bash
+        env:
+          SSH_USER: ${{secrets.SSH_USER}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+
+      - name: Upload published solution
+        run: scp -r bin/Release/net7.0/linux-x64/publish/* $SSH_USER@$SSH_HOST:$UPLOAD_DESTINATION
+        env:
+          SSH_USER: ${{secrets.SSH_USER}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+          UPLOAD_DESTINATION: ${{secrets.UPLOAD_DESTINATION}}
+
+      - name: Start uploaded solution
+        run: |
+          ssh $SSH_USER@$SSH_HOST $COMMAND
+        shell: bash
+        env:
+          SSH_USER: ${{secrets.SSH_USER}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+          COMMAND: ${{secrets.COMMAND}}

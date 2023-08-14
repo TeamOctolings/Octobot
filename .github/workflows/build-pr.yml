@@ -1,0 +1,34 @@
+name: "Inspect code with ReSharper"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  merge_group:
+    types: [ checks_requested ]
+
+jobs:
+  inspect-code:
+    name: Inspect code
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Restore dependencies and tools
+        run: dotnet restore
+
+      - name: ReSharper CLI InspectCode
+        uses: muno92/resharper_inspectcode@1.8.0
+        with:
+          solutionPath: ./Boyfriend.sln
+          ignoreIssueType: InvertIf, ConvertIfStatementToSwitchStatement
+          extensions: ReSharperPlugin.CognitiveComplexity
+          solutionWideAnalysis: true
