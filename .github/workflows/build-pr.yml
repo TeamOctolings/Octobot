@@ -22,9 +22,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Restore dependencies and tools
-        run: dotnet restore
-
       - name: ReSharper CLI InspectCode
         uses: muno92/resharper_inspectcode@1.8.0
         with:

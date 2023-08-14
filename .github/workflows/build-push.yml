@@ -6,6 +6,7 @@ concurrency:
 on:
   push:
     branches: [ "test" ]
+  workflow_dispatch:
 
 jobs:
   upload-solution:
@@ -19,9 +20,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Restore dependencies and tools
-        run: dotnet restore
 
       - name: Publish solution
         run: dotnet publish -c Release -r linux-x64 --no-self-contained -p:PublishReadyToRun=true
