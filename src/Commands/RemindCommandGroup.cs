@@ -61,29 +61,35 @@ public class RemindCommandGroup : CommandGroup
             return Result.FromError(userResult);
         }
 
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
+
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(userId), user, CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(userId), user, currentUser, CancellationToken);
     }
 
-    private async Task<Result> ListRemindersAsync(MemberData data, IUser user, CancellationToken ct)
+    private async Task<Result> ListRemindersAsync(MemberData data, IUser user, IUser currentUser, CancellationToken ct)
     {
+        if (data.Reminders.Count == 0)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoRemindersFound, currentUser)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
         var builder = new StringBuilder();
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
             builder.AppendLine(
                 $"- {Markdown.InlineCode(i.ToString())} - {Markdown.InlineCode(reminder.Text)} - {Markdown.Timestamp(reminder.At)}");
-        }
-
-        if (data.Reminders.Count == 0)
-        {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoRemindersFound, user)
-                .WithColour(ColorsList.Red)
-                .Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
