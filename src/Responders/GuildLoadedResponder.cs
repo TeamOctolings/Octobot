@@ -50,6 +50,21 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             data.GetOrCreateMemberData(member.User.Value.ID);
         }
 
+        foreach (var schEvent in guild.GuildScheduledEvents)
+        {
+            if (!data.ScheduledEvents.TryGetValue(schEvent.ID.Value, out var eventData))
+            {
+                data.ScheduledEvents.Add(schEvent.ID.Value, new ScheduledEventData(schEvent.ID.Value,
+                    schEvent.Name, schEvent.Status, schEvent.ScheduledStartTime));
+                continue;
+            }
+
+            eventData.Name = schEvent.Name;
+            eventData.ScheduledStartTime = schEvent.ScheduledStartTime;
+            eventData.ScheduleOnStatusUpdated = eventData.Status != schEvent.Status;
+            eventData.Status = schEvent.Status;
+        }
+
         if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
             return Result.FromSuccess();
