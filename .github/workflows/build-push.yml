@@ -5,8 +5,7 @@ concurrency:
 
 on:
   push:
-    branches: [ "test" ]
-  workflow_dispatch:
+    branches: [ "master" ]
 
 jobs:
   upload-solution:
@@ -35,6 +34,7 @@ jobs:
           SSH_HOST: ${{secrets.SSH_HOST}}
 
       - name: Quit currently running instance
+        continue-on-error: true
         run: |
           ssh $SSH_USER@$SSH_HOST pkill --signal SIGQUIT Boyfriend
         shell: bash
