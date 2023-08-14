@@ -995,5 +995,11 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ReminderDeleted", resourceCulture);
             }
         }
+
+        internal static string NoRemindersFound {
+            get {
+                return ResourceManager.GetString("NoRemindersFound", resourceCulture);
+            }
+        }
     }
 }
