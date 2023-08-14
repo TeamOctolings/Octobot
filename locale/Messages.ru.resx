@@ -591,4 +591,7 @@
     <data name="ReminderDeleted" xml:space="preserve">
         <value>Напоминание удалено</value>
     </data>
+    <data name="NoRemindersFound" xml:space="preserve">
+        <value>У вас нет созданных напоминаний!</value>
+    </data>
 </root>

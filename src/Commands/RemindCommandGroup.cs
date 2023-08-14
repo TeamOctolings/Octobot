@@ -77,6 +77,15 @@ public class RemindCommandGroup : CommandGroup
                 $"- {Markdown.InlineCode(i.ToString())} - {Markdown.InlineCode(reminder.Text)} - {Markdown.Timestamp(reminder.At)}");
         }
 
+        if (data.Reminders.Count == 0)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoRemindersFound, user)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderList, user.GetTag()), user)
             .WithDescription(builder.ToString())
