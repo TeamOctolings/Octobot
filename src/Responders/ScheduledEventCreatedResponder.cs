@@ -25,7 +25,7 @@ public class ScheduledEventCreatedResponder : IResponder<IGuildScheduledEventCre
         var data = await _guildData.GetData(gatewayEvent.GuildID, ct);
         data.ScheduledEvents.Add(gatewayEvent.ID.Value,
             new ScheduledEventData(gatewayEvent.ID.Value,
-                gatewayEvent.Name, gatewayEvent.Status, gatewayEvent.ScheduledStartTime));
+                gatewayEvent.Name, gatewayEvent.ScheduledStartTime, gatewayEvent.Status));
 
         return Result.FromSuccess();
     }

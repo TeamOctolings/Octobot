@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Remora.Discord.API.Abstractions.Objects;
 
 namespace Boyfriend.Data;
@@ -8,13 +9,26 @@ namespace Boyfriend.Data;
 /// <remarks>This information is stored on disk as a JSON file.</remarks>
 public sealed class ScheduledEventData
 {
-    public ScheduledEventData(ulong id, string name, GuildScheduledEventStatus status,
-        DateTimeOffset scheduledStartTime)
+    public ScheduledEventData(ulong id, string name, DateTimeOffset scheduledStartTime,
+        GuildScheduledEventStatus status)
     {
         Id = id;
         Name = name;
-        Status = status;
         ScheduledStartTime = scheduledStartTime;
+        Status = status;
+    }
+
+    [JsonConstructor]
+    public ScheduledEventData(ulong id, string name, bool earlyNotificationSent, DateTimeOffset scheduledStartTime,
+        DateTimeOffset? actualStartTime, GuildScheduledEventStatus? status, bool scheduleOnStatusUpdated)
+    {
+        Id = id;
+        Name = name;
+        EarlyNotificationSent = earlyNotificationSent;
+        ScheduledStartTime = scheduledStartTime;
+        ActualStartTime = actualStartTime;
+        Status = status;
+        ScheduleOnStatusUpdated = scheduleOnStatusUpdated;
     }
 
     public ulong Id { get; }
