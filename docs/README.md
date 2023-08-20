@@ -2,9 +2,9 @@
     <img src="https://cdn.upload.systems/uploads/v40uV9K1.png" alt="Boyfriend logo" width="75%"/>
 </p>
 
-![License](https://img.shields.io/github/license/TeamOctolings/Boyfriend)
-![Workflow Status](https://img.shields.io/github/actions/workflow/status/TeamOctolings/Boyfriend/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
-![Last Commit](https://img.shields.io/github/last-commit/TeamOctolings/Boyfriend)
+![License](https://img.shields.io/github/license/LabsDevelopment/Boyfriend)
+![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Boyfriend/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
+![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Boyfriend)
 
 Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and Remora.Discord
 
