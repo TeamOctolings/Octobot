@@ -79,7 +79,7 @@ public class AboutCommandGroup : CommandGroup
 
         builder.AppendLine()
             .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
-            .AppendLine("https://github.com/TeamOctolings/Boyfriend/wiki");
+            .AppendLine("https://github.com/LabsDevelopment/Boyfriend/wiki");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())
