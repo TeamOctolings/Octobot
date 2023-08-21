@@ -149,7 +149,7 @@ public class SettingsCommandGroup : CommandGroup
     /// <param name="setting">The setting to modify.</param>
     /// <param name="value">The new value of the setting.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
-    [Command("settings")]
+    [Command("editsettings")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
