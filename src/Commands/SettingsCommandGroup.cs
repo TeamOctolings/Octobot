@@ -68,7 +68,7 @@ public class SettingsCommandGroup : CommandGroup
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
-    [Command("settingslist")]
+    [Command("listsettings")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
@@ -76,8 +76,7 @@ public class SettingsCommandGroup : CommandGroup
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
     public async Task<Result> ExecuteSettingsListAsync(
-        [Description("Settings list page")]
-        [MinValue(1)]
+        [Description("Settings list page")] [MinValue(1)]
         int page)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
