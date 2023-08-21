@@ -75,7 +75,7 @@ public class SettingsCommandGroup : CommandGroup
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteSettingsListAsync(
+    public async Task<Result> ExecuteListSettingsAsync(
         [Description("Settings list page")] [MinValue(1)]
         int page)
     {
@@ -156,7 +156,7 @@ public class SettingsCommandGroup : CommandGroup
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Change settings for this server")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteSettingsAsync(
+    public async Task<Result> ExecuteEditSettingsAsync(
         [Description("The setting whose value you want to change")]
         string setting,
         [Description("Setting value")] string value)
