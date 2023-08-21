@@ -68,16 +68,15 @@ public class SettingsCommandGroup : CommandGroup
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
-    [Command("settingslist")]
+    [Command("listsettings")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Shows settings list for this server")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteSettingsListAsync(
-        [Description("Settings list page")]
-        [MinValue(1)]
+    public async Task<Result> ExecuteListSettingsAsync(
+        [Description("Settings list page")] [MinValue(1)]
         int page)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
@@ -150,14 +149,14 @@ public class SettingsCommandGroup : CommandGroup
     /// <param name="setting">The setting to modify.</param>
     /// <param name="value">The new value of the setting.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
-    [Command("settings")]
+    [Command("editsettings")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
     [Description("Change settings for this server")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteSettingsAsync(
+    public async Task<Result> ExecuteEditSettingsAsync(
         [Description("The setting whose value you want to change")]
         string setting,
         [Description("Setting value")] string value)
