@@ -92,6 +92,7 @@ public sealed class Boyfriend
                         .AddHostedService<MemberUpdateService>()
                         .AddHostedService<ScheduledEventUpdateService>()
                         .AddHostedService<SongUpdateService>()
+                        .AddHostedService<BackgroundGuildDataSaverService>()
                         // Slash commands
                         .AddCommandTree()
                         .WithCommandGroup<AboutCommandGroup>()
