@@ -44,15 +44,15 @@ public sealed class GuildDataService : IHostedService
         var tasks = new List<Task>();
         foreach (var data in _datas.Values)
         {
-            await using var settingsStream = File.OpenWrite(data.SettingsPath);
+            await using var settingsStream = File.Create(data.SettingsPath);
             tasks.Add(JsonSerializer.SerializeAsync(settingsStream, data.Settings, cancellationToken: ct));
 
-            await using var eventsStream = File.OpenWrite(data.ScheduledEventsPath);
+            await using var eventsStream = File.Create(data.ScheduledEventsPath);
             tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
 
             foreach (var memberData in data.MemberData.Values)
             {
-                await using var memberDataStream = File.OpenWrite($"{data.MemberDataPath}/{memberData.Id}.json");
+                await using var memberDataStream = File.Create($"{data.MemberDataPath}/{memberData.Id}.json");
                 tasks.Add(JsonSerializer.SerializeAsync(memberDataStream, memberData, cancellationToken: ct));
             }
         }

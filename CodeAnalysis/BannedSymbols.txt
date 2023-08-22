@@ -17,3 +17,4 @@ M:Humanizer.InflectorExtensions.Kebaberize(System.String);Humanizer's .Kebaberiz
 P:System.DateTime.Now;Use System.DateTime.UtcNow instead.
 P:System.DateTimeOffset.Now;Use System.DateTimeOffset.UtcNow instead.
 P:System.DateTimeOffset.DateTime;Use System.DateTimeOffset.UtcDateTime instead.
+M:System.IO.File.OpenWrite(System.String);File.OpenWrite(string) does not clear the file before writing to it. Use File.Create(string) instead.
