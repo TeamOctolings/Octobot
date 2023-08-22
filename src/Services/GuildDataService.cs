@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest.Core;
 
@@ -15,12 +16,14 @@ public sealed class GuildDataService : IHostedService
 {
     private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
     private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly ILogger<GuildDataService> _logger;
 
     // https://github.com/dotnet/aspnetcore/issues/39139
     public GuildDataService(
-        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi)
+        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi, ILogger<GuildDataService> logger)
     {
         _guildApi = guildApi;
+        _logger = logger;
         lifetime.ApplicationStopping.Register(ApplicationStopping);
     }
 
@@ -39,8 +42,9 @@ public sealed class GuildDataService : IHostedService
         SaveAsync(CancellationToken.None).GetAwaiter().GetResult();
     }
 
-    private async Task SaveAsync(CancellationToken ct)
+    public async Task SaveAsync(CancellationToken ct)
     {
+        _logger.LogInformation("Saving guild data...");
         var tasks = new List<Task>();
         foreach (var data in _datas.Values)
         {
@@ -89,7 +93,7 @@ public sealed class GuildDataService : IHostedService
 
         await using var eventsStream = File.OpenRead(scheduledEventsPath);
         var events
-            = JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
+            = await JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
                 eventsStream, cancellationToken: ct);
 
         var memberData = new Dictionary<ulong, MemberData>();
@@ -113,7 +117,7 @@ public sealed class GuildDataService : IHostedService
 
         var finalData = new GuildData(
             jsonSettings ?? new JsonObject(), settingsPath,
-            await events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
+            events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
             memberData, memberDataPath);
 
         _datas.TryAdd(guildId, finalData);
