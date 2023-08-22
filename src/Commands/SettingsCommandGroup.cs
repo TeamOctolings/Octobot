@@ -26,6 +26,13 @@ namespace Boyfriend.Commands;
 [UsedImplicitly]
 public class SettingsCommandGroup : CommandGroup
 {
+    /// <summary>
+    ///     Represents all options as an array of objects implementing <see cref="IOption" />.
+    /// </summary>
+    /// <remarks>
+    ///     WARNING: If you update this array in any way, you must also update <see cref="AllOptionsEnum" /> and make sure
+    ///     that the orders match.
+    /// </remarks>
     private static readonly IOption[] AllOptions =
     {
         GuildSettings.Language,
@@ -158,7 +165,7 @@ public class SettingsCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteEditSettingsAsync(
         [Description("The setting whose value you want to change")]
-        string setting,
+        AllOptionsEnum setting,
         [Description("Setting value")] string value)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
@@ -181,16 +188,14 @@ public class SettingsCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await EditSettingAsync(setting, value, data, channelId, user, currentUser, CancellationToken);
+        return await EditSettingAsync(AllOptions[(int)setting], value, data, channelId, user, currentUser,
+            CancellationToken);
     }
 
     private async Task<Result> EditSettingAsync(
-        string setting, string value, GuildData data, Snowflake channelId, IUser user, IUser currentUser,
+        IOption option, string value, GuildData data, Snowflake channelId, IUser user, IUser currentUser,
         CancellationToken ct = default)
     {
-        var option = AllOptions.Single(
-            o => string.Equals(setting, o.Name, StringComparison.InvariantCultureIgnoreCase));
-
         var setResult = option.Set(data.Settings, value);
         if (!setResult.IsSuccess)
         {
