@@ -21,7 +21,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Publish solution
-        run: dotnet publish -c Release -r linux-x64 --no-self-contained -p:PublishReadyToRun=true
+        run: dotnet publish $PUBLISH_FLAGS
+        env:
+          PUBLISH_FLAGS: ${{vars.PUBLISH_FLAGS}}
 
       - name: Setup SSH key
         run: |
@@ -33,29 +35,30 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_HOST: ${{secrets.SSH_HOST}}
 
-      - name: Quit currently running instance
-        continue-on-error: true
+      - name: Stop currently running instance
         run: |
-          ssh $SSH_USER@$SSH_HOST pkill --signal SIGQUIT Boyfriend
+          ssh $SSH_USER@$SSH_HOST $STOP_COMMAND
         shell: bash
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
+          STOP_COMMAND: ${{vars.STOP_COMMAND}}
 
       - name: Upload published solution
         run: |
-          scp -r bin/Release/net7.0/linux-x64/publish/* $SSH_USER@$SSH_HOST:$UPLOAD_DESTINATION
+          scp -r $UPLOAD_FROM $SSH_USER@$SSH_HOST:$UPLOAD_TO
         shell: bash
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
-          UPLOAD_DESTINATION: ${{secrets.UPLOAD_DESTINATION}}
+          UPLOAD_FROM: ${{vars.UPLOAD_FROM}}
+          UPLOAD_TO: ${{vars.UPLOAD_TO}}
 
-      - name: Start uploaded solution
+      - name: Start new instance
         run: |
-          ssh $SSH_USER@$SSH_HOST $COMMAND
+          ssh $SSH_USER@$SSH_HOST $START_COMMAND
         shell: bash
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
-          COMMAND: ${{secrets.COMMAND}}
+          START_COMMAND: ${{vars.START_COMMAND}}
