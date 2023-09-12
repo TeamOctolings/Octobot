@@ -63,7 +63,8 @@ public sealed partial class MemberUpdateService : BackgroundService
         var guildData = await _guildData.GetData(guildId, ct);
         var defaultRole = GuildSettings.DefaultRole.Get(guildData.Settings);
         var failedResults = new List<Result>();
-        foreach (var data in guildData.MemberData.Values)
+        var memberDatas = guildData.MemberData.Values.ToArray();
+        foreach (var data in memberDatas)
         {
             var tickResult = await TickMemberDataAsync(guildId, guildData, defaultRole, data, ct);
             failedResults.AddIfFailed(tickResult);
