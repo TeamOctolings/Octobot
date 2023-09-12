@@ -85,7 +85,7 @@ public class RemindCommandGroup : CommandGroup
         }
 
         var builder = new StringBuilder();
-        for (var i = 0; i < data.Reminders.Count; i++)
+        for (var i = data.Reminders.Count - 1; i >= 0; i--)
         {
             var reminder = data.Reminders[i];
             builder.AppendLine(
@@ -168,8 +168,7 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteDeleteReminderAsync(
-        [Description("Index of reminder to delete")]
-        [MinValue(0)]
+        [Description("Index of reminder to delete")] [MinValue(0)]
         int index)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))

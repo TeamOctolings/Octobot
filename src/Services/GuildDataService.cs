@@ -46,7 +46,8 @@ public sealed class GuildDataService : IHostedService
     {
         _logger.LogInformation("Saving guild data...");
         var tasks = new List<Task>();
-        foreach (var data in _datas.Values)
+        var datas = _datas.Values.ToArray();
+        foreach (var data in datas)
         {
             await using var settingsStream = File.Create(data.SettingsPath);
             tasks.Add(JsonSerializer.SerializeAsync(settingsStream, data.Settings, cancellationToken: ct));
@@ -54,7 +55,8 @@ public sealed class GuildDataService : IHostedService
             await using var eventsStream = File.Create(data.ScheduledEventsPath);
             tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
 
-            foreach (var memberData in data.MemberData.Values)
+            var memberDatas = data.MemberData.Values.ToArray();
+            foreach (var memberData in memberDatas)
             {
                 await using var memberDataStream = File.Create($"{data.MemberDataPath}/{memberData.Id}.json");
                 tasks.Add(JsonSerializer.SerializeAsync(memberDataStream, memberData, cancellationToken: ct));
