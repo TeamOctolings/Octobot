@@ -21,7 +21,12 @@ public sealed class SongUpdateService : BackgroundService
         ("SCATTLE - Hypertension", new TimeSpan(0, 3, 18)),
         ("KEYGEN CHURCH - Tenebre Rosso Sangue", new TimeSpan(0, 3, 53)),
         ("Chipzel - Swing Me Another 6", new TimeSpan(0, 5, 32)),
-        ("Noisecream - Mist of Rage", new TimeSpan(0, 2, 25))
+        ("Noisecream - Mist of Rage", new TimeSpan(0, 2, 25)),
+        ("EDWXRDX - CONSCIENCE", new TimeSpan(0, 2, 16)),
+        ("dontleaveme - afterward", new TimeSpan(0, 2, 29)),
+        ("Clams Casino - I'm God", new TimeSpan(0, 4, 37)),
+        ("Jupyter - Starboy", new TimeSpan(0, 2, 35)),
+        ("VØJ, Narvent - Memory Reboot", new TimeSpan(0, 3, 29))
     };
 
     private readonly List<Activity> _activityList = new(1)
