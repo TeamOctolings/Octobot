@@ -24,9 +24,9 @@ public sealed class SongUpdateService : BackgroundService
         ("Noisecream - Mist of Rage", new TimeSpan(0, 2, 25)),
         ("EDWXRDX - CONSCIENCE", new TimeSpan(0, 2, 16)),
         ("dontleaveme - afterward", new TimeSpan(0, 2, 29)),
-        ("Ferdous - Gravity", new TimeSpan(0, 4, 37)),
-        ("The Drums - Money", new TimeSpan(0, 2, 35)),
-        ("Derek Pope - War Machine", new TimeSpan(0, 3, 29))
+        ("Ferdous - Gravity", new TimeSpan(0, 2, 38)),
+        ("The Drums - Money", new TimeSpan(0, 3, 53)),
+        ("Derek Pope - War Machine", new TimeSpan(0, 3, 39))
     };
 
     private readonly List<Activity> _activityList = new(1)
