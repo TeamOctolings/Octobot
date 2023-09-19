@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://cdn.upload.systems/uploads/v40uV9K1.png" alt="Boyfriend logo" width="75%"/>
+    <img src="https://mctaylors.ddns.net/cdn/boyfriend-banner-light-padding.png" alt="Boyfriend banner" width="75%"/>
 </p>
 
 ![License](https://img.shields.io/github/license/LabsDevelopment/Boyfriend)

@@ -84,7 +84,7 @@ public class AboutCommandGroup : CommandGroup
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl("https://cdn.upload.systems/uploads/JFAaX5vr.png")
+            .WithImageUrl("https://mctaylors.ddns.net/cdn/boyfriend-banner-light.png")
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
