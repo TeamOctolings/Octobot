@@ -79,30 +79,9 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         var failedResults = new List<Result>();
         var id = data.Id.ToSnowflake();
-        if (DateTimeOffset.UtcNow > data.BannedUntil)
-        {
-            var unbanResult = await _guildApi.RemoveGuildBanAsync(
-                guildId, id, Messages.PunishmentExpired.EncodeHeader(), ct);
-            if (unbanResult.IsSuccess)
-            {
-                data.BannedUntil = null;
-            }
 
-            return unbanResult;
-        }
-
-        if (DateTimeOffset.UtcNow > data.MutedUntil)
-        {
-            var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
-                guildId, id, roles: data.Roles.ConvertAll(r => r.ToSnowflake()),
-                reason: Messages.PunishmentExpired.EncodeHeader(), ct: ct);
-            if (unmuteResult.IsSuccess)
-            {
-                data.MutedUntil = null;
-            }
-
-            return unmuteResult;
-        }
+        var punishmentsResult = await CheckMemberPunishmentsAsync(guildId, id, data, ct);
+        failedResults.AddIfFailed(punishmentsResult);
 
         if (defaultRole.Value is not 0 && !data.Roles.Contains(defaultRole.Value))
         {
@@ -136,6 +115,35 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
 
         return failedResults.AggregateErrors();
+    }
+
+    private async Task<Result> CheckMemberPunishmentsAsync(
+        Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct)
+    {
+        if (DateTimeOffset.UtcNow > data.BannedUntil)
+        {
+            var unbanResult = await _guildApi.RemoveGuildBanAsync(
+                guildId, id, Messages.PunishmentExpired.EncodeHeader(), ct);
+            if (unbanResult.IsSuccess)
+            {
+                data.BannedUntil = null;
+            }
+
+            return unbanResult;
+        }
+
+        if (DateTimeOffset.UtcNow > data.MutedUntil)
+        {
+            var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
+                guildId, id, roles: data.Roles.ConvertAll(r => r.ToSnowflake()),
+                reason: Messages.PunishmentExpired.EncodeHeader(), ct: ct);
+            if (unmuteResult.IsSuccess)
+            {
+                data.MutedUntil = null;
+            }
+        }
+
+        return Result.FromSuccess();
     }
 
     private async Task<Result> FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member,

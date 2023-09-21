@@ -133,11 +133,16 @@ public class MuteCommandGroup : CommandGroup
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
         var memberData = data.GetOrCreateMemberData(target.ID);
-        memberData.MutedUntil = DateTimeOffset.UtcNow.Add(duration);
+        memberData.MutedUntil = until;
         var assignRoles = new List<Snowflake>
         {
             GuildSettings.MuteRole.Get(data.Settings)
         };
+        if (!GuildSettings.RemoveRolesOnMute.Get(data.Settings))
+        {
+            assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
+        }
+
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, roles: assignRoles,
             reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
@@ -170,7 +175,7 @@ public class MuteCommandGroup : CommandGroup
         IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
         IUser user, IUser currentUser, CancellationToken ct = default)
     {
-        if (duration.Days >= 28)
+        if (duration.TotalDays >= 28)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.BotCannotMuteTarget, currentUser)
                 .WithDescription(Messages.DurationRequiredForTimeOuts)
