@@ -141,6 +141,8 @@ public sealed partial class MemberUpdateService : BackgroundService
             {
                 data.MutedUntil = null;
             }
+
+            return unmuteResult;
         }
 
         return Result.FromSuccess();
