@@ -101,11 +101,17 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await MuteUserAsync(
+        if (GuildSettings.MuteRole.Get(data.Settings) != 0)
+        {
+            return await RoleMuteUserAsync(
+                target, reason, duration, guildId, data, channelId, user, currentUser, CancellationToken);
+        }
+
+        return await TimeoutUserAsync(
             target, reason, duration, guildId, data, channelId, user, currentUser, CancellationToken);
     }
 
-    private async Task<Result> MuteUserAsync(
+    private async Task<Result> RoleMuteUserAsync(
         IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
         IUser user, IUser currentUser, CancellationToken ct = default)
     {
@@ -126,9 +132,79 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.MutedUntil = until;
+        var assignRoles = new List<Snowflake>
+        {
+            GuildSettings.MuteRole.Get(data.Settings)
+        };
+        if (!GuildSettings.RemoveRolesOnMute.Get(data.Settings))
+        {
+            assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
+        }
+
+        var muteResult = await _guildApi.ModifyGuildMemberAsync(
+            guildId, target.ID, roles: assignRoles,
+            reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
+        if (!muteResult.IsSuccess)
+        {
+            return Result.FromError(muteResult.Error);
+        }
+
+        var title = string.Format(Messages.UserMuted, target.GetTag());
+        var description = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+            .Append(
+                string.Format(
+                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
+
+        var logResult = _utility.LogActionAsync(
+            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
+        if (!logResult.IsSuccess)
+        {
+            return Result.FromError(logResult.Error);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.UserMuted, target.GetTag()), target)
+            .WithColour(ColorsList.Green).Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    private async Task<Result> TimeoutUserAsync(
+        IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
+        IUser user, IUser currentUser, CancellationToken ct = default)
+    {
+        if (duration.TotalDays >= 28)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.BotCannotMuteTarget, currentUser)
+                .WithDescription(Messages.DurationRequiredForTimeOuts)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
+        }
+
+        var interactionResult
+            = await _utility.CheckInteractionsAsync(
+                guildId, user.ID, target.ID, "Mute", ct);
+        if (!interactionResult.IsSuccess)
+        {
+            return Result.FromError(interactionResult);
+        }
+
+        if (interactionResult.Entity is not null)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
+        var until = DateTimeOffset.UtcNow.Add(duration); // >:)
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: until, ct: ct);
+
         if (!muteResult.IsSuccess)
         {
             return Result.FromError(muteResult.Error);
@@ -211,11 +287,63 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await UnmuteUserAsync(
+        if (data.GetOrCreateMemberData(target.ID).MutedUntil is not null)
+        {
+            return await RemoveMuteRoleUserAsync(
+                target, reason, guildId, data, channelId, user, currentUser, CancellationToken);
+        }
+
+        return await RemoveTimeoutUserAsync(
             target, reason, guildId, data, channelId, user, currentUser, CancellationToken);
     }
 
-    private async Task<Result> UnmuteUserAsync(
+    private async Task<Result> RemoveMuteRoleUserAsync(
+        IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
+        IUser currentUser, CancellationToken ct = default)
+    {
+        var interactionResult
+            = await _utility.CheckInteractionsAsync(
+                guildId, user.ID, target.ID, "Unmute", ct);
+        if (!interactionResult.IsSuccess)
+        {
+            return Result.FromError(interactionResult);
+        }
+
+        if (interactionResult.Entity is not null)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
+            guildId, target.ID, roles: memberData.Roles.ConvertAll(r => r.ToSnowflake()),
+            reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
+        memberData.MutedUntil = null;
+        if (!unmuteResult.IsSuccess)
+        {
+            return Result.FromError(unmuteResult.Error);
+        }
+
+        var title = string.Format(Messages.UserUnmuted, target.GetTag());
+        var description = string.Format(Messages.DescriptionActionReason, reason);
+        var logResult = _utility.LogActionAsync(
+            data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
+        if (!logResult.IsSuccess)
+        {
+            return Result.FromError(logResult.Error);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.UserUnmuted, target.GetTag()), target)
+            .WithColour(ColorsList.Green).Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    private async Task<Result> RemoveTimeoutUserAsync(
         IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
         IUser currentUser, CancellationToken ct = default)
     {
@@ -236,7 +364,7 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
-            guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
+            guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: null, ct: ct);
         if (!unmuteResult.IsSuccess)
         {
