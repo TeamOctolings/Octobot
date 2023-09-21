@@ -23,7 +23,11 @@ public class GuildMemberUpdateResponder : IResponder<IGuildMemberUpdate>
     public async Task<Result> RespondAsync(IGuildMemberUpdate gatewayEvent, CancellationToken ct = default)
     {
         var memberData = await _guildData.GetMemberData(gatewayEvent.GuildID, gatewayEvent.User.ID, ct);
-        memberData.Roles = gatewayEvent.Roles.ToList().ConvertAll(r => r.Value);
+        if (memberData.MutedUntil is null)
+        {
+            memberData.Roles = gatewayEvent.Roles.ToList().ConvertAll(r => r.Value);
+        }
+
         return Result.FromSuccess();
     }
 }

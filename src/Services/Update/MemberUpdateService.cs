@@ -91,6 +91,19 @@ public sealed partial class MemberUpdateService : BackgroundService
             return unbanResult;
         }
 
+        if (DateTimeOffset.UtcNow > data.MutedUntil)
+        {
+            var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
+                guildId, id, roles: data.Roles.ConvertAll(r => r.ToSnowflake()),
+                reason: Messages.PunishmentExpired.EncodeHeader(), ct: ct);
+            if (unmuteResult.IsSuccess)
+            {
+                data.MutedUntil = null;
+            }
+
+            return unmuteResult;
+        }
+
         if (defaultRole.Value is not 0 && !data.Roles.Contains(defaultRole.Value))
         {
             var addResult = await _guildApi.AddGuildMemberRoleAsync(
