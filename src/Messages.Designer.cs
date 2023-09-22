@@ -1001,5 +1001,17 @@ namespace Boyfriend {
                 return ResourceManager.GetString("NoRemindersFound", resourceCulture);
             }
         }
+
+        internal static string SingleSettingReset {
+            get {
+                return ResourceManager.GetString("SingleSettingReset", resourceCulture);
+            }
+        }
+
+        internal static string AllSettingsReset {
+            get {
+                return ResourceManager.GetString("AllSettingsReset", resourceCulture);
+            }
+        }
     }
 }

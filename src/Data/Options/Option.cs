@@ -48,4 +48,10 @@ public class Option<T> : IOption
         var property = settings[Name];
         return property != null ? property.GetValue<T>() : DefaultValue;
     }
+
+    public Result Reset(JsonNode settings)
+    {
+        settings[Name] = null;
+        return Result.FromSuccess();
+    }
 }

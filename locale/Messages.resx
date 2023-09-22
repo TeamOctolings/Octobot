@@ -594,4 +594,10 @@
     <data name="NoRemindersFound" xml:space="preserve">
         <value>You don't have any reminders created!</value>
     </data>
+    <data name="SingleSettingReset" xml:space="preserve">
+        <value>Setting {0} reset</value>
+    </data>
+    <data name="AllSettingsReset" xml:space="preserve">
+        <value>All settings have been reset</value>
+    </data>
 </root>
