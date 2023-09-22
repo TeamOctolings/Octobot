@@ -44,7 +44,6 @@ public sealed class GuildDataService : IHostedService
 
     public async Task SaveAsync(CancellationToken ct)
     {
-        _logger.LogInformation("Saving guild data...");
         var tasks = new List<Task>();
         var datas = _datas.Values.ToArray();
         foreach (var data in datas)
