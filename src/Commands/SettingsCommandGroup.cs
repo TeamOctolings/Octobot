@@ -277,7 +277,7 @@ public class SettingsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.SingleSettingReset, Markdown.InlineCode(option.Name)), currentUser)
+                string.Format(Messages.SingleSettingReset, option.Name), currentUser)
             .WithColour(ColorsList.Green)
             .Build();
 
