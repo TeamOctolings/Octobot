@@ -8,9 +8,5 @@ public interface IOption
     string Name { get; }
     string Display(JsonNode settings);
     Result Set(JsonNode settings, string from);
-
-    public void Reset(JsonNode settings)
-    {
-        settings[Name] = null;
-    }
+    Result Reset(JsonNode settings);
 }

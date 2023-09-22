@@ -1002,15 +1002,15 @@ namespace Boyfriend {
             }
         }
 
-        internal static string SettingsReset {
+        internal static string SingleSettingReset {
             get {
-                return ResourceManager.GetString("SettingsReset", resourceCulture);
+                return ResourceManager.GetString("SingleSettingReset", resourceCulture);
             }
         }
 
-        internal static string SettingsResetOptional {
+        internal static string AllSettingsReset {
             get {
-                return ResourceManager.GetString("SettingsResetOptional", resourceCulture);
+                return ResourceManager.GetString("AllSettingsReset", resourceCulture);
             }
         }
     }

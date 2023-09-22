@@ -261,19 +261,23 @@ public class SettingsCommandGroup : CommandGroup
 
         if (setting is not null)
         {
-            return await ResetSettingAsync(cfg, currentUser, AllOptions[(int)setting], CancellationToken);
+            return await ResetSingleSettingAsync(cfg, currentUser, AllOptions[(int)setting], CancellationToken);
         }
 
         return await ResetAllSettingsAsync(cfg, currentUser, CancellationToken);
     }
 
-    private async Task<Result> ResetSettingAsync(JsonNode cfg, IUser currentUser,
+    private async Task<Result> ResetSingleSettingAsync(JsonNode cfg, IUser currentUser,
         IOption option, CancellationToken ct = default)
     {
-        option.Reset(cfg);
+        var resetResult = option.Reset(cfg);
+        if (!resetResult.IsSuccess)
+        {
+            return Result.FromError(resetResult.Error);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.SettingsResetOptional, option.Name), currentUser)
+                string.Format(Messages.SingleSettingReset, option.Name), currentUser)
             .WithColour(ColorsList.Green)
             .Build();
 
@@ -285,10 +289,14 @@ public class SettingsCommandGroup : CommandGroup
     {
         foreach (var option in AllOptions)
         {
-            option.Reset(cfg);
+            var resetResult = option.Reset(cfg);
+            if (!resetResult.IsSuccess)
+            {
+                return Result.FromError(resetResult.Error);
+            }
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsReset, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.AllSettingsReset, currentUser)
             .WithColour(ColorsList.Green)
             .Build();
 
