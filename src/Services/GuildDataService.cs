@@ -73,11 +73,14 @@ public sealed class GuildDataService : IHostedService
 
     private async Task<GuildData> InitializeData(Snowflake guildId, CancellationToken ct = default)
     {
-        var idString = $"{guildId}";
-        var memberDataPath = $"{guildId}/MemberData";
-        var settingsPath = $"{guildId}/Settings.json";
-        var scheduledEventsPath = $"{guildId}/ScheduledEvents.json";
-        Directory.CreateDirectory(idString);
+        var path = $"GuildData/{guildId}";
+        var memberDataPath = $"{path}/MemberData";
+        var settingsPath = $"{path}/Settings.json";
+        var scheduledEventsPath = $"{path}/ScheduledEvents.json";
+
+        await MigrateGuildData(guildId, path);
+
+        Directory.CreateDirectory(path);
 
         if (!File.Exists(settingsPath))
         {
@@ -125,6 +128,19 @@ public sealed class GuildDataService : IHostedService
         _datas.TryAdd(guildId, finalData);
 
         return finalData;
+    }
+
+    private static Task MigrateGuildData(Snowflake guildId, string path)
+    {
+        var oldPath = $"{guildId}";
+
+        if (Directory.Exists(oldPath))
+        {
+            Directory.CreateDirectory($"{path}/..");
+            Directory.Move(oldPath, path);
+        }
+
+        return Task.CompletedTask;
     }
 
     public async Task<JsonNode> GetSettings(Snowflake guildId, CancellationToken ct = default)
