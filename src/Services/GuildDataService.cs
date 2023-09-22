@@ -139,7 +139,7 @@ public sealed class GuildDataService : IHostedService
             Directory.CreateDirectory($"{newPath}/..");
             Directory.Move(oldPath, newPath);
 
-            _logger.LogInformation("Migrated GuildData: \"{oldPath}\" -> \"{newPath}\"", oldPath, newPath);
+            _logger.LogInformation("Moved guild data to separate folder: \"{OldPath}\" -> \"{NewPath}\"", oldPath, newPath);
         }
     }
 
