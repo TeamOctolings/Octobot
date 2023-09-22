@@ -287,13 +287,17 @@ public class SettingsCommandGroup : CommandGroup
     private async Task<Result> ResetAllSettingsAsync(JsonNode cfg, IUser currentUser,
         CancellationToken ct = default)
     {
-        foreach (var option in AllOptions)
+        var failedResults = new List<Result>();
+        foreach (var resetResult in AllOptions.Select(option => option.Reset(cfg)))
         {
-            var resetResult = option.Reset(cfg);
-            if (!resetResult.IsSuccess)
-            {
-                return Result.FromError(resetResult.Error);
-            }
+            failedResults.AddIfFailed(resetResult);
+        }
+
+        var errors = failedResults.AggregateErrors();
+
+        if (!errors.IsSuccess)
+        {
+            return errors;
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AllSettingsReset, currentUser)
