@@ -594,4 +594,10 @@
     <data name="NoRemindersFound" xml:space="preserve">
         <value>У вас нет созданных напоминаний!</value>
     </data>
+    <data name="SettingsResetOptional" xml:space="preserve">
+        <value>Настройка {0} сброшена</value>
+    </data>
+    <data name="SettingsReset" xml:space="preserve">
+        <value>Все настройки были сброшены</value>
+    </data>
 </root>

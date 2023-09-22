@@ -229,4 +229,69 @@ public class SettingsCommandGroup : CommandGroup
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
+
+    /// <summary>
+    ///     A slash command that resets per-guild GuildSettings.
+    /// </summary>
+    /// <param name="setting">The setting to reset.</param>
+    /// <returns>A feedback sending result which may have succeeded.</returns>
+    [Command("resetsettings")]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
+    [RequireDiscordPermission(DiscordPermission.ManageGuild)]
+    [Description("Reset settings for this server")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteResetSettingsAsync(
+        [Description("Setting to reset")] AllOptionsEnum? setting = null)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out _))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
+
+        var cfg = await _guildData.GetSettings(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(cfg);
+
+        if (setting is not null)
+        {
+            return await ResetSettingAsync(cfg, currentUser, AllOptions[(int)setting], CancellationToken);
+        }
+
+        return await ResetAllSettingsAsync(cfg, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> ResetSettingAsync(JsonNode cfg, IUser currentUser,
+        IOption option, CancellationToken ct = default)
+    {
+        option.Reset(cfg);
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.SettingsResetOptional, option.Name), currentUser)
+            .WithColour(ColorsList.Green)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    private async Task<Result> ResetAllSettingsAsync(JsonNode cfg, IUser currentUser,
+        CancellationToken ct = default)
+    {
+        foreach (var option in AllOptions)
+        {
+            option.Reset(cfg);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsReset, currentUser)
+            .WithColour(ColorsList.Green)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
 }

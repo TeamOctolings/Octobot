@@ -594,4 +594,10 @@
     <data name="NoRemindersFound" xml:space="preserve">
         <value>ты еще не крафтил напоминалки</value>
     </data>
+    <data name="SettingsResetOptional" xml:space="preserve">
+        <value>{0} откачен к заводским</value>
+    </data>
+    <data name="SettingsReset" xml:space="preserve">
+        <value>откатываемся к заводским...</value>
+    </data>
 </root>
