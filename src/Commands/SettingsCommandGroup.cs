@@ -277,7 +277,7 @@ public class SettingsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.SingleSettingReset, option.Name), currentUser)
+                string.Format(Messages.SingleSettingReset, Markdown.InlineCode(option.Name)), currentUser)
             .WithColour(ColorsList.Green)
             .Build();
 
@@ -293,11 +293,9 @@ public class SettingsCommandGroup : CommandGroup
             failedResults.AddIfFailed(resetResult);
         }
 
-        var errors = failedResults.AggregateErrors();
-
-        if (!errors.IsSuccess)
+        if (failedResults.Count is not 0)
         {
-            return errors;
+            return failedResults.AggregateErrors();
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AllSettingsReset, currentUser)
