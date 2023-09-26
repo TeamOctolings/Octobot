@@ -256,9 +256,11 @@ public class BanCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
         }
 
+        var memberData = data.GetOrCreateMemberData(target.ID);
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
             guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct);
+        memberData.MutedUntil = null;
         if (!unbanResult.IsSuccess)
         {
             return Result.FromError(unbanResult.Error);
