@@ -260,7 +260,7 @@ public class BanCommandGroup : CommandGroup
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
             guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct);
-        memberData.MutedUntil = null;
+        memberData.BannedUntil = null;
         if (!unbanResult.IsSuccess)
         {
             return Result.FromError(unbanResult.Error);
