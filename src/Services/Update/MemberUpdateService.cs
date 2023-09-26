@@ -134,6 +134,12 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         if (DateTimeOffset.UtcNow > data.MutedUntil)
         {
+            var isOnServer = await _guildApi.GetGuildMemberAsync(guildId, id, ct);
+            if (!isOnServer.IsSuccess)
+            {
+                return Result.FromSuccess();
+            }
+
             var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
                 guildId, id, roles: data.Roles.ConvertAll(r => r.ToSnowflake()),
                 reason: Messages.PunishmentExpired.EncodeHeader(), ct: ct);
