@@ -264,6 +264,8 @@ public class BanCommandGroup : CommandGroup
             return Result.FromError(unbanResult.Error);
         }
 
+        data.GetOrCreateMemberData(target.ID).BannedUntil = null;
+
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnbanned, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
