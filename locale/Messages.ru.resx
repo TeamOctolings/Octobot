@@ -528,9 +528,9 @@
     <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>Разработчики:</value>
   </data>
-    <data name="AboutTitleWiki" xml:space="preserve">
-    <value>Страница Boyfriend's Wiki:</value>
-  </data>
+    <data name="AboutTitleRepository" xml:space="preserve">
+        <value>Репозиторий Boyfriend</value>
+    </data>
     <data name="AboutBot" xml:space="preserve">
     <value>О Boyfriend</value>
   </data>
@@ -541,8 +541,8 @@
     <value>основной разработчик</value>
   </data>
     <data name="AboutDeveloper@mctaylors" xml:space="preserve">
-    <value>дизайнер лого и эмбедов, создатель Boyfriend's Wiki</value>
-  </data>
+        <value>разработчик и дизайнер, создатель Boyfriend's Wiki</value>
+    </data>
     <data name="ReminderCreated" xml:space="preserve">
         <value>Напоминание для {0} создано</value>
     </data>

@@ -528,15 +528,15 @@
     <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>девелоперы:</value>
   </data>
-    <data name="AboutTitleWiki" xml:space="preserve">
-    <value>страничка Boyfriend's Wiki:</value>
-  </data>
+    <data name="AboutTitleRepository" xml:space="preserve">
+        <value>репа Boyfriend (тык)</value>
+    </data>
     <data name="AboutBot" xml:space="preserve">
     <value>немного о Boyfriend</value>
   </data>
     <data name="AboutDeveloper@mctaylors" xml:space="preserve">
-    <value>скучный лого/эмбед дизайнер создавший Boyfriend's Wiki</value>
-  </data>
+        <value>скучный девелопер + дизайнер создавший Boyfriend's Wiki</value>
+    </data>
     <data name="AboutDeveloper@neroduckale" xml:space="preserve">
     <value>ВАЖНЫЙ соучастник кодинг-стримов @Octol1ttle</value>
   </data>

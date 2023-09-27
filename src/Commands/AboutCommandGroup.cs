@@ -12,7 +12,7 @@ using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
-using Remora.Discord.Extensions.Formatting;
+using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Commands;
@@ -23,20 +23,31 @@ namespace Boyfriend.Commands;
 [UsedImplicitly]
 public class AboutCommandGroup : CommandGroup
 {
-    private static readonly string[] Developers = { "Octol1ttle", "mctaylors", "neroduckale" };
+    private static readonly string[] Developers =
+        { "Octol1ttle", "mctaylors", "neroduckale" };
+
+    private static readonly List<ulong> DevelopersIds =
+        new() { 504343489664909322, 326642240229474304, 474943797063843851 };
+
+    private static readonly List<Snowflake> DevelopersSnowflakes =
+        DevelopersIds.ConvertAll(r => r.ToSnowflake());
+
     private readonly ICommandContext _context;
     private readonly FeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
+    private readonly IDiscordRestGuildAPI _guildApi;
 
     public AboutCommandGroup(
         ICommandContext context, GuildDataService guildData,
-        FeedbackService feedback, IDiscordRestUserAPI userApi)
+        FeedbackService feedback, IDiscordRestUserAPI userApi,
+        IDiscordRestGuildAPI guildApi)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+        _guildApi = guildApi;
     }
 
     /// <summary>
@@ -66,20 +77,26 @@ public class AboutCommandGroup : CommandGroup
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendAboutBotAsync(currentUser, CancellationToken);
+        return await SendAboutBotAsync(currentUser, guildId, CancellationToken);
     }
 
-    private async Task<Result> SendAboutBotAsync(IUser currentUser, CancellationToken ct = default)
+    private async Task<Result> SendAboutBotAsync(IUser currentUser, Snowflake guildId, CancellationToken ct = default)
     {
-        var builder = new StringBuilder().AppendLine(Markdown.Bold(Messages.AboutTitleDevelopers));
-        foreach (var dev in Developers)
+        var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
+        for (var i = 0; i < Developers.Length; i++)
         {
-            builder.AppendLine($"@{dev} — {$"AboutDeveloper@{dev}".Localized()}");
+            var tag = $"@{Developers[i]}";
+            var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, DevelopersSnowflakes[i], ct);
+            if (guildMemberResult.IsSuccess)
+            {
+                tag = $"<@{DevelopersIds[i]}>";
+            }
+
+            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers[i]}".Localized()}");
         }
 
-        builder.AppendLine()
-            .AppendLine(Markdown.Bold(Messages.AboutTitleWiki))
-            .AppendLine("https://github.com/LabsDevelopment/Boyfriend/wiki");
+        builder.Append("### [").Append(Messages.AboutTitleRepository)
+            .Append("](https://github.com/LabsDevelopment/Boyfriend)");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())

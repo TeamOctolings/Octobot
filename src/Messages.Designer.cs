@@ -876,9 +876,9 @@ namespace Boyfriend {
             }
         }
 
-        internal static string AboutTitleWiki {
+        internal static string AboutTitleRepository {
             get {
-                return ResourceManager.GetString("AboutTitleWiki", resourceCulture);
+                return ResourceManager.GetString("AboutTitleRepository", resourceCulture);
             }
         }
 

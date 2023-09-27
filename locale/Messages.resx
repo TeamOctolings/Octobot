@@ -528,15 +528,15 @@
     <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>Developers:</value>
   </data>
-    <data name="AboutTitleWiki" xml:space="preserve">
-    <value>Boyfriend's Wiki Page:</value>
-  </data>
+    <data name="AboutTitleRepository" xml:space="preserve">
+        <value>Boyfriend's Repository</value>
+    </data>
     <data name="AboutBot" xml:space="preserve">
     <value>About Boyfriend</value>
   </data>
     <data name="AboutDeveloper@mctaylors" xml:space="preserve">
-    <value>logo and embed designer, Boyfriend's Wiki creator</value>
-  </data>
+        <value>developer &amp; designer, Boyfriend's Wiki creator</value>
+    </data>
     <data name="AboutDeveloper@Octol1ttle" xml:space="preserve">
     <value>main developer</value>
   </data>
