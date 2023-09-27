@@ -1085,11 +1085,5 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ShowInfoMutedWithMuteRole", resourceCulture);
             }
         }
-
-        internal static string ShowInfoUntil {
-            get {
-                return ResourceManager.GetString("ShowInfoUntil", resourceCulture);
-            }
-        }
     }
 }

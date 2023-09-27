@@ -636,7 +636,4 @@
     <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
         <value>Заглушен с помощью мут роли</value>
     </data>
-    <data name="ShowInfoUntil" xml:space="preserve">
-        <value>До</value>
-    </data>
 </root>

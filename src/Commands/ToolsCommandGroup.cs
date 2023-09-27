@@ -144,8 +144,8 @@ public class ToolsCommandGroup : CommandGroup
         if (memberData.BannedUntil < DateTimeOffset.MaxValue)
         {
             builder.Append("- ").AppendLine(Messages.ShowInfoBanned)
-                .Append(" - ").Append(Messages.ShowInfoUntil).Append(' ')
-                .AppendLine(Markdown.Timestamp(memberData.BannedUntil.Value));
+                .Append(" - ").AppendLine(string.Format(
+                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
         }
 
         if (memberData.BannedUntil >= DateTimeOffset.MaxValue)
@@ -161,15 +161,15 @@ public class ToolsCommandGroup : CommandGroup
         if (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil)
         {
             builder.Append(" - ").AppendLine(Messages.ShowInfoMutedWithMuteRole)
-                .Append(" - ").Append(Messages.ShowInfoUntil).Append(' ')
-                .AppendLine(Markdown.Timestamp(memberData.MutedUntil.Value));
+                .Append(" - ").Append(" - ").AppendLine(string.Format(
+                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.MutedUntil.Value)));
         }
 
         if (guildMember is not null && guildMember.CommunicationDisabledUntil.IsDefined())
         {
             builder.Append(" - ").AppendLine(Messages.ShowInfoMutedWithTimeout)
-                .Append(" - ").Append(Messages.ShowInfoUntil).Append(' ')
-                .AppendLine(Markdown.Timestamp(guildMember.CommunicationDisabledUntil.Value.Value));
+                .Append(" - ").Append(" - ").AppendLine(string.Format(
+                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(guildMember.CommunicationDisabledUntil.Value.Value)));
         }
     }
 }

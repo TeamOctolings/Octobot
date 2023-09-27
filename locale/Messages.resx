@@ -636,7 +636,4 @@
     <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
         <value>Muted with a mute role</value>
     </data>
-    <data name="ShowInfoUntil" xml:space="preserve">
-        <value>Until</value>
-    </data>
 </root>
