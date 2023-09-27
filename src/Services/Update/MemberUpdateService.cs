@@ -123,7 +123,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     private async Task<Result> TryAutoUnbanAsync(
         Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct)
     {
-        if (DateTimeOffset.UtcNow <= data.BannedUntil)
+        if (data.BannedUntil is null || DateTimeOffset.UtcNow <= data.BannedUntil)
         {
             return Result.FromSuccess();
         }
@@ -141,7 +141,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     private async Task<Result> TryAutoUnmuteAsync(
         Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct)
     {
-        if (DateTimeOffset.UtcNow <= data.MutedUntil)
+        if (data.MutedUntil is null || DateTimeOffset.UtcNow <= data.MutedUntil)
         {
             return Result.FromSuccess();
         }
