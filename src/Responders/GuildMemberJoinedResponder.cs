@@ -1,10 +1,13 @@
+using System.Text.Json.Nodes;
 using Boyfriend.Data;
 using Boyfriend.Services;
 using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Gateway.Events;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway.Responders;
+using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Boyfriend.Responders;
@@ -40,15 +43,10 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var cfg = data.Settings;
         var memberData = data.GetOrCreateMemberData(user.ID);
 
-        if (GuildSettings.ReturnRolesOnRejoin.Get(cfg))
+        var returnRolesResult = await ReturnRolesOnRejoinAsync(cfg, memberData, gatewayEvent, user, ct);
+        if (!returnRolesResult.IsSuccess)
         {
-            var result = await _guildApi.ModifyGuildMemberAsync(
-                gatewayEvent.GuildID, user.ID,
-                roles: memberData.Roles.ConvertAll(r => r.ToSnowflake()), ct: ct);
-            if (!result.IsSuccess)
-            {
-                return Result.FromError(result.Error);
-            }
+            return Result.FromError(returnRolesResult.Error);
         }
 
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
@@ -82,5 +80,31 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: new[] { built },
             allowedMentions: Boyfriend.NoMentions, ct: ct);
+    }
+
+    private async Task<Result> ReturnRolesOnRejoinAsync(
+        JsonNode cfg, MemberData memberData, IGuildMemberAdd gatewayEvent, IUser user, CancellationToken ct)
+    {
+        if (!GuildSettings.ReturnRolesOnRejoin.Get(cfg))
+        {
+            return Result.FromSuccess();
+        }
+
+        var assignRoles = new List<Snowflake>();
+
+        if (!GuildSettings.RemoveRolesOnMute.Get(cfg))
+        {
+            assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
+        }
+
+        if (memberData.MutedUntil is not null)
+        {
+            assignRoles.Add(GuildSettings.MuteRole.Get(cfg));
+        }
+
+        var result = await _guildApi.ModifyGuildMemberAsync(
+            gatewayEvent.GuildID, user.ID,
+            roles: assignRoles, ct: ct);
+        return !result.IsSuccess ? Result.FromError(result.Error) : Result.FromSuccess();
     }
 }
