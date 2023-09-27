@@ -259,11 +259,11 @@ public class BanCommandGroup : CommandGroup
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
             guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
             ct);
-        data.GetOrCreateMemberData(target.ID).BannedUntil = null;
         if (!unbanResult.IsSuccess)
         {
             return Result.FromError(unbanResult.Error);
         }
+        data.GetOrCreateMemberData(target.ID).BannedUntil = null;
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnbanned, target.GetTag()), target)
