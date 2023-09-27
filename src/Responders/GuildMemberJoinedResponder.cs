@@ -92,7 +92,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 
         var assignRoles = new List<Snowflake>();
 
-        if (!GuildSettings.RemoveRolesOnMute.Get(cfg))
+        if (!GuildSettings.RemoveRolesOnMute.Get(cfg) || memberData.MutedUntil is null)
         {
             assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
         }
