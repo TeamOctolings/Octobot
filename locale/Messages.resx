@@ -600,4 +600,43 @@
     <data name="AllSettingsReset" xml:space="preserve">
         <value>All settings have been reset</value>
     </data>
+    <data name="ShowInfoDisplayName" xml:space="preserve">
+        <value>Display Name</value>
+    </data>
+    <data name="NotPresent" xml:space="preserve">
+        <value>Not present</value>
+    </data>
+    <data name="ShowInfoTitle" xml:space="preserve">
+        <value>Information about {0}</value>
+    </data>
+    <data name="ShowInfoMuted" xml:space="preserve">
+        <value>Muted</value>
+    </data>
+    <data name="ShowInfoDiscordUserSince" xml:space="preserve">
+        <value>Discord user since</value>
+    </data>
+    <data name="ShowInfoMentionedAs" xml:space="preserve">
+        <value>Mentioned as</value>
+    </data>
+    <data name="ShowInfoBanned" xml:space="preserve">
+        <value>Banned</value>
+    </data>
+    <data name="ShowInfoPunishments" xml:space="preserve">
+        <value>Punishments</value>
+    </data>
+    <data name="ShowInfoBannedPermanently" xml:space="preserve">
+        <value>Banned permanently</value>
+    </data>
+    <data name="ShowInfoNotOnServer" xml:space="preserve">
+        <value>Not on the server</value>
+    </data>
+    <data name="ShowInfoMutedWithTimeout" xml:space="preserve">
+        <value>Muted with a timeout</value>
+    </data>
+    <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
+        <value>Muted with a mute role</value>
+    </data>
+    <data name="ShowInfoUntil" xml:space="preserve">
+        <value>Until</value>
+    </data>
 </root>

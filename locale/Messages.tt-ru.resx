@@ -600,4 +600,43 @@
     <data name="AllSettingsReset" xml:space="preserve">
         <value>откатываемся к заводским...</value>
     </data>
+    <data name="ShowInfoDisplayName" xml:space="preserve">
+        <value>дисплейнейм</value>
+    </data>
+    <data name="NotPresent" xml:space="preserve">
+        <value>нету такого</value>
+    </data>
+    <data name="ShowInfoTitle" xml:space="preserve">
+        <value>деанон {0}</value>
+    </data>
+    <data name="ShowInfoMuted" xml:space="preserve">
+        <value>замучен</value>
+    </data>
+    <data name="ShowInfoDiscordUserSince" xml:space="preserve">
+        <value>юзер Discord со времен</value>
+    </data>
+    <data name="ShowInfoMentionedAs" xml:space="preserve">
+        <value>пинается как</value>
+    </data>
+    <data name="ShowInfoBanned" xml:space="preserve">
+        <value>забанен</value>
+    </data>
+    <data name="ShowInfoPunishments" xml:space="preserve">
+        <value>приколы полученные по заслугам</value>
+    </data>
+    <data name="ShowInfoBannedPermanently" xml:space="preserve">
+        <value>забанен</value>
+    </data>
+    <data name="ShowInfoNotOnServer" xml:space="preserve">
+        <value>вышел из сервера</value>
+    </data>
+    <data name="ShowInfoMutedWithTimeout" xml:space="preserve">
+        <value>замучен таймаутом</value>
+    </data>
+    <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
+        <value>замучен ролькой</value>
+    </data>
+    <data name="ShowInfoUntil" xml:space="preserve">
+        <value>до</value>
+    </data>
 </root>

@@ -1013,5 +1013,83 @@ namespace Boyfriend {
                 return ResourceManager.GetString("AllSettingsReset", resourceCulture);
             }
         }
+
+        internal static string NotPresent {
+            get {
+                return ResourceManager.GetString("NotPresent", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoTitle {
+            get {
+                return ResourceManager.GetString("ShowInfoTitle", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMentionedAs {
+            get {
+                return ResourceManager.GetString("ShowInfoMentionedAs", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoDisplayName {
+            get {
+                return ResourceManager.GetString("ShowInfoDisplayName", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoDiscordUserSince {
+            get {
+                return ResourceManager.GetString("ShowInfoDiscordUserSince", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMuted {
+            get {
+                return ResourceManager.GetString("ShowInfoMuted", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoBanned {
+            get {
+                return ResourceManager.GetString("ShowInfoBanned", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoPunishments {
+            get {
+                return ResourceManager.GetString("ShowInfoPunishments", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoBannedPermanently {
+            get {
+                return ResourceManager.GetString("ShowInfoBannedPermanently", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoNotOnServer {
+            get {
+                return ResourceManager.GetString("ShowInfoNotOnServer", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMutedWithTimeout {
+            get {
+                return ResourceManager.GetString("ShowInfoMutedWithTimeout", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMutedWithMuteRole {
+            get {
+                return ResourceManager.GetString("ShowInfoMutedWithMuteRole", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoUntil {
+            get {
+                return ResourceManager.GetString("ShowInfoUntil", resourceCulture);
+            }
+        }
     }
 }
