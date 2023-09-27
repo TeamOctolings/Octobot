@@ -1013,5 +1013,11 @@ namespace Boyfriend {
                 return ResourceManager.GetString("AllSettingsReset", resourceCulture);
             }
         }
+
+        internal static string DescriptionActionJumpToMessage {
+            get {
+                return ResourceManager.GetString("DescriptionActionJumpToMessage", resourceCulture);
+            }
+        }
     }
 }

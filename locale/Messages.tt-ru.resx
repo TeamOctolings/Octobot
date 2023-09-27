@@ -600,4 +600,7 @@
     <data name="AllSettingsReset" xml:space="preserve">
         <value>откатываемся к заводским...</value>
     </data>
+    <data name="DescriptionActionJumpToMessage" xml:space="preserve">
+        <value>чекнуть: {0}</value>
+    </data>
 </root>

@@ -600,4 +600,7 @@
     <data name="AllSettingsReset" xml:space="preserve">
         <value>All settings have been reset</value>
     </data>
+    <data name="DescriptionActionJumpToMessage" xml:space="preserve">
+        <value>Jump to message: {0}</value>
+    </data>
 </root>

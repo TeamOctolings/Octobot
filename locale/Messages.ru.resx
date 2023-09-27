@@ -600,4 +600,7 @@
     <data name="AllSettingsReset" xml:space="preserve">
         <value>Все настройки были сброшены</value>
     </data>
+    <data name="DescriptionActionJumpToMessage" xml:space="preserve">
+        <value>Открыть сообщение: {0}</value>
+    </data>
 </root>
