@@ -636,4 +636,13 @@
     <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
         <value>замучен ролькой</value>
     </data>
+    <data name="ShowInfoGuildMemberSince" xml:space="preserve">
+        <value>участник сервера со времен</value>
+    </data>
+    <data name="ShowInfoGuildNickname" xml:space="preserve">
+        <value>сервернейм</value>
+    </data>
+    <data name="ShowInfoGuildRoles" xml:space="preserve">
+        <value>рольки</value>
+    </data>
 </root>

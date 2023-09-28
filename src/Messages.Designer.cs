@@ -1085,5 +1085,23 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ShowInfoMutedWithMuteRole", resourceCulture);
             }
         }
+
+        internal static string ShowInfoGuildMemberSince {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildMemberSince", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoGuildNickname {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildNickname", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoGuildRoles {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildRoles", resourceCulture);
+            }
+        }
     }
 }

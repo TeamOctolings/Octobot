@@ -42,7 +42,8 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows general information about user & user's punishments.
+    ///     A slash command that shows user's display name, joined Discord & joined server dates
+    ///     and current punishments.
     /// </summary>
     /// <param name="target">The user to show info about.</param>
     /// <returns>
@@ -87,19 +88,21 @@ public class ToolsCommandGroup : CommandGroup
         if (user.GlobalName is not null)
         {
             builder.Append("- ").AppendLine(Messages.ShowInfoDisplayName)
-                .Append(" - ").AppendLine(Markdown.Sanitize(user.GlobalName));
+                .AppendLine(Markdown.InlineCode(user.GlobalName));
         }
 
         builder.Append("- ").AppendLine(Messages.ShowInfoDiscordUserSince)
-            .Append(" - ").AppendLine(Markdown.Timestamp(user.ID.Timestamp));
+            .AppendLine(Markdown.Timestamp(user.ID.Timestamp));
 
         var memberData = data.GetOrCreateMemberData(user.ID);
 
         var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
         DateTimeOffset? communicationDisabledUntil = null;
-        if (guildMemberResult.IsSuccess)
+        if (guildMemberResult.IsDefined(out var guildMember))
         {
-            communicationDisabledUntil = guildMemberResult.Entity.CommunicationDisabledUntil.Value;
+            communicationDisabledUntil = guildMember.CommunicationDisabledUntil.Value;
+
+            AppendGuildInformation(guildMember, builder);
         }
 
         var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
@@ -146,6 +149,29 @@ public class ToolsCommandGroup : CommandGroup
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    private static void AppendGuildInformation(IGuildMember guildMember, StringBuilder builder)
+    {
+        if (guildMember.Nickname.Value is not null)
+        {
+            builder.Append("- ").AppendLine(Messages.ShowInfoGuildNickname)
+                .AppendLine(Markdown.InlineCode(guildMember.Nickname.Value));
+        }
+
+        builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberSince)
+            .AppendLine(Markdown.Timestamp(guildMember.JoinedAt));
+
+        if (guildMember.Roles.Count > 0)
+        {
+            builder.Append("- ").AppendLine(Messages.ShowInfoGuildRoles);
+            for (var i = 0; i < guildMember.Roles.Count - 1; i++)
+            {
+                builder.Append($"<@&{guildMember.Roles[i]}>, ");
+            }
+
+            builder.Append($"<@&{guildMember.Roles[^1]}>");
+        }
     }
 
     private static void AppendBanInformation(MemberData memberData, StringBuilder builder)

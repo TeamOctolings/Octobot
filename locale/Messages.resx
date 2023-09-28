@@ -636,4 +636,13 @@
     <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
         <value>Muted with a mute role</value>
     </data>
+    <data name="ShowInfoGuildMemberSince" xml:space="preserve">
+        <value>Guild member since</value>
+    </data>
+    <data name="ShowInfoGuildNickname" xml:space="preserve">
+        <value>Nickname</value>
+    </data>
+    <data name="ShowInfoGuildRoles" xml:space="preserve">
+        <value>Roles</value>
+    </data>
 </root>
