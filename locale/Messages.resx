@@ -603,9 +603,6 @@
     <data name="ShowInfoDisplayName" xml:space="preserve">
         <value>Display name</value>
     </data>
-    <data name="NotPresent" xml:space="preserve">
-        <value>Not present</value>
-    </data>
     <data name="ShowInfoTitle" xml:space="preserve">
         <value>Information about {0}</value>
     </data>
@@ -614,9 +611,6 @@
     </data>
     <data name="ShowInfoDiscordUserSince" xml:space="preserve">
         <value>Discord user since</value>
-    </data>
-    <data name="ShowInfoMentionedAs" xml:space="preserve">
-        <value>Mentioned as</value>
     </data>
     <data name="ShowInfoBanned" xml:space="preserve">
         <value>Banned</value>
@@ -627,14 +621,14 @@
     <data name="ShowInfoBannedPermanently" xml:space="preserve">
         <value>Banned permanently</value>
     </data>
-    <data name="ShowInfoNotOnServer" xml:space="preserve">
-        <value>Not on the server</value>
+    <data name="ShowInfoNotOnGuild" xml:space="preserve">
+        <value>Not on the guild</value>
     </data>
-    <data name="ShowInfoMutedWithTimeout" xml:space="preserve">
-        <value>Muted with a timeout</value>
+    <data name="ShowInfoMutedByTimeout" xml:space="preserve">
+        <value>Muted by timeout</value>
     </data>
-    <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
-        <value>Muted with a mute role</value>
+    <data name="ShowInfoMutedByMuteRole" xml:space="preserve">
+        <value>Muted by mute role</value>
     </data>
     <data name="ShowInfoGuildMemberSince" xml:space="preserve">
         <value>Guild member since</value>
@@ -646,6 +640,6 @@
         <value>Roles</value>
     </data>
     <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
-        <value>Guild Nitro booster since</value>
+        <value>Nitro booster since</value>
     </data>
 </root>

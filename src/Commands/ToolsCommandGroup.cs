@@ -43,10 +43,22 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows user's display name & guild nickname,
-    ///     joined Discord & joined server dates, Nitro boosting status, guild roles
-    ///     and current punishments.
+    ///     A slash command that shows information about user.
     /// </summary>
+    /// <remarks>
+    ///     Information on the output:
+    ///     <list type="bullet">
+    ///         <item>Display name</item>
+    ///         <item>Discord user since</item>
+    ///         <item>Guild nickname</item>
+    ///         <item>Guild member since</item>
+    ///         <item>Nitro booster since</item>
+    ///         <item>Guild roles</item>
+    ///         <item>Active mute information</item>
+    ///         <item>Active ban information</item>
+    ///         <item>Is on guild status</item>
+    ///     </list>
+    /// </remarks>
     /// <param name="target">The user to show info about.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
@@ -137,7 +149,7 @@ public class ToolsCommandGroup : CommandGroup
         if (!guildMemberResult.IsSuccess && !existingBanResult.IsDefined())
         {
             builder.Append("### ")
-                .AppendLine(Markdown.Bold(Messages.ShowInfoNotOnServer));
+                .AppendLine(Markdown.Bold(Messages.ShowInfoNotOnGuild));
 
             embedColor = ColorsList.Default;
         }
@@ -204,14 +216,14 @@ public class ToolsCommandGroup : CommandGroup
         builder.Append("- ").AppendLine(Messages.ShowInfoMuted);
         if (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil)
         {
-            builder.Append(" - ").AppendLine(Messages.ShowInfoMutedWithMuteRole)
+            builder.Append(" - ").AppendLine(Messages.ShowInfoMutedByMuteRole)
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.MutedUntil.Value)));
         }
 
         if (communicationDisabledUntil is not null)
         {
-            builder.Append(" - ").AppendLine(Messages.ShowInfoMutedWithTimeout)
+            builder.Append(" - ").AppendLine(Messages.ShowInfoMutedByTimeout)
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }

@@ -1014,21 +1014,9 @@ namespace Boyfriend {
             }
         }
 
-        internal static string NotPresent {
-            get {
-                return ResourceManager.GetString("NotPresent", resourceCulture);
-            }
-        }
-
         internal static string ShowInfoTitle {
             get {
                 return ResourceManager.GetString("ShowInfoTitle", resourceCulture);
-            }
-        }
-
-        internal static string ShowInfoMentionedAs {
-            get {
-                return ResourceManager.GetString("ShowInfoMentionedAs", resourceCulture);
             }
         }
 
@@ -1068,21 +1056,21 @@ namespace Boyfriend {
             }
         }
 
-        internal static string ShowInfoNotOnServer {
+        internal static string ShowInfoNotOnGuild {
             get {
-                return ResourceManager.GetString("ShowInfoNotOnServer", resourceCulture);
+                return ResourceManager.GetString("ShowInfoNotOnGuild", resourceCulture);
             }
         }
 
-        internal static string ShowInfoMutedWithTimeout {
+        internal static string ShowInfoMutedByTimeout {
             get {
-                return ResourceManager.GetString("ShowInfoMutedWithTimeout", resourceCulture);
+                return ResourceManager.GetString("ShowInfoMutedByTimeout", resourceCulture);
             }
         }
 
-        internal static string ShowInfoMutedWithMuteRole {
+        internal static string ShowInfoMutedByMuteRole {
             get {
-                return ResourceManager.GetString("ShowInfoMutedWithMuteRole", resourceCulture);
+                return ResourceManager.GetString("ShowInfoMutedByMuteRole", resourceCulture);
             }
         }
 

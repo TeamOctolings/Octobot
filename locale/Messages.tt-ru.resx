@@ -603,9 +603,6 @@
     <data name="ShowInfoDisplayName" xml:space="preserve">
         <value>дисплейнейм</value>
     </data>
-    <data name="NotPresent" xml:space="preserve">
-        <value>нету такого</value>
-    </data>
     <data name="ShowInfoTitle" xml:space="preserve">
         <value>деанон {0}</value>
     </data>
@@ -614,9 +611,6 @@
     </data>
     <data name="ShowInfoDiscordUserSince" xml:space="preserve">
         <value>юзер Discord со времен</value>
-    </data>
-    <data name="ShowInfoMentionedAs" xml:space="preserve">
-        <value>пинается как</value>
     </data>
     <data name="ShowInfoBanned" xml:space="preserve">
         <value>забанен</value>
@@ -627,13 +621,13 @@
     <data name="ShowInfoBannedPermanently" xml:space="preserve">
         <value>забанен</value>
     </data>
-    <data name="ShowInfoNotOnServer" xml:space="preserve">
+    <data name="ShowInfoNotOnGuild" xml:space="preserve">
         <value>вышел из сервера</value>
     </data>
-    <data name="ShowInfoMutedWithTimeout" xml:space="preserve">
+    <data name="ShowInfoMutedByTimeout" xml:space="preserve">
         <value>замучен таймаутом</value>
     </data>
-    <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
+    <data name="ShowInfoMutedByMuteRole" xml:space="preserve">
         <value>замучен ролькой</value>
     </data>
     <data name="ShowInfoGuildMemberSince" xml:space="preserve">
