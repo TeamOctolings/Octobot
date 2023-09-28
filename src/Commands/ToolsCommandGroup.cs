@@ -100,7 +100,7 @@ public class ToolsCommandGroup : CommandGroup
         DateTimeOffset? communicationDisabledUntil = null;
         if (guildMemberResult.IsDefined(out var guildMember))
         {
-            communicationDisabledUntil = guildMember.CommunicationDisabledUntil.Value;
+            communicationDisabledUntil = guildMember.CommunicationDisabledUntil.OrDefault(null);
 
             AppendGuildInformation(guildMember, builder);
         }
