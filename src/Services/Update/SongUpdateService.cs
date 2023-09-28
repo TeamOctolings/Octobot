@@ -31,7 +31,8 @@ public sealed class SongUpdateService : BackgroundService
         ("Squid Sisters - Tommorrow\'s Nostalgia Today", new TimeSpan(0, 2, 8)),
         ("Deep Cut - Anarchy Rainbow", new TimeSpan(0, 1, 51)),
         ("Squid Sisters - Liquid Sunshine", new TimeSpan(0, 1, 32)),
-        ("Damp Socks feat. Off the Hook - Candy-Coated Rocks (Full Ver.)", new TimeSpan(0, 2, 38))
+        ("Damp Socks feat. Off the Hook - Candy-Coated Rocks (Full Ver.)", new TimeSpan(0, 2, 38)),
+        ("Deep Cut - Daybreaker Anthem", new TimeSpan(0, 3, 14))
     };
 
     private readonly List<Activity> _activityList = new(1)
