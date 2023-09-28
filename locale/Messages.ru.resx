@@ -601,6 +601,6 @@
         <value>Все настройки были сброшены</value>
     </data>
     <data name="DescriptionActionJumpToMessage" xml:space="preserve">
-        <value>Открыть сообщение: {0}</value>
+        <value>Перейти к сообщению: {0}</value>
     </data>
 </root>

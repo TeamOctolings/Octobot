@@ -95,8 +95,7 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers[i]}".Localized()}");
         }
 
-        builder.Append("### [").Append(Messages.AboutTitleRepository)
-            .Append("](https://github.com/LabsDevelopment/Boyfriend)");
+        builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Boyfriend)");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())

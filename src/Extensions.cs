@@ -23,6 +23,7 @@ public static class Extensions
     /// <param name="builder">The builder to add the footer to.</param>
     /// <param name="user">The user whose tag and avatar to add.</param>
     /// <returns>The builder with the added footer.</returns>
+    // ReSharper disable once UnusedMember.Global
     public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user)
     {
         var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
