@@ -3,7 +3,6 @@ using Boyfriend.Data;
 using Boyfriend.Services;
 using JetBrains.Annotations;
 using Remora.Discord.API.Abstractions.Gateway.Events;
-using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway.Responders;
@@ -43,7 +42,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var cfg = data.Settings;
         var memberData = data.GetOrCreateMemberData(user.ID);
 
-        var returnRolesResult = await ReturnRolesOnRejoinAsync(cfg, memberData, gatewayEvent, user, ct);
+        var returnRolesResult = await ReturnRolesOnRejoinAsync(cfg, memberData, gatewayEvent, user.ID, ct);
         if (!returnRolesResult.IsSuccess)
         {
             return Result.FromError(returnRolesResult.Error);
@@ -83,7 +82,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
     }
 
     private async Task<Result> ReturnRolesOnRejoinAsync(
-        JsonNode cfg, MemberData memberData, IGuildMemberAdd gatewayEvent, IUser user, CancellationToken ct)
+        JsonNode cfg, MemberData memberData, IGuildMemberAdd gatewayEvent, Snowflake userId, CancellationToken ct)
     {
         if (!GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
@@ -92,7 +91,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 
         var assignRoles = new List<Snowflake>();
 
-        if (!GuildSettings.RemoveRolesOnMute.Get(cfg) || memberData.MutedUntil is null)
+        if (memberData.MutedUntil is null || !GuildSettings.RemoveRolesOnMute.Get(cfg))
         {
             assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
         }
@@ -102,9 +101,8 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             assignRoles.Add(GuildSettings.MuteRole.Get(cfg));
         }
 
-        var result = await _guildApi.ModifyGuildMemberAsync(
-            gatewayEvent.GuildID, user.ID,
+        return await _guildApi.ModifyGuildMemberAsync(
+            gatewayEvent.GuildID, userId,
             roles: assignRoles, ct: ct);
-        return !result.IsSuccess ? Result.FromError(result.Error) : Result.FromSuccess();
     }
 }
