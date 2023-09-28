@@ -90,7 +90,7 @@ public class RemindCommandGroup : CommandGroup
             var reminder = data.Reminders[i];
             builder.Append("- ").AppendLine(string.Format(Messages.ReminderIndex, Markdown.InlineCode(i.ToString())))
                 .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-                .Append(" - ").AppendLine(string.Format(Messages.ReminderSentOn, Markdown.Timestamp(reminder.At)));
+                .Append(" - ").AppendLine(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(reminder.At)));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -152,11 +152,10 @@ public class RemindCommandGroup : CommandGroup
 
         var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
                 Messages.ReminderText, Markdown.InlineCode(message)))
-            .Append("- ").Append(string.Format(Messages.ReminderSentOn, Markdown.Timestamp(remindAt)));
+            .Append("- ").Append(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(remindAt)));
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, user.GetTag()), user)
-            .WithTitle(Messages.DescriptionReminderCreated)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();

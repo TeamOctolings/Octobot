@@ -462,9 +462,6 @@
     <data name="MissingReminderText" xml:space="preserve">
     <value>You need to specify reminder text!</value>
   </data>
-    <data name="DescriptionReminderCreated" xml:space="preserve">
-        <value>OK, I'll remind you about that</value>
-    </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>You need to specify when I should send you the reminder!</value>
   </data>
@@ -544,7 +541,7 @@
     <value>developer</value>
   </data>
     <data name="ReminderCreated" xml:space="preserve">
-        <value>Reminder for {0} created</value>
+        <value>Ok, {0}, I'll remind you that</value>
     </data>
     <data name="Reminder" xml:space="preserve">
         <value>Reminder for {0}</value>

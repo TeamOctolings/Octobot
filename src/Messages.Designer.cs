@@ -744,12 +744,6 @@ namespace Boyfriend {
             }
         }
 
-        internal static string DescriptionReminderCreated {
-            get {
-                return ResourceManager.GetString("DescriptionReminderCreated", resourceCulture);
-            }
-        }
-
         internal static string InvalidRemindIn {
             get {
                 return ResourceManager.GetString("InvalidRemindIn", resourceCulture);
@@ -1032,9 +1026,9 @@ namespace Boyfriend {
             }
         }
 
-        internal static string ReminderSentOn {
+        internal static string ReminderWillBeSentOn {
             get {
-                return ResourceManager.GetString("ReminderSentOn", resourceCulture);
+                return ResourceManager.GetString("ReminderWillBeSentOn", resourceCulture);
             }
         }
 

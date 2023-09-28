@@ -459,9 +459,6 @@
     <data name="MissingReminderText" xml:space="preserve">
     <value>Тебе нужно указать текст напоминания!</value>
   </data>
-    <data name="DescriptionReminderCreated" xml:space="preserve">
-        <value>Хорошо, я тебе об этом напомню</value>
-    </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>Нужно указать время, через которое придёт напоминание!</value>
   </data>
@@ -544,7 +541,7 @@
         <value>разработчик и дизайнер, создатель Boyfriend's Wiki</value>
     </data>
     <data name="ReminderCreated" xml:space="preserve">
-        <value>Напоминание для {0} создано</value>
+        <value>Хорошо, {0}, я напомню тебе об этом</value>
     </data>
     <data name="Reminder" xml:space="preserve">
         <value>Напоминание для {0}</value>
