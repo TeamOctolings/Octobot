@@ -25,8 +25,8 @@ public class ToolsCommandGroup : CommandGroup
 {
     private readonly ICommandContext _context;
     private readonly FeedbackService _feedback;
-    private readonly GuildDataService _guildData;
     private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
 
     public ToolsCommandGroup(
@@ -153,10 +153,10 @@ public class ToolsCommandGroup : CommandGroup
 
     private static void AppendGuildInformation(IGuildMember guildMember, StringBuilder builder)
     {
-        if (guildMember.Nickname.Value is not null)
+        if (guildMember.Nickname.IsDefined(out var nickname))
         {
             builder.Append("- ").AppendLine(Messages.ShowInfoGuildNickname)
-                .AppendLine(Markdown.InlineCode(guildMember.Nickname.Value));
+                .AppendLine(Markdown.InlineCode(nickname));
         }
 
         builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberSince)
