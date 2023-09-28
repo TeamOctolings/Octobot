@@ -131,7 +131,7 @@ public class KickCommandGroup : CommandGroup
         {
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereKicked)
-                .WithDescription(string.Format(Messages.DescriptionActionReason, reason))
+                .WithDescription($"- {string.Format(Messages.DescriptionActionReason, reason)}")
                 .WithActionFooter(user)
                 .WithCurrentTimestamp()
                 .WithColour(ColorsList.Red)
