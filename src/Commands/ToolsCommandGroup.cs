@@ -43,7 +43,8 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows user's display name, joined Discord & joined server dates
+    ///     A slash command that shows user's display name & guild nickname,
+    ///     joined Discord & joined server dates, Nitro boosting status, guild roles
     ///     and current punishments.
     /// </summary>
     /// <param name="target">The user to show info about.</param>
