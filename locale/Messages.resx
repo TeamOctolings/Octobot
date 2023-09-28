@@ -610,7 +610,7 @@
         <value>Index: {0}</value>
     </data>
     <data name="ReminderWillBeSentOn" xml:space="preserve">
-        <value>Reminder will be sent on: {0}</value>
+        <value>The reminder will be sent on: {0}</value>
     </data>
     <data name="ReminderText" xml:space="preserve">
         <value>Reminder text: {0}</value>
