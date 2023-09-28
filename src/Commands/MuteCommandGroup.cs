@@ -152,7 +152,7 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
             .Append("- ").Append(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
@@ -210,7 +210,7 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
             .Append("- ").Append(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
