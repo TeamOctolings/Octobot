@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles the command to manage reminders: /remind
+///     Handles commands to manage reminders: /remind, /listremind, /delremind
 /// </summary>
 [UsedImplicitly]
 public class RemindCommandGroup : CommandGroup
@@ -88,8 +88,9 @@ public class RemindCommandGroup : CommandGroup
         for (var i = data.Reminders.Count - 1; i >= 0; i--)
         {
             var reminder = data.Reminders[i];
-            builder.AppendLine(
-                $"- {Markdown.InlineCode(i.ToString())} - {Markdown.InlineCode(reminder.Text)} - {Markdown.Timestamp(reminder.At)}");
+            builder.Append("- ").AppendLine(string.Format(Messages.ReminderIndex, Markdown.InlineCode(i.ToString())))
+                .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+                .Append(" - ").AppendLine(string.Format(Messages.ReminderSentOn, Markdown.Timestamp(reminder.At)));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -149,8 +150,14 @@ public class RemindCommandGroup : CommandGroup
                 Text = message
             });
 
-        var embed = new EmbedBuilder().WithSmallTitle(string.Format(Messages.ReminderCreated, user.GetTag()), user)
-            .WithDescription(string.Format(Messages.DescriptionReminderCreated, Markdown.Timestamp(remindAt)))
+        var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
+                Messages.ReminderText, Markdown.InlineCode(message)))
+            .Append("- ").Append(string.Format(Messages.ReminderSentOn, Markdown.Timestamp(remindAt)));
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.ReminderCreated, user.GetTag()), user)
+            .WithTitle(Messages.DescriptionReminderCreated)
+            .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();
 

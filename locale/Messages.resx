@@ -463,7 +463,7 @@
     <value>You need to specify reminder text!</value>
   </data>
     <data name="DescriptionReminderCreated" xml:space="preserve">
-        <value>OK, I'll mention you on {0}</value>
+        <value>OK, I'll remind you about that</value>
     </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>You need to specify when I should send you the reminder!</value>
@@ -602,5 +602,17 @@
     </data>
     <data name="DescriptionActionJumpToMessage" xml:space="preserve">
         <value>Jump to message: {0}</value>
+    </data>
+    <data name="DescriptionActionJumpToChannel" xml:space="preserve">
+        <value>Jump to channel: {0}</value>
+    </data>
+    <data name="ReminderIndex" xml:space="preserve">
+        <value>Index: {0}</value>
+    </data>
+    <data name="ReminderSentOn" xml:space="preserve">
+        <value>Reminder will be sent on: {0}</value>
+    </data>
+    <data name="ReminderText" xml:space="preserve">
+        <value>Reminder text: {0}</value>
     </data>
 </root>

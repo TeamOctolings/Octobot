@@ -1019,5 +1019,29 @@ namespace Boyfriend {
                 return ResourceManager.GetString("DescriptionActionJumpToMessage", resourceCulture);
             }
         }
+
+        internal static string DescriptionActionJumpToChannel {
+            get {
+                return ResourceManager.GetString("DescriptionActionJumpToChannel", resourceCulture);
+            }
+        }
+
+        internal static string ReminderIndex {
+            get {
+                return ResourceManager.GetString("ReminderIndex", resourceCulture);
+            }
+        }
+
+        internal static string ReminderSentOn {
+            get {
+                return ResourceManager.GetString("ReminderSentOn", resourceCulture);
+            }
+        }
+
+        internal static string ReminderText {
+            get {
+                return ResourceManager.GetString("ReminderText", resourceCulture);
+            }
+        }
     }
 }

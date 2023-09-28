@@ -1,3 +1,4 @@
+using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
 using JetBrains.Annotations;
@@ -81,13 +82,17 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
+        var builder = new StringBuilder().AppendLine(
+                string.Format(Messages.DescriptionActionJumpToChannel,
+                    Mention.Channel(gatewayEvent.ChannelID)))
+            .AppendLine(message.Content.InBlockCode());
+
         var embed = new EmbedBuilder()
             .WithSmallTitle(
                 string.Format(
                     Messages.CachedMessageDeleted,
                     message.Author.GetTag()), message.Author)
-            .WithDescription(
-                $"{Mention.Channel(gatewayEvent.ChannelID)}\n{message.Content.InBlockCode()}")
+            .WithDescription(builder.ToString())
             .WithActionFooter(user)
             .WithTimestamp(message.Timestamp)
             .WithColour(ColorsList.Red)

@@ -463,7 +463,7 @@
     <value>для крафта напоминалки нужен текст</value>
   </data>
     <data name="DescriptionReminderCreated" xml:space="preserve">
-        <value>вас понял, упоминание будет {0}</value>
+        <value>вас понял, я пну тебе об этом</value>
     </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>шизоид у меня на часах такого нету</value>
@@ -601,6 +601,18 @@
         <value>откатываемся к заводским...</value>
     </data>
     <data name="DescriptionActionJumpToMessage" xml:space="preserve">
-        <value>чекнуть: {0}</value>
+        <value>чекнуть сообщение: {0}</value>
+    </data>
+    <data name="DescriptionActionJumpToChannel" xml:space="preserve">
+        <value>чекнуть канал: {0}</value>
+    </data>
+    <data name="ReminderIndex" xml:space="preserve">
+        <value>индекс: {0}</value>
+    </data>
+    <data name="ReminderSentOn" xml:space="preserve">
+        <value>я пну тебе это: {0}</value>
+    </data>
+    <data name="ReminderText" xml:space="preserve">
+        <value>че там в напоминалке: {0}</value>
     </data>
 </root>

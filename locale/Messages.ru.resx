@@ -460,7 +460,7 @@
     <value>Тебе нужно указать текст напоминания!</value>
   </data>
     <data name="DescriptionReminderCreated" xml:space="preserve">
-        <value>Хорошо, я упомяну тебя {0}</value>
+        <value>Хорошо, я напомню тебе об этом</value>
     </data>
     <data name="InvalidRemindIn" xml:space="preserve">
     <value>Нужно указать время, через которое придёт напоминание!</value>
@@ -602,5 +602,17 @@
     </data>
     <data name="DescriptionActionJumpToMessage" xml:space="preserve">
         <value>Перейти к сообщению: {0}</value>
+    </data>
+    <data name="DescriptionActionJumpToChannel" xml:space="preserve">
+        <value>Перейти к каналу: {0}</value>
+    </data>
+    <data name="ReminderIndex" xml:space="preserve">
+        <value>Индекс: {0}</value>
+    </data>
+    <data name="ReminderSentOn" xml:space="preserve">
+        <value>Напоминание будет отправлено: {0}</value>
+    </data>
+    <data name="ReminderText" xml:space="preserve">
+        <value>Текст напоминалки: {0}</value>
     </data>
 </root>
