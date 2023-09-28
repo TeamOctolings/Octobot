@@ -170,7 +170,7 @@ public class ToolsCommandGroup : CommandGroup
                 builder.Append($"<@&{guildMember.Roles[i]}>, ");
             }
 
-            builder.Append($"<@&{guildMember.Roles[^1]}>");
+            builder.AppendLine($"<@&{guildMember.Roles[^1]}>");
         }
     }
 
