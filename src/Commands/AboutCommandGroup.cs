@@ -81,17 +81,17 @@ public class AboutCommandGroup : CommandGroup
     private async Task<Result> SendAboutBotAsync(IUser currentUser, Snowflake guildId, CancellationToken ct = default)
     {
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
-        for (var i = 0; i < Developers.Length; i++)
+        foreach (var dev in Developers)
         {
-            var tag = $"@{Developers[i].Username}";
+            var tag = $"@{dev.Username}";
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(
-                guildId, Developers[i].Id.ToSnowflake(), ct);
+                guildId, dev.Id.ToSnowflake(), ct);
             if (guildMemberResult.IsSuccess)
             {
-                tag = $"<@{Developers[i].Id}>";
+                tag = $"<@{dev.Id}>";
             }
 
-            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers[i].Username}".Localized()}");
+            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
         builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Boyfriend)");
