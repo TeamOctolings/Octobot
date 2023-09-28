@@ -23,14 +23,12 @@ namespace Boyfriend.Commands;
 [UsedImplicitly]
 public class AboutCommandGroup : CommandGroup
 {
-    private static readonly string[] DevelopersUsernames =
-        { "Octol1ttle", "mctaylors", "neroduckale" };
-
-    private static readonly ulong[] DevelopersIds =
-        { 504343489664909322, 326642240229474304, 474943797063843851 };
-
-    private static readonly (string[] Usernames, ulong[] Ids) Developers = (
-        DevelopersUsernames, DevelopersIds);
+    private static readonly (string Username, ulong Id)[] Developers =
+    {
+        ("Octol1ttle", 504343489664909322),
+        ("mctaylors", 326642240229474304),
+        ("neroduckale", 474943797063843851)
+    };
 
     private readonly ICommandContext _context;
     private readonly FeedbackService _feedback;
@@ -83,17 +81,17 @@ public class AboutCommandGroup : CommandGroup
     private async Task<Result> SendAboutBotAsync(IUser currentUser, Snowflake guildId, CancellationToken ct = default)
     {
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
-        for (var i = 0; i < Developers.Usernames.Length; i++)
+        for (var i = 0; i < Developers.Length; i++)
         {
-            var tag = $"@{Developers.Usernames[i]}";
+            var tag = $"@{Developers[i].Username}";
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(
-                guildId, Developers.Ids[i].ToSnowflake(), ct);
+                guildId, Developers[i].Id.ToSnowflake(), ct);
             if (guildMemberResult.IsSuccess)
             {
-                tag = $"<@{Developers.Ids[i]}>";
+                tag = $"<@{Developers[i].Id}>";
             }
 
-            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers.Usernames[i]}".Localized()}");
+            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers[i].Username}".Localized()}");
         }
 
         builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Boyfriend)");
