@@ -156,7 +156,7 @@ public class KickCommandGroup : CommandGroup
         data.GetOrCreateMemberData(target.ID).Roles.Clear();
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
-        var description = string.Format(Messages.DescriptionActionReason, reason);
+        var description = $"- {string.Format(Messages.DescriptionActionReason, reason)}";
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
