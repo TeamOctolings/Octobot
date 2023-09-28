@@ -42,7 +42,7 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows information about user.
+    ///     A slash command that shows general information about user & user's punishments.
     /// </summary>
     /// <param name="target">The user to show info about.</param>
     /// <returns>
@@ -117,14 +117,14 @@ public class ToolsCommandGroup : CommandGroup
 
         if (isMuted)
         {
-            ShowInfoMutedUntilAsync(memberData, communicationDisabledUntil, builder);
+            AppendMuteInformation(memberData, communicationDisabledUntil, builder);
 
             embedColor = ColorsList.Red;
         }
 
         if (existingBanResult.IsDefined())
         {
-            ShowInfoBannedUntilAsync(memberData, builder);
+            AppendBanInformation(memberData, builder);
 
             embedColor = ColorsList.Black;
         }
@@ -148,7 +148,7 @@ public class ToolsCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
-    private static void ShowInfoBannedUntilAsync(MemberData memberData, StringBuilder builder)
+    private static void AppendBanInformation(MemberData memberData, StringBuilder builder)
     {
         if (memberData.BannedUntil < DateTimeOffset.MaxValue)
         {
@@ -161,7 +161,7 @@ public class ToolsCommandGroup : CommandGroup
         builder.Append("- ").AppendLine(Messages.ShowInfoBannedPermanently);
     }
 
-    private static void ShowInfoMutedUntilAsync(
+    private static void AppendMuteInformation(
         MemberData memberData, DateTimeOffset? communicationDisabledUntil, StringBuilder builder)
     {
         builder.Append("- ").AppendLine(Messages.ShowInfoMuted);
