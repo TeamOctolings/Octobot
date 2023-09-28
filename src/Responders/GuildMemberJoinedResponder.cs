@@ -42,7 +42,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var cfg = data.Settings;
         var memberData = data.GetOrCreateMemberData(user.ID);
 
-        var returnRolesResult = await ReturnRolesOnRejoinAsync(cfg, memberData, gatewayEvent, user.ID, ct);
+        var returnRolesResult = await TryReturnRolesAsync(cfg, memberData, gatewayEvent.GuildID, user.ID, ct);
         if (!returnRolesResult.IsSuccess)
         {
             return Result.FromError(returnRolesResult.Error);
@@ -81,8 +81,8 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             allowedMentions: Boyfriend.NoMentions, ct: ct);
     }
 
-    private async Task<Result> ReturnRolesOnRejoinAsync(
-        JsonNode cfg, MemberData memberData, IGuildMemberAdd gatewayEvent, Snowflake userId, CancellationToken ct)
+    private async Task<Result> TryReturnRolesAsync(
+        JsonNode cfg, MemberData memberData, Snowflake guildId, Snowflake userId, CancellationToken ct)
     {
         if (!GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
@@ -102,7 +102,6 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         }
 
         return await _guildApi.ModifyGuildMemberAsync(
-            gatewayEvent.GuildID, userId,
-            roles: assignRoles, ct: ct);
+            guildId, userId, roles: assignRoles, ct: ct);
     }
 }
