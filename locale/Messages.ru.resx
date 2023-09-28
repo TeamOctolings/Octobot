@@ -535,8 +535,8 @@
     <value>О Boyfriend</value>
   </data>
     <data name="AboutDeveloper@neroduckale" xml:space="preserve">
-    <value>разрабочик</value>
-  </data>
+        <value>разработчик</value>
+    </data>
     <data name="AboutDeveloper@Octol1ttle" xml:space="preserve">
     <value>основной разработчик</value>
   </data>
