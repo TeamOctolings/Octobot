@@ -23,14 +23,14 @@ namespace Boyfriend.Commands;
 [UsedImplicitly]
 public class AboutCommandGroup : CommandGroup
 {
-    private static readonly string[] Developers =
+    private static readonly string[] DevelopersUsernames =
         { "Octol1ttle", "mctaylors", "neroduckale" };
 
-    private static readonly List<ulong> DevelopersIds =
-        new() { 504343489664909322, 326642240229474304, 474943797063843851 };
+    private static readonly ulong[] DevelopersIds =
+        { 504343489664909322, 326642240229474304, 474943797063843851 };
 
-    private static readonly List<Snowflake> DevelopersSnowflakes =
-        DevelopersIds.ConvertAll(r => r.ToSnowflake());
+    private static readonly (string[] Usernames, ulong[] Ids) Developers = (
+        DevelopersUsernames, DevelopersIds);
 
     private readonly ICommandContext _context;
     private readonly FeedbackService _feedback;
@@ -83,16 +83,17 @@ public class AboutCommandGroup : CommandGroup
     private async Task<Result> SendAboutBotAsync(IUser currentUser, Snowflake guildId, CancellationToken ct = default)
     {
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
-        for (var i = 0; i < Developers.Length; i++)
+        for (var i = 0; i < Developers.Usernames.Length; i++)
         {
-            var tag = $"@{Developers[i]}";
-            var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, DevelopersSnowflakes[i], ct);
+            var tag = $"@{Developers.Usernames[i]}";
+            var guildMemberResult = await _guildApi.GetGuildMemberAsync(
+                guildId, Developers.Ids[i].ToSnowflake(), ct);
             if (guildMemberResult.IsSuccess)
             {
-                tag = $"<@{DevelopersIds[i]}>";
+                tag = $"<@{Developers.Ids[i]}>";
             }
 
-            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers[i]}".Localized()}");
+            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{Developers.Usernames[i]}".Localized()}");
         }
 
         builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Boyfriend)");

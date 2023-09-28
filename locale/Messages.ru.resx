@@ -529,7 +529,7 @@
     <value>Разработчики:</value>
   </data>
     <data name="AboutTitleRepository" xml:space="preserve">
-        <value>Репозиторий Boyfriend</value>
+        <value>Исходный код Boyfriend</value>
     </data>
     <data name="AboutBot" xml:space="preserve">
     <value>О Boyfriend</value>

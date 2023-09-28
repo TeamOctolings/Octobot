@@ -529,7 +529,7 @@
     <value>Developers:</value>
   </data>
     <data name="AboutTitleRepository" xml:space="preserve">
-        <value>Boyfriend's Repository</value>
+        <value>Boyfriend's source code</value>
     </data>
     <data name="AboutBot" xml:space="preserve">
     <value>About Boyfriend</value>
