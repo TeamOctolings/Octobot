@@ -46,7 +46,7 @@ public class ToolsCommandGroup : CommandGroup
     ///     A slash command that shows information about user.
     /// </summary>
     /// <remarks>
-    ///     Information on the output:
+    ///     Information in the output:
     ///     <list type="bullet">
     ///         <item>Display name</item>
     ///         <item>Discord user since</item>

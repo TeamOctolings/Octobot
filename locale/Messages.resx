@@ -622,7 +622,7 @@
         <value>Banned permanently</value>
     </data>
     <data name="ShowInfoNotOnGuild" xml:space="preserve">
-        <value>Not on the guild</value>
+        <value>Not in the guild</value>
     </data>
     <data name="ShowInfoMutedByTimeout" xml:space="preserve">
         <value>Muted by timeout</value>
