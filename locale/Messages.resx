@@ -601,7 +601,7 @@
         <value>All settings have been reset</value>
     </data>
     <data name="ShowInfoDisplayName" xml:space="preserve">
-        <value>Display Name</value>
+        <value>Display name</value>
     </data>
     <data name="NotPresent" xml:space="preserve">
         <value>Not present</value>

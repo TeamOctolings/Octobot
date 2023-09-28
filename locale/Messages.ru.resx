@@ -634,6 +634,6 @@
         <value>Заглушен с помощью тайм-аута</value>
     </data>
     <data name="ShowInfoMutedWithMuteRole" xml:space="preserve">
-        <value>Заглушен с помощью мут роли</value>
+        <value>Заглушен с помощью роли мута</value>
     </data>
 </root>

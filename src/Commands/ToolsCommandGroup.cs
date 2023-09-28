@@ -17,6 +17,9 @@ using Remora.Results;
 
 namespace Boyfriend.Commands;
 
+/// <summary>
+///     Handles commands related to tools: /showinfo.
+/// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
 {
@@ -38,12 +41,19 @@ public class ToolsCommandGroup : CommandGroup
         _userApi = userApi;
     }
 
+    /// <summary>
+    ///     A slash command that shows information about user.
+    /// </summary>
+    /// <param name="target">The user to show info about.</param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
     [Command("showinfo")]
     [DiscordDefaultDMPermission(false)]
     [Description("Shows info about user")]
     [UsedImplicitly]
     public async Task<Result> ExecuteShowInfoAsync(
-        [Description("Specific user or ID to show info about")]
+        [Description("User to show info about")]
         IUser? target = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
@@ -66,29 +76,12 @@ public class ToolsCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        if (target is not null)
-        {
-            return await ShowUserInfoAsync(target, currentUser, data, guildId, CancellationToken);
-        }
-
-        return await ShowUserInfoAsync(user, currentUser, data, guildId, CancellationToken);
+        return await ShowUserInfoAsync(target ?? user, currentUser, data, guildId, CancellationToken);
     }
 
     private async Task<Result> ShowUserInfoAsync(
         IUser user, IUser currentUser, GuildData data, Snowflake guildId, CancellationToken ct = default)
     {
-        var embedColor = ColorsList.Cyan;
-
-        var memberData = data.GetOrCreateMemberData(user.ID);
-
-        var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
-        guildMemberResult.IsDefined(out var guildMember);
-
-        var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
-                      (guildMember is not null && guildMember.CommunicationDisabledUntil.IsDefined());
-
-        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, user.ID, ct);
-
         var builder = new StringBuilder().AppendLine($"### <@{user.ID}>");
 
         if (user.GlobalName is not null)
@@ -100,6 +93,22 @@ public class ToolsCommandGroup : CommandGroup
         builder.Append("- ").AppendLine(Messages.ShowInfoDiscordUserSince)
             .Append(" - ").AppendLine(Markdown.Timestamp(user.ID.Timestamp));
 
+        var memberData = data.GetOrCreateMemberData(user.ID);
+
+        var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
+        DateTimeOffset? communicationDisabledUntil = null;
+        if (guildMemberResult.IsSuccess)
+        {
+            communicationDisabledUntil = guildMemberResult.Entity.CommunicationDisabledUntil.Value;
+        }
+
+        var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
+                      communicationDisabledUntil is not null;
+
+        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, user.ID, ct);
+
+        var embedColor = ColorsList.Cyan;
+
         if (isMuted || existingBanResult.IsDefined())
         {
             builder.Append("### ")
@@ -108,7 +117,7 @@ public class ToolsCommandGroup : CommandGroup
 
         if (isMuted)
         {
-            ShowInfoMutedUntilAsync(memberData, guildMember, builder);
+            ShowInfoMutedUntilAsync(memberData, communicationDisabledUntil, builder);
 
             embedColor = ColorsList.Red;
         }
@@ -146,30 +155,28 @@ public class ToolsCommandGroup : CommandGroup
             builder.Append("- ").AppendLine(Messages.ShowInfoBanned)
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
+            return;
         }
 
-        if (memberData.BannedUntil >= DateTimeOffset.MaxValue)
-        {
-            builder.Append("- ").AppendLine(Messages.ShowInfoBannedPermanently);
-        }
+        builder.Append("- ").AppendLine(Messages.ShowInfoBannedPermanently);
     }
 
     private static void ShowInfoMutedUntilAsync(
-        MemberData memberData, IGuildMember? guildMember, StringBuilder builder)
+        MemberData memberData, DateTimeOffset? communicationDisabledUntil, StringBuilder builder)
     {
         builder.Append("- ").AppendLine(Messages.ShowInfoMuted);
         if (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil)
         {
             builder.Append(" - ").AppendLine(Messages.ShowInfoMutedWithMuteRole)
-                .Append(" - ").Append(" - ").AppendLine(string.Format(
+                .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.MutedUntil.Value)));
         }
 
-        if (guildMember is not null && guildMember.CommunicationDisabledUntil.IsDefined())
+        if (communicationDisabledUntil is not null)
         {
             builder.Append(" - ").AppendLine(Messages.ShowInfoMutedWithTimeout)
-                .Append(" - ").Append(" - ").AppendLine(string.Format(
-                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(guildMember.CommunicationDisabledUntil.Value.Value)));
+                .Append(" - ").AppendLine(string.Format(
+                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }
     }
 }
