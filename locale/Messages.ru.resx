@@ -609,7 +609,7 @@
     <data name="ReminderIndex" xml:space="preserve">
         <value>Индекс: {0}</value>
     </data>
-    <data name="ReminderSentOn" xml:space="preserve">
+    <data name="ReminderWillBeSentOn" xml:space="preserve">
         <value>Напоминание будет отправлено: {0}</value>
     </data>
     <data name="ReminderText" xml:space="preserve">
