@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Drawing;
 using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
@@ -104,7 +105,7 @@ public class ToolsCommandGroup : CommandGroup
         {
             communicationDisabledUntil = guildMember.CommunicationDisabledUntil.OrDefault(null);
 
-            AppendGuildInformation(guildMember, builder);
+            embedColor = AppendGuildInformation(embedColor, guildMember, builder);
         }
 
         var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
@@ -151,7 +152,7 @@ public class ToolsCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
-    private static void AppendGuildInformation(IGuildMember guildMember, StringBuilder builder)
+    private static Color AppendGuildInformation(Color color, IGuildMember guildMember, StringBuilder builder)
     {
         if (guildMember.Nickname.IsDefined(out var nickname))
         {
@@ -166,6 +167,7 @@ public class ToolsCommandGroup : CommandGroup
         {
             builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberPremiumSince)
                 .AppendLine(Markdown.Timestamp(premiumSince.Value));
+            color = ColorsList.Magenta;
         }
 
         if (guildMember.Roles.Count > 0)
@@ -178,6 +180,8 @@ public class ToolsCommandGroup : CommandGroup
 
             builder.AppendLine($"<@&{guildMember.Roles[^1]}>");
         }
+
+        return color;
     }
 
     private static void AppendBanInformation(MemberData memberData, StringBuilder builder)
