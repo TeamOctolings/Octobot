@@ -645,4 +645,7 @@
     <data name="ShowInfoGuildRoles" xml:space="preserve">
         <value>Roles</value>
     </data>
+    <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
+        <value>Guild Nitro booster since</value>
+    </data>
 </root>

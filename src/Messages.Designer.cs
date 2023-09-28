@@ -1103,5 +1103,11 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ShowInfoGuildRoles", resourceCulture);
             }
         }
+
+        internal static string ShowInfoGuildMemberPremiumSince {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildMemberPremiumSince", resourceCulture);
+            }
+        }
     }
 }

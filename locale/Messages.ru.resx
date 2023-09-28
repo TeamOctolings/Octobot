@@ -645,4 +645,7 @@
     <data name="ShowInfoGuildRoles" xml:space="preserve">
         <value>Роли</value>
     </data>
+    <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
+        <value>Nitro бустер сервера с</value>
+    </data>
 </root>

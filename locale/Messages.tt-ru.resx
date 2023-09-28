@@ -645,4 +645,7 @@
     <data name="ShowInfoGuildRoles" xml:space="preserve">
         <value>рольки</value>
     </data>
+    <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
+        <value>бустит сервер со времен</value>
+    </data>
 </root>

@@ -96,6 +96,8 @@ public class ToolsCommandGroup : CommandGroup
 
         var memberData = data.GetOrCreateMemberData(user.ID);
 
+        var embedColor = ColorsList.Cyan;
+
         var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
         DateTimeOffset? communicationDisabledUntil = null;
         if (guildMemberResult.IsDefined(out var guildMember))
@@ -109,8 +111,6 @@ public class ToolsCommandGroup : CommandGroup
                       communicationDisabledUntil is not null;
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, user.ID, ct);
-
-        var embedColor = ColorsList.Cyan;
 
         if (isMuted || existingBanResult.IsDefined())
         {
@@ -161,6 +161,12 @@ public class ToolsCommandGroup : CommandGroup
 
         builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberSince)
             .AppendLine(Markdown.Timestamp(guildMember.JoinedAt));
+
+        if (guildMember.PremiumSince.IsDefined(out var premiumSince))
+        {
+            builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberPremiumSince)
+                .AppendLine(Markdown.Timestamp(premiumSince.Value));
+        }
 
         if (guildMember.Roles.Count > 0)
         {
