@@ -230,8 +230,10 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that generates a random number.
+    ///     A slash command that generates a random number using maximum and minimum numbers.
     /// </summary>
+    /// <param name="max">The maximum number for randomization.</param>
+    /// <param name="min">The minimum number for randomization. Default value: 1</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
@@ -244,7 +246,7 @@ public class ToolsCommandGroup : CommandGroup
         [Description("Minumum number (Default: 1)")]
         int min = 1)
     {
-        if (!_context.TryGetContextIDs(out _, out _, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
@@ -261,10 +263,13 @@ public class ToolsCommandGroup : CommandGroup
             return Result.FromError(userResult);
         }
 
-        return await SendRandomAsync(max, min, user, currentUser, CancellationToken);
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await SendRandomNumberAsync(max, min, user, currentUser, CancellationToken);
     }
 
-    private async Task<Result> SendRandomAsync(int max, int min, IUser user, IUser currentUser, CancellationToken ct)
+    private async Task<Result> SendRandomNumberAsync(int max, int min, IUser user, IUser currentUser, CancellationToken ct)
     {
         if (min > max)
         {
