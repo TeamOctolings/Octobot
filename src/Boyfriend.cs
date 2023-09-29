@@ -102,7 +102,8 @@ public sealed class Boyfriend
                         .WithCommandGroup<MuteCommandGroup>()
                         .WithCommandGroup<PingCommandGroup>()
                         .WithCommandGroup<RemindCommandGroup>()
-                        .WithCommandGroup<SettingsCommandGroup>();
+                        .WithCommandGroup<SettingsCommandGroup>()
+                        .WithCommandGroup<ToolsCommandGroup>();
                     var responderTypes = typeof(Boyfriend).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
