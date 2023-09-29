@@ -152,10 +152,9 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
-            .Append(
-                string.Format(
-                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
+        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+            .Append("- ").Append(string.Format(
+                Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
@@ -211,10 +210,9 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendLine(string.Format(Messages.DescriptionActionReason, reason))
-            .Append(
-                string.Format(
-                    Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
+        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+            .Append("- ").Append(string.Format(
+                Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
@@ -328,7 +326,7 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
-        var description = string.Format(Messages.DescriptionActionReason, reason);
+        var description = $"- {string.Format(Messages.DescriptionActionReason, reason)}";
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
@@ -372,7 +370,7 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
-        var description = string.Format(Messages.DescriptionActionReason, reason);
+        var description = $"- {string.Format(Messages.DescriptionActionReason, reason)}";
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, user, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)

@@ -1,3 +1,4 @@
+using System.Text;
 using Boyfriend.Data;
 using Boyfriend.Services;
 using DiffPlex.DiffBuilder;
@@ -23,16 +24,13 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _guildData;
-    private readonly IDiscordRestUserAPI _userApi;
 
     public MessageEditedResponder(
-        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
-        IDiscordRestUserAPI userApi)
+        CacheService cacheService, IDiscordRestChannelAPI channelApi, GuildDataService guildData)
     {
         _cacheService = cacheService;
         _channelApi = channelApi;
         _guildData = guildData;
-        _userApi = userApi;
     }
 
     public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default)
@@ -92,20 +90,18 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
         // NOTE: Awaiting this might not even solve this if the same responder is called asynchronously
         _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser))
-        {
-            return Result.FromError(currentUserResult);
-        }
-
         var diff = InlineDiffBuilder.Diff(message.Content, newContent);
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
+        var builder = new StringBuilder().AppendLine(
+                string.Format(Messages.DescriptionActionJumpToMessage,
+                    $"https://discord.com/channels/{guildId}/{channelId}/{messageId}"))
+            .AppendLine(diff.AsMarkdown());
+
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.CachedMessageEdited, message.Author.GetTag()), message.Author)
-            .WithDescription($"https://discord.com/channels/{guildId}/{channelId}/{messageId}\n{diff.AsMarkdown()}")
-            .WithUserFooter(currentUser)
+            .WithDescription(builder.ToString())
             .WithTimestamp(timestamp.Value)
             .WithColour(ColorsList.Yellow)
             .Build();

@@ -18,22 +18,6 @@ namespace Boyfriend;
 public static class Extensions
 {
     /// <summary>
-    ///     Adds a footer with the <paramref name="user" />'s avatar and tag (@username or username#0000).
-    /// </summary>
-    /// <param name="builder">The builder to add the footer to.</param>
-    /// <param name="user">The user whose tag and avatar to add.</param>
-    /// <returns>The builder with the added footer.</returns>
-    public static EmbedBuilder WithUserFooter(this EmbedBuilder builder, IUser user)
-    {
-        var avatarUrlResult = CDN.GetUserAvatarUrl(user, imageSize: 256);
-        var avatarUrl = avatarUrlResult.IsSuccess
-            ? avatarUrlResult.Entity.AbsoluteUri
-            : CDN.GetDefaultUserAvatarUrl(user, imageSize: 256).Entity.AbsoluteUri;
-
-        return builder.WithFooter(new EmbedFooter(user.GetTag(), avatarUrl));
-    }
-
-    /// <summary>
     ///     Adds a footer representing that an action was performed by a <paramref name="user" />.
     /// </summary>
     /// <param name="builder">The builder to add the footer to.</param>

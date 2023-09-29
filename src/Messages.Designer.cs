@@ -744,12 +744,6 @@ namespace Boyfriend {
             }
         }
 
-        internal static string DescriptionReminderCreated {
-            get {
-                return ResourceManager.GetString("DescriptionReminderCreated", resourceCulture);
-            }
-        }
-
         internal static string InvalidRemindIn {
             get {
                 return ResourceManager.GetString("InvalidRemindIn", resourceCulture);
@@ -876,9 +870,9 @@ namespace Boyfriend {
             }
         }
 
-        internal static string AboutTitleWiki {
+        internal static string AboutTitleRepository {
             get {
-                return ResourceManager.GetString("AboutTitleWiki", resourceCulture);
+                return ResourceManager.GetString("AboutTitleRepository", resourceCulture);
             }
         }
 
@@ -1011,6 +1005,36 @@ namespace Boyfriend {
         internal static string AllSettingsReset {
             get {
                 return ResourceManager.GetString("AllSettingsReset", resourceCulture);
+            }
+        }
+
+        internal static string DescriptionActionJumpToMessage {
+            get {
+                return ResourceManager.GetString("DescriptionActionJumpToMessage", resourceCulture);
+            }
+        }
+
+        internal static string DescriptionActionJumpToChannel {
+            get {
+                return ResourceManager.GetString("DescriptionActionJumpToChannel", resourceCulture);
+            }
+        }
+
+        internal static string ReminderIndex {
+            get {
+                return ResourceManager.GetString("ReminderIndex", resourceCulture);
+            }
+        }
+
+        internal static string ReminderWillBeSentOn {
+            get {
+                return ResourceManager.GetString("ReminderWillBeSentOn", resourceCulture);
+            }
+        }
+
+        internal static string ReminderText {
+            get {
+                return ResourceManager.GetString("ReminderText", resourceCulture);
             }
         }
 
