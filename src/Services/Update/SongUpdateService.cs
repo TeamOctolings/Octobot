@@ -12,7 +12,7 @@ public sealed class SongUpdateService : BackgroundService
     {
         ("UNDEAD CORPORATION - The Empress", new TimeSpan(0, 4, 34)),
         ("UNDEAD CORPORATION - Everything will freeze", new TimeSpan(0, 3, 17)),
-        ("Splatoon 3 - Rockagilly Blues (Yoko & the Gold Bazookas)", new TimeSpan(0, 3, 37)),
+        ("Yoko & the Gold Bazookas - Rockagilly Blues ", new TimeSpan(0, 3, 37)),
         ("Splatoon 3 - Seep and Destroy", new TimeSpan(0, 2, 42)),
         ("IA - A Tale of Six Trillion Years and a Night", new TimeSpan(0, 3, 40)),
         ("Manuel - Gas Gas Gas", new TimeSpan(0, 3, 17)),
@@ -26,7 +26,14 @@ public sealed class SongUpdateService : BackgroundService
         ("dontleaveme - afterward", new TimeSpan(0, 2, 29)),
         ("Ferdous - Gravity", new TimeSpan(0, 2, 38)),
         ("The Drums - Money", new TimeSpan(0, 3, 53)),
-        ("Derek Pope - War Machine", new TimeSpan(0, 3, 39))
+        ("Derek Pope - War Machine", new TimeSpan(0, 3, 39)),
+        ("Deep Cut - Big Betrayal", new TimeSpan(0, 1, 42)),
+        ("Squid Sisters - Tomorrow's Nostalgia Today", new TimeSpan(0, 2, 8)),
+        ("Deep Cut - Anarchy Rainbow", new TimeSpan(0, 1, 51)),
+        ("Squid Sisters feat. Ian BGM - Liquid Sunshine", new TimeSpan(0, 1, 32)),
+        ("Damp Socks feat. Off the Hook - Candy-Coated Rocks", new TimeSpan(0, 1, 11)),
+        ("H2Whoa - Aquasonic", new TimeSpan(0, 1, 1)), // Add some Splatoon™ songs that *I* liked #125
+        ("Yoko & the Gold Bazookas - Ska-Blam!", new TimeSpan(0, 4, 4))
     };
 
     private readonly List<Activity> _activityList = new(1)
