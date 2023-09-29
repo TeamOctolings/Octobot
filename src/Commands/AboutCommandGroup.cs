@@ -83,13 +83,9 @@ public class AboutCommandGroup : CommandGroup
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
         foreach (var dev in Developers)
         {
-            var tag = $"@{dev.Username}";
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(
                 guildId, dev.Id.ToSnowflake(), ct);
-            if (guildMemberResult.IsSuccess)
-            {
-                tag = $"<@{dev.Id}>";
-            }
+            var tag = guildMemberResult.IsSuccess ? $"<@{dev.Id}>" : $"@{dev.Username}";
 
             builder.AppendLine($"- {tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
