@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles commands related to tools: /showinfo.
+///     Handles tool commands: /showinfo, /random.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
@@ -227,5 +227,66 @@ public class ToolsCommandGroup : CommandGroup
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }
+    }
+
+    /// <summary>
+    ///     A slash command that generates a random number using maximum and minimum numbers.
+    /// </summary>
+    /// <param name="max">The maximum number for randomization.</param>
+    /// <param name="min">The minimum number for randomization. Default value: 1</param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
+    [Command("random")]
+    [DiscordDefaultDMPermission(false)]
+    [Description("Generates a random number")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteRandomAsync(
+        [Description("Maximum number")] int max,
+        [Description("Minumum number (Default: 1)")]
+        int min = 1)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
+
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await SendRandomNumberAsync(max, min, user, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> SendRandomNumberAsync(int max, int min, IUser user, IUser currentUser, CancellationToken ct)
+    {
+        if (min > max)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(
+                    Messages.RandomMinGreaterThanMax, currentUser)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
+        var i = Random.Shared.Next(min, max + 1);
+
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.RandomOutput, user)
+            .WithDescription($"# {i}\n({min}-{max})")
+            .WithColour(ColorsList.Blue)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

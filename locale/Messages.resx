@@ -648,4 +648,10 @@
   <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
     <value>Nitro booster since</value>
   </data>
+  <data name="RandomMinGreaterThanMax" xml:space="preserve">
+    <value>The minimum number is greater than the maximum!</value>
+  </data>
+  <data name="RandomOutput" xml:space="preserve">
+    <value>Your random number is:</value>
+  </data>
 </root>
