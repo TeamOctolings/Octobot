@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://mctaylors.ddns.net/cdn/octobot-banner.png" alt="Octobot banner" width="75%"/>
+    <img src="https://mctaylors.ddns.net/cdn/octobot-banner.png" alt="Octobot banner"/>
 </p>
 
 ![License](https://img.shields.io/github/license/LabsDevelopment/Octobot)
