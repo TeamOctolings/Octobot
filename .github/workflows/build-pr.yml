@@ -25,7 +25,7 @@ jobs:
       - name: ReSharper CLI InspectCode
         uses: muno92/resharper_inspectcode@1.8.3
         with:
-          solutionPath: ./Boyfriend.sln
+          solutionPath: ./Octobot.sln
           ignoreIssueType: InvertIf, ConvertIfStatementToSwitchStatement
           extensions: ReSharperPlugin.CognitiveComplexity
           solutionWideAnalysis: true
