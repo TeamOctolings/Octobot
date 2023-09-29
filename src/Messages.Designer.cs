@@ -1035,8 +1035,9 @@ namespace Boyfriend {
         internal static string ReminderText {
             get {
                 return ResourceManager.GetString("ReminderText", resourceCulture);
+            }
         }
-        
+
         internal static string ShowInfoTitle {
             get {
                 return ResourceManager.GetString("ShowInfoTitle", resourceCulture);
