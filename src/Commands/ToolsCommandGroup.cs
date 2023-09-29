@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Boyfriend.Commands;
 
 /// <summary>
-///     Handles commands related to tools: /showinfo, /random.
+///     Handles tool commands: /showinfo, /random.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup

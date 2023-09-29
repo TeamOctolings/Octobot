@@ -649,7 +649,7 @@
     <value>Начал бустить сервер</value>
   </data>
   <data name="RandomMinGreaterThanMax" xml:space="preserve">
-    <value>Минимальное число больше чем максимальное!</value>
+    <value>Минимальное число больше максимального!</value>
   </data>
   <data name="RandomOutput" xml:space="preserve">
     <value>Ваше случайное число:</value>
