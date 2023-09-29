@@ -648,4 +648,10 @@
   <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
     <value>Начал бустить сервер</value>
   </data>
+  <data name="RandomMinGreaterThanMax" xml:space="preserve">
+    <value>Минимальное число больше чем максимальное!</value>
+  </data>
+  <data name="RandomOutput" xml:space="preserve">
+    <value>Ваше случайное число:</value>
+  </data>
 </root>

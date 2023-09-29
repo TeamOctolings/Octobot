@@ -1121,5 +1121,19 @@ namespace Boyfriend {
                 return ResourceManager.GetString("ShowInfoGuildMemberPremiumSince", resourceCulture);
             }
         }
+
+        internal static string RandomMinGreaterThanMax
+        {
+            get {
+                return ResourceManager.GetString("RandomMinGreaterThanMax", resourceCulture);
+            }
+        }
+
+        internal static string RandomOutput
+        {
+            get {
+                return ResourceManager.GetString("RandomOutput", resourceCulture);
+            }
+        }
     }
 }
