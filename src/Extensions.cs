@@ -59,6 +59,23 @@ public static class Extensions
     }
 
     /// <summary>
+    ///     Adds a user avatar in the thumbnail field.
+    /// </summary>
+    /// <param name="builder">The builder to add the thumbnail to.</param>
+    /// <param name="avatarSource">The user whose avatar to use in the thumbnail field.</param>
+    /// <returns>The builder with the added avatar in the thumbnail field.</returns>
+    public static EmbedBuilder WithLargeAvatar(
+        this EmbedBuilder builder, IUser avatarSource)
+    {
+        var avatarUrlResult = CDN.GetUserAvatarUrl(avatarSource, imageSize: 256);
+        var avatarUrl = avatarUrlResult.IsSuccess
+            ? avatarUrlResult.Entity
+            : CDN.GetDefaultUserAvatarUrl(avatarSource, imageSize: 256).Entity;
+
+        return builder.WithThumbnailUrl(avatarUrl.AbsoluteUri);
+    }
+
+    /// <summary>
     ///     Adds a footer representing that the action was performed in the <paramref name="guild" />.
     /// </summary>
     /// <param name="builder">The builder to add the footer to.</param>
