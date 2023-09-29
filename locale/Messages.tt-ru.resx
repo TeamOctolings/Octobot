@@ -541,7 +541,7 @@
     <value>САМЫЙ ВАЖНЫЙ чел написавший кода больше всех (99.99%)</value>
   </data>
     <data name="ReminderCreated" xml:space="preserve">
-        <value>без проблем, {0}, напоминалка уже ждет</value>
+        <value>напоминалка для {0} скрафченА</value>
     </data>
     <data name="Reminder" xml:space="preserve">
         <value>напоминалка для {0}</value>

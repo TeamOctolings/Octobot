@@ -541,7 +541,7 @@
     <value>developer</value>
   </data>
     <data name="ReminderCreated" xml:space="preserve">
-        <value>Ok, {0}, I'll remind you that</value>
+        <value>Reminder for {0} created</value>
     </data>
     <data name="Reminder" xml:space="preserve">
         <value>Reminder for {0}</value>

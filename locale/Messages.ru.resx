@@ -541,7 +541,7 @@
         <value>разработчик и дизайнер, создатель Boyfriend's Wiki</value>
     </data>
     <data name="ReminderCreated" xml:space="preserve">
-        <value>Хорошо, {0}, я напомню тебе об этом</value>
+        <value>Напоминание для {0} создано</value>
     </data>
     <data name="Reminder" xml:space="preserve">
         <value>Напоминание для {0}</value>
