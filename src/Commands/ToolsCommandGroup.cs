@@ -228,4 +228,51 @@ public class ToolsCommandGroup : CommandGroup
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }
     }
+
+    [Command("random")]
+    [DiscordDefaultDMPermission(false)]
+    [Description("Generates a random number")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteRandomAsync(int max, int min = 1)
+    {
+        if (!_context.TryGetContextIDs(out _, out _, out var userId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!currentUserResult.IsDefined(out var currentUser))
+        {
+            return Result.FromError(currentUserResult);
+        }
+
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
+
+        return await SendRandomAsync(max, min, user, currentUser, CancellationToken);
+    }
+
+    private async Task<Result> SendRandomAsync(int max, int min, IUser user, IUser currentUser, CancellationToken ct)
+    {
+        if (min > max)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(
+                    Messages.RandomMinGreaterThanMax, currentUser)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
+        var i = Random.Shared.Next(min, max + 1);
+
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.RandomOutput, user)
+            .WithDescription($"# {i}\n({min}-{max})")
+            .WithColour(ColorsList.Blue)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
 }

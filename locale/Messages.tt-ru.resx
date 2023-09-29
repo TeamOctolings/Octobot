@@ -648,4 +648,10 @@
   <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
     <value>бустит сервер со времен</value>
   </data>
+  <data name="RandomMinGreaterThanMax" xml:space="preserve">
+    <value>почему минимальное &gt; максимальное</value>
+  </data>
+  <data name="RandomOutput" xml:space="preserve">
+    <value>ваше рандомное число:</value>
+  </data>
 </root>
