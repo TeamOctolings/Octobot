@@ -600,4 +600,46 @@
     <data name="AllSettingsReset" xml:space="preserve">
         <value>откатываемся к заводским...</value>
     </data>
+    <data name="ShowInfoDisplayName" xml:space="preserve">
+        <value>дисплейнейм</value>
+    </data>
+    <data name="ShowInfoTitle" xml:space="preserve">
+        <value>деанон {0}</value>
+    </data>
+    <data name="ShowInfoMuted" xml:space="preserve">
+        <value>замучен</value>
+    </data>
+    <data name="ShowInfoDiscordUserSince" xml:space="preserve">
+        <value>юзер Discord со времен</value>
+    </data>
+    <data name="ShowInfoBanned" xml:space="preserve">
+        <value>забанен</value>
+    </data>
+    <data name="ShowInfoPunishments" xml:space="preserve">
+        <value>приколы полученные по заслугам</value>
+    </data>
+    <data name="ShowInfoBannedPermanently" xml:space="preserve">
+        <value>забанен</value>
+    </data>
+    <data name="ShowInfoNotOnGuild" xml:space="preserve">
+        <value>вышел из сервера</value>
+    </data>
+    <data name="ShowInfoMutedByTimeout" xml:space="preserve">
+        <value>замучен таймаутом</value>
+    </data>
+    <data name="ShowInfoMutedByMuteRole" xml:space="preserve">
+        <value>замучен ролькой</value>
+    </data>
+    <data name="ShowInfoGuildMemberSince" xml:space="preserve">
+        <value>участник сервера со времен</value>
+    </data>
+    <data name="ShowInfoGuildNickname" xml:space="preserve">
+        <value>сервернейм</value>
+    </data>
+    <data name="ShowInfoGuildRoles" xml:space="preserve">
+        <value>рольки</value>
+    </data>
+    <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
+        <value>бустит сервер со времен</value>
+    </data>
 </root>

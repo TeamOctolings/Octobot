@@ -1013,5 +1013,89 @@ namespace Boyfriend {
                 return ResourceManager.GetString("AllSettingsReset", resourceCulture);
             }
         }
+
+        internal static string ShowInfoTitle {
+            get {
+                return ResourceManager.GetString("ShowInfoTitle", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoDisplayName {
+            get {
+                return ResourceManager.GetString("ShowInfoDisplayName", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoDiscordUserSince {
+            get {
+                return ResourceManager.GetString("ShowInfoDiscordUserSince", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMuted {
+            get {
+                return ResourceManager.GetString("ShowInfoMuted", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoBanned {
+            get {
+                return ResourceManager.GetString("ShowInfoBanned", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoPunishments {
+            get {
+                return ResourceManager.GetString("ShowInfoPunishments", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoBannedPermanently {
+            get {
+                return ResourceManager.GetString("ShowInfoBannedPermanently", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoNotOnGuild {
+            get {
+                return ResourceManager.GetString("ShowInfoNotOnGuild", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMutedByTimeout {
+            get {
+                return ResourceManager.GetString("ShowInfoMutedByTimeout", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoMutedByMuteRole {
+            get {
+                return ResourceManager.GetString("ShowInfoMutedByMuteRole", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoGuildMemberSince {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildMemberSince", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoGuildNickname {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildNickname", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoGuildRoles {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildRoles", resourceCulture);
+            }
+        }
+
+        internal static string ShowInfoGuildMemberPremiumSince {
+            get {
+                return ResourceManager.GetString("ShowInfoGuildMemberPremiumSince", resourceCulture);
+            }
+        }
     }
 }
