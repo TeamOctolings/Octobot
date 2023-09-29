@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Text;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -16,7 +16,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Commands;
+namespace Octobot.Commands;
 
 /// <summary>
 ///     Handles the command to clear messages in a channel: /clear.
@@ -100,7 +100,7 @@ public class ClearCommandGroup : CommandGroup
     {
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
-        for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Boyfriend is thinking...')
+        for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Octobot is thinking...')
         {
             var message = messages[i];
             idList.Add(message.ID);

@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using System.Text.Json.Nodes;
-using Boyfriend.Data;
-using Boyfriend.Data.Options;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Data.Options;
+using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -18,7 +18,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Commands;
+namespace Octobot.Commands;
 
 /// <summary>
 ///     Handles the commands to list and modify per-guild settings: /settings and /settings list.

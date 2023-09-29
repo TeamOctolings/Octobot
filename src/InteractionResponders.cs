@@ -5,7 +5,7 @@ using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Interactivity;
 using Remora.Results;
 
-namespace Boyfriend;
+namespace Octobot;
 
 /// <summary>
 ///     Handles responding to various interactions.

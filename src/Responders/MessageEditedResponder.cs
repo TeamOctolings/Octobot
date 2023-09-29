@@ -1,8 +1,8 @@
 using System.Text;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using DiffPlex.DiffBuilder;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
@@ -12,7 +12,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 /// <summary>
 ///     Handles logging the difference between an edited message's old and new content
@@ -112,6 +112,6 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },
-            allowedMentions: Boyfriend.NoMentions, ct: ct);
+            allowedMentions: Octobot.NoMentions, ct: ct);
     }
 }

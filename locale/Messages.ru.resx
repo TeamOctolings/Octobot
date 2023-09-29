@@ -120,14 +120,14 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Beep1" xml:space="preserve">
-    <value>Бап!</value>
+  <data name="Sound1" xml:space="preserve">
+      <value>Виимо!</value>
   </data>
-  <data name="Beep2" xml:space="preserve">
-    <value>Боп!</value>
+  <data name="Sound2" xml:space="preserve">
+      <value>Вууми!</value>
   </data>
-  <data name="Beep3" xml:space="preserve">
-    <value>Бип!</value>
+  <data name="Sound3" xml:space="preserve">
+      <value>Нгьес!</value>
   </data>
   <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>У меня недостаточно прав для выполнения этой команды!</value>
@@ -520,10 +520,10 @@
     <value>Разработчики:</value>
   </data>
   <data name="AboutTitleRepository" xml:space="preserve">
-    <value>Исходный код Boyfriend</value>
+    <value>Исходный код Octobot</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>О Boyfriend</value>
+    <value>О Octobot</value>
   </data>
   <data name="AboutDeveloper@neroduckale" xml:space="preserve">
     <value>разработчик</value>
@@ -532,7 +532,7 @@
     <value>основной разработчик</value>
   </data>
   <data name="AboutDeveloper@mctaylors" xml:space="preserve">
-    <value>разработчик и дизайнер, создатель Boyfriend's Wiki</value>
+    <value>разработчик и дизайнер, создатель Octobot's Wiki</value>
   </data>
   <data name="ReminderCreated" xml:space="preserve">
     <value>Напоминание для {0} создано</value>
@@ -544,7 +544,7 @@
     <value>Вы просили напомнить вам {0}</value>
   </data>
   <data name="SettingsListTitle" xml:space="preserve">
-    <value>Настройки Boyfriend</value>
+    <value>Настройки Octobot</value>
   </data>
   <data name="SettingSuccessfullyChanged" xml:space="preserve">
     <value>Настройка успешно изменена</value>

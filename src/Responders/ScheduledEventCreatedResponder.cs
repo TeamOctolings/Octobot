@@ -1,11 +1,11 @@
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 /// <summary>
 ///     Handles adding a scheduled event to a guild's ScheduledEventData.

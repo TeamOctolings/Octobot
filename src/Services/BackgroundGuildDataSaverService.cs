@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace Boyfriend.Services;
+namespace Octobot.Services;
 
 public sealed class BackgroundGuildDataSaverService : BackgroundService
 {

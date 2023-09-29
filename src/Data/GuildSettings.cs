@@ -1,8 +1,8 @@
-using Boyfriend.Data.Options;
-using Boyfriend.Responders;
+using Octobot.Data.Options;
+using Octobot.Responders;
 using Remora.Discord.API.Abstractions.Objects;
 
-namespace Boyfriend.Data;
+namespace Octobot.Data;
 
 /// <summary>
 ///     Contains all per-guild settings that can be set by a member

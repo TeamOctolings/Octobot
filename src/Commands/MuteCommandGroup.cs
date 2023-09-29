@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Text;
-using Boyfriend.Data;
-using Boyfriend.Services;
-using Boyfriend.Services.Update;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
+using Octobot.Services.Update;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -17,7 +17,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Commands;
+namespace Octobot.Commands;
 
 /// <summary>
 ///     Handles commands related to mute management: /mute and /unmute.

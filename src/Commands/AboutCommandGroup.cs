@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Text;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -15,7 +15,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Commands;
+namespace Octobot.Commands;
 
 /// <summary>
 ///     Handles the command to show information about this bot: /about.
@@ -57,7 +57,7 @@ public class AboutCommandGroup : CommandGroup
     [Command("about")]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [Description("Shows Boyfriend's developers")]
+    [Description("Shows Octobot's developers")]
     [UsedImplicitly]
     public async Task<Result> ExecuteAboutAsync()
     {
@@ -90,12 +90,12 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendLine($"- {tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
-        builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Boyfriend)");
+        builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Octobot)");
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl("https://mctaylors.ddns.net/cdn/boyfriend-banner-light.png")
+            .WithImageUrl("https://mctaylors.ddns.net/cdn/octobot-banner.png")
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);

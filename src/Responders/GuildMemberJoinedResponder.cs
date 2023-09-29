@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Extensions.Embeds;
@@ -9,7 +9,7 @@ using Remora.Discord.Gateway.Responders;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 /// <summary>
 ///     Handles sending a guild's <see cref="GuildSettings.WelcomeMessage" /> if one is set.
@@ -78,7 +78,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: new[] { built },
-            allowedMentions: Boyfriend.NoMentions, ct: ct);
+            allowedMentions: Octobot.NoMentions, ct: ct);
     }
 
     private async Task<Result> TryReturnRolesAsync(

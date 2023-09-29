@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Octobot.Data;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Extensions.Embeds;
@@ -9,7 +9,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Services.Update;
+namespace Octobot.Services.Update;
 
 public sealed partial class MemberUpdateService : BackgroundService
 {

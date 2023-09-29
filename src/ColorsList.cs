@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Boyfriend;
+namespace Octobot;
 
 /// <summary>
 ///     Contains all colors used in embeds.

@@ -1,12 +1,12 @@
 <p align="center">
-    <img src="https://mctaylors.ddns.net/cdn/boyfriend-banner-light-padding.png" alt="Boyfriend banner" width="75%"/>
+    <img src="https://mctaylors.ddns.net/cdn/octobot-banner.png" alt="Octobot banner" width="75%"/>
 </p>
 
-![License](https://img.shields.io/github/license/LabsDevelopment/Boyfriend)
-![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Boyfriend/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
-![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Boyfriend)
+![License](https://img.shields.io/github/license/LabsDevelopment/Octobot)
+![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
+![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Octobot)
 
-Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and Remora.Discord
+Veemo! I'm a general-purpose bot for moderation (formerly known as Octobot) written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and Remora.Discord
 
 ## Features
 
@@ -17,9 +17,9 @@ Beep! I'm a general-purpose bot for moderation written by [@Octol1ttle](https://
 
 *...and more!*
 
-## Installing and running Boyfriend
+## Installing and running Octobot
 
-You can read our [wiki](https://github.com/LabsDevelopment/Boyfriend/wiki) in order to assemble your Boyfriend™ and
+You can read our [wiki](https://github.com/LabsDevelopment/Octobot/wiki) in order to assemble your Octobot and
 moderate the server.
 
 ## Contributing
@@ -33,8 +33,8 @@ the most effective way possible.
 ![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
 
 [JetBrains](https://www.jetbrains.com/), creators of [ReSharper](https://www.jetbrains.com/resharper)
-and [Rider](https://www.jetbrains.com/rider), supports Boyfriend with one of
+and [Rider](https://www.jetbrains.com/rider), supports Octobot with one of
 their [Open Source Licenses](https://jb.gg/OpenSourceSupport).
-Rider is the recommended IDE when working with Boyfriend, and everyone on the Boyfriend team uses it.
+Rider is the recommended IDE when working with Octobot, and everyone on the Octobot team uses it.
 Additionally, ReSharper command-line tools made by JetBrains are used for status checks on pull requests to ensure code
 quality even when not using ReSharper or Rider.

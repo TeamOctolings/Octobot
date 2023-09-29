@@ -120,14 +120,14 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Beep1" xml:space="preserve">
-    <value>брах!</value>
+  <data name="Sound1" xml:space="preserve">
+      <value>вииимо!</value>
   </data>
-  <data name="Beep2" xml:space="preserve">
-    <value>брох!</value>
+  <data name="Sound2" xml:space="preserve">
+      <value>вуууми!</value>
   </data>
-  <data name="Beep3" xml:space="preserve">
-    <value>брух!</value>
+  <data name="Sound3" xml:space="preserve">
+      <value>нгьес!</value>
   </data>
   <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>у меня прав нету, сделай что нибудь.</value>
@@ -520,13 +520,13 @@
     <value>девелоперы:</value>
   </data>
   <data name="AboutTitleRepository" xml:space="preserve">
-    <value>репа Boyfriend (тык)</value>
+    <value>репа Octobot (тык)</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>немного о Boyfriend</value>
+    <value>немного о Octobot</value>
   </data>
   <data name="AboutDeveloper@mctaylors" xml:space="preserve">
-    <value>скучный девелопер + дизайнер создавший Boyfriend's Wiki</value>
+    <value>скучный девелопер + дизайнер создавший Octobot's Wiki</value>
   </data>
   <data name="AboutDeveloper@neroduckale" xml:space="preserve">
     <value>ВАЖНЫЙ соучастник кодинг-стримов @Octol1ttle</value>
@@ -544,7 +544,7 @@
     <value>ты хотел чтоб я напомнил тебе {0}</value>
   </data>
   <data name="SettingsListTitle" xml:space="preserve">
-    <value>приколы Boyfriend</value>
+    <value>приколы Octobot</value>
   </data>
   <data name="SettingSuccessfullyChanged" xml:space="preserve">
     <value>прикол редактирован</value>

@@ -1,4 +1,4 @@
-namespace Boyfriend.Data;
+namespace Octobot.Data;
 
 public struct Reminder
 {

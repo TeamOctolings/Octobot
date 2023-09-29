@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Thank you for showing interest in the development of Boyfriend. We aim to provide a good collaborating environment for
+Thank you for showing interest in the development of Octobot. We aim to provide a good collaborating environment for
 everyone involved, and as such have decided to list some of the most important things to keep in mind in the process.
 Before starting, please read our [Code of Conduct](CODE_OF_CONDUCT.md)
 
@@ -29,7 +29,7 @@ While pull requests from unaffiliated contributors are welcome, please note that
 internal issues that haven't been published to the issue tracker yet. Reviewing PRs is done on a best-effort basis, so
 please be aware that it may take a while before a core maintainer gets around to review your change.
 
-The [issue tracker](https://github.com/LabsDevelopment/Boyfriend/issues) should provide plenty of issues to start with.
+The [issue tracker](https://github.com/LabsDevelopment/Octobot/issues) should provide plenty of issues to start with.
 Make sure to check that an issue you're planning to resolve does not already have people working on it and that there
 are no PRs associated with it
 
@@ -62,7 +62,7 @@ After you're done with your changes and you wish to open the PR, please observe 
 - Please do not merge `master` continually if there are no conflicts to resolve. We will do this for you when the change
   is ready for merge.
 
-We are highly committed to quality when it comes to Boyfriend. This means that contributions from less experienced
+We are highly committed to quality when it comes to Octobot. This means that contributions from less experienced
 community members can take multiple rounds of review to get to a mergeable state. We try our utmost best to never
 conflate a person with the code they authored, and to keep the discussion focused on the code at all times. Please
 consider our comments and requests a learning experience.

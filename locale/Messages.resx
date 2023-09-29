@@ -120,14 +120,14 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, welcome to {1}</value>
   </data>
-  <data name="Beep1" xml:space="preserve">
-    <value>Bah!</value>
+  <data name="Sound1" xml:space="preserve">
+      <value>Veemo!</value>
   </data>
-  <data name="Beep2" xml:space="preserve">
-    <value>Bop!</value>
+  <data name="Sound2" xml:space="preserve">
+      <value>Voomy!</value>
   </data>
-  <data name="Beep3" xml:space="preserve">
-    <value>Beep!</value>
+  <data name="Sound3" xml:space="preserve">
+      <value>Ngyes!</value>
   </data>
   <data name="CommandNoPermissionBot" xml:space="preserve">
     <value>I do not have permission to execute this command!</value>
@@ -520,13 +520,13 @@
     <value>Developers:</value>
   </data>
   <data name="AboutTitleRepository" xml:space="preserve">
-    <value>Boyfriend's source code</value>
+    <value>Octobot's source code</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>About Boyfriend</value>
+    <value>About Octobot</value>
   </data>
   <data name="AboutDeveloper@mctaylors" xml:space="preserve">
-    <value>developer &amp; designer, Boyfriend's Wiki creator</value>
+    <value>developer &amp; designer, Octobot's Wiki creator</value>
   </data>
   <data name="AboutDeveloper@Octol1ttle" xml:space="preserve">
     <value>main developer</value>
@@ -544,7 +544,7 @@
     <value>You asked me to remind you {0}</value>
   </data>
   <data name="SettingsListTitle" xml:space="preserve">
-    <value>Boyfriend's Settings</value>
+    <value>Octobot's Settings</value>
   </data>
   <data name="SettingSuccessfullyChanged" xml:space="preserve">
     <value>Setting successfully changed</value>

@@ -1,4 +1,4 @@
-namespace Boyfriend.Data;
+namespace Octobot.Data;
 
 /// <summary>
 ///     Stores information about a member

@@ -1,10 +1,10 @@
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 [UsedImplicitly]
 public class ScheduledEventUpdatedResponder : IResponder<IGuildScheduledEventUpdate>

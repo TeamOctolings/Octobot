@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boyfriend", "Boyfriend.csproj", "{9CA7A44F-167C-46D4-923D-88CE71044144}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octobot", "Octobot.csproj", "{9CA7A44F-167C-46D4-923D-88CE71044144}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

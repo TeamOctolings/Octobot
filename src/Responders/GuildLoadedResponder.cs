@@ -1,7 +1,7 @@
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Gateway.Events;
@@ -9,7 +9,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 /// <summary>
 ///     Handles sending a <see cref="Ready" /> message to a guild that has just initialized if that guild
@@ -85,7 +85,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var i = Random.Shared.Next(1, 4);
 
         var embed = new EmbedBuilder().WithSmallTitle(currentUser.GetTag(), currentUser)
-            .WithTitle($"Beep{i}".Localized())
+            .WithTitle($"Sound{i}".Localized())
             .WithDescription(Messages.Ready)
             .WithCurrentTimestamp()
             .WithColour(ColorsList.Blue)

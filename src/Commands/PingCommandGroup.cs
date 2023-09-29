@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -15,7 +15,7 @@ using Remora.Discord.Gateway;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Commands;
+namespace Octobot.Commands;
 
 /// <summary>
 ///     Handles the command to get the time taken for the gateway to respond to the last heartbeat: /ping
@@ -78,7 +78,7 @@ public class PingCommandGroup : CommandGroup
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0)
         {
-            // No heartbeat has occurred, estimate latency from local time and "Boyfriend is thinking..." message
+            // No heartbeat has occurred, estimate latency from local time and "Octobot is thinking..." message
             var lastMessageResult = await _channelApi.GetChannelMessagesAsync(
                 channelId, limit: 1, ct: ct);
             if (!lastMessageResult.IsDefined(out var lastMessage))
@@ -90,7 +90,7 @@ public class PingCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(currentUser.GetTag(), currentUser)
-            .WithTitle($"Beep{Random.Shared.Next(1, 4)}".Localized())
+            .WithTitle($"Sound{Random.Shared.Next(1, 4)}".Localized())
             .WithDescription($"{latency:F0}{Messages.Milliseconds}")
             .WithColour(latency < 250 ? ColorsList.Green : latency < 500 ? ColorsList.Yellow : ColorsList.Red)
             .WithCurrentTimestamp()

@@ -5,7 +5,7 @@ using Remora.Discord.Gateway.Responders;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 /// <summary>
 ///     Handles sending replies to easter egg messages.
