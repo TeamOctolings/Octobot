@@ -23,11 +23,11 @@ namespace Boyfriend.Commands;
 [UsedImplicitly]
 public class AboutCommandGroup : CommandGroup
 {
-    private static readonly (string Username, ulong Id)[] Developers =
+    private static readonly (string Username, Snowflake Id)[] Developers =
     {
-        ("Octol1ttle", 504343489664909322),
-        ("mctaylors", 326642240229474304),
-        ("neroduckale", 474943797063843851)
+        ("Octol1ttle", new Snowflake(504343489664909322)),
+        ("mctaylors", new Snowflake(326642240229474304)),
+        ("neroduckale", new Snowflake(474943797063843851))
     };
 
     private readonly ICommandContext _context;
@@ -83,9 +83,13 @@ public class AboutCommandGroup : CommandGroup
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
         foreach (var dev in Developers)
         {
+            var tag = $"@{dev.Username}";
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(
-                guildId, dev.Id.ToSnowflake(), ct);
-            var tag = guildMemberResult.IsSuccess ? $"<@{dev.Id}>" : $"@{dev.Username}";
+                guildId, dev.Id, ct);
+            if (guildMemberResult.IsSuccess)
+            {
+                tag = $"<@{dev.Id}>";
+            }
 
             builder.AppendLine($"- {tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
