@@ -28,11 +28,12 @@ public sealed class SongUpdateService : BackgroundService
         ("The Drums - Money", new TimeSpan(0, 3, 53)),
         ("Derek Pope - War Machine", new TimeSpan(0, 3, 39)),
         ("Deep Cut - Big Betrayal", new TimeSpan(0, 1, 42)),
-        ("Squid Sisters - Tommorrow\'s Nostalgia Today", new TimeSpan(0, 2, 8)),
+        ("Squid Sisters - Tomorrow's Nostalgia Today", new TimeSpan(0, 2, 8)),
         ("Deep Cut - Anarchy Rainbow", new TimeSpan(0, 1, 51)),
-        ("Squid Sisters - Liquid Sunshine", new TimeSpan(0, 1, 32)),
-        ("Damp Socks feat. Off the Hook - Candy-Coated Rocks (Full Ver.)", new TimeSpan(0, 2, 38)),
-        ("Deep Cut - Daybreaker Anthem", new TimeSpan(0, 3, 14))
+        ("Squid Sisters feat. Ian BGM - Liquid Sunshine", new TimeSpan(0, 1, 32)),
+        ("Damp Socks feat. Off the Hook - Candy-Coated Rocks", new TimeSpan(0, 1, 11)),
+        ("H2Whoa - Aquasonic", new TimeSpan(0, 1, 1)), // Add some Splatoon™ songs that *I* liked #125
+        ("Yoko & the Gold Bazookas - Ska-Blam!", new TimeSpan(0, 4, 4))
     };
 
     private readonly List<Activity> _activityList = new(1)
