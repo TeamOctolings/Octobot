@@ -110,15 +110,6 @@ public sealed class GuildDataService : IHostedService
                 continue;
             }
 
-            if (data.MutedUntil is null)
-            {
-                var memberResult = await _guildApi.GetGuildMemberAsync(guildId, data.Id.ToSnowflake(), ct);
-                if (memberResult.IsSuccess)
-                {
-                    data.Roles = memberResult.Entity.Roles.ToList().ConvertAll(r => r.Value);
-                }
-            }
-
             memberData.Add(data.Id, data);
         }
 

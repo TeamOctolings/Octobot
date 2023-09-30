@@ -89,6 +89,11 @@ public sealed partial class MemberUpdateService : BackgroundService
             return failedResults.AggregateErrors();
         }
 
+        if (data.MutedUntil is null)
+        {
+            data.Roles = guildMember.Roles.ToList().ConvertAll(r => r.Value);
+        }
+
         var autoUnmuteResult = await TryAutoUnmuteAsync(guildId, id, data, ct);
         failedResults.AddIfFailed(autoUnmuteResult);
 
