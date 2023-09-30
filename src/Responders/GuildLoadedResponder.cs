@@ -54,8 +54,6 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         {
             if (!data.ScheduledEvents.TryGetValue(schEvent.ID.Value, out var eventData))
             {
-                data.ScheduledEvents.Add(schEvent.ID.Value, new ScheduledEventData(schEvent.ID.Value,
-                    schEvent.Name, schEvent.ScheduledStartTime, schEvent.Status));
                 continue;
             }
 
