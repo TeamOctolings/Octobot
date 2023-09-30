@@ -15,7 +15,7 @@
         <RepositoryType>github</RepositoryType>
         <Company>LabsDevelopment</Company>
         <NeutralLanguage>en</NeutralLanguage>
-        <Description>A legacy-driven Discord bot written in C#</Description>
+        <Description>A Discord bot written in C#</Description>
     </PropertyGroup>
 
     <ItemGroup>
