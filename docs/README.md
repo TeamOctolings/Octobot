@@ -2,9 +2,10 @@
     <img src="https://mctaylors.ddns.net/cdn/octobot-banner.png" alt="Octobot banner"/>
 </p>
 
-![License](https://img.shields.io/github/license/LabsDevelopment/Octobot)
-![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
-![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Octobot)
+![License](https://img.shields.io/github/license/LabsDevelopment/Octobot?logo=git)
+![Powered by](https://img.shields.io/badge/powered_by-Remora.Discord-blue)
+![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production)
+![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Octobot?logo=github)
 
 Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/LabsDevelopment) in C# and Remora.Discord
 
@@ -13,14 +14,13 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 * Banning, muting, kicking, etc.
 * Reminding you about something if you wish
 * Reminding everyone about that new event you made
+* Renaming those annoying hoisted members
 * Log everything from joining the server to deleting messages
+* Listen to music!
 
-*...and more!*
+*...a-a-and more!*
 
-## Installing and running Octobot
-
-You can read our [wiki](https://github.com/LabsDevelopment/Octobot/wiki) in order to assemble your Octobot and
-moderate the server.
+[//]: # (if you are reading this, message @mctaylors that he needs to return wiki back)
 
 ## Contributing
 
