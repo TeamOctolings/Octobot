@@ -2,10 +2,10 @@
     <img src="https://mctaylors.ddns.net/cdn/octobot-banner.png" alt="Octobot banner"/>
 </p>
 
-![License](https://img.shields.io/github/license/LabsDevelopment/Octobot?logo=git)
-![Powered by](https://img.shields.io/badge/powered_by-Remora.Discord-blue)
-![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production)
-![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Octobot?logo=github)
+<a href="https://github.com/LabsDevelopment/Octobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LabsDevelopment/Octobot?logo=git"></img></a>
+<a href="https://github.com/Remora/Remora.Discord"><img src="https://img.shields.io/badge/powered_by-Remora.Discord-blue"></img></a>
+<a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
+<a href="https://github.com/LabsDevelopment/Octobot/commit/master"><img src="https://img.shields.io/github/last-commit/LabsDevelopment/Octobot?logo=github"></img></a>
 
 Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/LabsDevelopment) in C# and Remora.Discord
 
