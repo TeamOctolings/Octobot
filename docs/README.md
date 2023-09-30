@@ -38,3 +38,6 @@ their [Open Source Licenses](https://jb.gg/OpenSourceSupport).
 Rider is the recommended IDE when working with Octobot, and everyone on the Octobot team uses it.
 Additionally, ReSharper command-line tools made by JetBrains are used for status checks on pull requests to ensure code
 quality even when not using ReSharper or Rider.
+
+#
+<sup>Not an official Splatoon™ product. We are in no way affiliated with or endorsed by Nintendo Company, or other rightsholders.</sup>
