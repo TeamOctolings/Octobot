@@ -174,7 +174,7 @@ public sealed class UtilityService : IHostedService
             return Result<string>.FromError(usersResult);
         }
 
-        if (role.Value is not 0)
+        if (!role.Empty())
         {
             builder.Append($"{Mention.Role(role)} ");
         }

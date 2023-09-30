@@ -101,7 +101,7 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        if (GuildSettings.MuteRole.Get(data.Settings) != 0)
+        if (!GuildSettings.MuteRole.Get(data.Settings).Empty())
         {
             return await RoleMuteUserAsync(
                 target, reason, duration, guildId, data, channelId, user, currentUser, CancellationToken);

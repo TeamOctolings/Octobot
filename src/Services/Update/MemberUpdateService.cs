@@ -97,7 +97,7 @@ public sealed partial class MemberUpdateService : BackgroundService
         var autoUnmuteResult = await TryAutoUnmuteAsync(guildId, id, data, ct);
         failedResults.AddIfFailed(autoUnmuteResult);
 
-        if (defaultRole.Value is not 0 && !data.Roles.Contains(defaultRole.Value))
+        if (!defaultRole.Empty() && !data.Roles.Contains(defaultRole.Value))
         {
             var addResult = await _guildApi.AddGuildMemberRoleAsync(
                 guildId, id, defaultRole, ct: ct);
