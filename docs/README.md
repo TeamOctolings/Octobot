@@ -6,7 +6,7 @@
 ![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
 ![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Octobot)
 
-Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [@Octol1ttle](https://github.com/Octol1ttle) in C# and Remora.Discord
+Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/LabsDevelopment) in C# and Remora.Discord
 
 ## Features
 
