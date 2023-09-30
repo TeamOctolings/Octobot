@@ -317,6 +317,12 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     private async Task<Result> SendScheduledEventCompletedMessage(ScheduledEventData eventData, GuildData data,
         CancellationToken ct)
     {
+        if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
+        {
+            data.ScheduledEvents.Remove(eventData.Id);
+            return Result.FromSuccess();
+        }
+
         var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, eventData.Name))
             .WithDescription(
                 string.Format(
@@ -349,6 +355,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     {
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
+            data.ScheduledEvents.Remove(eventData.Id);
             return Result.FromSuccess();
         }
 
