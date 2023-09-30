@@ -38,7 +38,7 @@ public sealed class SongUpdateService : BackgroundService
         ("Off the Hook - Acid Hues", new TimeSpan(0, 3, 39)),
         ("Off the Hook - Shark Bytes", new TimeSpan(0, 3, 48)),
         ("DJ Octavio feat. Squid Sisters & Deep Cut - Calamari Inkantation", new TimeSpan(0, 7, 9)),
-        ("Splatoon - Ink Me Up", new TimeSpan(0, 2, 13)),
+        ("Splatoon - Ink Me Up", new TimeSpan(0, 2, 13))
     };
 
     private readonly List<Activity> _activityList = new(1)
