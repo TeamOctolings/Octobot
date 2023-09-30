@@ -4,7 +4,7 @@ using Remora.Discord.API.Gateway.Commands;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Gateway;
 
-namespace Boyfriend.Services.Update;
+namespace Octobot.Services.Update;
 
 public sealed class SongUpdateService : BackgroundService
 {

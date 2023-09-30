@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Boyfriend {
+namespace Octobot {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -25,7 +25,7 @@ namespace Boyfriend {
         internal static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("Boyfriend.locale.Messages", typeof(Messages).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("Octobot.locale.Messages", typeof(Messages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -72,21 +72,21 @@ namespace Boyfriend {
             }
         }
 
-        internal static string Beep1 {
+        internal static string Sound1 {
             get {
-                return ResourceManager.GetString("Beep1", resourceCulture);
+                return ResourceManager.GetString("Sound1", resourceCulture);
             }
         }
 
-        internal static string Beep2 {
+        internal static string Sound2 {
             get {
-                return ResourceManager.GetString("Beep2", resourceCulture);
+                return ResourceManager.GetString("Sound2", resourceCulture);
             }
         }
 
-        internal static string Beep3 {
+        internal static string Sound3 {
             get {
-                return ResourceManager.GetString("Beep3", resourceCulture);
+                return ResourceManager.GetString("Sound3", resourceCulture);
             }
         }
 

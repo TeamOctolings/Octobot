@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using Remora.Rest.Core;
 
-namespace Boyfriend.Data;
+namespace Octobot.Data;
 
 /// <summary>
 ///     Stores information about a guild. This information is not accessible via the Discord API.

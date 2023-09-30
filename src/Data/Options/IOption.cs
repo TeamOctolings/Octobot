@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using Remora.Results;
 
-namespace Boyfriend.Data.Options;
+namespace Octobot.Data.Options;
 
 public interface IOption
 {

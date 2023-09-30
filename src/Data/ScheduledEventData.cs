@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Remora.Discord.API.Abstractions.Objects;
 
-namespace Boyfriend.Data;
+namespace Octobot.Data;
 
 /// <summary>
 ///     Stores information about scheduled events. This information is not provided by the Discord API.

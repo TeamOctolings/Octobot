@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -14,7 +14,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Commands;
+namespace Octobot.Commands;
 
 /// <summary>
 ///     Handles the command to kick members of a guild: /kick.

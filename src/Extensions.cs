@@ -13,7 +13,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend;
+namespace Octobot;
 
 public static class Extensions
 {

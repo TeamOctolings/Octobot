@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using Remora.Commands.Parsers;
 using Remora.Results;
 
-namespace Boyfriend.Data.Options;
+namespace Octobot.Data.Options;
 
 public sealed class TimeSpanOption : Option<TimeSpan>
 {

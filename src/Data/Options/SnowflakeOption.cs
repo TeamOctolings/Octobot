@@ -4,7 +4,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Data.Options;
+namespace Octobot.Data.Options;
 
 public sealed partial class SnowflakeOption : Option<Snowflake>
 {

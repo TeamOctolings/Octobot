@@ -1,13 +1,13 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Octobot.Data;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest.Core;
 
-namespace Boyfriend.Services;
+namespace Octobot.Services;
 
 /// <summary>
 ///     Handles saving, loading, initializing and providing <see cref="GuildData" />.

@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
-namespace Boyfriend.Data.Options;
+namespace Octobot.Data.Options;
 
 /// <inheritdoc />
 public sealed class LanguageOption : Option<CultureInfo>

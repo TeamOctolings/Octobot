@@ -1,8 +1,8 @@
 using System.Drawing;
 using System.Text;
 using System.Text.Json.Nodes;
-using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
+using Octobot.Data;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Extensions.Embeds;
@@ -10,7 +10,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Services;
+namespace Octobot.Services;
 
 /// <summary>
 ///     Provides utility methods that cannot be transformed to extension methods because they require usage

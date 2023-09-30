@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using Boyfriend.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Octobot.Data;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
@@ -11,7 +11,7 @@ using Remora.Discord.Interactivity;
 using Remora.Rest.Core;
 using Remora.Results;
 
-namespace Boyfriend.Services.Update;
+namespace Octobot.Services.Update;
 
 public sealed class ScheduledEventUpdateService : BackgroundService
 {

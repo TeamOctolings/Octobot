@@ -1,7 +1,7 @@
-using Boyfriend.Commands;
 using JetBrains.Annotations;
+using Octobot.Commands;
 
-namespace Boyfriend.Data.Options;
+namespace Octobot.Data.Options;
 
 /// <summary>
 ///     Represents all options as enums.

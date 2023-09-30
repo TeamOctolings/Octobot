@@ -1,11 +1,11 @@
-using Boyfriend.Commands;
-using Boyfriend.Commands.Events;
-using Boyfriend.Services;
-using Boyfriend.Services.Update;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Octobot.Commands;
+using Octobot.Commands.Events;
+using Octobot.Services;
+using Octobot.Services.Update;
 using Remora.Commands.Extensions;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
@@ -21,9 +21,9 @@ using Remora.Discord.Interactivity.Extensions;
 using Remora.Rest.Core;
 using Serilog.Extensions.Logging;
 
-namespace Boyfriend;
+namespace Octobot;
 
-public sealed class Boyfriend
+public sealed class Octobot
 {
     public static readonly AllowedMentions NoMentions = new(
         Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
@@ -104,7 +104,7 @@ public sealed class Boyfriend
                         .WithCommandGroup<RemindCommandGroup>()
                         .WithCommandGroup<SettingsCommandGroup>()
                         .WithCommandGroup<ToolsCommandGroup>();
-                    var responderTypes = typeof(Boyfriend).Assembly
+                    var responderTypes = typeof(Octobot).Assembly
                         .GetExportedTypes()
                         .Where(t => t.IsResponder());
                     foreach (var responderType in responderTypes)
@@ -114,7 +114,7 @@ public sealed class Boyfriend
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()
-                    .AddFile("Logs/Boyfriend-{Date}.log",
+                    .AddFile("Logs/Octobot-{Date}.log",
                         outputTemplate: "{Timestamp:o} [{Level:u4}] {Message} {NewLine}{Exception}")
                     .AddFilter("System.Net.Http.HttpClient.*.LogicalHandler", LogLevel.Warning)
                     .AddFilter("System.Net.Http.HttpClient.*.ClientHandler", LogLevel.Warning)

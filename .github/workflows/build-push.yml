@@ -9,7 +9,7 @@ on:
 
 jobs:
   upload-solution:
-    name: Upload Boyfriend to production
+    name: Upload Octobot to production
     runs-on: ubuntu-latest
     permissions:
       actions: read

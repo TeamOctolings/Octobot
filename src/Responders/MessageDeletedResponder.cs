@@ -1,7 +1,7 @@
 using System.Text;
-using Boyfriend.Data;
-using Boyfriend.Services;
 using JetBrains.Annotations;
+using Octobot.Data;
+using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
@@ -10,7 +10,7 @@ using Remora.Discord.Extensions.Formatting;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 
-namespace Boyfriend.Responders;
+namespace Octobot.Responders;
 
 /// <summary>
 ///     Handles logging the contents of a deleted message and the user who deleted the message
@@ -104,6 +104,6 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },
-            allowedMentions: Boyfriend.NoMentions, ct: ct);
+            allowedMentions: Octobot.NoMentions, ct: ct);
     }
 }

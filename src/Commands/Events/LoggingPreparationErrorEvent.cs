@@ -4,7 +4,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Services;
 using Remora.Results;
 
-namespace Boyfriend.Commands.Events;
+namespace Octobot.Commands.Events;
 
 /// <summary>
 ///     Handles error logging for slash commands that couldn't be successfully prepared.
