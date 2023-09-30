@@ -34,20 +34,15 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
-        var tasks = new List<Task>();
 
         while (await timer.WaitForNextTickAsync(ct))
         {
             var guildIds = _guildData.GetGuildIds();
-
-            tasks.AddRange(guildIds.Select(async id =>
+            foreach (var id in guildIds)
             {
                 var tickResult = await TickScheduledEventsAsync(id, ct);
                 _logger.LogResult(tickResult, $"Error in scheduled events update for guild {id}.");
-            }));
-
-            await Task.WhenAll(tasks);
-            tasks.Clear();
+            }
         }
     }
 
