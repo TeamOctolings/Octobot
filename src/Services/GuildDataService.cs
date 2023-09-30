@@ -4,7 +4,6 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Octobot.Data;
-using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest.Core;
 
 namespace Octobot.Services;
@@ -15,14 +14,12 @@ namespace Octobot.Services;
 public sealed class GuildDataService : IHostedService
 {
     private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
-    private readonly IDiscordRestGuildAPI _guildApi;
     private readonly ILogger<GuildDataService> _logger;
 
     // https://github.com/dotnet/aspnetcore/issues/39139
     public GuildDataService(
-        IHostApplicationLifetime lifetime, IDiscordRestGuildAPI guildApi, ILogger<GuildDataService> logger)
+        IHostApplicationLifetime lifetime, ILogger<GuildDataService> logger)
     {
-        _guildApi = guildApi;
         _logger = logger;
         lifetime.ApplicationStopping.Register(ApplicationStopping);
     }
@@ -139,11 +136,6 @@ public sealed class GuildDataService : IHostedService
     public async Task<JsonNode> GetSettings(Snowflake guildId, CancellationToken ct = default)
     {
         return (await GetData(guildId, ct)).Settings;
-    }
-
-    public async Task<MemberData> GetMemberData(Snowflake guildId, Snowflake userId, CancellationToken ct = default)
-    {
-        return (await GetData(guildId, ct)).GetOrCreateMemberData(userId);
     }
 
     public ICollection<Snowflake> GetGuildIds()
