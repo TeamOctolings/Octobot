@@ -61,6 +61,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(eventsResult);
         }
 
+        SyncScheduledEvents(data, events);
+
         foreach (var storedEvent in data.ScheduledEvents.Values)
         {
             var scheduledEvent = TryGetScheduledEvent(events, storedEvent.Id);
@@ -100,20 +102,25 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             failedResults.AddIfFailed(statusUpdatedResponseResult);
         }
 
-        SyncScheduledEvents(data, events);
-
         return failedResults.AggregateErrors();
     }
 
-    private static void SyncScheduledEvents(GuildData data, IReadOnlyCollection<IGuildScheduledEvent> events)
+    private static void SyncScheduledEvents(GuildData data, IEnumerable<IGuildScheduledEvent> events)
     {
-        if (data.ScheduledEvents.Count < events.Count)
+        foreach (var @event in events)
         {
-            foreach (var @event in events.Where(@event => !data.ScheduledEvents.ContainsKey(@event.ID.Value)))
+            if (!data.ScheduledEvents.ContainsKey(@event.ID.Value))
             {
-                data.ScheduledEvents.Add(@event.ID.Value, new ScheduledEventData(@event.ID.Value,
-                    @event.Name, @event.ScheduledStartTime, @event.Status));
+                data.ScheduledEvents.Add(@event.ID.Value,
+                    new ScheduledEventData(@event.ID.Value, @event.Name, @event.ScheduledStartTime, @event.Status));
+                continue;
             }
+
+            var eventData = data.ScheduledEvents[@event.ID.Value];
+            eventData.Name = @event.Name;
+            eventData.ScheduledStartTime = @event.ScheduledStartTime;
+            eventData.ScheduleOnStatusUpdated = eventData.Status != @event.Status;
+            eventData.Status = @event.Status;
         }
     }
 
