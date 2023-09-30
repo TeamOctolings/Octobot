@@ -74,7 +74,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
             if (!storedEvent.ScheduleOnStatusUpdated)
             {
-                var tickResult = await TickScheduledEventAsync(guildId, data, scheduledEvent.Entity, storedEvent, ct);
+                var tickResult =
+                    await TickScheduledEventAsync(guildId, data, scheduledEvent.Entity, storedEvent, ct);
                 failedResults.AddIfFailed(tickResult);
                 continue;
             }
@@ -99,7 +100,21 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             failedResults.AddIfFailed(statusUpdatedResponseResult);
         }
 
+        SyncScheduledEvents(data, events);
+
         return failedResults.AggregateErrors();
+    }
+
+    private static void SyncScheduledEvents(GuildData data, IReadOnlyCollection<IGuildScheduledEvent> events)
+    {
+        if (data.ScheduledEvents.Count < events.Count)
+        {
+            foreach (var @event in events.Where(@event => !data.ScheduledEvents.ContainsKey(@event.ID.Value)))
+            {
+                data.ScheduledEvents.Add(@event.ID.Value, new ScheduledEventData(@event.ID.Value,
+                    @event.Name, @event.ScheduledStartTime, @event.Status));
+            }
+        }
     }
 
     private static Result<IGuildScheduledEvent> TryGetScheduledEvent(IEnumerable<IGuildScheduledEvent> from, ulong id)
