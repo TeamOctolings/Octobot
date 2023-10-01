@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Hosting;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Gateway.Commands;
@@ -8,22 +9,22 @@ namespace Octobot.Services.Update;
 
 public sealed class SongUpdateService : BackgroundService
 {
-    private static readonly (string Name, TimeSpan Duration)[] SongList =
+    private static readonly (string Name, string Author, TimeSpan Duration)[] SongList =
     {
-        ("Yoko & the Gold Bazookas - Rockagilly Blues", new TimeSpan(0, 3, 37)),
-        ("Splatoon 3 - Seep and Destroy", new TimeSpan(0, 2, 42)),
-        ("Deep Cut - Big Betrayal", new TimeSpan(0, 1, 42)),
-        ("Squid Sisters - Tomorrow's Nostalgia Today", new TimeSpan(0, 2, 8)),
-        ("Deep Cut - Anarchy Rainbow", new TimeSpan(0, 1, 51)),
-        ("Squid Sisters feat. Ian BGM - Liquid Sunshine", new TimeSpan(0, 1, 32)),
-        ("Damp Socks feat. Off the Hook - Candy-Coated Rocks", new TimeSpan(0, 1, 11)),
-        ("H2Whoa - Aquasonic", new TimeSpan(0, 1, 1)),
-        ("Yoko & the Gold Bazookas - Ska-Blam!", new TimeSpan(0, 4, 4)),
-        ("Off the Hook - Muck Warfare", new TimeSpan(0, 3, 39)),
-        ("Off the Hook - Acid Hues", new TimeSpan(0, 3, 39)),
-        ("Off the Hook - Shark Bytes", new TimeSpan(0, 3, 48)),
-        ("DJ Octavio feat. Squid Sisters & Deep Cut - Calamari Inkantation", new TimeSpan(0, 7, 9)),
-        ("Splatoon - Ink Me Up", new TimeSpan(0, 2, 13))
+        ("Rockagilly Blues", "Yoko & the Gold Bazookas", new TimeSpan(0, 3, 37)),
+        ("Seep and Destroy", "Splatoon 3", new TimeSpan(0, 2, 42)),
+        ("Big Betrayal", "Deep Cut", new TimeSpan(0, 1, 42)),
+        ("Tomorrow's Nostalgia Today", "Squid Sisters", new TimeSpan(0, 2, 8)),
+        ("Anarchy Rainbow", "Deep Cut", new TimeSpan(0, 1, 51)),
+        ("Liquid Sunshine", "Squid Sisters feat. Ian BGM", new TimeSpan(0, 1, 32)),
+        ("Candy-Coated Rocks", "Damp Socks feat. Off the Hook", new TimeSpan(0, 1, 11)),
+        ("Aquasonic", "H2Whoa", new TimeSpan(0, 1, 1)),
+        ("Ska-Blam!", "Yoko & the Gold Bazookas", new TimeSpan(0, 4, 4)),
+        ("Muck Warfare", "Off the Hook", new TimeSpan(0, 3, 39)),
+        ("Acid Hues", "Off the Hook", new TimeSpan(0, 3, 39)),
+        ("Shark Bytes", "Off the Hook", new TimeSpan(0, 3, 48)),
+        ("Calamari Inkantation 3MIX", "DJ Octavio feat. Squid Sisters & Deep Cut", new TimeSpan(0, 7, 9)),
+        ("Ink Me Up", "Squid Sisters", new TimeSpan(0, 2, 13))
     };
 
     private readonly List<Activity> _activityList = new(1)
@@ -52,7 +53,8 @@ public sealed class SongUpdateService : BackgroundService
         while (!ct.IsCancellationRequested)
         {
             var nextSong = SongList[_nextSongIndex];
-            _activityList[0] = new Activity(nextSong.Name, ActivityType.Listening);
+            var builder = new StringBuilder().Append(nextSong.Name).Append(" / ").Append(nextSong.Author);
+            _activityList[0] = new Activity(builder.ToString(), ActivityType.Listening);
             _client.SubmitCommand(
                 new UpdatePresence(
                     UserStatus.Online, false, DateTimeOffset.UtcNow, _activityList));
