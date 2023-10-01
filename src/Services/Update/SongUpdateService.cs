@@ -18,7 +18,12 @@ public sealed class SongUpdateService : BackgroundService
         ("Squid Sisters feat. Ian BGM - Liquid Sunshine", new TimeSpan(0, 1, 32)),
         ("Damp Socks feat. Off the Hook - Candy-Coated Rocks", new TimeSpan(0, 1, 11)),
         ("H2Whoa - Aquasonic", new TimeSpan(0, 1, 1)),
-        ("Yoko & the Gold Bazookas - Ska-Blam!", new TimeSpan(0, 4, 4))
+        ("Yoko & the Gold Bazookas - Ska-Blam!", new TimeSpan(0, 4, 4)),
+        ("Off the Hook - Muck Warfare", new TimeSpan(0, 3, 39)),
+        ("Off the Hook - Acid Hues", new TimeSpan(0, 3, 39)),
+        ("Off the Hook - Shark Bytes", new TimeSpan(0, 3, 48)),
+        ("DJ Octavio feat. Squid Sisters & Deep Cut - Calamari Inkantation", new TimeSpan(0, 7, 9)),
+        ("Splatoon - Ink Me Up", new TimeSpan(0, 2, 13))
     };
 
     private readonly List<Activity> _activityList = new(1)
