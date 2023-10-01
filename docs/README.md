@@ -2,9 +2,10 @@
     <img src="https://mctaylors.ddns.net/cdn/octobot-banner.png" alt="Octobot banner"/>
 </p>
 
-![License](https://img.shields.io/github/license/LabsDevelopment/Octobot)
-![Workflow Status](https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?branch=master&logo=ReSharper)
-![Last Commit](https://img.shields.io/github/last-commit/LabsDevelopment/Octobot)
+<a href="https://github.com/LabsDevelopment/Octobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LabsDevelopment/Octobot?logo=git"></img></a>
+<a href="https://github.com/Remora/Remora.Discord"><img src="https://img.shields.io/badge/powered_by-Remora.Discord-blue"></img></a>
+<a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
+<a href="https://github.com/LabsDevelopment/Octobot/commit/master"><img src="https://img.shields.io/github/last-commit/LabsDevelopment/Octobot?logo=github"></img></a>
 
 Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/LabsDevelopment) in C# and Remora.Discord
 
@@ -13,14 +14,13 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 * Banning, muting, kicking, etc.
 * Reminding you about something if you wish
 * Reminding everyone about that new event you made
+* Renaming those annoying self-hoisting members
 * Log everything from joining the server to deleting messages
+* Listen to music!
 
-*...and more!*
+*...a-a-and more!*
 
-## Installing and running Octobot
-
-You can read our [wiki](https://github.com/LabsDevelopment/Octobot/wiki) in order to assemble your Octobot and
-moderate the server.
+[//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
 
 ## Contributing
 
