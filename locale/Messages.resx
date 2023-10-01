@@ -654,4 +654,13 @@
   <data name="RandomOutput" xml:space="preserve">
     <value>Your random number is:</value>
   </data>
+  <data name="RandomObvious" xml:space="preserve">
+      <value>Isn't it obvious?</value>
+  </data>
+  <data name="RandomMin" xml:space="preserve">
+      <value>Minimum number: {0}</value>
+  </data>
+  <data name="RandomMax" xml:space="preserve">
+      <value>Maximum number: {0}</value>
+  </data>
 </root>

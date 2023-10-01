@@ -654,4 +654,13 @@
   <data name="RandomOutput" xml:space="preserve">
     <value>ваше рандомное число:</value>
   </data>
+  <data name="RandomObvious" xml:space="preserve">
+      <value>ну чувак...</value>
+  </data>
+  <data name="RandomMax" xml:space="preserve">
+      <value>наибольшее: {0}</value>
+  </data>
+  <data name="RandomMin" xml:space="preserve">
+      <value>наименьшее: {0}</value>
+  </data>
 </root>

@@ -1135,5 +1135,26 @@ namespace Octobot {
                 return ResourceManager.GetString("RandomOutput", resourceCulture);
             }
         }
+
+        internal static string RandomObvious
+        {
+            get {
+                return ResourceManager.GetString("RandomObvious", resourceCulture);
+            }
+        }
+
+        internal static string RandomMax
+        {
+            get {
+                return ResourceManager.GetString("RandomMax", resourceCulture);
+            }
+        }
+
+        internal static string RandomMin
+        {
+            get {
+                return ResourceManager.GetString("RandomMin", resourceCulture);
+            }
+        }
     }
 }

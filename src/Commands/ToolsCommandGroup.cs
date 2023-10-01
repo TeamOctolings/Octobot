@@ -243,8 +243,8 @@ public class ToolsCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteRandomAsync(
         [Description("Maximum number")] int max,
-        [Description("Minumum number (Default: 1)")]
-        int min = 1)
+        [Description("Minumum number (Default: 0)")]
+        int min = 0)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
@@ -282,9 +282,19 @@ public class ToolsCommandGroup : CommandGroup
 
         var i = Random.Shared.Next(min, max + 1);
 
+        var description = new StringBuilder().Append("# ").AppendLine(i.ToString())
+            .Append("- ").AppendLine(string.Format(Messages.RandomMin, Markdown.InlineCode(min.ToString())))
+            .Append("- ").AppendLine(string.Format(Messages.RandomMax, Markdown.InlineCode(max.ToString())));
+        var embedColor = ColorsList.Blue;
+        if (min == max)
+        {
+            description.AppendLine(Markdown.Italicise(Messages.RandomObvious));
+            embedColor = ColorsList.Red;
+        }
+
         var embed = new EmbedBuilder().WithSmallTitle(Messages.RandomOutput, user)
-            .WithDescription($"# {i}\n({min}-{max})")
-            .WithColour(ColorsList.Blue)
+            .WithDescription(description.ToString())
+            .WithColour(embedColor)
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
