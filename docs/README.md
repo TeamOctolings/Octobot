@@ -14,13 +14,13 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 * Banning, muting, kicking, etc.
 * Reminding you about something if you wish
 * Reminding everyone about that new event you made
-* Renaming those annoying hoisted members
+* Renaming those annoying self-hoisting members
 * Log everything from joining the server to deleting messages
 * Listen to music!
 
 *...a-a-and more!*
 
-[//]: # (if you are reading this, message @mctaylors that he needs to return wiki back)
+[//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
 
 ## Contributing
 
