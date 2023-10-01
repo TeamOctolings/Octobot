@@ -288,7 +288,7 @@ public class ToolsCommandGroup : CommandGroup
         var embedColor = ColorsList.Blue;
         if (min == max)
         {
-            description.AppendLine(Markdown.Italicise(Messages.RandomObvious));
+            description.AppendLine(Markdown.Italicise(Messages.RandomMinMaxSame));
             embedColor = ColorsList.Red;
         }
 

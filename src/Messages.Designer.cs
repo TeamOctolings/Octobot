@@ -1136,10 +1136,10 @@ namespace Octobot {
             }
         }
 
-        internal static string RandomObvious
+        internal static string RandomMinMaxSame
         {
             get {
-                return ResourceManager.GetString("RandomObvious", resourceCulture);
+                return ResourceManager.GetString("RandomMinMaxSame", resourceCulture);
             }
         }
 
