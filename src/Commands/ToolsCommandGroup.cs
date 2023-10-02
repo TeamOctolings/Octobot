@@ -324,9 +324,9 @@ public class ToolsCommandGroup : CommandGroup
 
     private async Task<Result> SendRandomNumberAsync(TimeSpan? offset, IUser user, CancellationToken ct)
     {
-        var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds().ToString();
+        var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
 
-        var description = new StringBuilder().Append("# ").AppendLine(timestamp);
+        var description = new StringBuilder().Append("# ").AppendLine(timestamp.ToString());
 
         if (offset is not null)
         {
@@ -334,11 +334,21 @@ public class ToolsCommandGroup : CommandGroup
                 Messages.TimestampOffset, Markdown.InlineCode(offset.ToString() ?? string.Empty))).AppendLine();
         }
 
-        string[] options = { "d", "D", "t", "T", "f", "F", "R" };
-        foreach (var option in options)
+        TimestampStyle[] allStyles =
         {
-            description.Append("- ").Append(Markdown.InlineCode($"<t:{timestamp}:{option}>"))
-                .Append(" — ").AppendLine($"<t:{timestamp}:{option}>");
+            TimestampStyle.ShortDate,
+            TimestampStyle.LongDate,
+            TimestampStyle.ShortTime,
+            TimestampStyle.LongTime,
+            TimestampStyle.ShortDateTime,
+            TimestampStyle.LongDateTime,
+            TimestampStyle.RelativeTime
+        };
+
+        foreach (var style in allStyles)
+        {
+            description.Append("- ").Append(Markdown.InlineCode(Markdown.Timestamp(timestamp, style)))
+                .Append(" — ").AppendLine(Markdown.Timestamp(timestamp, style));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
