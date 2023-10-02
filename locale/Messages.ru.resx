@@ -660,4 +660,7 @@
   <data name="RandomMin" xml:space="preserve">
       <value>Минимальное число: {0}</value>
   </data>
+  <data name="Default" xml:space="preserve">
+      <value>(по умолчанию)</value>
+  </data>
 </root>

@@ -244,7 +244,7 @@ public class ToolsCommandGroup : CommandGroup
     public async Task<Result> ExecuteRandomAsync(
         [Description("First number")] long first,
         [Description("Second number (Default: 0)")]
-        long second = 0)
+        long? second = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
@@ -263,21 +263,36 @@ public class ToolsCommandGroup : CommandGroup
         return await SendRandomNumberAsync(first, second, user, CancellationToken);
     }
 
-    private async Task<Result> SendRandomNumberAsync(long first, long second, IUser user, CancellationToken ct)
+    private async Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
+        IUser user, CancellationToken ct)
     {
+        var second = secondNullable ?? 0;
+
         var min = Math.Min(first, second);
         var max = Math.Max(first, second);
 
         var i = Random.Shared.NextInt64(min, max + 1);
 
-        var description = new StringBuilder().Append("# ").AppendLine(i.ToString())
-            .Append("- ").AppendLine(string.Format(Messages.RandomMin, Markdown.InlineCode(min.ToString())))
-            .Append("- ").AppendLine(string.Format(Messages.RandomMax, Markdown.InlineCode(max.ToString())));
+        var description = new StringBuilder().Append("# ").Append(i);
+
+        description.AppendLine().Append("- ").Append(string.Format(
+            Messages.RandomMin, Markdown.InlineCode(min.ToString())));
+        if (secondNullable is null && first >= 0)
+        {
+            description.Append(' ').Append(Messages.Default);
+        }
+
+        description.AppendLine().Append("- ").Append(string.Format(
+            Messages.RandomMax, Markdown.InlineCode(max.ToString())));
+        if (secondNullable is null && first < 0)
+        {
+            description.Append(' ').Append(Messages.Default);
+        }
 
         var embedColor = ColorsList.Blue;
-        if (min == max)
+        if (secondNullable is not null && min == max)
         {
-            description.AppendLine(Markdown.Italicise(Messages.RandomMinMaxSame));
+            description.AppendLine().Append(Markdown.Italicise(Messages.RandomMinMaxSame));
             embedColor = ColorsList.Red;
         }
 
