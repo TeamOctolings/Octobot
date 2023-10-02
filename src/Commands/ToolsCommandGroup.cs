@@ -233,7 +233,7 @@ public class ToolsCommandGroup : CommandGroup
     ///     A slash command that generates a random number using maximum and minimum numbers.
     /// </summary>
     /// <param name="first">The first number used for randomization.</param>
-    /// <param name="second">The second number used for randomization. Default value: 1</param>
+    /// <param name="second">The second number used for randomization. Default value: 0</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
