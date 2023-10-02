@@ -82,12 +82,6 @@ public class ToolsCommandGroup : CommandGroup
             return Result.FromError(userResult);
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
-        {
-            return Result.FromError(currentUserResult);
-        }
-
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
