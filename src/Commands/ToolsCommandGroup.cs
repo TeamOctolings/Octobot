@@ -260,7 +260,7 @@ public class ToolsCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await SendRandomNumberAsync(first, second, user, currentUser, CancellationToken);
+        return await SendRandomNumberAsync(first, second, user, CancellationToken);
     }
 
     private async Task<Result> SendRandomNumberAsync(int first, int second, IUser user, CancellationToken ct)
