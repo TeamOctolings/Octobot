@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Octobot.Commands;
 
 /// <summary>
-///     Handles tool commands: /showinfo, /random.
+///     Handles tool commands: /showinfo, /random, /timestamp.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
@@ -284,6 +284,66 @@ public class ToolsCommandGroup : CommandGroup
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.RandomOutput, user)
             .WithDescription($"# {i}\n({min}-{max})")
+            .WithColour(ColorsList.Blue)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    /// <summary>
+    ///     A slash command that shows current or counted timestamp.
+    /// </summary>
+    /// <param name="offset">The offset to count timestamp.</param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
+    [Command("timestamp")]
+    [DiscordDefaultDMPermission(false)]
+    [Description("Gets timestamp")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteTimestampAsync(
+        [Description("Add an offset from now")]
+        TimeSpan? offset = null)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await SendRandomNumberAsync(offset, user, CancellationToken);
+    }
+
+    private async Task<Result> SendRandomNumberAsync(TimeSpan? offset, IUser user, CancellationToken ct)
+    {
+        var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds().ToString();
+
+        var description = new StringBuilder().Append("# ").AppendLine(timestamp);
+
+        if (offset is not null)
+        {
+            description.AppendLine(string.Format(
+                Messages.TimestampOffset, Markdown.InlineCode(offset.ToString() ?? string.Empty))).AppendLine();
+        }
+
+        string[] options = { "d", "D", "t", "T", "f", "F", "R" };
+        foreach (var option in options)
+        {
+            description.Append("- ").Append(Markdown.InlineCode($"<t:{timestamp}:{option}>"))
+                .Append(" — ").AppendLine($"<t:{timestamp}:{option}>");
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.TimestampTitle, user.GetTag()), user)
+            .WithDescription(description.ToString())
             .WithColour(ColorsList.Blue)
             .Build();
 
