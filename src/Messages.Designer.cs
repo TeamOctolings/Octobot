@@ -1122,10 +1122,10 @@ namespace Octobot {
             }
         }
 
-        internal static string RandomOutput
+        internal static string RandomTitle
         {
             get {
-                return ResourceManager.GetString("RandomOutput", resourceCulture);
+                return ResourceManager.GetString("RandomTitle", resourceCulture);
             }
         }
 

@@ -648,8 +648,8 @@
   <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
     <value>бустит сервер со времен</value>
   </data>
-  <data name="RandomOutput" xml:space="preserve">
-    <value>ваше рандомное число:</value>
+  <data name="RandomTitle" xml:space="preserve">
+      <value>рандомное число {0}:</value>
   </data>
   <data name="RandomMinMaxSame" xml:space="preserve">
       <value>ну чувак...</value>

@@ -296,7 +296,8 @@ public class ToolsCommandGroup : CommandGroup
             embedColor = ColorsList.Red;
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.RandomOutput, user)
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.RandomTitle, user.GetTag()), user)
             .WithDescription(description.ToString())
             .WithColour(embedColor)
             .Build();
