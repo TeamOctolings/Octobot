@@ -265,8 +265,8 @@ public class ToolsCommandGroup : CommandGroup
 
     private async Task<Result> SendRandomNumberAsync(int first, int second, IUser user, CancellationToken ct)
     {
-        var max = Math.Max(first, second);
         var min = Math.Min(first, second);
+        var max = Math.Max(first, second);
 
         var i = Random.Shared.Next(min, max + 1);
 
