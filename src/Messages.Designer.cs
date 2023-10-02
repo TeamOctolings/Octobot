@@ -1122,13 +1122,6 @@ namespace Octobot {
             }
         }
 
-        internal static string RandomMinGreaterThanMax
-        {
-            get {
-                return ResourceManager.GetString("RandomMinGreaterThanMax", resourceCulture);
-            }
-        }
-
         internal static string RandomOutput
         {
             get {
