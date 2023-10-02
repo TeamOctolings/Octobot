@@ -263,7 +263,7 @@ public class ToolsCommandGroup : CommandGroup
         return await SendRandomNumberAsync(first, second, user, currentUser, CancellationToken);
     }
 
-    private async Task<Result> SendRandomNumberAsync(int first, int second, IUser user, IUser currentUser, CancellationToken ct)
+    private async Task<Result> SendRandomNumberAsync(int first, int second, IUser user, CancellationToken ct)
     {
         var max = Math.Max(first, second);
         var min = Math.Min(first, second);
