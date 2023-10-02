@@ -232,8 +232,8 @@ public class ToolsCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that generates a random number using maximum and minimum numbers.
     /// </summary>
-    /// <param name="max">The maximum number for randomization.</param>
-    /// <param name="min">The minimum number for randomization. Default value: 1</param>
+    /// <param name="first">The first number used for randomization.</param>
+    /// <param name="second">The second number used for randomization. Default value: 1</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
@@ -242,9 +242,9 @@ public class ToolsCommandGroup : CommandGroup
     [Description("Generates a random number")]
     [UsedImplicitly]
     public async Task<Result> ExecuteRandomAsync(
-        [Description("Maximum number")] int max,
-        [Description("Minumum number (Default: 0)")]
-        int min = 0)
+        [Description("First number")] int first,
+        [Description("Second number (Default: 0)")]
+        int second = 0)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
@@ -271,14 +271,8 @@ public class ToolsCommandGroup : CommandGroup
 
     private async Task<Result> SendRandomNumberAsync(int max, int min, IUser user, IUser currentUser, CancellationToken ct)
     {
-        if (min > max)
-        {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(
-                    Messages.RandomMinGreaterThanMax, currentUser)
-                .WithColour(ColorsList.Red).Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
-        }
+        var max = Math.Max(first, second);
+        var min = Math.Min(first, second);
 
         var i = Random.Shared.Next(min, max + 1);
 
