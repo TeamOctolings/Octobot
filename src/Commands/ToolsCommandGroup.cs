@@ -348,7 +348,7 @@ public class ToolsCommandGroup : CommandGroup
         foreach (var style in allStyles)
         {
             description.Append("- ").Append(Markdown.InlineCode(Markdown.Timestamp(timestamp, style)))
-                .Append(" — ").AppendLine(Markdown.Timestamp(timestamp, style));
+                .Append(" → ").AppendLine(Markdown.Timestamp(timestamp, style));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
