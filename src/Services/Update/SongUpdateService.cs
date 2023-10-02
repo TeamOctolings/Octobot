@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.Extensions.Hosting;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Gateway.Commands;
