@@ -242,9 +242,9 @@ public class ToolsCommandGroup : CommandGroup
     [Description("Generates a random number")]
     [UsedImplicitly]
     public async Task<Result> ExecuteRandomAsync(
-        [Description("First number")] int first,
+        [Description("First number")] long first,
         [Description("Second number (Default: 0)")]
-        int second = 0)
+        long second = 0)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
@@ -263,12 +263,12 @@ public class ToolsCommandGroup : CommandGroup
         return await SendRandomNumberAsync(first, second, user, CancellationToken);
     }
 
-    private async Task<Result> SendRandomNumberAsync(int first, int second, IUser user, CancellationToken ct)
+    private async Task<Result> SendRandomNumberAsync(long first, long second, IUser user, CancellationToken ct)
     {
         var min = Math.Min(first, second);
         var max = Math.Max(first, second);
 
-        var i = Random.Shared.Next(min, max + 1);
+        var i = Random.Shared.NextInt64(min, max + 1);
 
         var description = new StringBuilder().Append("# ").AppendLine(i.ToString())
             .Append("- ").AppendLine(string.Format(Messages.RandomMin, Markdown.InlineCode(min.ToString())))
