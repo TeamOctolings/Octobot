@@ -273,7 +273,7 @@ public class ToolsCommandGroup : CommandGroup
         var description = new StringBuilder().Append("# ").AppendLine(i.ToString())
             .Append("- ").AppendLine(string.Format(Messages.RandomMin, Markdown.InlineCode(min.ToString())))
             .Append("- ").AppendLine(string.Format(Messages.RandomMax, Markdown.InlineCode(max.ToString())));
-            
+
         var embedColor = ColorsList.Blue;
         if (min == max)
         {
