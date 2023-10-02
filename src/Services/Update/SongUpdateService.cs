@@ -52,7 +52,7 @@ public sealed class SongUpdateService : BackgroundService
         while (!ct.IsCancellationRequested)
         {
             var nextSong = SongList[_nextSongIndex];
-            _activityList[0] = new Activity($"{nextSong.Name} / {nextSong.Author}", 
+            _activityList[0] = new Activity($"{nextSong.Name} / {nextSong.Author}",
                 ActivityType.Listening);
             _client.SubmitCommand(
                 new UpdatePresence(
