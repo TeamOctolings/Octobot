@@ -19,7 +19,7 @@ public sealed class SongUpdateService : BackgroundService
         ("Liquid Sunshine", "Squid Sisters feat. Ian BGM", new TimeSpan(0, 1, 32)),
         ("Candy-Coated Rocks", "Damp Socks feat. Off the Hook", new TimeSpan(0, 1, 11)),
         ("Aquasonic", "H2Whoa", new TimeSpan(0, 1, 1)),
-        ("Ska-Blam!", "Yoko & the Gold Bazookas", new TimeSpan(0, 4, 4)),
+        ("Ska-BLAM", "Yoko & the Gold Bazookas", new TimeSpan(0, 4, 4)),
         ("Muck Warfare", "Off the Hook", new TimeSpan(0, 3, 39)),
         ("Acid Hues", "Off the Hook", new TimeSpan(0, 3, 39)),
         ("Shark Bytes", "Off the Hook", new TimeSpan(0, 3, 48)),
@@ -53,8 +53,8 @@ public sealed class SongUpdateService : BackgroundService
         while (!ct.IsCancellationRequested)
         {
             var nextSong = SongList[_nextSongIndex];
-            var builder = new StringBuilder().Append(nextSong.Name).Append(" / ").Append(nextSong.Author);
-            _activityList[0] = new Activity(builder.ToString(), ActivityType.Listening);
+            _activityList[0] = new Activity($"{nextSong.Name} / {nextSong.Author}"
+                , ActivityType.Listening);
             _client.SubmitCommand(
                 new UpdatePresence(
                     UserStatus.Online, false, DateTimeOffset.UtcNow, _activityList));
