@@ -89,6 +89,7 @@ public sealed class Octobot
                         // Services
                         .AddSingleton<GuildDataService>()
                         .AddSingleton<UtilityService>()
+                        .AddHostedService<GuildUpdateService>()
                         .AddHostedService<MemberUpdateService>()
                         .AddHostedService<ScheduledEventUpdateService>()
                         .AddHostedService<SongUpdateService>()

@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Octobot.Data;
+using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
 
 namespace Octobot.Services;
@@ -141,5 +142,10 @@ public sealed class GuildDataService : IHostedService
     public ICollection<Snowflake> GetGuildIds()
     {
         return _datas.Keys;
+    }
+
+    public Task RemoveGuildId(Snowflake id)
+    {
+        return Task.FromResult(_datas.TryRemove(id, out _));
     }
 }
