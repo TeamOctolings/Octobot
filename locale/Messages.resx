@@ -663,4 +663,10 @@
   <data name="Default" xml:space="preserve">
       <value>(default)</value>
   </data>
+  <data name="TimestampTitle" xml:space="preserve">
+      <value>Timestamp for {0}:</value>
+  </data>
+  <data name="TimestampOffset" xml:space="preserve">
+      <value>Offset: {0}</value>
+  </data>
 </root>

@@ -663,4 +663,10 @@
   <data name="Default" xml:space="preserve">
       <value>(дефолт)</value>
   </data>
+  <data name="TimestampTitle" xml:space="preserve">
+      <value>таймштамп для {0}:</value>
+  </data>
+  <data name="TimestampOffset" xml:space="preserve">
+      <value>офсет: {0}</value>
+  </data>
 </root>

@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Octobot.Commands;
 
 /// <summary>
-///     Handles tool commands: /showinfo, /random.
+///     Handles tool commands: /showinfo, /random, /timestamp.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
@@ -306,6 +306,76 @@ public class ToolsCommandGroup : CommandGroup
                 string.Format(Messages.RandomTitle, user.GetTag()), user)
             .WithDescription(description.ToString())
             .WithColour(embedColor)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    private static readonly TimestampStyle[] AllStyles =
+    {
+        TimestampStyle.ShortDate,
+        TimestampStyle.LongDate,
+        TimestampStyle.ShortTime,
+        TimestampStyle.LongTime,
+        TimestampStyle.ShortDateTime,
+        TimestampStyle.LongDateTime,
+        TimestampStyle.RelativeTime
+    };
+
+    /// <summary>
+    ///     A slash command that shows the current timestamp with an optional offset in all styles supported by Discord.
+    /// </summary>
+    /// <param name="offset">The offset for the current timestamp.</param>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
+    [Command("timestamp")]
+    [DiscordDefaultDMPermission(false)]
+    [Description("Shows a timestamp in all styles")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteTimestampAsync(
+        [Description("Offset from current time")]
+        TimeSpan? offset = null)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
+        if (!userResult.IsDefined(out var user))
+        {
+            return Result.FromError(userResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await SendTimestampAsync(offset, user, CancellationToken);
+    }
+
+    private async Task<Result> SendTimestampAsync(TimeSpan? offset, IUser user, CancellationToken ct)
+    {
+        var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
+
+        var description = new StringBuilder().Append("# ").AppendLine(timestamp.ToString());
+
+        if (offset is not null)
+        {
+            description.AppendLine(string.Format(
+                Messages.TimestampOffset, Markdown.InlineCode(offset.ToString() ?? string.Empty))).AppendLine();
+        }
+
+        foreach (var markdownTimestamp in AllStyles.Select(style => Markdown.Timestamp(timestamp, style)))
+        {
+            description.Append("- ").Append(Markdown.InlineCode(markdownTimestamp))
+                .Append(" → ").AppendLine(markdownTimestamp);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.TimestampTitle, user.GetTag()), user)
+            .WithDescription(description.ToString())
+            .WithColour(ColorsList.Blue)
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
