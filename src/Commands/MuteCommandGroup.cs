@@ -365,17 +365,15 @@ public class MuteCommandGroup : CommandGroup
             return Result.FromSuccess();
         }
 
-        var muteResult = await _guildApi.ModifyGuildMemberAsync(
+        var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, roles: memberData.Roles.ConvertAll(r => r.ToSnowflake()),
             reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
-        if (!muteResult.IsSuccess)
+        if (unmuteResult.IsSuccess)
         {
-            return Result.FromError(muteResult.Error);
+            memberData.MutedUntil = null;
         }
 
-        memberData.MutedUntil = null;
-
-        return Result.FromSuccess();
+        return unmuteResult;
     }
 
     private async Task<Result> RemoveTimeoutAsync(
@@ -387,9 +385,9 @@ public class MuteCommandGroup : CommandGroup
             return Result.FromSuccess();
         }
 
-        var muteResult = await _guildApi.ModifyGuildMemberAsync(
+        var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: null, ct: ct);
-        return !muteResult.IsSuccess ? Result.FromError(muteResult.Error) : Result.FromSuccess();
+        return unmuteResult;
     }
 }
