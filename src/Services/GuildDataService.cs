@@ -4,7 +4,6 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Octobot.Data;
-using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
 
 namespace Octobot.Services;
