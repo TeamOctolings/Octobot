@@ -290,6 +290,17 @@ public class ToolsCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
+    private static readonly TimestampStyle[] AllStyles =
+    {
+        TimestampStyle.ShortDate,
+        TimestampStyle.LongDate,
+        TimestampStyle.ShortTime,
+        TimestampStyle.LongTime,
+        TimestampStyle.ShortDateTime,
+        TimestampStyle.LongDateTime,
+        TimestampStyle.RelativeTime
+    };
+
     /// <summary>
     ///     A slash command that shows the current timestamp with an optional offset in all styles supported by Discord.
     /// </summary>
@@ -302,7 +313,7 @@ public class ToolsCommandGroup : CommandGroup
     [Description("Shows a timestamp in all styles")]
     [UsedImplicitly]
     public async Task<Result> ExecuteTimestampAsync(
-        [Description("Add an offset from now")]
+        [Description("Offset from current time")]
         TimeSpan? offset = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
@@ -321,17 +332,6 @@ public class ToolsCommandGroup : CommandGroup
 
         return await SendTimestampAsync(offset, user, CancellationToken);
     }
-
-    private static readonly TimestampStyle[] AllStyles =
-    {
-        TimestampStyle.ShortDate,
-        TimestampStyle.LongDate,
-        TimestampStyle.ShortTime,
-        TimestampStyle.LongTime,
-        TimestampStyle.ShortDateTime,
-        TimestampStyle.LongDateTime,
-        TimestampStyle.RelativeTime
-    };
 
     private async Task<Result> SendTimestampAsync(TimeSpan? offset, IUser user, CancellationToken ct)
     {
