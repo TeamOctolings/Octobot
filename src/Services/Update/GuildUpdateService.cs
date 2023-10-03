@@ -10,10 +10,10 @@ public sealed class GuildUpdateService : BackgroundService
 {
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
-    private readonly ILogger<MemberUpdateService> _logger;
+    private readonly ILogger<GuildUpdateService> _logger;
 
     public GuildUpdateService(IDiscordRestGuildAPI guildApi,
-        GuildDataService guildData, ILogger<MemberUpdateService> logger)
+        GuildDataService guildData, ILogger<GuildUpdateService> logger)
     {
         _guildApi = guildApi;
         _guildData = guildData;
