@@ -173,8 +173,6 @@ public class MuteCommandGroup : CommandGroup
         IUser target, string reason, Snowflake guildId, GuildData data, MemberData memberData,
         IUser user, DateTimeOffset until, Snowflake muteRole, CancellationToken ct = default)
     {
-        memberData.MutedUntil = until;
-
         var assignRoles = new List<Snowflake> { muteRole };
 
         if (!GuildSettings.RemoveRolesOnMute.Get(data.Settings))
@@ -185,6 +183,11 @@ public class MuteCommandGroup : CommandGroup
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, roles: assignRoles,
             reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
+        if (muteResult.IsSuccess)
+        {
+            memberData.MutedUntil = until;
+        }
+
         return muteResult;
     }
 
