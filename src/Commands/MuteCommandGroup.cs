@@ -185,7 +185,7 @@ public class MuteCommandGroup : CommandGroup
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, roles: assignRoles,
             reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
-        return !muteResult.IsSuccess ? Result.FromError(muteResult.Error) : Result.FromSuccess();
+        return muteResult;
     }
 
     private async Task<Result> TimeoutUserAsync(
@@ -204,7 +204,7 @@ public class MuteCommandGroup : CommandGroup
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: until, ct: ct);
-        return !muteResult.IsSuccess ? Result.FromError(muteResult.Error) : Result.FromSuccess();
+        return muteResult;
     }
 
     /// <summary>
