@@ -531,4 +531,10 @@
   <data name="RandomOutput" xml:space="preserve">
     <value>Ваше случайное число:</value>
   </data>
+  <data name="TimestampTitle" xml:space="preserve">
+      <value>Временная метка для {0}:</value>
+  </data>
+  <data name="TimestampOffset" xml:space="preserve">
+      <value>Офсет: {0}</value>
+  </data>
 </root>
