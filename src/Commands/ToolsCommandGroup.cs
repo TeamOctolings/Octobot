@@ -277,22 +277,16 @@ public class ToolsCommandGroup : CommandGroup
 
         description.AppendLine().Append("- ").Append(string.Format(
             Messages.RandomMin, Markdown.InlineCode(min.ToString())));
-        if (secondNullable is null)
+        if (secondNullable is null && first >= 0)
         {
-            if (first >= 0)
-            {
-                description.Append(' ').Append(Messages.Default);
-            }
+            description.Append(' ').Append(Messages.Default);
         }
 
         description.AppendLine().Append("- ").Append(string.Format(
             Messages.RandomMax, Markdown.InlineCode(max.ToString())));
-        if (secondNullable is null)
+        if (secondNullable is null && first < 0)
         {
-            if (first < 0)
-            {
-                description.Append(' ').Append(Messages.Default);
-            }
+            description.Append(' ').Append(Messages.Default);
         }
 
         var embedColor = ColorsList.Blue;
