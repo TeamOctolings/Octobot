@@ -37,8 +37,8 @@ public sealed class GuildUpdateService : BackgroundService
 
     private async Task<Result> TickGuildsAsync(Snowflake guildId, CancellationToken ct)
     {
-        var guildData = await _guildApi.GetGuildAsync(guildId, ct: ct);
-        if (guildData.IsSuccess)
+        var getGuildResult = await _guildApi.GetGuildAsync(guildId, ct: ct);
+        if (getGuildResult.IsSuccess)
         {
             return Result.FromSuccess();
         }
