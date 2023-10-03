@@ -111,9 +111,6 @@
   <data name="CachedMessageDeleted" xml:space="preserve">
     <value>сообщение {0} вырезано:</value>
   </data>
-  <data name="CachedMessageCleared" xml:space="preserve">
-    <value>вырезано сообщение (используя `!clear`) от {0} в канале {1}: {2}</value>
-  </data>
   <data name="CachedMessageEdited" xml:space="preserve">
     <value>сообщение {0} переделано:</value>
   </data>
@@ -129,26 +126,11 @@
   <data name="Sound3" xml:space="preserve">
       <value>нгьес!</value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
-    <value>у меня прав нету, сделай что нибудь.</value>
-  </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
-    <value>у тебя прав нету, твои проблемы.</value>
-  </data>
   <data name="YouWereBanned" xml:space="preserve">
     <value>вы были забанены</value>
   </data>
   <data name="PunishmentExpired" xml:space="preserve">
     <value>время бана закончиловсь</value>
-  </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
-    <value>ты выбрал менее {0} сообщений</value>
-  </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
-    <value>ты выбрал более {0} сообщений</value>
-  </data>
-  <data name="CommandHelp" xml:space="preserve">
-    <value>туториал по приколам:</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>вы были кикнуты</value>
@@ -156,17 +138,11 @@
   <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
-    <value>шизоид уже замучен!</value>
-  </data>
   <data name="ChannelNotSpecified" xml:space="preserve">
     <value>*тут ничего нет*</value>
   </data>
   <data name="RoleNotSpecified" xml:space="preserve">
     <value>нъет</value>
-  </data>
-  <data name="CurrentSettings" xml:space="preserve">
-    <value>настройки:</value>
   </data>
   <data name="SettingsLanguage" xml:space="preserve">
     <value>язык</value>
@@ -201,14 +177,8 @@
   <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>здравствуйте (типо настройка)</value>
   </data>
-  <data name="ClearAmountInvalid" xml:space="preserve">
-    <value>выбери число от {0} до {1} вместо {2}!</value>
-  </data>
   <data name="UserBanned" xml:space="preserve">
     <value>{0} забанен</value>
-  </data>
-  <data name="SettingDoesntExist" xml:space="preserve">
-    <value>такой прикол не существует</value>
   </data>
   <data name="SettingsReceiveStartupMessages" xml:space="preserve">
     <value>получать инфу о старте бота</value>
@@ -216,20 +186,11 @@
   <data name="InvalidSettingValue" xml:space="preserve">
     <value>криво настроил прикол, давай по новой</value>
   </data>
-  <data name="InvalidRole" xml:space="preserve">
-    <value>этого звания нету, ты шо</value>
-  </data>
-  <data name="InvalidChannel" xml:space="preserve">
-    <value>этого канала нету, ты шо</value>
-  </data>
   <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>ты шо, мутить больше чем на 28 дней таймаут не разрешает, вот настроишь роль мута, тогда поговорим</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
     <value>я не могу замутить ботов, сделай что нибудь</value>
-  </data>
-  <data name="EventCreated" xml:space="preserve">
-    <value>{0} приготовил новую движуху {1}! она пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!{4}</value>
   </data>
   <data name="SettingsEventNotificationRole" xml:space="preserve">
     <value>роль для уведомлений о создании движухи</value>
@@ -243,32 +204,14 @@
   <data name="EventStarted" xml:space="preserve">
     <value>движуха "{0}" начинается</value>
   </data>
-  <data name="SettingsFrowningFace" xml:space="preserve">
-    <value>оъмъомоъемъъео((((</value>
-  </data>
   <data name="EventCancelled" xml:space="preserve">
     <value>движуха "{0}" отменена!</value>
   </data>
   <data name="EventCompleted" xml:space="preserve">
     <value>движуха "{0}" завершена!</value>
   </data>
-  <data name="Ever" xml:space="preserve">
-    <value>всегда</value>
-  </data>
   <data name="MessagesCleared" xml:space="preserve">
     <value>вырезано {0} забавных сообщений</value>
-  </data>
-  <data name="FeedbackMemberKicked" xml:space="preserve">
-    <value>выгнан {0}: {1}</value>
-  </data>
-  <data name="FeedbackMemberMuted" xml:space="preserve">
-    <value>замучен {0} на{1}: {2}</value>
-  </data>
-  <data name="FeedbackUserUnbanned" xml:space="preserve">
-    <value>раззабанен {0}: {1}</value>
-  </data>
-  <data name="FeedbackMemberUnmuted" xml:space="preserve">
-    <value>раззамучен {0}: {1}</value>
   </data>
   <data name="SettingsNothingChanged" xml:space="preserve">
     <value>ты все сломал! значение прикола `{0}` и так {1}</value>
@@ -276,50 +219,8 @@
   <data name="SettingNotDefined" xml:space="preserve">
     <value>нъет</value>
   </data>
-  <data name="FeedbackSettingsUpdated" xml:space="preserve">
-    <value>прикол для `{0}` теперь установлен на {1}</value>
-  </data>
-  <data name="CommandDescriptionBan" xml:space="preserve">
-    <value>возводит великий банхаммер над шизоидом</value>
-  </data>
-  <data name="CommandDescriptionClear" xml:space="preserve">
-    <value>удаляет сообщения. сколько хош, столько и удалит</value>
-  </data>
-  <data name="CommandDescriptionHelp" xml:space="preserve">
-    <value>показывает то, что ты сейчас видишь прямо сейчас</value>
-  </data>
-  <data name="CommandDescriptionKick" xml:space="preserve">
-    <value>выпинывает шизоида</value>
-  </data>
-  <data name="CommandDescriptionMute" xml:space="preserve">
-    <value>мутит шизоида</value>
-  </data>
-  <data name="CommandDescriptionPing" xml:space="preserve">
-    <value>показывает пинг (сверхмегаточный (нет))</value>
-  </data>
-  <data name="CommandDescriptionSettings" xml:space="preserve">
-    <value>настройки бота под этот сервер</value>
-  </data>
-  <data name="CommandDescriptionUnban" xml:space="preserve">
-    <value>отводит великий банхаммер от шизоида</value>
-  </data>
-  <data name="CommandDescriptionUnmute" xml:space="preserve">
-    <value>раззамучивает шизоида</value>
-  </data>
-  <data name="MissingNumber" xml:space="preserve">
-    <value>укажи целое число от {0} до {1}</value>
-  </data>
   <data name="MissingUser" xml:space="preserve">
     <value>укажи самого шизика</value>
-  </data>
-  <data name="InvalidUser" xml:space="preserve">
-    <value>надо указать юзверя вместо {0}!</value>
-  </data>
-  <data name="MissingMember" xml:space="preserve">
-    <value>укажи самого шизика</value>
-  </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>укажи шизоида сервера!</value>
   </data>
   <data name="UserCannotBanMembers" xml:space="preserve">
     <value>бан</value>
@@ -350,21 +251,6 @@
   </data>
   <data name="BotCannotManageGuild" xml:space="preserve">
     <value>я не могу этому серверу хоть че либо нибудь изменить, сделай что нибудь.</value>
-  </data>
-  <data name="MissingBanReason" xml:space="preserve">
-    <value>укажи зачем банить шизика</value>
-  </data>
-  <data name="MissingKickReason" xml:space="preserve">
-    <value>укажи зачем кикать шизика</value>
-  </data>
-  <data name="MissingMuteReason" xml:space="preserve">
-    <value>укажи зачем мутить шизика</value>
-  </data>
-  <data name="MissingUnbanReason" xml:space="preserve">
-    <value>укажи зачем раззабанивать шизика</value>
-  </data>
-  <data name="MissingUnmuteReason" xml:space="preserve">
-    <value>укажи зачам размучивать шизика</value>
   </data>
   <data name="UserCannotBanBot" xml:space="preserve">
     <value>ээбля френдли фаер огонь по своим</value>
@@ -438,9 +324,6 @@
   <data name="SettingsDefaultRole" xml:space="preserve">
     <value>дефолтное звание</value>
   </data>
-  <data name="CommandDescriptionRemind" xml:space="preserve">
-    <value>крафтит напоминалку</value>
-  </data>
   <data name="SettingsPrivateFeedbackChannel" xml:space="preserve">
     <value>канал для секретных уведомлений</value>
   </data>
@@ -452,12 +335,6 @@
   </data>
   <data name="SettingsAutoStartEvents" xml:space="preserve">
     <value>автоматом стартить движухи</value>
-  </data>
-  <data name="MissingReminderText" xml:space="preserve">
-    <value>для крафта напоминалки нужен текст</value>
-  </data>
-  <data name="InvalidRemindIn" xml:space="preserve">
-    <value>шизоид у меня на часах такого нету</value>
   </data>
   <data name="IssuedBy" xml:space="preserve">
     <value>ответственный</value>

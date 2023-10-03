@@ -111,9 +111,6 @@
   <data name="CachedMessageDeleted" xml:space="preserve">
     <value>Сообщение {0} удалено:</value>
   </data>
-  <data name="CachedMessageCleared" xml:space="preserve">
-    <value>Очищено сообщение от {0} в канале {1}: {2}</value>
-  </data>
   <data name="CachedMessageEdited" xml:space="preserve">
     <value>Сообщение {0} отредактировано:</value>
   </data>
@@ -129,23 +126,8 @@
   <data name="Sound3" xml:space="preserve">
       <value>Нгьес!</value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
-    <value>У меня недостаточно прав для выполнения этой команды!</value>
-  </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
-    <value>У тебя недостаточно прав для выполнения этой команды!</value>
-  </data>
   <data name="PunishmentExpired" xml:space="preserve">
     <value>Время наказания истекло</value>
-  </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
-    <value>Указано менее {0} сообщений!</value>
-  </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
-    <value>Указано более {0} сообщений!</value>
-  </data>
-  <data name="CommandHelp" xml:space="preserve">
-    <value>Справка по командам:</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>Вы были выгнаны</value>
@@ -153,17 +135,11 @@
   <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
-    <value>Участник уже заглушен!</value>
-  </data>
   <data name="ChannelNotSpecified" xml:space="preserve">
     <value>Не указан</value>
   </data>
   <data name="RoleNotSpecified" xml:space="preserve">
     <value>Не указана</value>
-  </data>
-  <data name="CurrentSettings" xml:space="preserve">
-    <value>Текущие настройки:</value>
   </data>
   <data name="SettingsLanguage" xml:space="preserve">
     <value>Язык</value>
@@ -198,14 +174,8 @@
   <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>Приветствие</value>
   </data>
-  <data name="ClearAmountInvalid" xml:space="preserve">
-    <value>Надо указать целое число от {0} до {1} вместо {2}!</value>
-  </data>
   <data name="UserBanned" xml:space="preserve">
     <value>{0} был(-а) забанен(-а)</value>
-  </data>
-  <data name="SettingDoesntExist" xml:space="preserve">
-    <value>Такая настройка не существует!</value>
   </data>
   <data name="SettingsReceiveStartupMessages" xml:space="preserve">
     <value>Получать сообщения о запуске</value>
@@ -213,20 +183,11 @@
   <data name="InvalidSettingValue" xml:space="preserve">
     <value>Указано недействительное значение для настройки!</value>
   </data>
-  <data name="InvalidRole" xml:space="preserve">
-    <value>Эта роль не существует!</value>
-  </data>
-  <data name="InvalidChannel" xml:space="preserve">
-    <value>Этот канал не существует!</value>
-  </data>
   <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>Я не могу заглушить кого-то на более чем 28 дней, используя тайм-ауты! Или укажи продолжительность менее 28 дней, или установи роль мута в настройках</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
     <value>Я не могу использовать тайм-ауты на других ботах! Попробуй указать роль мута в настройках</value>
-  </data>
-  <data name="EventCreated" xml:space="preserve">
-    <value>{0} создал событие {1}! Оно пройдёт в {2} и начнётся &lt;t:{3}:R&gt;!{4}</value>
   </data>
   <data name="SettingsEventNotificationRole" xml:space="preserve">
     <value>Роль для уведомлений о создании событий</value>
@@ -240,32 +201,14 @@
   <data name="EventStarted" xml:space="preserve">
     <value>Событие "{0}" началось</value>
   </data>
-  <data name="SettingsFrowningFace" xml:space="preserve">
-    <value>:( </value>
-  </data>
   <data name="EventCancelled" xml:space="preserve">
     <value>Событие "{0}" отменено!</value>
   </data>
   <data name="EventCompleted" xml:space="preserve">
     <value>Событие "{0}" завершено!</value>
   </data>
-  <data name="Ever" xml:space="preserve">
-    <value>всегда</value>
-  </data>
   <data name="MessagesCleared" xml:space="preserve">
     <value>Очищено {0} сообщений</value>
-  </data>
-  <data name="FeedbackMemberKicked" xml:space="preserve">
-    <value>Выгнан {0}: {1}</value>
-  </data>
-  <data name="FeedbackMemberMuted" xml:space="preserve">
-    <value>Заглушен {0} на{1}: {2}</value>
-  </data>
-  <data name="FeedbackUserUnbanned" xml:space="preserve">
-    <value>Возвращён из бана {0}: {1}</value>
-  </data>
-  <data name="FeedbackMemberUnmuted" xml:space="preserve">
-    <value>Разглушен {0}: {1}</value>
   </data>
   <data name="SettingsNothingChanged" xml:space="preserve">
     <value>Ничего не изменилось! Значение настройки `{0}` уже {1}</value>
@@ -273,50 +216,8 @@
   <data name="SettingNotDefined" xml:space="preserve">
     <value>Не указано</value>
   </data>
-  <data name="FeedbackSettingsUpdated" xml:space="preserve">
-    <value>Значение настройки `{0}` теперь установлено на {1}</value>
-  </data>
-  <data name="CommandDescriptionBan" xml:space="preserve">
-    <value>Банит пользователя</value>
-  </data>
-  <data name="CommandDescriptionClear" xml:space="preserve">
-    <value>Удаляет указанное количество сообщений в этом канале</value>
-  </data>
-  <data name="CommandDescriptionHelp" xml:space="preserve">
-    <value>Показывает эту справку</value>
-  </data>
-  <data name="CommandDescriptionKick" xml:space="preserve">
-    <value>Выгоняет участника</value>
-  </data>
-  <data name="CommandDescriptionMute" xml:space="preserve">
-    <value>Глушит участника</value>
-  </data>
-  <data name="CommandDescriptionPing" xml:space="preserve">
-    <value>Показывает (неточную) задержку</value>
-  </data>
-  <data name="CommandDescriptionSettings" xml:space="preserve">
-    <value>Позволяет менять некоторые настройки под этот сервер</value>
-  </data>
-  <data name="CommandDescriptionUnban" xml:space="preserve">
-    <value>Возвращает пользователя из бана</value>
-  </data>
-  <data name="CommandDescriptionUnmute" xml:space="preserve">
-    <value>Разглушает участника</value>
-  </data>
-  <data name="MissingNumber" xml:space="preserve">
-    <value>Надо указать целое число от {0} до {1}!</value>
-  </data>
   <data name="MissingUser" xml:space="preserve">
     <value>Надо указать пользователя!</value>
-  </data>
-  <data name="InvalidUser" xml:space="preserve">
-    <value>Надо указать пользователя вместо {0}!</value>
-  </data>
-  <data name="MissingMember" xml:space="preserve">
-    <value>Надо указать участника сервера!</value>
-  </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>Надо указать участника этого сервера!</value>
   </data>
   <data name="UserCannotBanMembers" xml:space="preserve">
     <value>Ты не можешь банить пользователей на этом сервере!</value>
@@ -347,21 +248,6 @@
   </data>
   <data name="BotCannotManageGuild" xml:space="preserve">
     <value>Я не могу настраивать этот сервер!</value>
-  </data>
-  <data name="MissingBanReason" xml:space="preserve">
-    <value>Надо указать причину для бана этого участника!</value>
-  </data>
-  <data name="MissingKickReason" xml:space="preserve">
-    <value>Надо указать причину для кика этого участника!</value>
-  </data>
-  <data name="MissingMuteReason" xml:space="preserve">
-    <value>Надо указать причину для мута этого участника!</value>
-  </data>
-  <data name="MissingUnbanReason" xml:space="preserve">
-    <value>Надо указать причину для разбана этого пользователя!</value>
-  </data>
-  <data name="MissingUnmuteReason" xml:space="preserve">
-    <value>Надо указать причину для размута этого участника!</value>
   </data>
   <data name="UserCannotBanBot" xml:space="preserve">
     <value>Ты не можешь меня забанить!</value>
@@ -435,9 +321,6 @@
   <data name="SettingsDefaultRole" xml:space="preserve">
     <value>Роль по умолчанию</value>
   </data>
-  <data name="CommandDescriptionRemind" xml:space="preserve">
-    <value>Добавляет напоминание</value>
-  </data>
   <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
     <value>Канал для публичных уведомлений</value>
   </data>
@@ -449,12 +332,6 @@
   </data>
   <data name="SettingsAutoStartEvents" xml:space="preserve">
     <value>Автоматически начинать события</value>
-  </data>
-  <data name="MissingReminderText" xml:space="preserve">
-    <value>Тебе нужно указать текст напоминания!</value>
-  </data>
-  <data name="InvalidRemindIn" xml:space="preserve">
-    <value>Нужно указать время, через которое придёт напоминание!</value>
   </data>
   <data name="IssuedBy" xml:space="preserve">
     <value>Ответственный</value>
