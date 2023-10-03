@@ -1135,5 +1135,21 @@ namespace Octobot {
                 return ResourceManager.GetString("RandomOutput", resourceCulture);
             }
         }
+
+        internal static string TimestampTitle
+        {
+            get
+            {
+                return ResourceManager.GetString("TimestampTitle", resourceCulture);
+            }
+        }
+
+        internal static string TimestampOffset
+        {
+            get
+            {
+                return ResourceManager.GetString("TimestampOffset", resourceCulture);
+            }
+        }
     }
 }
