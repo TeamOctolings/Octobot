@@ -291,15 +291,15 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows current or counted timestamp.
+    ///     A slash command that shows the current timestamp with an optional offset in all styles supported by Discord.
     /// </summary>
-    /// <param name="offset">The offset to count timestamp.</param>
+    /// <param name="offset">The offset for the current timestamp.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("timestamp")]
     [DiscordDefaultDMPermission(false)]
-    [Description("Gets timestamp")]
+    [Description("Shows a timestamp in all styles")]
     [UsedImplicitly]
     public async Task<Result> ExecuteTimestampAsync(
         [Description("Add an offset from now")]
@@ -319,10 +319,21 @@ public class ToolsCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await SendRandomNumberAsync(offset, user, CancellationToken);
+        return await SendTimestampAsync(offset, user, CancellationToken);
     }
 
-    private async Task<Result> SendRandomNumberAsync(TimeSpan? offset, IUser user, CancellationToken ct)
+    private static readonly TimestampStyle[] AllStyles =
+    {
+        TimestampStyle.ShortDate,
+        TimestampStyle.LongDate,
+        TimestampStyle.ShortTime,
+        TimestampStyle.LongTime,
+        TimestampStyle.ShortDateTime,
+        TimestampStyle.LongDateTime,
+        TimestampStyle.RelativeTime
+    };
+
+    private async Task<Result> SendTimestampAsync(TimeSpan? offset, IUser user, CancellationToken ct)
     {
         var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
 
@@ -334,21 +345,10 @@ public class ToolsCommandGroup : CommandGroup
                 Messages.TimestampOffset, Markdown.InlineCode(offset.ToString() ?? string.Empty))).AppendLine();
         }
 
-        TimestampStyle[] allStyles =
+        foreach (var markdownTimestamp in AllStyles.Select(style => Markdown.Timestamp(timestamp, style)))
         {
-            TimestampStyle.ShortDate,
-            TimestampStyle.LongDate,
-            TimestampStyle.ShortTime,
-            TimestampStyle.LongTime,
-            TimestampStyle.ShortDateTime,
-            TimestampStyle.LongDateTime,
-            TimestampStyle.RelativeTime
-        };
-
-        foreach (var style in allStyles)
-        {
-            description.Append("- ").Append(Markdown.InlineCode(Markdown.Timestamp(timestamp, style)))
-                .Append(" → ").AppendLine(Markdown.Timestamp(timestamp, style));
+            description.Append("- ").Append(Markdown.InlineCode(markdownTimestamp))
+                .Append(" → ").AppendLine(markdownTimestamp);
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
