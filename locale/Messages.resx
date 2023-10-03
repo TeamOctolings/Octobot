@@ -111,9 +111,6 @@
   <data name="CachedMessageDeleted" xml:space="preserve">
     <value>Deleted message by {0}:</value>
   </data>
-  <data name="CachedMessageCleared" xml:space="preserve">
-    <value>Cleared message from {0} in channel {1}: {2}</value>
-  </data>
   <data name="CachedMessageEdited" xml:space="preserve">
     <value>Edited message by {0}:</value>
   </data>
@@ -129,26 +126,11 @@
   <data name="Sound3" xml:space="preserve">
       <value>Ngyes!</value>
   </data>
-  <data name="CommandNoPermissionBot" xml:space="preserve">
-    <value>I do not have permission to execute this command!</value>
-  </data>
-  <data name="CommandNoPermissionUser" xml:space="preserve">
-    <value>You do not have permission to execute this command!</value>
-  </data>
   <data name="YouWereBanned" xml:space="preserve">
     <value>You were banned</value>
   </data>
   <data name="PunishmentExpired" xml:space="preserve">
     <value>Punishment expired</value>
-  </data>
-  <data name="ClearAmountTooSmall" xml:space="preserve">
-    <value>You specified less than {0} messages!</value>
-  </data>
-  <data name="ClearAmountTooLarge" xml:space="preserve">
-    <value>You specified more than {0} messages!</value>
-  </data>
-  <data name="CommandHelp" xml:space="preserve">
-    <value>Command help:</value>
   </data>
   <data name="YouWereKicked" xml:space="preserve">
     <value>You were kicked</value>
@@ -156,17 +138,11 @@
   <data name="Milliseconds" xml:space="preserve">
     <value>ms</value>
   </data>
-  <data name="MemberAlreadyMuted" xml:space="preserve">
-    <value>Member is already muted!</value>
-  </data>
   <data name="ChannelNotSpecified" xml:space="preserve">
     <value>Not specified</value>
   </data>
   <data name="RoleNotSpecified" xml:space="preserve">
     <value>Not specified</value>
-  </data>
-  <data name="CurrentSettings" xml:space="preserve">
-    <value>Current settings:</value>
   </data>
   <data name="SettingsLanguage" xml:space="preserve">
     <value>Language</value>
@@ -201,14 +177,8 @@
   <data name="SettingsWelcomeMessage" xml:space="preserve">
     <value>Welcome message</value>
   </data>
-  <data name="ClearAmountInvalid" xml:space="preserve">
-    <value>You need to specify an integer from {0} to {1} instead of {2}!</value>
-  </data>
   <data name="UserBanned" xml:space="preserve">
     <value>{0} was banned</value>
-  </data>
-  <data name="SettingDoesntExist" xml:space="preserve">
-    <value>That setting doesn't exist!</value>
   </data>
   <data name="SettingsReceiveStartupMessages" xml:space="preserve">
     <value>Receive startup messages</value>
@@ -216,20 +186,11 @@
   <data name="InvalidSettingValue" xml:space="preserve">
     <value>Invalid setting value specified!</value>
   </data>
-  <data name="InvalidRole" xml:space="preserve">
-    <value>This role does not exist!</value>
-  </data>
-  <data name="InvalidChannel" xml:space="preserve">
-    <value>This channel does not exist!</value>
-  </data>
   <data name="DurationRequiredForTimeOuts" xml:space="preserve">
     <value>I cannot mute someone for more than 28 days using timeouts! Either specify a duration shorter than 28 days, or set a mute role in settings</value>
   </data>
   <data name="CannotTimeOutBot" xml:space="preserve">
     <value>I cannot use time-outs on other bots! Try to set a mute role in settings</value>
-  </data>
-  <data name="EventCreated" xml:space="preserve">
-    <value>{0} has created event {1}! It will take place in {2} and will start &lt;t:{3}:R&gt;! \n {4}</value>
   </data>
   <data name="SettingsEventNotificationRole" xml:space="preserve">
     <value>Role for event creation notifications</value>
@@ -243,32 +204,14 @@
   <data name="EventStarted" xml:space="preserve">
     <value>Event "{0}" started</value>
   </data>
-  <data name="SettingsFrowningFace" xml:space="preserve">
-    <value>:(</value>
-  </data>
   <data name="EventCancelled" xml:space="preserve">
     <value>Event "{0}" is cancelled!</value>
   </data>
   <data name="EventCompleted" xml:space="preserve">
     <value>Event "{0}" has completed!</value>
   </data>
-  <data name="Ever" xml:space="preserve">
-    <value>ever</value>
-  </data>
   <data name="MessagesCleared" xml:space="preserve">
     <value>Cleared {0} messages</value>
-  </data>
-  <data name="FeedbackMemberKicked" xml:space="preserve">
-    <value>Kicked {0}: {1}</value>
-  </data>
-  <data name="FeedbackMemberMuted" xml:space="preserve">
-    <value>Muted {0} for{1}: {2}</value>
-  </data>
-  <data name="FeedbackUserUnbanned" xml:space="preserve">
-    <value>Unbanned {0}: {1}</value>
-  </data>
-  <data name="FeedbackMemberUnmuted" xml:space="preserve">
-    <value>Unmuted {0}: {1}</value>
   </data>
   <data name="SettingsNothingChanged" xml:space="preserve">
     <value>Nothing changed! `{0}` is already set to {1}</value>
@@ -276,50 +219,8 @@
   <data name="SettingNotDefined" xml:space="preserve">
     <value>Not specified</value>
   </data>
-  <data name="FeedbackSettingsUpdated" xml:space="preserve">
-    <value>Value of setting `{0}` is now set to {1}</value>
-  </data>
-  <data name="CommandDescriptionBan" xml:space="preserve">
-    <value>Bans a user</value>
-  </data>
-  <data name="CommandDescriptionClear" xml:space="preserve">
-    <value>Deletes a specified amount of messages in this channel</value>
-  </data>
-  <data name="CommandDescriptionHelp" xml:space="preserve">
-    <value>Shows this message</value>
-  </data>
-  <data name="CommandDescriptionKick" xml:space="preserve">
-    <value>Kicks a member</value>
-  </data>
-  <data name="CommandDescriptionMute" xml:space="preserve">
-    <value>Mutes a member</value>
-  </data>
-  <data name="CommandDescriptionPing" xml:space="preserve">
-    <value>Shows (inaccurate) latency</value>
-  </data>
-  <data name="CommandDescriptionSettings" xml:space="preserve">
-    <value>Allows you to change certain preferences for this guild</value>
-  </data>
-  <data name="CommandDescriptionUnban" xml:space="preserve">
-    <value>Unbans a user</value>
-  </data>
-  <data name="CommandDescriptionUnmute" xml:space="preserve">
-    <value>Unmutes a member</value>
-  </data>
-  <data name="MissingNumber" xml:space="preserve">
-    <value>You need to specify an integer from {0} to {1}!</value>
-  </data>
   <data name="MissingUser" xml:space="preserve">
     <value>You need to specify a user!</value>
-  </data>
-  <data name="InvalidUser" xml:space="preserve">
-    <value>You need to specify a user instead of {0}!</value>
-  </data>
-  <data name="MissingMember" xml:space="preserve">
-    <value>You need to specify a guild member!</value>
-  </data>
-  <data name="InvalidMember" xml:space="preserve">
-    <value>You need to specify a member of this guild!</value>
   </data>
   <data name="UserCannotBanMembers" xml:space="preserve">
     <value>You cannot ban users from this guild!</value>
@@ -350,21 +251,6 @@
   </data>
   <data name="BotCannotManageGuild" xml:space="preserve">
     <value>I cannot manage this guild!</value>
-  </data>
-  <data name="MissingBanReason" xml:space="preserve">
-    <value>You need to specify a reason to ban this user!</value>
-  </data>
-  <data name="MissingKickReason" xml:space="preserve">
-    <value>You need to specify a reason to kick this member!</value>
-  </data>
-  <data name="MissingMuteReason" xml:space="preserve">
-    <value>You need to specify a reason to mute this member!</value>
-  </data>
-  <data name="MissingUnbanReason" xml:space="preserve">
-    <value>You need to specify a reason to unban this user!</value>
-  </data>
-  <data name="MissingUnmuteReason" xml:space="preserve">
-    <value>You need to specify a reason for unmute this member!</value>
   </data>
   <data name="UserCannotBanOwner" xml:space="preserve">
     <value>You cannot ban the owner of this guild!</value>
@@ -438,9 +324,6 @@
   <data name="SettingsDefaultRole" xml:space="preserve">
     <value>Default role</value>
   </data>
-  <data name="CommandDescriptionRemind" xml:space="preserve">
-    <value>Adds a reminder</value>
-  </data>
   <data name="SettingsPublicFeedbackChannel" xml:space="preserve">
     <value>Channel for public notifications</value>
   </data>
@@ -452,12 +335,6 @@
   </data>
   <data name="SettingsAutoStartEvents" xml:space="preserve">
     <value>Automatically start scheduled events</value>
-  </data>
-  <data name="MissingReminderText" xml:space="preserve">
-    <value>You need to specify reminder text!</value>
-  </data>
-  <data name="InvalidRemindIn" xml:space="preserve">
-    <value>You need to specify when I should send you the reminder!</value>
   </data>
   <data name="IssuedBy" xml:space="preserve">
     <value>Issued by</value>

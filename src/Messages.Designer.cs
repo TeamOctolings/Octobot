@@ -54,12 +54,6 @@ namespace Octobot {
             }
         }
 
-        internal static string CachedMessageCleared {
-            get {
-                return ResourceManager.GetString("CachedMessageCleared", resourceCulture);
-            }
-        }
-
         internal static string CachedMessageEdited {
             get {
                 return ResourceManager.GetString("CachedMessageEdited", resourceCulture);
@@ -90,18 +84,6 @@ namespace Octobot {
             }
         }
 
-        internal static string CommandNoPermissionBot {
-            get {
-                return ResourceManager.GetString("CommandNoPermissionBot", resourceCulture);
-            }
-        }
-
-        internal static string CommandNoPermissionUser {
-            get {
-                return ResourceManager.GetString("CommandNoPermissionUser", resourceCulture);
-            }
-        }
-
         internal static string YouWereBanned {
             get {
                 return ResourceManager.GetString("YouWereBanned", resourceCulture);
@@ -111,24 +93,6 @@ namespace Octobot {
         internal static string PunishmentExpired {
             get {
                 return ResourceManager.GetString("PunishmentExpired", resourceCulture);
-            }
-        }
-
-        internal static string ClearAmountTooSmall {
-            get {
-                return ResourceManager.GetString("ClearAmountTooSmall", resourceCulture);
-            }
-        }
-
-        internal static string ClearAmountTooLarge {
-            get {
-                return ResourceManager.GetString("ClearAmountTooLarge", resourceCulture);
-            }
-        }
-
-        internal static string CommandHelp {
-            get {
-                return ResourceManager.GetString("CommandHelp", resourceCulture);
             }
         }
 
@@ -144,12 +108,6 @@ namespace Octobot {
             }
         }
 
-        internal static string MemberAlreadyMuted {
-            get {
-                return ResourceManager.GetString("MemberAlreadyMuted", resourceCulture);
-            }
-        }
-
         internal static string ChannelNotSpecified {
             get {
                 return ResourceManager.GetString("ChannelNotSpecified", resourceCulture);
@@ -159,12 +117,6 @@ namespace Octobot {
         internal static string RoleNotSpecified {
             get {
                 return ResourceManager.GetString("RoleNotSpecified", resourceCulture);
-            }
-        }
-
-        internal static string CurrentSettings {
-            get {
-                return ResourceManager.GetString("CurrentSettings", resourceCulture);
             }
         }
 
@@ -234,21 +186,9 @@ namespace Octobot {
             }
         }
 
-        internal static string ClearAmountInvalid {
-            get {
-                return ResourceManager.GetString("ClearAmountInvalid", resourceCulture);
-            }
-        }
-
         internal static string UserBanned {
             get {
                 return ResourceManager.GetString("UserBanned", resourceCulture);
-            }
-        }
-
-        internal static string SettingDoesntExist {
-            get {
-                return ResourceManager.GetString("SettingDoesntExist", resourceCulture);
             }
         }
 
@@ -288,12 +228,6 @@ namespace Octobot {
             }
         }
 
-        internal static string EventCreated {
-            get {
-                return ResourceManager.GetString("EventCreated", resourceCulture);
-            }
-        }
-
         internal static string SettingsEventNotificationRole {
             get {
                 return ResourceManager.GetString("SettingsEventNotificationRole", resourceCulture);
@@ -318,12 +252,6 @@ namespace Octobot {
             }
         }
 
-        internal static string SettingsFrowningFace {
-            get {
-                return ResourceManager.GetString("SettingsFrowningFace", resourceCulture);
-            }
-        }
-
         internal static string EventCancelled {
             get {
                 return ResourceManager.GetString("EventCancelled", resourceCulture);
@@ -336,39 +264,9 @@ namespace Octobot {
             }
         }
 
-        internal static string Ever {
-            get {
-                return ResourceManager.GetString("Ever", resourceCulture);
-            }
-        }
-
         internal static string MessagesCleared {
             get {
                 return ResourceManager.GetString("MessagesCleared", resourceCulture);
-            }
-        }
-
-        internal static string FeedbackMemberKicked {
-            get {
-                return ResourceManager.GetString("FeedbackMemberKicked", resourceCulture);
-            }
-        }
-
-        internal static string FeedbackMemberMuted {
-            get {
-                return ResourceManager.GetString("FeedbackMemberMuted", resourceCulture);
-            }
-        }
-
-        internal static string FeedbackUserUnbanned {
-            get {
-                return ResourceManager.GetString("FeedbackUserUnbanned", resourceCulture);
-            }
-        }
-
-        internal static string FeedbackMemberUnmuted {
-            get {
-                return ResourceManager.GetString("FeedbackMemberUnmuted", resourceCulture);
             }
         }
 
@@ -381,96 +279,6 @@ namespace Octobot {
         internal static string SettingNotDefined {
             get {
                 return ResourceManager.GetString("SettingNotDefined", resourceCulture);
-            }
-        }
-
-        internal static string FeedbackSettingsUpdated {
-            get {
-                return ResourceManager.GetString("FeedbackSettingsUpdated", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionBan {
-            get {
-                return ResourceManager.GetString("CommandDescriptionBan", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionClear {
-            get {
-                return ResourceManager.GetString("CommandDescriptionClear", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionHelp {
-            get {
-                return ResourceManager.GetString("CommandDescriptionHelp", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionKick {
-            get {
-                return ResourceManager.GetString("CommandDescriptionKick", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionMute {
-            get {
-                return ResourceManager.GetString("CommandDescriptionMute", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionPing {
-            get {
-                return ResourceManager.GetString("CommandDescriptionPing", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionSettings {
-            get {
-                return ResourceManager.GetString("CommandDescriptionSettings", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionUnban {
-            get {
-                return ResourceManager.GetString("CommandDescriptionUnban", resourceCulture);
-            }
-        }
-
-        internal static string CommandDescriptionUnmute {
-            get {
-                return ResourceManager.GetString("CommandDescriptionUnmute", resourceCulture);
-            }
-        }
-
-        internal static string MissingNumber {
-            get {
-                return ResourceManager.GetString("MissingNumber", resourceCulture);
-            }
-        }
-
-        internal static string MissingUser {
-            get {
-                return ResourceManager.GetString("MissingUser", resourceCulture);
-            }
-        }
-
-        internal static string InvalidUser {
-            get {
-                return ResourceManager.GetString("InvalidUser", resourceCulture);
-            }
-        }
-
-        internal static string MissingMember {
-            get {
-                return ResourceManager.GetString("MissingMember", resourceCulture);
-            }
-        }
-
-        internal static string InvalidMember {
-            get {
-                return ResourceManager.GetString("InvalidMember", resourceCulture);
             }
         }
 
@@ -531,36 +339,6 @@ namespace Octobot {
         internal static string BotCannotManageGuild {
             get {
                 return ResourceManager.GetString("BotCannotManageGuild", resourceCulture);
-            }
-        }
-
-        internal static string MissingBanReason {
-            get {
-                return ResourceManager.GetString("MissingBanReason", resourceCulture);
-            }
-        }
-
-        internal static string MissingKickReason {
-            get {
-                return ResourceManager.GetString("MissingKickReason", resourceCulture);
-            }
-        }
-
-        internal static string MissingMuteReason {
-            get {
-                return ResourceManager.GetString("MissingMuteReason", resourceCulture);
-            }
-        }
-
-        internal static string MissingUnbanReason {
-            get {
-                return ResourceManager.GetString("MissingUnbanReason", resourceCulture);
-            }
-        }
-
-        internal static string MissingUnmuteReason {
-            get {
-                return ResourceManager.GetString("MissingUnmuteReason", resourceCulture);
             }
         }
 
@@ -708,12 +486,6 @@ namespace Octobot {
             }
         }
 
-        internal static string CommandDescriptionRemind {
-            get {
-                return ResourceManager.GetString("CommandDescriptionRemind", resourceCulture);
-            }
-        }
-
         internal static string SettingsPublicFeedbackChannel {
             get {
                 return ResourceManager.GetString("SettingsPublicFeedbackChannel", resourceCulture);
@@ -735,18 +507,6 @@ namespace Octobot {
         internal static string SettingsAutoStartEvents {
             get {
                 return ResourceManager.GetString("SettingsAutoStartEvents", resourceCulture);
-            }
-        }
-
-        internal static string MissingReminderText {
-            get {
-                return ResourceManager.GetString("MissingReminderText", resourceCulture);
-            }
-        }
-
-        internal static string InvalidRemindIn {
-            get {
-                return ResourceManager.GetString("InvalidRemindIn", resourceCulture);
             }
         }
 
