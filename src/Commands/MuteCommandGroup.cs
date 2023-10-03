@@ -309,7 +309,7 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
-        var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
+        var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, ct);
         DateTimeOffset? communicationDisabledUntil = null;
         if (guildMemberResult.IsDefined(out var guildMember))
         {
