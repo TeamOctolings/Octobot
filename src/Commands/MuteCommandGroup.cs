@@ -101,17 +101,11 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        if (!GuildSettings.MuteRole.Get(data.Settings).Empty())
-        {
-            return await RoleMuteUserAsync(
-                target, reason, duration, guildId, data, channelId, user, currentUser, CancellationToken);
-        }
-
-        return await TimeoutUserAsync(
+        return await MuteUserAsync(
             target, reason, duration, guildId, data, channelId, user, currentUser, CancellationToken);
     }
 
-    private async Task<Result> RoleMuteUserAsync(
+    private async Task<Result> MuteUserAsync(
         IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
         IUser user, IUser currentUser, CancellationToken ct = default)
     {
@@ -132,12 +126,57 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
-        var memberData = data.GetOrCreateMemberData(target.ID);
-        memberData.MutedUntil = until;
-        var assignRoles = new List<Snowflake>
+
+        var muteMethodResult = await SelectMuteMethodAsync(
+            target, reason, duration, guildId, data, user, currentUser, until, ct);
+        if (!muteMethodResult.IsSuccess)
         {
-            GuildSettings.MuteRole.Get(data.Settings)
-        };
+            return muteMethodResult;
+        }
+
+        var title = string.Format(Messages.UserMuted, target.GetTag());
+        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
+            .Append("- ").Append(string.Format(
+                Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
+
+        var logResult = _utility.LogActionAsync(
+            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
+        if (!logResult.IsSuccess)
+        {
+            return Result.FromError(logResult.Error);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.UserMuted, target.GetTag()), target)
+            .WithColour(ColorsList.Green).Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+    }
+
+    private async Task<Result> SelectMuteMethodAsync(
+        IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
+        IUser user, IUser currentUser, DateTimeOffset until, CancellationToken ct)
+    {
+        var muteRole = GuildSettings.MuteRole.Get(data.Settings);
+
+        if (muteRole.Empty())
+        {
+            var timeoutResult = await TimeoutUserAsync(
+                target, reason, duration, guildId, user, currentUser, until, ct);
+            return timeoutResult;
+        }
+
+        var muteRoleResult = await RoleMuteUserAsync(
+            target, reason, guildId, data, user, until, muteRole, ct);
+        return muteRoleResult;
+    }
+
+    private async Task<Result> RoleMuteUserAsync(
+        IUser target, string reason, Snowflake guildId, GuildData data,
+        IUser user, DateTimeOffset until, Snowflake muteRole, CancellationToken ct)
+    {
+        var assignRoles = new List<Snowflake> { muteRole };
+        var memberData = data.GetOrCreateMemberData(target.ID);
         if (!GuildSettings.RemoveRolesOnMute.Get(data.Settings))
         {
             assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
@@ -146,33 +185,17 @@ public class MuteCommandGroup : CommandGroup
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, roles: assignRoles,
             reason: $"({user.GetTag()}) {reason}".EncodeHeader(), ct: ct);
-        if (!muteResult.IsSuccess)
+        if (muteResult.IsSuccess)
         {
-            return Result.FromError(muteResult.Error);
+            memberData.MutedUntil = until;
         }
 
-        var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
-            .Append("- ").Append(string.Format(
-                Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
-
-        var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
-
-        var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.UserMuted, target.GetTag()), target)
-            .WithColour(ColorsList.Green).Build();
-
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return muteResult;
     }
 
     private async Task<Result> TimeoutUserAsync(
-        IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId,
-        IUser user, IUser currentUser, CancellationToken ct = default)
+        IUser target, string reason, TimeSpan duration, Snowflake guildId,
+        IUser user, IUser currentUser, DateTimeOffset until, CancellationToken ct)
     {
         if (duration.TotalDays >= 28)
         {
@@ -180,52 +203,13 @@ public class MuteCommandGroup : CommandGroup
                 .WithDescription(Messages.DurationRequiredForTimeOuts)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
-        }
-
-        var interactionResult
-            = await _utility.CheckInteractionsAsync(
-                guildId, user.ID, target.ID, "Mute", ct);
-        if (!interactionResult.IsSuccess)
-        {
-            return Result.FromError(interactionResult);
-        }
-
-        if (interactionResult.Entity is not null)
-        {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
-                .WithColour(ColorsList.Red).Build();
-
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
-        var until = DateTimeOffset.UtcNow.Add(duration); // >:)
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: until, ct: ct);
-
-        if (!muteResult.IsSuccess)
-        {
-            return Result.FromError(muteResult.Error);
-        }
-
-        var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().Append("- ").AppendLine(string.Format(Messages.DescriptionActionReason, reason))
-            .Append("- ").Append(string.Format(
-                Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
-
-        var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
-
-        var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.UserMuted, target.GetTag()), target)
-            .WithColour(ColorsList.Green).Build();
-
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return muteResult;
     }
 
     /// <summary>
