@@ -483,46 +483,46 @@
   <data name="ReminderText" xml:space="preserve">
     <value>Reminder text: {0}</value>
   </data>
-  <data name="ShowInfoDisplayName" xml:space="preserve">
+  <data name="UserInfoDisplayName" xml:space="preserve">
     <value>Display name</value>
   </data>
-  <data name="ShowInfoTitle" xml:space="preserve">
+  <data name="UserInfoTitle" xml:space="preserve">
     <value>Information about {0}</value>
   </data>
-  <data name="ShowInfoMuted" xml:space="preserve">
+  <data name="UserInfoMuted" xml:space="preserve">
     <value>Muted</value>
   </data>
-  <data name="ShowInfoDiscordUserSince" xml:space="preserve">
+  <data name="UserInfoDiscordUserSince" xml:space="preserve">
     <value>Discord user since</value>
   </data>
-  <data name="ShowInfoBanned" xml:space="preserve">
+  <data name="UserInfoBanned" xml:space="preserve">
     <value>Banned</value>
   </data>
-  <data name="ShowInfoPunishments" xml:space="preserve">
+  <data name="UserInfoPunishments" xml:space="preserve">
     <value>Punishments</value>
   </data>
-  <data name="ShowInfoBannedPermanently" xml:space="preserve">
+  <data name="UserInfoBannedPermanently" xml:space="preserve">
     <value>Banned permanently</value>
   </data>
-  <data name="ShowInfoNotOnGuild" xml:space="preserve">
+  <data name="UserInfoNotOnGuild" xml:space="preserve">
     <value>Not in the guild</value>
   </data>
-  <data name="ShowInfoMutedByTimeout" xml:space="preserve">
+  <data name="UserInfoMutedByTimeout" xml:space="preserve">
     <value>Muted by timeout</value>
   </data>
-  <data name="ShowInfoMutedByMuteRole" xml:space="preserve">
+  <data name="UserInfoMutedByMuteRole" xml:space="preserve">
     <value>Muted by mute role</value>
   </data>
-  <data name="ShowInfoGuildMemberSince" xml:space="preserve">
+  <data name="UserInfoGuildMemberSince" xml:space="preserve">
     <value>Guild member since</value>
   </data>
-  <data name="ShowInfoGuildNickname" xml:space="preserve">
+  <data name="UserInfoGuildNickname" xml:space="preserve">
     <value>Nickname</value>
   </data>
-  <data name="ShowInfoGuildRoles" xml:space="preserve">
+  <data name="UserInfoGuildRoles" xml:space="preserve">
     <value>Roles</value>
   </data>
-  <data name="ShowInfoGuildMemberPremiumSince" xml:space="preserve">
+  <data name="UserInfoGuildMemberPremiumSince" xml:space="preserve">
     <value>Nitro booster since</value>
   </data>
   <data name="RandomTitle" xml:space="preserve">

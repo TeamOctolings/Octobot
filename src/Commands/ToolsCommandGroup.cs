@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Octobot.Commands;
 
 /// <summary>
-///     Handles tool commands: /showinfo, /random, /timestamp.
+///     Handles tool commands: /userinfo, /random, /timestamp.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
@@ -63,11 +63,11 @@ public class ToolsCommandGroup : CommandGroup
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
-    [Command("showinfo")]
+    [Command("userinfo")]
     [DiscordDefaultDMPermission(false)]
     [Description("Shows info about user")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteShowInfoAsync(
+    public async Task<Result> ExecuteUserInfoAsync(
         [Description("User to show info about")]
         IUser? target = null)
     {
@@ -101,11 +101,11 @@ public class ToolsCommandGroup : CommandGroup
 
         if (target.GlobalName is not null)
         {
-            builder.Append("- ").AppendLine(Messages.ShowInfoDisplayName)
+            builder.Append("- ").AppendLine(Messages.UserInfoDisplayName)
                 .AppendLine(Markdown.InlineCode(target.GlobalName));
         }
 
-        builder.Append("- ").AppendLine(Messages.ShowInfoDiscordUserSince)
+        builder.Append("- ").AppendLine(Messages.UserInfoDiscordUserSince)
             .AppendLine(Markdown.Timestamp(target.ID.Timestamp));
 
         var memberData = data.GetOrCreateMemberData(target.ID);
@@ -129,7 +129,7 @@ public class ToolsCommandGroup : CommandGroup
         if (isMuted || existingBanResult.IsDefined())
         {
             builder.Append("### ")
-                .AppendLine(Markdown.Bold(Messages.ShowInfoPunishments));
+                .AppendLine(Markdown.Bold(Messages.UserInfoPunishments));
         }
 
         if (isMuted)
@@ -149,13 +149,13 @@ public class ToolsCommandGroup : CommandGroup
         if (!guildMemberResult.IsSuccess && !existingBanResult.IsDefined())
         {
             builder.Append("### ")
-                .AppendLine(Markdown.Bold(Messages.ShowInfoNotOnGuild));
+                .AppendLine(Markdown.Bold(Messages.UserInfoNotOnGuild));
 
             embedColor = ColorsList.Default;
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ShowInfoTitle, target.GetTag()), bot)
+                string.Format(Messages.UserInfoTitle, target.GetTag()), bot)
             .WithDescription(builder.ToString())
             .WithColour(embedColor)
             .WithLargeAvatar(target)
@@ -169,23 +169,23 @@ public class ToolsCommandGroup : CommandGroup
     {
         if (guildMember.Nickname.IsDefined(out var nickname))
         {
-            builder.Append("- ").AppendLine(Messages.ShowInfoGuildNickname)
+            builder.Append("- ").AppendLine(Messages.UserInfoGuildNickname)
                 .AppendLine(Markdown.InlineCode(nickname));
         }
 
-        builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberSince)
+        builder.Append("- ").AppendLine(Messages.UserInfoGuildMemberSince)
             .AppendLine(Markdown.Timestamp(guildMember.JoinedAt));
 
         if (guildMember.PremiumSince.IsDefined(out var premiumSince))
         {
-            builder.Append("- ").AppendLine(Messages.ShowInfoGuildMemberPremiumSince)
+            builder.Append("- ").AppendLine(Messages.UserInfoGuildMemberPremiumSince)
                 .AppendLine(Markdown.Timestamp(premiumSince.Value));
             color = ColorsList.Magenta;
         }
 
         if (guildMember.Roles.Count > 0)
         {
-            builder.Append("- ").AppendLine(Messages.ShowInfoGuildRoles);
+            builder.Append("- ").AppendLine(Messages.UserInfoGuildRoles);
             for (var i = 0; i < guildMember.Roles.Count - 1; i++)
             {
                 builder.Append($"<@&{guildMember.Roles[i]}>, ");
@@ -201,29 +201,29 @@ public class ToolsCommandGroup : CommandGroup
     {
         if (memberData.BannedUntil < DateTimeOffset.MaxValue)
         {
-            builder.Append("- ").AppendLine(Messages.ShowInfoBanned)
+            builder.Append("- ").AppendLine(Messages.UserInfoBanned)
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
             return;
         }
 
-        builder.Append("- ").AppendLine(Messages.ShowInfoBannedPermanently);
+        builder.Append("- ").AppendLine(Messages.UserInfoBannedPermanently);
     }
 
     private static void AppendMuteInformation(
         MemberData memberData, DateTimeOffset? communicationDisabledUntil, StringBuilder builder)
     {
-        builder.Append("- ").AppendLine(Messages.ShowInfoMuted);
+        builder.Append("- ").AppendLine(Messages.UserInfoMuted);
         if (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil)
         {
-            builder.Append(" - ").AppendLine(Messages.ShowInfoMutedByMuteRole)
+            builder.Append(" - ").AppendLine(Messages.UserInfoMutedByMuteRole)
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.MutedUntil.Value)));
         }
 
         if (communicationDisabledUntil is not null)
         {
-            builder.Append(" - ").AppendLine(Messages.ShowInfoMutedByTimeout)
+            builder.Append(" - ").AppendLine(Messages.UserInfoMutedByTimeout)
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }
