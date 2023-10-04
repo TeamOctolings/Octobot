@@ -266,7 +266,8 @@ public class ToolsCommandGroup : CommandGroup
     private async Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
         IUser user, CancellationToken ct)
     {
-        var second = secondNullable ?? 0;
+        const int secondDefault = 0;
+        var second = secondNullable ?? secondDefault;
 
         var min = Math.Min(first, second);
         var max = Math.Max(first, second);
@@ -277,14 +278,14 @@ public class ToolsCommandGroup : CommandGroup
 
         description.AppendLine().Append("- ").Append(string.Format(
             Messages.RandomMin, Markdown.InlineCode(min.ToString())));
-        if (secondNullable is null && first >= 0)
+        if (secondNullable is null && first >= secondDefault)
         {
             description.Append(' ').Append(Messages.Default);
         }
 
         description.AppendLine().Append("- ").Append(string.Format(
             Messages.RandomMax, Markdown.InlineCode(max.ToString())));
-        if (secondNullable is null && first < 0)
+        if (secondNullable is null && first < secondDefault)
         {
             description.Append(' ').Append(Messages.Default);
         }
