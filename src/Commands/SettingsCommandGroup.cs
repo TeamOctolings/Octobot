@@ -91,19 +91,19 @@ public class SettingsCommandGroup : CommandGroup
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendSettingsListAsync(cfg, currentUser, page, CancellationToken);
+        return await SendSettingsListAsync(cfg, bot, page, CancellationToken);
     }
 
-    private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser currentUser, int page,
+    private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser bot, int page,
         CancellationToken ct = default)
     {
         var description = new StringBuilder();
@@ -117,7 +117,7 @@ public class SettingsCommandGroup : CommandGroup
 
         if (firstOptionOnPage >= AllOptions.Length)
         {
-            var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, currentUser)
+            var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, bot)
                 .WithDescription(string.Format(Messages.PagesAllowed, Markdown.Bold(totalPages.ToString())))
                 .WithColour(ColorsList.Red)
                 .Build();
@@ -141,7 +141,7 @@ public class SettingsCommandGroup : CommandGroup
                 .AppendLine(optionValue);
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, bot)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Default)
             .WithFooter(footer.ToString())
@@ -168,38 +168,38 @@ public class SettingsCommandGroup : CommandGroup
         AllOptionsEnum setting,
         [Description("Setting value")] string value)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await EditSettingAsync(AllOptions[(int)setting], value, data, channelId, user, currentUser,
+        return await EditSettingAsync(AllOptions[(int)setting], value, data, channelId, executor, bot,
             CancellationToken);
     }
 
     private async Task<Result> EditSettingAsync(
-        IOption option, string value, GuildData data, Snowflake channelId, IUser user, IUser currentUser,
+        IOption option, string value, GuildData data, Snowflake channelId, IUser executor, IUser bot,
         CancellationToken ct = default)
     {
         var setResult = option.Set(data.Settings, value);
         if (!setResult.IsSuccess)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.SettingNotChanged, currentUser)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.SettingNotChanged, bot)
                 .WithDescription(setResult.Error.Message)
                 .WithColour(ColorsList.Red)
                 .Build();
@@ -216,13 +216,13 @@ public class SettingsCommandGroup : CommandGroup
         var description = builder.ToString();
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, currentUser, ColorsList.Magenta, false, ct);
+            data.Settings, channelId, executor, title, description, bot, ColorsList.Magenta, false, ct);
         if (!logResult.IsSuccess)
         {
             return Result.FromError(logResult.Error);
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithDescription(description)
             .WithColour(ColorsList.Green)
             .Build();
@@ -250,10 +250,10 @@ public class SettingsCommandGroup : CommandGroup
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
@@ -261,13 +261,13 @@ public class SettingsCommandGroup : CommandGroup
 
         if (setting is not null)
         {
-            return await ResetSingleSettingAsync(cfg, currentUser, AllOptions[(int)setting], CancellationToken);
+            return await ResetSingleSettingAsync(cfg, bot, AllOptions[(int)setting], CancellationToken);
         }
 
-        return await ResetAllSettingsAsync(cfg, currentUser, CancellationToken);
+        return await ResetAllSettingsAsync(cfg, bot, CancellationToken);
     }
 
-    private async Task<Result> ResetSingleSettingAsync(JsonNode cfg, IUser currentUser,
+    private async Task<Result> ResetSingleSettingAsync(JsonNode cfg, IUser bot,
         IOption option, CancellationToken ct = default)
     {
         var resetResult = option.Reset(cfg);
@@ -277,14 +277,14 @@ public class SettingsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.SingleSettingReset, option.Name), currentUser)
+                string.Format(Messages.SingleSettingReset, option.Name), bot)
             .WithColour(ColorsList.Green)
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
-    private async Task<Result> ResetAllSettingsAsync(JsonNode cfg, IUser currentUser,
+    private async Task<Result> ResetAllSettingsAsync(JsonNode cfg, IUser bot,
         CancellationToken ct = default)
     {
         var failedResults = new List<Result>();
@@ -298,7 +298,7 @@ public class SettingsCommandGroup : CommandGroup
             return failedResults.AggregateErrors();
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.AllSettingsReset, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.AllSettingsReset, bot)
             .WithColour(ColorsList.Green)
             .Build();
 

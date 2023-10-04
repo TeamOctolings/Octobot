@@ -50,34 +50,34 @@ public class RemindCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteListReminderAsync()
     {
-        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(botResult);
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(userId), user, currentUser, CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, CancellationToken);
     }
 
-    private async Task<Result> ListRemindersAsync(MemberData data, IUser user, IUser currentUser, CancellationToken ct)
+    private async Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoRemindersFound, currentUser)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoRemindersFound, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -90,11 +90,12 @@ public class RemindCommandGroup : CommandGroup
             var reminder = data.Reminders[i];
             builder.Append("- ").AppendLine(string.Format(Messages.ReminderIndex, Markdown.InlineCode(i.ToString())))
                 .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-                .Append(" - ").AppendLine(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(reminder.At)));
+                .Append(" - ")
+                .AppendLine(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(reminder.At)));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ReminderList, user.GetTag()), user)
+                string.Format(Messages.ReminderList, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .Build();
@@ -119,30 +120,30 @@ public class RemindCommandGroup : CommandGroup
         TimeSpan @in,
         [Description("Reminder message")] string message)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, message, data, channelId, user, CancellationToken);
+        return await AddReminderAsync(@in, message, data, channelId, executor, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(
         TimeSpan @in, string message, GuildData data,
-        Snowflake channelId, IUser user, CancellationToken ct = default)
+        Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
 
-        data.GetOrCreateMemberData(user.ID).Reminders.Add(
+        data.GetOrCreateMemberData(executor.ID).Reminders.Add(
             new Reminder
             {
                 At = remindAt,
@@ -155,7 +156,7 @@ public class RemindCommandGroup : CommandGroup
             .Append("- ").Append(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(remindAt)));
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ReminderCreated, user.GetTag()), user)
+                string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .Build();
@@ -177,29 +178,29 @@ public class RemindCommandGroup : CommandGroup
         [Description("Index of reminder to delete")] [MinValue(0)]
         int index)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await DeleteReminderAsync(data.GetOrCreateMemberData(userId), index, currentUser, CancellationToken);
+        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), index, bot, CancellationToken);
     }
 
-    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser currentUser,
+    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
         CancellationToken ct)
     {
         if (index >= data.Reminders.Count)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderIndex, currentUser)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderIndex, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -208,7 +209,7 @@ public class RemindCommandGroup : CommandGroup
 
         data.Reminders.RemoveAt(index);
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, bot)
             .WithColour(ColorsList.Green)
             .Build();
 

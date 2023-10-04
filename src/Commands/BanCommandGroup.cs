@@ -74,22 +74,22 @@ public class BanCommandGroup : CommandGroup
         [Description("Ban reason")] string reason,
         [Description("Ban duration")] TimeSpan? duration = null)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        // The current user's avatar is used when sending error messages
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        // The bot's avatar is used when sending error messages
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
@@ -101,25 +101,24 @@ public class BanCommandGroup : CommandGroup
         var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await BanUserAsync(
-            target, reason, duration, guild, data, channelId, user, currentUser, CancellationToken);
+        return await BanUserAsync(executor, target, reason, duration, guild, data, channelId, bot, CancellationToken);
     }
 
     private async Task<Result> BanUserAsync(
-        IUser target, string reason, TimeSpan? duration, IGuild guild, GuildData data, Snowflake channelId,
-        IUser user, IUser currentUser, CancellationToken ct = default)
+        IUser executor, IUser target, string reason, TimeSpan? duration, IGuild guild, GuildData data, Snowflake channelId,
+        IUser bot, CancellationToken ct = default)
     {
         var existingBanResult = await _guildApi.GetGuildBanAsync(guild.ID, target.ID, ct);
         if (existingBanResult.IsDefined())
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, currentUser)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, bot)
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, user.ID, target.ID, "Ban", ct);
+            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Ban", ct);
         if (!interactionResult.IsSuccess)
         {
             return Result.FromError(interactionResult);
@@ -127,7 +126,7 @@ public class BanCommandGroup : CommandGroup
 
         if (interactionResult.Entity is not null)
         {
-            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
+            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
@@ -152,7 +151,7 @@ public class BanCommandGroup : CommandGroup
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereBanned)
                 .WithDescription(description)
-                .WithActionFooter(user)
+                .WithActionFooter(executor)
                 .WithCurrentTimestamp()
                 .WithColour(ColorsList.Red)
                 .Build();
@@ -166,7 +165,7 @@ public class BanCommandGroup : CommandGroup
         }
 
         var banResult = await _guildApi.CreateGuildBanAsync(
-            guild.ID, target.ID, reason: $"({user.GetTag()}) {reason}".EncodeHeader(),
+            guild.ID, target.ID, reason: $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct: ct);
         if (!banResult.IsSuccess)
         {
@@ -183,7 +182,7 @@ public class BanCommandGroup : CommandGroup
             .WithColour(ColorsList.Green).Build();
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
+            data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
         {
             return Result.FromError(logResult.Error);
@@ -218,47 +217,46 @@ public class BanCommandGroup : CommandGroup
         [Description("User to unban")] IUser target,
         [Description("Unban reason")] string reason)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        // The current user's avatar is used when sending error messages
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        // The bot's avatar is used when sending error messages
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         // Needed to get the tag and avatar
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await UnbanUserAsync(
-            target, reason, guildId, data, channelId, user, currentUser, CancellationToken);
+        return await UnbanUserAsync(executor, target, reason, guildId, data, channelId, bot, CancellationToken);
     }
 
     private async Task<Result> UnbanUserAsync(
-        IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId, IUser user,
-        IUser currentUser, CancellationToken ct = default)
+        IUser executor, IUser target, string reason, Snowflake guildId, GuildData data, Snowflake channelId,
+        IUser bot, CancellationToken ct = default)
     {
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, target.ID, ct);
         if (!existingBanResult.IsDefined())
         {
-            var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, currentUser)
+            var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, bot)
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
         }
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
-            guildId, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
+            guildId, target.ID, $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct);
         if (!unbanResult.IsSuccess)
         {
@@ -275,7 +273,7 @@ public class BanCommandGroup : CommandGroup
         var description = new StringBuilder().Append("- ")
             .Append(string.Format(Messages.DescriptionActionReason, reason));
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description.ToString(), target, ColorsList.Green, ct: ct);
+            data.Settings, channelId, executor, title, description.ToString(), target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
         {
             return Result.FromError(logResult.Error);

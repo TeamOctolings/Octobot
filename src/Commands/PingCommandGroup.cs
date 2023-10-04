@@ -60,20 +60,20 @@ public class PingCommandGroup : CommandGroup
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendLatencyAsync(channelId, currentUser, CancellationToken);
+        return await SendLatencyAsync(channelId, bot, CancellationToken);
     }
 
     private async Task<Result> SendLatencyAsync(
-        Snowflake channelId, IUser currentUser, CancellationToken ct = default)
+        Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0)
@@ -89,7 +89,7 @@ public class PingCommandGroup : CommandGroup
             latency = DateTimeOffset.UtcNow.Subtract(lastMessage.Single().Timestamp).TotalMilliseconds;
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(currentUser.GetTag(), currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
             .WithTitle($"Sound{Random.Shared.Next(1, 4)}".Localized())
             .WithDescription($"{latency:F0}{Messages.Milliseconds}")
             .WithColour(latency < 250 ? ColorsList.Green : latency < 500 ? ColorsList.Yellow : ColorsList.Red)

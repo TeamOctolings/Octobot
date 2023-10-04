@@ -69,10 +69,10 @@ public sealed class UtilityService : IHostedService
             return Result<string?>.FromSuccess($"UserCannot{action}Themselves".Localized());
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(ct);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result<string?>.FromError(currentUserResult);
+            return Result<string?>.FromError(botResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: ct);
@@ -87,7 +87,7 @@ public sealed class UtilityService : IHostedService
             return Result<string?>.FromSuccess(null);
         }
 
-        var currentMemberResult = await _guildApi.GetGuildMemberAsync(guildId, currentUser.ID, ct);
+        var currentMemberResult = await _guildApi.GetGuildMemberAsync(guildId, bot.ID, ct);
         if (!currentMemberResult.IsDefined(out var currentMember))
         {
             return Result<string?>.FromError(currentMemberResult);
@@ -167,11 +167,11 @@ public sealed class UtilityService : IHostedService
     {
         var builder = new StringBuilder();
         var role = GuildSettings.EventNotificationRole.Get(settings);
-        var usersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
+        var subscribersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
             scheduledEvent.GuildID, scheduledEvent.ID, withMember: true, ct: ct);
-        if (!usersResult.IsDefined(out var users))
+        if (!subscribersResult.IsDefined(out var subscribers))
         {
-            return Result<string>.FromError(usersResult);
+            return Result<string>.FromError(subscribersResult);
         }
 
         if (!role.Empty())
@@ -179,9 +179,9 @@ public sealed class UtilityService : IHostedService
             builder.Append($"{Mention.Role(role)} ");
         }
 
-        builder = users.Where(
-                user => user.GuildMember.IsDefined(out var member) && !member.Roles.Contains(role))
-            .Aggregate(builder, (current, user) => current.Append($"{Mention.User(user.User)} "));
+        builder = subscribers.Where(
+                subscriber => subscriber.GuildMember.IsDefined(out var member) && !member.Roles.Contains(role))
+            .Aggregate(builder, (current, subscriber) => current.Append($"{Mention.User(subscriber.User)} "));
         return builder.ToString();
     }
 
