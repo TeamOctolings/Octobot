@@ -215,13 +215,13 @@ public static class Extensions
 
     public static bool TryGetContextIDs(
         this ICommandContext context, out Snowflake guildId,
-        out Snowflake channelId, out Snowflake userId)
+        out Snowflake channelId, out Snowflake executorId)
     {
         channelId = default;
-        userId = default;
+        executorId = default;
         return context.TryGetGuildID(out guildId)
                && context.TryGetChannelID(out channelId)
-               && context.TryGetUserID(out userId);
+               && context.TryGetUserID(out executorId);
     }
 
     /// <summary>

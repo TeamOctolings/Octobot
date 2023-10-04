@@ -66,19 +66,19 @@ public class AboutCommandGroup : CommandGroup
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendAboutBotAsync(currentUser, guildId, CancellationToken);
+        return await SendAboutBotAsync(bot, guildId, CancellationToken);
     }
 
-    private async Task<Result> SendAboutBotAsync(IUser currentUser, Snowflake guildId, CancellationToken ct = default)
+    private async Task<Result> SendAboutBotAsync(IUser bot, Snowflake guildId, CancellationToken ct = default)
     {
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
         foreach (var dev in Developers)
@@ -92,7 +92,7 @@ public class AboutCommandGroup : CommandGroup
 
         builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Octobot)");
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://mctaylors.ddns.net/cdn/octobot-banner.png")

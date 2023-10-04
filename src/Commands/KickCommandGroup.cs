@@ -68,22 +68,22 @@ public class KickCommandGroup : CommandGroup
         [Description("Member to kick")] IUser target,
         [Description("Kick reason")] string reason)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        // The current user's avatar is used when sending error messages
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        // The bot's avatar is used when sending error messages
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
@@ -98,21 +98,21 @@ public class KickCommandGroup : CommandGroup
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
         if (!memberResult.IsSuccess)
         {
-            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, currentUser)
+            var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, bot)
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
         }
 
-        return await KickUserAsync(target, reason, guild, channelId, data, user, currentUser, CancellationToken);
+        return await KickUserAsync(executor, target, reason, guild, channelId, data, bot, CancellationToken);
     }
 
     private async Task<Result> KickUserAsync(
-        IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser user, IUser currentUser,
+        IUser executor, IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser bot,
         CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, user.ID, target.ID, "Kick", ct);
+            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Kick", ct);
         if (!interactionResult.IsSuccess)
         {
             return Result.FromError(interactionResult);
@@ -120,7 +120,7 @@ public class KickCommandGroup : CommandGroup
 
         if (interactionResult.Entity is not null)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, currentUser)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
@@ -132,7 +132,7 @@ public class KickCommandGroup : CommandGroup
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereKicked)
                 .WithDescription($"- {string.Format(Messages.DescriptionActionReason, reason)}")
-                .WithActionFooter(user)
+                .WithActionFooter(executor)
                 .WithCurrentTimestamp()
                 .WithColour(ColorsList.Red)
                 .Build();
@@ -146,7 +146,7 @@ public class KickCommandGroup : CommandGroup
         }
 
         var kickResult = await _guildApi.RemoveGuildMemberAsync(
-            guild.ID, target.ID, $"({user.GetTag()}) {reason}".EncodeHeader(),
+            guild.ID, target.ID, $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct);
         if (!kickResult.IsSuccess)
         {
@@ -158,7 +158,7 @@ public class KickCommandGroup : CommandGroup
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = $"- {string.Format(Messages.DescriptionActionReason, reason)}";
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, target, ColorsList.Red, ct: ct);
+            data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
         {
             return Result.FromError(logResult.Error);

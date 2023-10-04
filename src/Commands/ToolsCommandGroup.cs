@@ -71,48 +71,48 @@ public class ToolsCommandGroup : CommandGroup
         [Description("User to show info about")]
         IUser? target = null)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(botResult);
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ShowUserInfoAsync(target ?? user, currentUser, data, guildId, CancellationToken);
+        return await ShowUserInfoAsync(target ?? executor, bot, data, guildId, CancellationToken);
     }
 
     private async Task<Result> ShowUserInfoAsync(
-        IUser user, IUser currentUser, GuildData data, Snowflake guildId, CancellationToken ct = default)
+        IUser target, IUser bot, GuildData data, Snowflake guildId, CancellationToken ct = default)
     {
-        var builder = new StringBuilder().AppendLine($"### <@{user.ID}>");
+        var builder = new StringBuilder().AppendLine($"### <@{target.ID}>");
 
-        if (user.GlobalName is not null)
+        if (target.GlobalName is not null)
         {
             builder.Append("- ").AppendLine(Messages.ShowInfoDisplayName)
-                .AppendLine(Markdown.InlineCode(user.GlobalName));
+                .AppendLine(Markdown.InlineCode(target.GlobalName));
         }
 
         builder.Append("- ").AppendLine(Messages.ShowInfoDiscordUserSince)
-            .AppendLine(Markdown.Timestamp(user.ID.Timestamp));
+            .AppendLine(Markdown.Timestamp(target.ID.Timestamp));
 
-        var memberData = data.GetOrCreateMemberData(user.ID);
+        var memberData = data.GetOrCreateMemberData(target.ID);
 
         var embedColor = ColorsList.Cyan;
 
-        var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, user.ID, ct);
+        var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, ct);
         DateTimeOffset? communicationDisabledUntil = null;
         if (guildMemberResult.IsDefined(out var guildMember))
         {
@@ -124,7 +124,7 @@ public class ToolsCommandGroup : CommandGroup
         var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
                       communicationDisabledUntil is not null;
 
-        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, user.ID, ct);
+        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, target.ID, ct);
 
         if (isMuted || existingBanResult.IsDefined())
         {
@@ -155,11 +155,11 @@ public class ToolsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ShowInfoTitle, user.GetTag()), currentUser)
+                string.Format(Messages.ShowInfoTitle, target.GetTag()), bot)
             .WithDescription(builder.ToString())
             .WithColour(embedColor)
-            .WithLargeAvatar(user)
-            .WithFooter($"ID: {user.ID.ToString()}")
+            .WithLargeAvatar(target)
+            .WithFooter($"ID: {target.ID.ToString()}")
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
@@ -246,25 +246,25 @@ public class ToolsCommandGroup : CommandGroup
         [Description("Second number (Default: 0)")]
         long? second = null)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await SendRandomNumberAsync(first, second, user, CancellationToken);
+        return await SendRandomNumberAsync(first, second, executor, CancellationToken);
     }
 
     private async Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
-        IUser user, CancellationToken ct)
+        IUser executor, CancellationToken ct)
     {
         const long secondDefault = 0;
         var second = secondNullable ?? secondDefault;
@@ -298,7 +298,7 @@ public class ToolsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.RandomTitle, user.GetTag()), user)
+                string.Format(Messages.RandomTitle, executor.GetTag()), executor)
             .WithDescription(description.ToString())
             .WithColour(embedColor)
             .Build();
@@ -332,24 +332,24 @@ public class ToolsCommandGroup : CommandGroup
         [Description("Offset from current time")]
         TimeSpan? offset = null)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await SendTimestampAsync(offset, user, CancellationToken);
+        return await SendTimestampAsync(offset, executor, CancellationToken);
     }
 
-    private async Task<Result> SendTimestampAsync(TimeSpan? offset, IUser user, CancellationToken ct)
+    private async Task<Result> SendTimestampAsync(TimeSpan? offset, IUser executor, CancellationToken ct)
     {
         var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
 
@@ -368,7 +368,7 @@ public class ToolsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.TimestampTitle, user.GetTag()), user)
+                string.Format(Messages.TimestampTitle, executor.GetTag()), executor)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Blue)
             .Build();

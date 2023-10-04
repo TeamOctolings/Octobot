@@ -60,16 +60,16 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             return Result.FromSuccess();
         }
 
-        var currentUserResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!currentUserResult.IsDefined(out var currentUser))
+        var botResult = await _userApi.GetCurrentUserAsync(ct);
+        if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(currentUserResult);
+            return Result.FromError(botResult);
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
         var i = Random.Shared.Next(1, 4);
 
-        var embed = new EmbedBuilder().WithSmallTitle(currentUser.GetTag(), currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
             .WithTitle($"Sound{i}".Localized())
             .WithDescription(Messages.Ready)
             .WithCurrentTimestamp()

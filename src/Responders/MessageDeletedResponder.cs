@@ -67,17 +67,17 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         var auditLog = auditLogPage.AuditLogEntries.Single();
 
-        var userResult = Result<IUser>.FromSuccess(message.Author);
+        var deleterResult = Result<IUser>.FromSuccess(message.Author);
         if (auditLog.UserID is not null
             && auditLog.Options.Value.ChannelID == gatewayEvent.ChannelID
             && DateTimeOffset.UtcNow.Subtract(auditLog.ID.Timestamp).TotalSeconds <= 2)
         {
-            userResult = await _userApi.GetUserAsync(auditLog.UserID.Value, ct);
+            deleterResult = await _userApi.GetUserAsync(auditLog.UserID.Value, ct);
         }
 
-        if (!userResult.IsDefined(out var user))
+        if (!deleterResult.IsDefined(out var deleter))
         {
-            return Result.FromError(userResult);
+            return Result.FromError(deleterResult);
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
@@ -93,7 +93,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
                     Messages.CachedMessageDeleted,
                     message.Author.GetTag()), message.Author)
             .WithDescription(builder.ToString())
-            .WithActionFooter(user)
+            .WithActionFooter(deleter)
             .WithTimestamp(message.Timestamp)
             .WithColour(ColorsList.Red)
             .Build();

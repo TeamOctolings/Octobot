@@ -63,9 +63,22 @@ public class ClearCommandGroup : CommandGroup
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount)
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var userId))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        // The bot's avatar is used when sending messages
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
+        }
+
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
+        {
+            return Result.FromError(executorResult);
         }
 
         var messagesResult = await _channelApi.GetChannelMessagesAsync(
@@ -75,28 +88,15 @@ public class ClearCommandGroup : CommandGroup
             return Result.FromError(messagesResult);
         }
 
-        var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
-        if (!userResult.IsDefined(out var user))
-        {
-            return Result.FromError(userResult);
-        }
-
-        // The current user's avatar is used when sending messages
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
-        {
-            return Result.FromError(currentUserResult);
-        }
-
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ClearMessagesAsync(amount, data, channelId, messages, user, currentUser, CancellationToken);
+        return await ClearMessagesAsync(executor, amount, data, channelId, messages, bot, CancellationToken);
     }
 
     private async Task<Result> ClearMessagesAsync(
-        int amount, GuildData data, Snowflake channelId, IReadOnlyList<IMessage> messages,
-        IUser user, IUser currentUser, CancellationToken ct = default)
+        IUser executor, int amount, GuildData data, Snowflake channelId, IReadOnlyList<IMessage> messages, IUser bot,
+        CancellationToken ct = default)
     {
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
@@ -112,20 +112,20 @@ public class ClearCommandGroup : CommandGroup
         var description = builder.ToString();
 
         var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
-            channelId, idList, user.GetTag().EncodeHeader(), ct);
+            channelId, idList, executor.GetTag().EncodeHeader(), ct);
         if (!deleteResult.IsSuccess)
         {
             return Result.FromError(deleteResult.Error);
         }
 
         var logResult = _utility.LogActionAsync(
-            data.Settings, channelId, user, title, description, currentUser, ColorsList.Red, false, ct);
+            data.Settings, channelId, executor, title, description, bot, ColorsList.Red, false, ct);
         if (!logResult.IsSuccess)
         {
             return Result.FromError(logResult.Error);
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(title, currentUser)
+        var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithColour(ColorsList.Green).Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
