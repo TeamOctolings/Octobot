@@ -22,6 +22,55 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 
 [//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
 
+## Building & running
+
+<details><summary>Instructions for Linux</summary>
+<br/>
+
+1. Install [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+2. Go to the [Discord Developer Portal](https://discord.com/developers), create a new application and get a bot token. Don't forget to also enable all intents!
+3. Open Terminal
+4. Clone this repository and open `Octobot` folder.
+```
+git clone https://github.com/LabsDevelopment/Octobot
+cd Octobot
+```
+5. Build Octobot using `dotnet` and open `bin\Debug\net7.0` folder.
+```
+dotnet build
+cd bin\Debug\net7.0
+```
+6. Create a `BOT_TOKEN` environment variable with a bot token from Discord Developer Portal and run Octobot.
+```
+export BOT_TOKEN='ENTER_TOKEN_HERE'
+./Octobot
+```
+
+</details>
+<details><summary>Instructions for Windows</summary>
+<br/>
+
+1. Install [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+2. Go to the [Discord Developer Portal](https://discord.com/developers), create a new application and get a bot token. Don't forget to also enable all intents!
+3. Open PowerShell
+4. Clone this repository and open `Octobot` folder.
+```
+git clone https://github.com/LabsDevelopment/Octobot
+cd Octobot
+```
+5. Build Octobot using `dotnet` and open `bin/Debug/net7.0` folder.
+```
+dotnet build
+cd bin/Debug/net7.0
+```
+6. Create a `BOT_TOKEN` environment variable with a bot token from Discord Developer Portal and run Octobot.
+```
+$ENV:BOT_TOKEN='ENTER_TOKEN_HERE'
+.\Octobot.exe
+```
+
+</details>
+
 ## Contributing
 
 When it comes to contributing to the project, the two main things you can do to help out are reporting issues and
