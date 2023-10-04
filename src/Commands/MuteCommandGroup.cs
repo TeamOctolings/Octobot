@@ -201,7 +201,7 @@ public class MuteCommandGroup : CommandGroup
                 .WithDescription(Messages.DurationRequiredForTimeOuts)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
