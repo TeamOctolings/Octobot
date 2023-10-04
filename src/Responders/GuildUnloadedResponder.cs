@@ -10,8 +10,7 @@ using Remora.Results;
 namespace Octobot.Responders;
 
 /// <summary>
-///     Handles sending a <see cref="Ready" /> message to a guild that has just initialized if that guild
-///     has <see cref="GuildSettings.ReceiveStartupMessages" /> enabled
+///     Handles removing guild ID from <see cref="GuildData" /> if bot leaves the guild.
 /// </summary>
 [UsedImplicitly]
 public class GuildUnloadedResponder : IResponder<IGuildDelete>
