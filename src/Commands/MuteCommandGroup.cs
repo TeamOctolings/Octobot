@@ -127,27 +127,11 @@ public class MuteCommandGroup : CommandGroup
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
 
-        var memberData = data.GetOrCreateMemberData(target.ID);
-        var muteRole = GuildSettings.MuteRole.Get(data.Settings);
-
-        if (!muteRole.Empty())
+        var muteMethodResult = await SelectMuteMethodAsync(
+            target, reason, duration, guildId, data, user, currentUser, until, ct);
+        if (!muteMethodResult.IsSuccess)
         {
-            var muteRoleAsync =
-                await RoleMuteUserAsync(target, reason, guildId, data, memberData, user, until, muteRole, CancellationToken);
-            if (!muteRoleAsync.IsSuccess)
-            {
-                return Result.FromError(muteRoleAsync.Error);
-            }
-        }
-
-        if (muteRole.Empty())
-        {
-            var timeoutResult =
-                await TimeoutUserAsync(target, reason, duration, guildId, user, currentUser, until, CancellationToken);
-            if (!timeoutResult.IsSuccess)
-            {
-                return Result.FromError(timeoutResult.Error);
-            }
+            return Result.FromError(muteMethodResult.Error);
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
@@ -169,12 +153,30 @@ public class MuteCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
+    private async Task<Result> SelectMuteMethodAsync(
+        IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
+        IUser user, IUser currentUser, DateTimeOffset until, CancellationToken ct)
+    {
+        var muteRole = GuildSettings.MuteRole.Get(data.Settings);
+
+        if (muteRole.Empty())
+        {
+            var timeoutResult =
+                await TimeoutUserAsync(target, reason, duration, guildId, user, currentUser, until, ct);
+            return timeoutResult;
+        }
+
+        var muteRoleResult =
+            await RoleMuteUserAsync(target, reason, guildId, data, user, until, muteRole, ct);
+        return muteRoleResult;
+    }
+
     private async Task<Result> RoleMuteUserAsync(
-        IUser target, string reason, Snowflake guildId, GuildData data, MemberData memberData,
-        IUser user, DateTimeOffset until, Snowflake muteRole, CancellationToken ct = default)
+        IUser target, string reason, Snowflake guildId, GuildData data,
+        IUser user, DateTimeOffset until, Snowflake muteRole, CancellationToken ct)
     {
         var assignRoles = new List<Snowflake> { muteRole };
-
+        var memberData = data.GetOrCreateMemberData(target.ID);
         if (!GuildSettings.RemoveRolesOnMute.Get(data.Settings))
         {
             assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
@@ -193,7 +195,7 @@ public class MuteCommandGroup : CommandGroup
 
     private async Task<Result> TimeoutUserAsync(
         IUser target, string reason, TimeSpan duration, Snowflake guildId,
-        IUser user, IUser currentUser, DateTimeOffset until, CancellationToken ct = default)
+        IUser user, IUser currentUser, DateTimeOffset until, CancellationToken ct)
     {
         if (duration.TotalDays >= 28)
         {
