@@ -197,7 +197,7 @@ public sealed partial class MemberUpdateService : BackgroundService
             ct: ct);
     }
 
-    [GeneratedRegex("[^0-9A-zЁА-яё]")]
+    [GeneratedRegex("[^0-9A-Za-zА-Яа-яЁё]")]
     private static partial Regex IllegalChars();
 
     private async Task<Result> TickReminderAsync(Reminder reminder, IUser user, MemberData data, CancellationToken ct)
