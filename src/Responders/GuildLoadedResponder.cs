@@ -41,7 +41,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         }
 
         var guild = gatewayEvent.Guild.AsT0;
-        _logger.LogInformation("Joined guild \"{Name}\"", guild.Name);
+        _logger.LogInformation("Joined guild {ID} (\"{Name}\")", guild.ID, guild.Name);
 
         var data = await _guildData.GetData(guild.ID, ct);
         var cfg = data.Settings;
