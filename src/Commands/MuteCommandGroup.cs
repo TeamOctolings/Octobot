@@ -161,13 +161,13 @@ public class MuteCommandGroup : CommandGroup
 
         if (muteRole.Empty())
         {
-            var timeoutResult =
-                await TimeoutUserAsync(target, reason, duration, guildId, user, currentUser, until, ct);
+            var timeoutResult = await TimeoutUserAsync(
+                target, reason, duration, guildId, user, currentUser, until, ct);
             return timeoutResult;
         }
 
-        var muteRoleResult =
-            await RoleMuteUserAsync(target, reason, guildId, data, user, until, muteRole, ct);
+        var muteRoleResult = await RoleMuteUserAsync(
+            target, reason, guildId, data, user, until, muteRole, ct);
         return muteRoleResult;
     }
 
