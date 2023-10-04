@@ -27,8 +27,8 @@ public class GuildUnloadedResponder : IResponder<IGuildDelete>
     public Task<Result> RespondAsync(IGuildDelete gatewayEvent, CancellationToken ct = default)
     {
         var guildId = gatewayEvent.ID;
-        var removeGuildSucceed = _guildData.RemoveGuildId(guildId);
-        if (removeGuildSucceed)
+        var isDataRemoved = _guildData.UnloadGuildData(guildId);
+        if (isDataRemoved)
         {
             _logger.LogInformation("Left guild {GuildId}", guildId);
         }
