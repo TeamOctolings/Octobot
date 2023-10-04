@@ -232,8 +232,8 @@ public class ToolsCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that generates a random number using maximum and minimum numbers.
     /// </summary>
-    /// <param name="max">The maximum number for randomization.</param>
-    /// <param name="min">The minimum number for randomization. Default value: 1</param>
+    /// <param name="first">The first number used for randomization.</param>
+    /// <param name="second">The second number used for randomization. Default value: 0</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
@@ -242,19 +242,13 @@ public class ToolsCommandGroup : CommandGroup
     [Description("Generates a random number")]
     [UsedImplicitly]
     public async Task<Result> ExecuteRandomAsync(
-        [Description("Maximum number")] int max,
-        [Description("Minumum number (Default: 1)")]
-        int min = 1)
+        [Description("First number")] long first,
+        [Description("Second number (Default: 0)")]
+        long? second = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var userId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
-        }
-
-        var currentUserResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!currentUserResult.IsDefined(out var currentUser))
-        {
-            return Result.FromError(currentUserResult);
         }
 
         var userResult = await _userApi.GetUserAsync(userId, CancellationToken);
@@ -266,25 +260,47 @@ public class ToolsCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await SendRandomNumberAsync(max, min, user, currentUser, CancellationToken);
+        return await SendRandomNumberAsync(first, second, user, CancellationToken);
     }
 
-    private async Task<Result> SendRandomNumberAsync(int max, int min, IUser user, IUser currentUser, CancellationToken ct)
+    private async Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
+        IUser user, CancellationToken ct)
     {
-        if (min > max)
-        {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(
-                    Messages.RandomMinGreaterThanMax, currentUser)
-                .WithColour(ColorsList.Red).Build();
+        const long secondDefault = 0;
+        var second = secondNullable ?? secondDefault;
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        var min = Math.Min(first, second);
+        var max = Math.Max(first, second);
+
+        var i = Random.Shared.NextInt64(min, max + 1);
+
+        var description = new StringBuilder().Append("# ").Append(i);
+
+        description.AppendLine().Append("- ").Append(string.Format(
+            Messages.RandomMin, Markdown.InlineCode(min.ToString())));
+        if (secondNullable is null && first >= secondDefault)
+        {
+            description.Append(' ').Append(Messages.Default);
         }
 
-        var i = Random.Shared.Next(min, max + 1);
+        description.AppendLine().Append("- ").Append(string.Format(
+            Messages.RandomMax, Markdown.InlineCode(max.ToString())));
+        if (secondNullable is null && first < secondDefault)
+        {
+            description.Append(' ').Append(Messages.Default);
+        }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.RandomOutput, user)
-            .WithDescription($"# {i}\n({min}-{max})")
-            .WithColour(ColorsList.Blue)
+        var embedColor = ColorsList.Blue;
+        if (secondNullable is not null && min == max)
+        {
+            description.AppendLine().Append(Markdown.Italicise(Messages.RandomMinMaxSame));
+            embedColor = ColorsList.Red;
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.RandomTitle, user.GetTag()), user)
+            .WithDescription(description.ToString())
+            .WithColour(embedColor)
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
