@@ -105,7 +105,8 @@ public class MuteCommandGroup : CommandGroup
     }
 
     private async Task<Result> MuteUserAsync(
-        IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
+        IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
+        Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var interactionResult
             = await _utility.CheckInteractionsAsync(
