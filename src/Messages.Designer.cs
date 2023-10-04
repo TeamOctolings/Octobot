@@ -882,17 +882,38 @@ namespace Octobot {
             }
         }
 
-        internal static string RandomMinGreaterThanMax
+        internal static string RandomTitle
         {
             get {
-                return ResourceManager.GetString("RandomMinGreaterThanMax", resourceCulture);
+                return ResourceManager.GetString("RandomTitle", resourceCulture);
             }
         }
 
-        internal static string RandomOutput
+        internal static string RandomMinMaxSame
         {
             get {
-                return ResourceManager.GetString("RandomOutput", resourceCulture);
+                return ResourceManager.GetString("RandomMinMaxSame", resourceCulture);
+            }
+        }
+
+        internal static string RandomMax
+        {
+            get {
+                return ResourceManager.GetString("RandomMax", resourceCulture);
+            }
+        }
+
+        internal static string RandomMin
+        {
+            get {
+                return ResourceManager.GetString("RandomMin", resourceCulture);
+            }
+        }
+
+        internal static string Default
+        {
+            get {
+                return ResourceManager.GetString("Default", resourceCulture);
             }
         }
 
