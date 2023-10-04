@@ -44,7 +44,7 @@ public sealed class GuildUpdateService : BackgroundService
         }
 
         await _guildData.RemoveGuildId(guildId);
-        _logger.LogInformation("Left guild \"{guildId}\"", guildId);
+        _logger.LogInformation("Left guild {guildId}", guildId);
 
         return Result.FromSuccess();
     }
