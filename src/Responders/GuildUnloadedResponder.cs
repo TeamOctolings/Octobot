@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Octobot.Data;
 using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
-using Remora.Discord.API.Gateway.Events;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 
