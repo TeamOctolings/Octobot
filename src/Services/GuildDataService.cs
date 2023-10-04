@@ -143,8 +143,8 @@ public sealed class GuildDataService : IHostedService
         return _datas.Keys;
     }
 
-    public Task RemoveGuildId(Snowflake id)
+    public bool RemoveGuildId(Snowflake id)
     {
-        return Task.FromResult(_datas.TryRemove(id, out _));
+        return _datas.TryRemove(id, out _);
     }
 }

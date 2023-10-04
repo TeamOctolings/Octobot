@@ -9,7 +9,7 @@ using Remora.Results;
 namespace Octobot.Responders;
 
 /// <summary>
-///     Handles removing guild ID from <see cref="GuildData" /> if bot leaves the guild.
+///     Handles removing guild ID from <see cref="GuildData" /> if the guild becomes unavailable.
 /// </summary>
 [UsedImplicitly]
 public class GuildUnloadedResponder : IResponder<IGuildDelete>
@@ -24,12 +24,15 @@ public class GuildUnloadedResponder : IResponder<IGuildDelete>
         _logger = logger;
     }
 
-    public async Task<Result> RespondAsync(IGuildDelete gatewayEvent, CancellationToken ct = default)
+    public Task<Result> RespondAsync(IGuildDelete gatewayEvent, CancellationToken ct = default)
     {
         var guildId = gatewayEvent.ID;
-        await _guildData.RemoveGuildId(guildId);
-        _logger.LogInformation("Left guild {guildId}", guildId);
+        var removeGuildSucceed = _guildData.RemoveGuildId(guildId);
+        if (removeGuildSucceed)
+        {
+            _logger.LogInformation("Left guild {GuildId}", guildId);
+        }
 
-        return Result.FromSuccess();
+        return Task.FromResult(Result.FromSuccess());
     }
 }
