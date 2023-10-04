@@ -22,6 +22,20 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 
 [//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
 
+## Running Octobot
+
+1. Install [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+2. Go to the [Discord Developer Portal](https://discord.com/developers), create a new application and get a bot token. Don't forget to also enable all intents!
+3. Clone this repository and open `Octobot` folder.
+```
+git clone https://github.com/LabsDevelopment/Octobot
+cd Octobot
+```
+4. Run Octobot using `dotnet` with `BOT_TOKEN` variable.
+```
+dotnet run BOT_TOKEN='ENTER_TOKEN_HERE'
+```
+
 ## Contributing
 
 When it comes to contributing to the project, the two main things you can do to help out are reporting issues and
