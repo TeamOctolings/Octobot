@@ -131,7 +131,7 @@ public class MuteCommandGroup : CommandGroup
             target, reason, duration, guildId, data, user, currentUser, until, ct);
         if (!muteMethodResult.IsSuccess)
         {
-            return Result.FromError(muteMethodResult.Error);
+            return muteMethodResult;
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
