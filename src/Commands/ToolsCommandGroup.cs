@@ -266,7 +266,7 @@ public class ToolsCommandGroup : CommandGroup
     private async Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
         IUser user, CancellationToken ct)
     {
-        const int secondDefault = 0;
+        const long secondDefault = 0;
         var second = secondNullable ?? secondDefault;
 
         var min = Math.Min(first, second);
