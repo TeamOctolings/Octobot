@@ -486,7 +486,7 @@
   <data name="ShowInfoDisplayName" xml:space="preserve">
     <value>Display name</value>
   </data>
-  <data name="ShowInfoTitle" xml:space="preserve">
+  <data name="InformationAbout" xml:space="preserve">
     <value>Information about {0}</value>
   </data>
   <data name="ShowInfoMuted" xml:space="preserve">
@@ -545,5 +545,26 @@
   </data>
   <data name="TimestampOffset" xml:space="preserve">
       <value>Offset: {0}</value>
+  </data>
+  <data name="GuildInfoDescription" xml:space="preserve">
+      <value>Guild description</value>
+  </data>
+  <data name="GuildInfoCreatedAt" xml:space="preserve">
+      <value>Creation date</value>
+  </data>
+  <data name="GuildInfoLocale" xml:space="preserve">
+      <value>Guild's language</value>
+  </data>
+  <data name="GuildInfoOwner" xml:space="preserve">
+      <value>Guild's owner</value>
+  </data>
+  <data name="GuildInfoServerBoost" xml:space="preserve">
+      <value>Server Boost</value>
+  </data>
+  <data name="GuildInfoBoostTier" xml:space="preserve">
+      <value>Boost level</value>
+  </data>
+  <data name="GuildInfoBoostCount" xml:space="preserve">
+      <value>Boost count</value>
   </data>
 </root>

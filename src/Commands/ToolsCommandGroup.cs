@@ -19,7 +19,7 @@ using Remora.Results;
 namespace Octobot.Commands;
 
 /// <summary>
-///     Handles tool commands: /showinfo, /random, /timestamp.
+///     Handles tool commands: /showinfo, /guildinfo, /random, /timestamp.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
@@ -155,10 +155,10 @@ public class ToolsCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ShowInfoTitle, target.GetTag()), bot)
+                string.Format(Messages.InformationAbout, target.GetTag()), bot)
             .WithDescription(builder.ToString())
             .WithColour(embedColor)
-            .WithLargeAvatar(target)
+            .WithLargeUserAvatar(target)
             .WithFooter($"ID: {target.ID.ToString()}")
             .Build();
 
@@ -227,6 +227,93 @@ public class ToolsCommandGroup : CommandGroup
                 .Append(" - ").AppendLine(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }
+    }
+
+    /// <summary>
+    ///     A slash command that shows information about guild.
+    /// </summary>
+    /// <remarks>
+    ///     Information in the output:
+    ///     <list type="bullet">
+    ///         <item>Guild description</item>
+    ///         <item>Creation date</item>
+    ///         <item>Guild's language</item>
+    ///         <item>Guild's owner</item>
+    ///         <item>Boost level</item>
+    ///         <item>Boost count</item>
+    ///     </list>
+    /// </remarks>
+    /// <returns>
+    ///     A feedback sending result which may or may not have succeeded.
+    /// </returns>
+    [Command("guildinfo")]
+    [DiscordDefaultDMPermission(false)]
+    [Description("Shows info current guild")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteGuildInfoAsync()
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out _))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
+        }
+
+        var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
+        if (!guildResult.IsDefined(out var guild))
+        {
+            return Result.FromError(guildResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await ShowGuildInfoAsync(bot, guild, CancellationToken);
+    }
+
+    private async Task<Result> ShowGuildInfoAsync(IUser bot, IGuild guild, CancellationToken ct)
+    {
+        var description = new StringBuilder().AppendLine($"## {guild.Name}");
+
+        if (guild.Description is not null)
+        {
+            description.Append("- ").AppendLine(Messages.GuildInfoDescription)
+                .AppendLine(Markdown.InlineCode(guild.Description));
+        }
+
+        description.Append("- ").AppendLine(Messages.GuildInfoCreatedAt)
+            .AppendLine(Markdown.Timestamp(guild.ID.Timestamp))
+            .Append("- ").AppendLine(Messages.GuildInfoLocale)
+            .AppendLine(Markdown.InlineCode(guild.PreferredLocale))
+            .Append("- ").AppendLine(Messages.GuildInfoOwner)
+            .AppendLine($"<@{guild.OwnerID}>");
+
+        var embedColor = ColorsList.Cyan;
+
+        if (guild.PremiumTier > PremiumTier.None)
+        {
+            description.Append("### ").AppendLine(Messages.GuildInfoServerBoost)
+                .Append("- ").Append(Messages.GuildInfoBoostTier)
+                .Append(": ").AppendLine(Markdown.InlineCode(guild.PremiumTier.ToString()))
+                .Append("- ").Append(Messages.GuildInfoBoostCount)
+                .Append(": ").AppendLine(Markdown.InlineCode(guild.PremiumSubscriptionCount.ToString()));
+            embedColor = ColorsList.Magenta;
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.InformationAbout, guild.Name), bot)
+            .WithDescription(description.ToString())
+            .WithColour(embedColor)
+            .WithLargeGuildIcon(guild)
+            .WithGuildBanner(guild)
+            .WithFooter($"ID: {guild.ID.ToString()}")
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
