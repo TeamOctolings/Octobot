@@ -480,8 +480,8 @@
   <data name="ReminderWillBeSentOn" xml:space="preserve">
     <value>The reminder will be sent on: {0}</value>
   </data>
-  <data name="ReminderMessage" xml:space="preserve">
-      <value>Reminder message: {0}</value>
+  <data name="ReminderText" xml:space="preserve">
+    <value>Reminder text: {0}</value>
   </data>
   <data name="UserInfoDisplayName" xml:space="preserve">
     <value>Display name</value>
