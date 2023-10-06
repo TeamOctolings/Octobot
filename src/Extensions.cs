@@ -84,7 +84,10 @@ public static class Extensions
     public static EmbedBuilder WithLargeGuildIcon(
         this EmbedBuilder builder, IGuild iconSource)
     {
-        return builder.WithThumbnailUrl(CDN.GetGuildIconUrl(iconSource, imageSize: 256).Entity.AbsoluteUri);
+        var iconUrlResult = CDN.GetGuildIconUrl(iconSource, imageSize: 256);
+        return iconUrlResult.IsSuccess
+            ? builder.WithThumbnailUrl(iconUrlResult.Entity.AbsoluteUri)
+            : builder;
     }
 
     /// <summary>

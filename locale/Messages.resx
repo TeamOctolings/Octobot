@@ -552,11 +552,8 @@
   <data name="GuildInfoCreatedAt" xml:space="preserve">
       <value>Creation date</value>
   </data>
-  <data name="GuildInfoLocale" xml:space="preserve">
-      <value>Guild's language</value>
-  </data>
   <data name="GuildInfoOwner" xml:space="preserve">
-      <value>Guild's owner</value>
+      <value>Guild owner</value>
   </data>
   <data name="GuildInfoServerBoost" xml:space="preserve">
       <value>Server Boost</value>

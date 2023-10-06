@@ -230,7 +230,7 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows information about guild.
+    ///     A slash command that shows guild information.
     /// </summary>
     /// <remarks>
     ///     Information in the output:
@@ -287,10 +287,8 @@ public class ToolsCommandGroup : CommandGroup
 
         description.Append("- ").AppendLine(Messages.GuildInfoCreatedAt)
             .AppendLine(Markdown.Timestamp(guild.ID.Timestamp))
-            .Append("- ").AppendLine(Messages.GuildInfoLocale)
-            .AppendLine(Markdown.InlineCode(guild.PreferredLocale))
             .Append("- ").AppendLine(Messages.GuildInfoOwner)
-            .AppendLine($"<@{guild.OwnerID}>");
+            .AppendLine(Mention.User(guild.OwnerID));
 
         var embedColor = ColorsList.Cyan;
 

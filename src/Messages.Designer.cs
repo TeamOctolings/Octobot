@@ -949,14 +949,6 @@ namespace Octobot {
             }
         }
 
-        internal static string GuildInfoLocale
-        {
-            get
-            {
-                return ResourceManager.GetString("GuildInfoLocale", resourceCulture);
-            }
-        }
-
         internal static string GuildInfoOwner
         {
             get

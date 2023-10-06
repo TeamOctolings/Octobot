@@ -552,9 +552,6 @@
   <data name="GuildInfoCreatedAt" xml:space="preserve">
       <value>Дата создания</value>
   </data>
-  <data name="GuildInfoLocale" xml:space="preserve">
-      <value>Язык сервера</value>
-  </data>
   <data name="GuildInfoOwner" xml:space="preserve">
       <value>Владелец сервера</value>
   </data>

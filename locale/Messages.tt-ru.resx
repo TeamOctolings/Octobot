@@ -552,9 +552,6 @@
   <data name="GuildInfoCreatedAt" xml:space="preserve">
       <value>создался</value>
   </data>
-  <data name="GuildInfoLocale" xml:space="preserve">
-      <value>язык гильдии</value>
-  </data>
   <data name="GuildInfoOwner" xml:space="preserve">
       <value>админ гильдии</value>
   </data>
