@@ -64,7 +64,7 @@ public static class Extensions
     /// <param name="builder">The builder to add the thumbnail to.</param>
     /// <param name="avatarSource">The user whose avatar to use in the thumbnail field.</param>
     /// <returns>The builder with the added avatar in the thumbnail field.</returns>
-    public static EmbedBuilder WithLargeAvatar(
+    public static EmbedBuilder WithLargeUserAvatar(
         this EmbedBuilder builder, IUser avatarSource)
     {
         var avatarUrlResult = CDN.GetUserAvatarUrl(avatarSource, imageSize: 256);
@@ -73,6 +73,35 @@ public static class Extensions
             : CDN.GetDefaultUserAvatarUrl(avatarSource, imageSize: 256).Entity;
 
         return builder.WithThumbnailUrl(avatarUrl.AbsoluteUri);
+    }
+
+    /// <summary>
+    ///     Adds a guild icon in the thumbnail field.
+    /// </summary>
+    /// <param name="builder">The builder to add the thumbnail to.</param>
+    /// <param name="iconSource">The guild whose icon to use in the thumbnail field.</param>
+    /// <returns>The builder with the added icon in the thumbnail field.</returns>
+    public static EmbedBuilder WithLargeGuildIcon(
+        this EmbedBuilder builder, IGuild iconSource)
+    {
+        var iconUrlResult = CDN.GetGuildIconUrl(iconSource, imageSize: 256);
+        return iconUrlResult.IsSuccess
+            ? builder.WithThumbnailUrl(iconUrlResult.Entity.AbsoluteUri)
+            : builder;
+    }
+
+    /// <summary>
+    ///     Adds a guild banner in the image field.
+    /// </summary>
+    /// <param name="builder">The builder to add the image to.</param>
+    /// <param name="bannerSource">The guild whose banner to use in the image field.</param>
+    /// <returns>The builder with the added banner in the image field.</returns>
+    public static EmbedBuilder WithGuildBanner(
+        this EmbedBuilder builder, IGuild bannerSource)
+    {
+        return bannerSource.Banner is not null
+            ? builder.WithImageUrl(CDN.GetGuildBannerUrl(bannerSource).Entity.AbsoluteUri)
+            : builder;
     }
 
     /// <summary>

@@ -486,7 +486,7 @@
   <data name="UserInfoDisplayName" xml:space="preserve">
     <value>дисплейнейм</value>
   </data>
-  <data name="UserInfoTitle" xml:space="preserve">
+  <data name="InformationAbout" xml:space="preserve">
     <value>деанон {0}</value>
   </data>
   <data name="UserInfoMuted" xml:space="preserve">
@@ -545,5 +545,23 @@
   </data>
   <data name="TimestampOffset" xml:space="preserve">
       <value>офсет: {0}</value>
+  </data>
+  <data name="GuildInfoDescription" xml:space="preserve">
+      <value>дескрипшон гильдии</value>
+  </data>
+  <data name="GuildInfoCreatedAt" xml:space="preserve">
+      <value>создался</value>
+  </data>
+  <data name="GuildInfoOwner" xml:space="preserve">
+      <value>админ гильдии</value>
+  </data>
+  <data name="GuildInfoServerBoost" xml:space="preserve">
+      <value>буст гильдии</value>
+  </data>
+  <data name="GuildInfoBoostTier" xml:space="preserve">
+      <value>уровень</value>
+  </data>
+  <data name="GuildInfoBoostCount" xml:space="preserve">
+      <value>кол-во бустов</value>
   </data>
 </root>

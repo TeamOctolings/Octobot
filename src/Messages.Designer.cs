@@ -798,9 +798,9 @@ namespace Octobot {
             }
         }
 
-        internal static string UserInfoTitle {
+        internal static string InformationAbout {
             get {
-                return ResourceManager.GetString("UserInfoTitle", resourceCulture);
+                return ResourceManager.GetString("InformationAbout", resourceCulture);
             }
         }
 
@@ -930,6 +930,54 @@ namespace Octobot {
             get
             {
                 return ResourceManager.GetString("TimestampOffset", resourceCulture);
+            }
+        }
+
+        internal static string GuildInfoDescription
+        {
+            get
+            {
+                return ResourceManager.GetString("GuildInfoDescription", resourceCulture);
+            }
+        }
+
+        internal static string GuildInfoCreatedAt
+        {
+            get
+            {
+                return ResourceManager.GetString("GuildInfoCreatedAt", resourceCulture);
+            }
+        }
+
+        internal static string GuildInfoOwner
+        {
+            get
+            {
+                return ResourceManager.GetString("GuildInfoOwner", resourceCulture);
+            }
+        }
+
+        internal static string GuildInfoServerBoost
+        {
+            get
+            {
+                return ResourceManager.GetString("GuildInfoServerBoost", resourceCulture);
+            }
+        }
+
+        internal static string GuildInfoBoostTier
+        {
+            get
+            {
+                return ResourceManager.GetString("GuildInfoBoostTier", resourceCulture);
+            }
+        }
+
+        internal static string GuildInfoBoostCount
+        {
+            get
+            {
+                return ResourceManager.GetString("GuildInfoBoostCount", resourceCulture);
             }
         }
     }
