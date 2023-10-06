@@ -85,7 +85,7 @@ public class RemindCommandGroup : CommandGroup
         }
 
         var builder = new StringBuilder();
-        for (var i = data.Reminders.Count - 1; i >= 0; i--)
+        for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
             builder.Append("- ").AppendLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
