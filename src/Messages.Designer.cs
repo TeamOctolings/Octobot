@@ -804,81 +804,81 @@ namespace Octobot {
             }
         }
 
-        internal static string ShowInfoDisplayName {
+        internal static string UserInfoDisplayName {
             get {
-                return ResourceManager.GetString("ShowInfoDisplayName", resourceCulture);
+                return ResourceManager.GetString("UserInfoDisplayName", resourceCulture);
             }
         }
 
-        internal static string ShowInfoDiscordUserSince {
+        internal static string UserInfoDiscordUserSince {
             get {
-                return ResourceManager.GetString("ShowInfoDiscordUserSince", resourceCulture);
+                return ResourceManager.GetString("UserInfoDiscordUserSince", resourceCulture);
             }
         }
 
-        internal static string ShowInfoMuted {
+        internal static string UserInfoMuted {
             get {
-                return ResourceManager.GetString("ShowInfoMuted", resourceCulture);
+                return ResourceManager.GetString("UserInfoMuted", resourceCulture);
             }
         }
 
-        internal static string ShowInfoBanned {
+        internal static string UserInfoBanned {
             get {
-                return ResourceManager.GetString("ShowInfoBanned", resourceCulture);
+                return ResourceManager.GetString("UserInfoBanned", resourceCulture);
             }
         }
 
-        internal static string ShowInfoPunishments {
+        internal static string UserInfoPunishments {
             get {
-                return ResourceManager.GetString("ShowInfoPunishments", resourceCulture);
+                return ResourceManager.GetString("UserInfoPunishments", resourceCulture);
             }
         }
 
-        internal static string ShowInfoBannedPermanently {
+        internal static string UserInfoBannedPermanently {
             get {
-                return ResourceManager.GetString("ShowInfoBannedPermanently", resourceCulture);
+                return ResourceManager.GetString("UserInfoBannedPermanently", resourceCulture);
             }
         }
 
-        internal static string ShowInfoNotOnGuild {
+        internal static string UserInfoNotOnGuild {
             get {
-                return ResourceManager.GetString("ShowInfoNotOnGuild", resourceCulture);
+                return ResourceManager.GetString("UserInfoNotOnGuild", resourceCulture);
             }
         }
 
-        internal static string ShowInfoMutedByTimeout {
+        internal static string UserInfoMutedByTimeout {
             get {
-                return ResourceManager.GetString("ShowInfoMutedByTimeout", resourceCulture);
+                return ResourceManager.GetString("UserInfoMutedByTimeout", resourceCulture);
             }
         }
 
-        internal static string ShowInfoMutedByMuteRole {
+        internal static string UserInfoMutedByMuteRole {
             get {
-                return ResourceManager.GetString("ShowInfoMutedByMuteRole", resourceCulture);
+                return ResourceManager.GetString("UserInfoMutedByMuteRole", resourceCulture);
             }
         }
 
-        internal static string ShowInfoGuildMemberSince {
+        internal static string UserInfoGuildMemberSince {
             get {
-                return ResourceManager.GetString("ShowInfoGuildMemberSince", resourceCulture);
+                return ResourceManager.GetString("UserInfoGuildMemberSince", resourceCulture);
             }
         }
 
-        internal static string ShowInfoGuildNickname {
+        internal static string UserInfoGuildNickname {
             get {
-                return ResourceManager.GetString("ShowInfoGuildNickname", resourceCulture);
+                return ResourceManager.GetString("UserInfoGuildNickname", resourceCulture);
             }
         }
 
-        internal static string ShowInfoGuildRoles {
+        internal static string UserInfoGuildRoles {
             get {
-                return ResourceManager.GetString("ShowInfoGuildRoles", resourceCulture);
+                return ResourceManager.GetString("UserInfoGuildRoles", resourceCulture);
             }
         }
 
-        internal static string ShowInfoGuildMemberPremiumSince {
+        internal static string UserInfoGuildMemberPremiumSince {
             get {
-                return ResourceManager.GetString("ShowInfoGuildMemberPremiumSince", resourceCulture);
+                return ResourceManager.GetString("UserInfoGuildMemberPremiumSince", resourceCulture);
             }
         }
 
