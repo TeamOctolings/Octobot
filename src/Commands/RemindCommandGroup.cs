@@ -108,7 +108,7 @@ public class RemindCommandGroup : CommandGroup
     ///     A slash command that schedules a reminder with the specified text.
     /// </summary>
     /// <param name="in">The period of time which must pass before the reminder will be sent.</param>
-    /// <param name="message">The text of the reminder.</param>
+    /// <param name="text">The text of the reminder.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
     [Description("Create a reminder")]
@@ -118,7 +118,7 @@ public class RemindCommandGroup : CommandGroup
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
         TimeSpan @in,
-        [Description("Reminder message")] string message)
+        [Description("Reminder text")] string text)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
@@ -134,11 +134,11 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, message, data, channelId, executor, CancellationToken);
+        return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(
-        TimeSpan @in, string message, GuildData data,
+        TimeSpan @in, string text, GuildData data,
         Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
@@ -149,11 +149,11 @@ public class RemindCommandGroup : CommandGroup
             {
                 At = remindAt,
                 Channel = channelId.Value,
-                Text = message
+                Text = text
             });
 
         var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
-                Messages.ReminderText, Markdown.InlineCode(message)))
+                Messages.ReminderText, Markdown.InlineCode(text)))
             .Append("- ").Append(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(remindAt)));
 
         var embed = new EmbedBuilder().WithSmallTitle(
