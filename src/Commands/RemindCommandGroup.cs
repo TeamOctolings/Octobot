@@ -88,7 +88,7 @@ public class RemindCommandGroup : CommandGroup
         for (var i = data.Reminders.Count - 1; i >= 0; i--)
         {
             var reminder = data.Reminders[i];
-            builder.Append("- ").AppendLine(string.Format(Messages.ReminderIndex, Markdown.InlineCode(i.ToString())))
+            builder.Append("- ").AppendLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
                 .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
                 .Append(" - ")
                 .AppendLine(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(reminder.At)));
@@ -142,8 +142,9 @@ public class RemindCommandGroup : CommandGroup
         Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
+        var memberData = data.GetOrCreateMemberData(executor.ID);
 
-        data.GetOrCreateMemberData(executor.ID).Reminders.Add(
+        memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
@@ -159,15 +160,16 @@ public class RemindCommandGroup : CommandGroup
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
+            .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
-    ///     A slash command that deletes a reminder using its index.
+    ///     A slash command that deletes a reminder using its list position.
     /// </summary>
-    /// <param name="index">The index of the reminder to delete.</param>
+    /// <param name="position">The position in list of the reminder to delete.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("delremind")]
     [Description("Delete one of your reminders")]
@@ -175,8 +177,8 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteDeleteReminderAsync(
-        [Description("Index of reminder to delete")] [MinValue(0)]
-        int index)
+        [Description("Position in list of reminder to delete")] [MinValue(1)]
+        int position)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
@@ -192,22 +194,22 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), index, bot, CancellationToken);
+        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position, bot, CancellationToken);
     }
 
-    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
+    private async Task<Result> DeleteReminderAsync(MemberData data, int position, IUser bot,
         CancellationToken ct)
     {
-        if (index >= data.Reminders.Count)
+        if (position > data.Reminders.Count)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderIndex, bot)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
-        data.Reminders.RemoveAt(index);
+        data.Reminders.RemoveAt(position - 1);
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, bot)
             .WithColour(ColorsList.Green)

@@ -453,8 +453,8 @@
   <data name="ReminderList" xml:space="preserve">
     <value>Напоминания {0}</value>
   </data>
-  <data name="InvalidReminderIndex" xml:space="preserve">
-    <value>У тебя нет напоминания с указанным индексом!</value>
+  <data name="InvalidReminderPosition" xml:space="preserve">
+      <value>У тебя нет напоминания на этой позиции!</value>
   </data>
   <data name="ReminderDeleted" xml:space="preserve">
     <value>Напоминание удалено</value>
@@ -474,8 +474,8 @@
   <data name="DescriptionActionJumpToChannel" xml:space="preserve">
     <value>Перейти к каналу: {0}</value>
   </data>
-  <data name="ReminderIndex" xml:space="preserve">
-    <value>Индекс: {0}</value>
+  <data name="ReminderPosition" xml:space="preserve">
+      <value>Позиция в списке: {0}</value>
   </data>
   <data name="ReminderWillBeSentOn" xml:space="preserve">
     <value>Напоминание будет отправлено: {0}</value>
