@@ -169,7 +169,7 @@ public class RemindCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that deletes a reminder using its list position.
     /// </summary>
-    /// <param name="position">The position in list of the reminder to delete.</param>
+    /// <param name="position">The list position of the reminder to delete.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("delremind")]
     [Description("Delete one of your reminders")]
@@ -177,7 +177,7 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteDeleteReminderAsync(
-        [Description("Position in list of reminder to delete")] [MinValue(1)]
+        [Description("Position in list")] [MinValue(1)]
         int position)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
@@ -194,13 +194,13 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position, bot, CancellationToken);
+        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
     }
 
-    private async Task<Result> DeleteReminderAsync(MemberData data, int position, IUser bot,
+    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
         CancellationToken ct)
     {
-        if (position > data.Reminders.Count)
+        if (index >= data.Reminders.Count)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
                 .WithColour(ColorsList.Red)
@@ -209,7 +209,7 @@ public class RemindCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
-        data.Reminders.RemoveAt(position - 1);
+        data.Reminders.RemoveAt(index);
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, bot)
             .WithColour(ColorsList.Green)
