@@ -738,9 +738,9 @@ namespace Octobot {
             }
         }
 
-        internal static string InvalidReminderIndex {
+        internal static string InvalidReminderPosition {
             get {
-                return ResourceManager.GetString("InvalidReminderIndex", resourceCulture);
+                return ResourceManager.GetString("InvalidReminderPosition", resourceCulture);
             }
         }
 
@@ -780,9 +780,9 @@ namespace Octobot {
             }
         }
 
-        internal static string ReminderIndex {
+        internal static string ReminderPosition {
             get {
-                return ResourceManager.GetString("ReminderIndex", resourceCulture);
+                return ResourceManager.GetString("ReminderPosition", resourceCulture);
             }
         }
 
