@@ -792,9 +792,9 @@ namespace Octobot {
             }
         }
 
-        internal static string ReminderText {
+        internal static string ReminderMessage {
             get {
-                return ResourceManager.GetString("ReminderText", resourceCulture);
+                return ResourceManager.GetString("ReminderMessage", resourceCulture);
             }
         }
 

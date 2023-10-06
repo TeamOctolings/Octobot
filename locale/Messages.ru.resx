@@ -480,7 +480,7 @@
   <data name="ReminderWillBeSentOn" xml:space="preserve">
     <value>Напоминание будет отправлено: {0}</value>
   </data>
-  <data name="ReminderText" xml:space="preserve">
+  <data name="ReminderMessage" xml:space="preserve">
     <value>Текст напоминания: {0}</value>
   </data>
   <data name="UserInfoDisplayName" xml:space="preserve">

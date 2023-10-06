@@ -89,7 +89,7 @@ public class RemindCommandGroup : CommandGroup
         {
             var reminder = data.Reminders[i];
             builder.Append("- ").AppendLine(string.Format(Messages.ReminderIndex, Markdown.InlineCode(i.ToString())))
-                .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+                .Append(" - ").AppendLine(string.Format(Messages.ReminderMessage, Markdown.InlineCode(reminder.Text)))
                 .Append(" - ")
                 .AppendLine(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(reminder.At)));
         }
@@ -152,7 +152,7 @@ public class RemindCommandGroup : CommandGroup
             });
 
         var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
-                Messages.ReminderText, Markdown.InlineCode(message)))
+                Messages.ReminderMessage, Markdown.InlineCode(message)))
             .Append("- ").Append(string.Format(Messages.ReminderWillBeSentOn, Markdown.Timestamp(remindAt)));
 
         var embed = new EmbedBuilder().WithSmallTitle(
