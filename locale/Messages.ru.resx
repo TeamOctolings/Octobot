@@ -486,7 +486,7 @@
   <data name="ShowInfoDisplayName" xml:space="preserve">
     <value>Отображаемое имя</value>
   </data>
-  <data name="ShowInfoTitle" xml:space="preserve">
+  <data name="InformationAbout" xml:space="preserve">
     <value>Информация о {0}</value>
   </data>
   <data name="ShowInfoMuted" xml:space="preserve">
@@ -545,5 +545,23 @@
   </data>
   <data name="TimestampOffset" xml:space="preserve">
       <value>Офсет: {0}</value>
+  </data>
+  <data name="GuildInfoDescription" xml:space="preserve">
+      <value>Описание сервера</value>
+  </data>
+  <data name="GuildInfoCreatedAt" xml:space="preserve">
+      <value>Дата создания</value>
+  </data>
+  <data name="GuildInfoOwner" xml:space="preserve">
+      <value>Владелец сервера</value>
+  </data>
+  <data name="GuildInfoServerBoost" xml:space="preserve">
+      <value>Буст сервера</value>
+  </data>
+  <data name="GuildInfoBoostTier" xml:space="preserve">
+      <value>Уровень буста</value>
+  </data>
+  <data name="GuildInfoBoostCount" xml:space="preserve">
+      <value>Количество бустов</value>
   </data>
 </root>
