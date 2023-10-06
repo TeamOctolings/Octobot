@@ -453,8 +453,8 @@
   <data name="ReminderList" xml:space="preserve">
     <value>напоминалки {0}</value>
   </data>
-  <data name="InvalidReminderIndex" xml:space="preserve">
-    <value>у тебя нет напоминалки с этим индексом!</value>
+  <data name="InvalidReminderPosition" xml:space="preserve">
+      <value>у тебя нет напоминалки на этом номере!</value>
   </data>
   <data name="ReminderDeleted" xml:space="preserve">
     <value>напоминалка уничтожена</value>
@@ -474,8 +474,8 @@
   <data name="DescriptionActionJumpToChannel" xml:space="preserve">
     <value>чекнуть канал: {0}</value>
   </data>
-  <data name="ReminderIndex" xml:space="preserve">
-    <value>индекс: {0}</value>
+  <data name="ReminderPosition" xml:space="preserve">
+      <value>номер в списке: {0}</value>
   </data>
   <data name="ReminderWillBeSentOn" xml:space="preserve">
     <value>я пну тебе это: {0}</value>

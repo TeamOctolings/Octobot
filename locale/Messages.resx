@@ -453,8 +453,8 @@
   <data name="ReminderList" xml:space="preserve">
     <value>{0}'s reminders</value>
   </data>
-  <data name="InvalidReminderIndex" xml:space="preserve">
-    <value>There's no reminder with that index!</value>
+  <data name="InvalidReminderPosition" xml:space="preserve">
+      <value>There's no reminder in this position!</value>
   </data>
   <data name="ReminderDeleted" xml:space="preserve">
     <value>Reminder deleted</value>
@@ -474,8 +474,8 @@
   <data name="DescriptionActionJumpToChannel" xml:space="preserve">
     <value>Jump to channel: {0}</value>
   </data>
-  <data name="ReminderIndex" xml:space="preserve">
-    <value>Index: {0}</value>
+  <data name="ReminderPosition" xml:space="preserve">
+      <value>Position in list: {0}</value>
   </data>
   <data name="ReminderWillBeSentOn" xml:space="preserve">
     <value>The reminder will be sent on: {0}</value>
