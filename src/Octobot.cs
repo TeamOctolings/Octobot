@@ -17,7 +17,6 @@ using Remora.Discord.Commands.Services;
 using Remora.Discord.Gateway;
 using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Hosting.Extensions;
-using Remora.Discord.Interactivity.Extensions;
 using Remora.Rest.Core;
 using Serilog.Extensions.Logging;
 
@@ -80,9 +79,6 @@ public sealed class Octobot
                         // Init
                         .AddDiscordCaching()
                         .AddDiscordCommands(true)
-                        // Interactions
-                        .AddInteractivity()
-                        .AddInteractionGroup<InteractionResponders>()
                         // Slash command event handlers
                         .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
