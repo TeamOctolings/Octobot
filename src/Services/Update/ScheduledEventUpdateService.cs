@@ -201,7 +201,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.EventCreatedTitle, creator.GetTag()), creator)
-            .WithTitle(scheduledEvent.Name)
+            .WithTitle(Markdown.Sanitize(scheduledEvent.Name))
             .WithDescription(embedDescription)
             .WithEventCover(scheduledEvent.ID, scheduledEvent.Image)
             .WithCurrentTimestamp()
@@ -298,7 +298,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(embedDescriptionResult);
         }
 
-        var startedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventStarted, scheduledEvent.Name))
+        var startedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventStarted, Markdown.Sanitize(scheduledEvent.Name)))
             .WithDescription(embedDescription)
             .WithColour(ColorsList.Green)
             .WithCurrentTimestamp()
@@ -323,7 +323,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromSuccess();
         }
 
-        var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, eventData.Name))
+        var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, Markdown.Sanitize(eventData.Name)))
             .WithDescription(
                 string.Format(
                     Messages.EventDuration,
@@ -360,7 +360,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         }
 
         var embed = new EmbedBuilder()
-            .WithSmallTitle(string.Format(Messages.EventCancelled, eventData.Name))
+            .WithSmallTitle(string.Format(Messages.EventCancelled, Markdown.Sanitize(eventData.Name)))
             .WithDescription(":(")
             .WithColour(ColorsList.Red)
             .WithCurrentTimestamp()
@@ -421,7 +421,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         var earlyResult = new EmbedBuilder()
             .WithDescription(
-                string.Format(Messages.EventEarlyNotification, scheduledEvent.Name,
+                string.Format(Messages.EventEarlyNotification, Markdown.Sanitize(scheduledEvent.Name),
                     Markdown.Timestamp(scheduledEvent.ScheduledStartTime, TimestampStyle.RelativeTime)))
             .WithColour(ColorsList.Default)
             .Build();
