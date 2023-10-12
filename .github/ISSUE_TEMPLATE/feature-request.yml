@@ -1,6 +1,6 @@
 name: Feature Request
 description: Create a request for a feature you would like
-labels: [ "type: enhancement" ]
+labels: [ "type: feature" ]
 body:
     - type: textarea
       id: background
