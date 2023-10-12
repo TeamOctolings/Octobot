@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using JetBrains.Annotations;
 using Octobot.Data;
+using Octobot.Extensions;
 using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -49,7 +50,7 @@ public class KickCommandGroup : CommandGroup
     /// </summary>
     /// <param name="target">The member to kick.</param>
     /// <param name="reason">
-    ///     The reason for this kick. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     The reason for this kick. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.RemoveGuildMemberAsync" />.
     /// </param>
     /// <returns>

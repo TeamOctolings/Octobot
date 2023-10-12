@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
+using Octobot.Extensions;
 using Octobot.Services;
 using Octobot.Services.Update;
 using Remora.Commands.Attributes;
@@ -53,7 +54,7 @@ public class BanCommandGroup : CommandGroup
     /// <param name="target">The user to ban.</param>
     /// <param name="duration">The duration for this ban. The user will be automatically unbanned after this duration.</param>
     /// <param name="reason">
-    ///     The reason for this ban. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     The reason for this ban. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.CreateGuildBanAsync" />.
     /// </param>
     /// <returns>
@@ -196,7 +197,7 @@ public class BanCommandGroup : CommandGroup
     /// </summary>
     /// <param name="target">The user to unban.</param>
     /// <param name="reason">
-    ///     The reason for this unban. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     The reason for this unban. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.RemoveGuildBanAsync" />.
     /// </param>
     /// <returns>

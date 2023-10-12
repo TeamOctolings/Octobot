@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
+using Octobot.Extensions;
 using Octobot.Services;
 using Octobot.Services.Update;
 using Remora.Commands.Attributes;
@@ -50,7 +51,7 @@ public class MuteCommandGroup : CommandGroup
     /// <param name="target">The member to mute.</param>
     /// <param name="duration">The duration for this mute. The member will be automatically unmuted after this duration.</param>
     /// <param name="reason">
-    ///     The reason for this mute. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     The reason for this mute. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
     /// </param>
     /// <returns>
@@ -213,7 +214,7 @@ public class MuteCommandGroup : CommandGroup
     /// </summary>
     /// <param name="target">The member to unmute.</param>
     /// <param name="reason">
-    ///     The reason for this unmute. Must be encoded with <see cref="Extensions.EncodeHeader" /> when passed to
+    ///     The reason for this unmute. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
     /// </param>
     /// <returns>

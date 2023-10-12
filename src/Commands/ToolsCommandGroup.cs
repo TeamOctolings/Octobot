@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
+using Octobot.Extensions;
 using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
