@@ -20,7 +20,7 @@ public static class StringExtensions
 
     /// <summary>
     ///     Sanitizes a string for use in <see cref="Markdown.BlockCode(string, string)" /> when "language" is "diff" by
-    ///     prepending a zero-width space before syntax highlighting characters (+ and -).
+    ///     prepending a zero-width space before the input string to prevent Discord from applying syntax highlighting.
     /// </summary>
     /// <remarks>This does not call <see cref="SanitizeForBlockCode"/>, you have to do so yourself if needed.</remarks>
     /// <param name="s">The string to sanitize.</param>
