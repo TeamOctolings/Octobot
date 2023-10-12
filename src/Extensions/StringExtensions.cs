@@ -17,6 +17,18 @@ public static class StringExtensions
     }
 
     /// <summary>
+    ///     Sanitizes a string for use in <see cref="Markdown.BlockCode(string, string)" /> when "language" is "diff" by
+    ///     prepending a zero-width space before syntax highlighting characters (+ and -).
+    /// </summary>
+    /// <remarks>This does not call <see cref="SanitizeForBlockCode"/>, you have to do so yourself if needed.</remarks>
+    /// <param name="s">The string to sanitize.</param>
+    /// <returns>The sanitized string that can be safely used in <see cref="Markdown.BlockCode(string, string)" /> with "diff" as the language.</returns>
+    public static string SanitizeForDiffBlock(this string s)
+    {
+        return $"​{s}";
+    }
+
+    /// <summary>
     ///     Sanitizes a string (see <see cref="SanitizeForBlockCode" />) and formats the string to use Markdown Block Code
     ///     formatting with a specified
     ///     language for syntax highlighting.
