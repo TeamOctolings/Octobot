@@ -2,6 +2,7 @@ using System.Text;
 using DiffPlex.DiffBuilder;
 using JetBrains.Annotations;
 using Octobot.Data;
+using Octobot.Extensions;
 using Octobot.Services;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;

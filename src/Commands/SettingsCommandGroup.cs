@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Data.Options;
+using Octobot.Extensions;
 using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
