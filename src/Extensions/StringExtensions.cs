@@ -5,6 +5,8 @@ namespace Octobot.Extensions;
 
 public static class StringExtensions
 {
+    private const string ZeroWidthSpace = "​";
+
     /// <summary>
     ///     Sanitizes a string for use in <see cref="Markdown.BlockCode(string)" /> by inserting zero-width spaces in between
     ///     symbols used to format the string with block code.
@@ -13,7 +15,7 @@ public static class StringExtensions
     /// <returns>The sanitized string that can be safely used in <see cref="Markdown.BlockCode(string)" />.</returns>
     private static string SanitizeForBlockCode(this string s)
     {
-        return s.Replace("```", "​`​`​`​");
+        return s.Replace("```", $"{ZeroWidthSpace}`{ZeroWidthSpace}`{ZeroWidthSpace}`{ZeroWidthSpace}");
     }
 
     /// <summary>
@@ -25,7 +27,7 @@ public static class StringExtensions
     /// <returns>The sanitized string that can be safely used in <see cref="Markdown.BlockCode(string, string)" /> with "diff" as the language.</returns>
     public static string SanitizeForDiffBlock(this string s)
     {
-        return $"​{s}";
+        return $"{ZeroWidthSpace}{s}";
     }
 
     /// <summary>
