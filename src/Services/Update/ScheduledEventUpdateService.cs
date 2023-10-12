@@ -7,7 +7,6 @@ using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
-using Remora.Discord.Interactivity;
 using Remora.Rest.Core;
 using Remora.Results;
 
@@ -217,11 +216,10 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             : string.Empty;
 
         var button = new ButtonComponent(
-            ButtonComponentStyle.Primary,
+            ButtonComponentStyle.Link,
             Messages.EventDetailsButton,
             new PartialEmoji(Name: "📋"),
-            CustomIDHelpers.CreateButtonIDWithState(
-                "scheduled-event-details", $"{scheduledEvent.GuildID}:{scheduledEvent.ID}")
+            URL: $"https://discord.com/events/{scheduledEvent.GuildID}/{scheduledEvent.ID}"
         );
 
         return (Result)await _channelApi.CreateMessageAsync(
