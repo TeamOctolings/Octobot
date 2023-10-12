@@ -12,17 +12,17 @@ public static class DiffPaneModelExtensions
         {
             if (line.Type is ChangeType.Deleted)
             {
-                builder.Append("- ");
+                builder.Append("-- ");
             }
 
             if (line.Type is ChangeType.Inserted)
             {
-                builder.Append("+ ");
+                builder.Append("++ ");
             }
 
             if (line.Type is not ChangeType.Imaginary)
             {
-                builder.AppendLine(line.Text);
+                builder.AppendLine(line.Text.SanitizeForDiffBlock());
             }
         }
 
