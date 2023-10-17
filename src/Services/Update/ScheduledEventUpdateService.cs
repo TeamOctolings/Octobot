@@ -114,7 +114,11 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             var eventData = data.ScheduledEvents[@event.ID.Value];
             eventData.Name = @event.Name;
             eventData.ScheduledStartTime = @event.ScheduledStartTime;
-            eventData.ScheduleOnStatusUpdated = eventData.Status != @event.Status;
+            if (!eventData.ScheduleOnStatusUpdated)
+            {
+                eventData.ScheduleOnStatusUpdated = eventData.Status != @event.Status;
+            }
+
             eventData.Status = @event.Status;
         }
     }
@@ -297,7 +301,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(embedDescriptionResult);
         }
 
-        var startedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventStarted, Markdown.Sanitize(scheduledEvent.Name)))
+        var startedEmbed = new EmbedBuilder()
+            .WithTitle(string.Format(Messages.EventStarted, Markdown.Sanitize(scheduledEvent.Name)))
             .WithDescription(embedDescription)
             .WithColour(ColorsList.Green)
             .WithCurrentTimestamp()
@@ -322,7 +327,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromSuccess();
         }
 
-        var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, Markdown.Sanitize(eventData.Name)))
+        var completedEmbed = new EmbedBuilder()
+            .WithTitle(string.Format(Messages.EventCompleted, Markdown.Sanitize(eventData.Name)))
             .WithDescription(
                 string.Format(
                     Messages.EventDuration,
