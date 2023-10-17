@@ -160,16 +160,16 @@ public sealed class UtilityService : IHostedService
     /// <param name="scheduledEvent">
     ///     The scheduled event whose subscribers will be mentioned.
     /// </param>
-    /// <param name="settings">The settings of the guild containing the scheduled event</param>
+    /// <param name="data">The data of the guild containing the scheduled event.</param>
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns>A result containing the string which may or may not have succeeded.</returns>
     public async Task<Result<string>> GetEventNotificationMentions(
-        IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default)
+        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct = default)
     {
         var builder = new StringBuilder();
-        var role = GuildSettings.EventNotificationRole.Get(settings);
+        var role = GuildSettings.EventNotificationRole.Get(data.Settings);
         var subscribersResult = await _eventApi.GetGuildScheduledEventUsersAsync(
-            scheduledEvent.GuildID, scheduledEvent.ID, withMember: true, ct: ct);
+            scheduledEvent.GuildID, scheduledEvent.ID, ct: ct);
         if (!subscribersResult.IsDefined(out var subscribers))
         {
             return Result<string>.FromError(subscribersResult);
@@ -181,7 +181,7 @@ public sealed class UtilityService : IHostedService
         }
 
         builder = subscribers.Where(
-                subscriber => subscriber.GuildMember.IsDefined(out var member) && !member.Roles.Contains(role))
+                subscriber => !data.GetOrCreateMemberData(subscriber.User.ID).Roles.Contains(role.Value))
             .Aggregate(builder, (current, subscriber) => current.Append($"{Mention.User(subscriber.User)} "));
         return builder.ToString();
     }
