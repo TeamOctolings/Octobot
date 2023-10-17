@@ -564,4 +564,10 @@
   <data name="GuildInfoBoostCount" xml:space="preserve">
       <value>Количество бустов</value>
   </data>
+  <data name="NoMessagesToClear" xml:space="preserve">
+      <value>Нет сообщений, которые подходят под твой фильтр!</value>
+  </data>
+  <data name="MessagesClearedFiltered" xml:space="preserve">
+      <value>Очищено {0} сообщений от {1}</value>
+  </data>
 </root>

@@ -45,9 +45,10 @@ public class ClearCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that clears messages in the channel it was executed.
+    ///     A slash command that clears messages in the channel it was executed, optionally filtering by message author.
     /// </summary>
     /// <param name="amount">The amount of messages to clear.</param>
+    /// <param name="author">The user whose messages will be cleared.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that any messages
     ///     were cleared and vice-versa.
@@ -62,7 +63,8 @@ public class ClearCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteClear(
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
-        int amount)
+        int amount,
+        IUser? author = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
@@ -92,11 +94,11 @@ public class ClearCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ClearMessagesAsync(executor, amount, data, channelId, messages, bot, CancellationToken);
+        return await ClearMessagesAsync(executor, author, data, channelId, messages, bot, CancellationToken);
     }
 
     private async Task<Result> ClearMessagesAsync(
-        IUser executor, int amount, GuildData data, Snowflake channelId, IReadOnlyList<IMessage> messages, IUser bot,
+        IUser executor, IUser? author, GuildData data, Snowflake channelId, IReadOnlyList<IMessage> messages, IUser bot,
         CancellationToken ct = default)
     {
         var idList = new List<Snowflake>(messages.Count);
@@ -104,12 +106,27 @@ public class ClearCommandGroup : CommandGroup
         for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Octobot is thinking...')
         {
             var message = messages[i];
+            if (author is not null && message.Author.ID != author.ID)
+            {
+                continue;
+            }
+
             idList.Add(message.ID);
             builder.AppendLine(string.Format(Messages.MessageFrom, Mention.User(message.Author)));
             builder.Append(message.Content.InBlockCode());
         }
 
-        var title = string.Format(Messages.MessagesCleared, amount.ToString());
+        if (idList.Count == 0)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoMessagesToClear, bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+        }
+
+        var title = author is not null
+            ? string.Format(Messages.MessagesClearedFiltered, idList.Count.ToString(), author.GetTag())
+            : string.Format(Messages.MessagesCleared, idList.Count.ToString());
         var description = builder.ToString();
 
         var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
