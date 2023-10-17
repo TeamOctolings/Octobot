@@ -177,6 +177,11 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     private async Task<Result> SendScheduledEventCreatedMessage(
         IGuildScheduledEvent scheduledEvent, JsonNode settings, CancellationToken ct = default)
     {
+        if (GuildSettings.EventNotificationChannel.Get(settings).Empty())
+        {
+            return Result.FromSuccess();
+        }
+
         if (!scheduledEvent.Creator.IsDefined(out var creator))
         {
             return new ArgumentNullError(nameof(scheduledEvent.Creator));
@@ -277,6 +282,11 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     {
         data.ScheduledEvents[scheduledEvent.ID.Value].ActualStartTime = DateTimeOffset.UtcNow;
 
+        if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
+        {
+            return Result.FromSuccess();
+        }
+
         var embedDescriptionResult = scheduledEvent.EntityType switch
         {
             GuildScheduledEventEntityType.StageInstance or GuildScheduledEventEntityType.Voice =>
@@ -297,7 +307,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(embedDescriptionResult);
         }
 
-        var startedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventStarted, Markdown.Sanitize(scheduledEvent.Name)))
+        var startedEmbed = new EmbedBuilder()
+            .WithTitle(string.Format(Messages.EventStarted, Markdown.Sanitize(scheduledEvent.Name)))
             .WithDescription(embedDescription)
             .WithColour(ColorsList.Green)
             .WithCurrentTimestamp()
@@ -322,7 +333,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromSuccess();
         }
 
-        var completedEmbed = new EmbedBuilder().WithTitle(string.Format(Messages.EventCompleted, Markdown.Sanitize(eventData.Name)))
+        var completedEmbed = new EmbedBuilder()
+            .WithTitle(string.Format(Messages.EventCompleted, Markdown.Sanitize(eventData.Name)))
             .WithDescription(
                 string.Format(
                     Messages.EventDuration,
@@ -411,6 +423,11 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     private async Task<Result> SendEarlyEventNotificationAsync(
         IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct)
     {
+        if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
+        {
+            return Result.FromSuccess();
+        }
+
         var contentResult = await _utility.GetEventNotificationMentions(
             scheduledEvent, data.Settings, ct);
         if (!contentResult.IsDefined(out var content))
