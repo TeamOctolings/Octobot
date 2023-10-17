@@ -296,7 +296,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         };
 
         var contentResult = await _utility.GetEventNotificationMentions(
-            scheduledEvent, data.Settings, ct);
+            scheduledEvent, data, ct);
         if (!contentResult.IsDefined(out var content))
         {
             return Result.FromError(contentResult);
@@ -429,7 +429,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         }
 
         var contentResult = await _utility.GetEventNotificationMentions(
-            scheduledEvent, data.Settings, ct);
+            scheduledEvent, data, ct);
         if (!contentResult.IsDefined(out var content))
         {
             return Result.FromError(contentResult);
