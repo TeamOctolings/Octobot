@@ -564,4 +564,10 @@
   <data name="GuildInfoBoostCount" xml:space="preserve">
       <value>Boost count</value>
   </data>
+  <data name="NoMessagesToClear" xml:space="preserve">
+      <value>There are no messages matching your filter!</value>
+  </data>
+  <data name="MessagesClearedFiltered" xml:space="preserve">
+      <value>Cleared {0} messages from {1}</value>
+  </data>
 </root>

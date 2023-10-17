@@ -564,4 +564,10 @@
   <data name="GuildInfoBoostCount" xml:space="preserve">
       <value>кол-во бустов</value>
   </data>
+  <data name="NoMessagesToClear" xml:space="preserve">
+      <value>алло а чё мне удалять-то</value>
+  </data>
+  <data name="MessagesClearedFiltered" xml:space="preserve">
+      <value>вырезано {0} забавных сообщений от {1}</value>
+  </data>
 </root>
