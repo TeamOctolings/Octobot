@@ -980,5 +980,21 @@ namespace Octobot {
                 return ResourceManager.GetString("GuildInfoBoostCount", resourceCulture);
             }
         }
+
+        internal static string NoMessagesToClear
+        {
+            get
+            {
+                return ResourceManager.GetString("NoMessagesToClear", resourceCulture);
+            }
+        }
+
+        internal static string MessagesClearedFiltered
+        {
+            get
+            {
+                return ResourceManager.GetString("MessagesClearedFiltered", resourceCulture);
+            }
+        }
     }
 }
