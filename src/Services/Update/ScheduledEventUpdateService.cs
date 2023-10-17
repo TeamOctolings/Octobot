@@ -114,7 +114,11 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             var eventData = data.ScheduledEvents[@event.ID.Value];
             eventData.Name = @event.Name;
             eventData.ScheduledStartTime = @event.ScheduledStartTime;
-            eventData.ScheduleOnStatusUpdated = eventData.Status != @event.Status;
+            if (!eventData.ScheduleOnStatusUpdated)
+            {
+                eventData.ScheduleOnStatusUpdated = eventData.Status != @event.Status;
+            }
+
             eventData.Status = @event.Status;
         }
     }
