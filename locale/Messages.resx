@@ -570,7 +570,4 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>Cleared {0} messages from {1}</value>
   </data>
-  <data name="ReminderSelectedPosition" xml:space="preserve">
-      <value>Selected position in list: {0}</value>
-  </data>
 </root>

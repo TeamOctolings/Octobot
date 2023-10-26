@@ -570,7 +570,4 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>Очищено {0} сообщений от {1}</value>
   </data>
-  <data name="ReminderSelectedPosition" xml:space="preserve">
-      <value>Выбранная позиция в списке: {0}</value>
-  </data>
 </root>

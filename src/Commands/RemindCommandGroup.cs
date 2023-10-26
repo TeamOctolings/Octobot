@@ -195,14 +195,12 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position, bot, CancellationToken);
+        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
     }
 
-    private async Task<Result> DeleteReminderAsync(MemberData data, int position, IUser bot,
+    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
         CancellationToken ct)
     {
-        var index = position - 1;
-
         if (index >= data.Reminders.Count)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
@@ -212,14 +210,9 @@ public class RemindCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
-        var description = new StringBuilder()
-            .Append("- ").AppendLine(string.Format(Messages.ReminderSelectedPosition, Markdown.InlineCode(position.ToString())))
-            .Append("- ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(data.Reminders[index].Text)));
-
         data.Reminders.RemoveAt(index);
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, bot)
-            .WithDescription(description.ToString())
             .WithColour(ColorsList.Green)
             .Build();
 
