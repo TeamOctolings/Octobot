@@ -571,6 +571,6 @@
       <value>вырезано {0} забавных сообщений от {1}</value>
   </data>
   <data name="CommandExecutionFailed" xml:space="preserve">
-      <value>произошёл пиздец в команде, удачи чел.</value>
+      <value>произошёл тотальный разнос в команде, удачи.</value>
   </data>
 </root>
