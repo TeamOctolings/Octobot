@@ -996,5 +996,13 @@ namespace Octobot {
                 return ResourceManager.GetString("MessagesClearedFiltered", resourceCulture);
             }
         }
+
+        internal static string ReminderSelectedPosition
+        {
+            get
+            {
+                return ResourceManager.GetString("ReminderSelectedPosition", resourceCulture);
+            }
+        }
     }
 }

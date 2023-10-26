@@ -570,4 +570,7 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>вырезано {0} забавных сообщений от {1}</value>
   </data>
+  <data name="ReminderSelectedPosition" xml:space="preserve">
+      <value>селекнутый номер в списке: {0}</value>
+  </data>
 </root>
