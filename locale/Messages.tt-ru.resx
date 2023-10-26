@@ -573,4 +573,7 @@
   <data name="CommandExecutionFailed" xml:space="preserve">
       <value>произошёл тотальный разнос в команде, удачи.</value>
   </data>
+  <data name="ContactDevelopers" xml:space="preserve">
+      <value>если ты это читаешь второй раз за сегодня, пиши разрабам</value>
+  </data>
 </root>

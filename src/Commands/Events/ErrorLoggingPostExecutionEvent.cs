@@ -61,6 +61,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.CommandExecutionFailed, bot)
             .WithDescription(Markdown.InlineCode(result.Error.Message))
+            .WithFooter(Messages.ContactDevelopers)
             .WithColour(ColorsList.Red)
             .Build();
 

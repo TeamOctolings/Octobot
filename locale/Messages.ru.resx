@@ -573,4 +573,7 @@
   <data name="CommandExecutionFailed" xml:space="preserve">
       <value>Произошла ошибка при выполнении команды, повтори попытку позже.</value>
   </data>
+  <data name="ContactDevelopers" xml:space="preserve">
+      <value>Обратитесь к разработчикам, если проблема возникнет снова.</value>
+  </data>
 </root>

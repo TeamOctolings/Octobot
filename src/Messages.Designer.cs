@@ -1004,5 +1004,13 @@ namespace Octobot {
                 return ResourceManager.GetString("CommandExecutionFailed", resourceCulture);
             }
         }
+
+        internal static string ContactDevelopers
+        {
+            get
+            {
+                return ResourceManager.GetString("ContactDevelopers", resourceCulture);
+            }
+        }
     }
 }
