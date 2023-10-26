@@ -570,4 +570,7 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>вырезано {0} забавных сообщений от {1}</value>
   </data>
+  <data name="CommandExecutionFailed" xml:space="preserve">
+      <value>произошёл пиздец в команде, удачи чел.</value>
+  </data>
 </root>

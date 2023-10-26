@@ -996,5 +996,13 @@ namespace Octobot {
                 return ResourceManager.GetString("MessagesClearedFiltered", resourceCulture);
             }
         }
+
+        internal static string CommandExecutionFailed
+        {
+            get
+            {
+                return ResourceManager.GetString("CommandExecutionFailed", resourceCulture);
+            }
+        }
     }
 }
