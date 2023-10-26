@@ -478,7 +478,7 @@
       <value>Position in list: {0}</value>
   </data>
   <data name="ReminderTime" xml:space="preserve">
-      <value>Reminder sending time: {0}</value>
+      <value>Reminder send time: {0}</value>
   </data>
   <data name="ReminderText" xml:space="preserve">
     <value>Reminder text: {0}</value>
