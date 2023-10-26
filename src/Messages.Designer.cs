@@ -997,6 +997,22 @@ namespace Octobot {
             }
         }
 
+        internal static string DataLoadFailedTitle
+        {
+            get
+            {
+                return ResourceManager.GetString("DataLoadFailedTitle", resourceCulture);
+            }
+        }
+
+        internal static string DataLoadFailedDescription
+        {
+            get
+            {
+                return ResourceManager.GetString("DataLoadFailedDescription", resourceCulture);
+            }
+        }
+        
         internal static string CommandExecutionFailed
         {
             get
@@ -1004,7 +1020,7 @@ namespace Octobot {
                 return ResourceManager.GetString("CommandExecutionFailed", resourceCulture);
             }
         }
-
+        
         internal static string ContactDevelopers
         {
             get

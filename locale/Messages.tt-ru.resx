@@ -570,6 +570,12 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>вырезано {0} забавных сообщений от {1}</value>
   </data>
+  <data name="DataLoadFailedTitle" xml:space="preserve">
+      <value>произошёл тотальный разнос в гилддате.</value>
+  </data>
+  <data name="DataLoadFailedDescription" xml:space="preserve">
+      <value>возможно всё съедет с крыши, но знай, что я больше ничё не сохраню.</value>
+  </data>
   <data name="CommandExecutionFailed" xml:space="preserve">
       <value>произошёл тотальный разнос в команде, удачи.</value>
   </data>

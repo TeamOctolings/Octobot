@@ -30,7 +30,7 @@ public class GuildUnloadedResponder : IResponder<IGuildDelete>
         var isDataRemoved = _guildData.UnloadGuildData(guildId);
         if (isDataRemoved)
         {
-            _logger.LogInformation("Left guild {GuildId}", guildId);
+            _logger.LogInformation("Unloaded guild {GuildId}", guildId);
         }
 
         return Task.FromResult(Result.FromSuccess());

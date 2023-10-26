@@ -17,10 +17,12 @@ public sealed class GuildData
     public readonly JsonNode Settings;
     public readonly string SettingsPath;
 
+    public readonly bool DataLoadFailed;
+
     public GuildData(
         JsonNode settings, string settingsPath,
         Dictionary<ulong, ScheduledEventData> scheduledEvents, string scheduledEventsPath,
-        Dictionary<ulong, MemberData> memberData, string memberDataPath)
+        Dictionary<ulong, MemberData> memberData, string memberDataPath, bool dataLoadFailed)
     {
         Settings = settings;
         SettingsPath = settingsPath;
@@ -28,6 +30,7 @@ public sealed class GuildData
         ScheduledEventsPath = scheduledEventsPath;
         MemberData = memberData;
         MemberDataPath = memberDataPath;
+        DataLoadFailed = dataLoadFailed;
     }
 
     public MemberData GetOrCreateMemberData(Snowflake memberId)
