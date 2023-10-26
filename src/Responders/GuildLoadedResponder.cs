@@ -62,6 +62,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             var errorEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.DataLoadFailedTitle, bot)
                 .WithDescription(Messages.DataLoadFailedDescription)
+                .WithFooter(Messages.ContactDevelopers)
                 .WithColour(ColorsList.Red)
                 .Build();
 

@@ -1012,5 +1012,12 @@ namespace Octobot {
                 return ResourceManager.GetString("DataLoadFailedDescription", resourceCulture);
             }
         }
+        internal static string ContactDevelopers
+        {
+            get
+            {
+                return ResourceManager.GetString("ContactDevelopers", resourceCulture);
+            }
+        }
     }
 }
