@@ -477,8 +477,8 @@
   <data name="ReminderPosition" xml:space="preserve">
       <value>Позиция в списке: {0}</value>
   </data>
-  <data name="ReminderWillBeSentOn" xml:space="preserve">
-    <value>Напоминание будет отправлено: {0}</value>
+  <data name="ReminderTime" xml:space="preserve">
+      <value>Время отправления напоминания: {0}</value>
   </data>
   <data name="ReminderText" xml:space="preserve">
     <value>Текст напоминания: {0}</value>
