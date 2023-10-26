@@ -1,8 +1,12 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Octobot.Extensions;
+using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Commands.Services;
+using Remora.Discord.Extensions.Embeds;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
 namespace Octobot.Commands.Events;
@@ -14,10 +18,15 @@ namespace Octobot.Commands.Events;
 public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
 {
     private readonly ILogger<ErrorLoggingPostExecutionEvent> _logger;
+    private readonly FeedbackService _feedback;
+    private readonly IDiscordRestUserAPI _userApi;
 
-    public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger)
+    public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger, FeedbackService feedback,
+        IDiscordRestUserAPI userApi)
     {
         _logger = logger;
+        _feedback = feedback;
+        _userApi = userApi;
     }
 
     /// <summary>
@@ -28,11 +37,34 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
     /// <param name="commandResult">The result whose success is checked.</param>
     /// <param name="ct">The cancellation token for this operation. Unused.</param>
     /// <returns>A result which has succeeded.</returns>
-    public Task<Result> AfterExecutionAsync(
+    public async Task<Result> AfterExecutionAsync(
         ICommandContext context, IResult commandResult, CancellationToken ct = default)
     {
         _logger.LogResult(commandResult, $"Error in slash command execution for /{context.Command.Command.Node.Key}.");
 
-        return Task.FromResult(Result.FromSuccess());
+        var result = commandResult;
+        while (result.Inner is not null)
+        {
+            result = result.Inner;
+        }
+
+        if (result.IsSuccess)
+        {
+            return Result.FromSuccess();
+        }
+
+        var botResult = await _userApi.GetCurrentUserAsync(ct);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
+        }
+
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.CommandExecutionFailed, bot)
+            .WithDescription(Markdown.InlineCode(result.Error.Message))
+            .WithFooter(Messages.ContactDevelopers)
+            .WithColour(ColorsList.Red)
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

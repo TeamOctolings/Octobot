@@ -477,8 +477,8 @@
   <data name="ReminderPosition" xml:space="preserve">
       <value>Position in list: {0}</value>
   </data>
-  <data name="ReminderWillBeSentOn" xml:space="preserve">
-    <value>The reminder will be sent on: {0}</value>
+  <data name="ReminderTime" xml:space="preserve">
+      <value>Reminder send time: {0}</value>
   </data>
   <data name="ReminderText" xml:space="preserve">
     <value>Reminder text: {0}</value>
@@ -575,6 +575,9 @@
   </data>
   <data name="DataLoadFailedDescription" xml:space="preserve">
       <value>This will lead to unexpected behavior. Data will no longer be saved</value>
+  </data>
+  <data name="CommandExecutionFailed" xml:space="preserve">
+      <value>An error occurred during command execution, try again later.</value>
   </data>
   <data name="ContactDevelopers" xml:space="preserve">
       <value>Contact the developers if the problem occurs again.</value>

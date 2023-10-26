@@ -786,9 +786,9 @@ namespace Octobot {
             }
         }
 
-        internal static string ReminderWillBeSentOn {
+        internal static string ReminderTime {
             get {
-                return ResourceManager.GetString("ReminderWillBeSentOn", resourceCulture);
+                return ResourceManager.GetString("ReminderTime", resourceCulture);
             }
         }
 
@@ -1012,6 +1012,15 @@ namespace Octobot {
                 return ResourceManager.GetString("DataLoadFailedDescription", resourceCulture);
             }
         }
+        
+        internal static string CommandExecutionFailed
+        {
+            get
+            {
+                return ResourceManager.GetString("CommandExecutionFailed", resourceCulture);
+            }
+        }
+        
         internal static string ContactDevelopers
         {
             get
