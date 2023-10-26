@@ -26,6 +26,11 @@ public static class LoggerExtensions
 
         if (result.Error is ExceptionError exe)
         {
+            if (exe.Exception is TaskCanceledException)
+            {
+                return;
+            }
+
             logger.LogError(exe.Exception, "{ErrorMessage}", message);
             return;
         }

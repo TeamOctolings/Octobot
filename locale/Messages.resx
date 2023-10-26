@@ -570,4 +570,10 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>Cleared {0} messages from {1}</value>
   </data>
+  <data name="CommandExecutionFailed" xml:space="preserve">
+      <value>An error occurred during command execution, try again later.</value>
+  </data>
+  <data name="ContactDevelopers" xml:space="preserve">
+      <value>Contact the developers if the problem occurs again.</value>
+  </data>
 </root>
