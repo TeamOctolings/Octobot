@@ -996,5 +996,21 @@ namespace Octobot {
                 return ResourceManager.GetString("MessagesClearedFiltered", resourceCulture);
             }
         }
+
+        internal static string DataLoadFailedTitle
+        {
+            get
+            {
+                return ResourceManager.GetString("DataLoadFailedTitle", resourceCulture);
+            }
+        }
+
+        internal static string DataLoadFailedDescription
+        {
+            get
+            {
+                return ResourceManager.GetString("DataLoadFailedDescription", resourceCulture);
+            }
+        }
     }
 }

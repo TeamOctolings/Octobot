@@ -8,6 +8,7 @@ using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Gateway.Events;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway.Responders;
+using Remora.Rest.Core;
 using Remora.Results;
 
 namespace Octobot.Responders;
@@ -42,7 +43,6 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         }
 
         var guild = gatewayEvent.Guild.AsT0;
-        _logger.LogInformation("Joined guild {ID} (\"{Name}\")", guild.ID, guild.Name);
 
         var data = await _guildData.GetData(guild.ID, ct);
         var cfg = data.Settings;
@@ -50,6 +50,31 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         {
             data.GetOrCreateMemberData(member.User.Value.ID);
         }
+
+        var botResult = await _userApi.GetCurrentUserAsync(ct);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
+        }
+
+        if (data.DataLoadFailed)
+        {
+            var errorEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.DataLoadFailedTitle, bot)
+                .WithDescription(Messages.DataLoadFailedDescription)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            if (!errorEmbed.IsDefined(out var errorBuilt))
+            {
+                return Result.FromError(errorEmbed);
+            }
+
+            return (Result)await _channelApi.CreateMessageAsync(
+                GetEmergencyFeedbackChannel(guild, data), embeds: new[] { errorBuilt }, ct: ct);
+        }
+
+        _logger.LogInformation("Loaded guild {ID} (\"{Name}\")", guild.ID, guild.Name);
 
         if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
@@ -59,12 +84,6 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
             return Result.FromSuccess();
-        }
-
-        var botResult = await _userApi.GetCurrentUserAsync(ct);
-        if (!botResult.IsDefined(out var bot))
-        {
-            return Result.FromError(botResult);
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
@@ -83,5 +102,24 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         return (Result)await _channelApi.CreateMessageAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built }, ct: ct);
+    }
+
+    private static Snowflake GetEmergencyFeedbackChannel(IGuildCreate.IAvailableGuild guild, GuildData data)
+    {
+        var privateFeedback = GuildSettings.PrivateFeedbackChannel.Get(data.Settings);
+        if (!privateFeedback.Empty())
+        {
+            return privateFeedback;
+        }
+
+        var publicFeedback = GuildSettings.PublicFeedbackChannel.Get(data.Settings);
+        if (!publicFeedback.Empty())
+        {
+            return publicFeedback;
+        }
+
+        return guild.SystemChannelID.AsOptional().IsDefined(out var systemChannel)
+            ? systemChannel
+            : guild.Channels[0].ID;
     }
 }

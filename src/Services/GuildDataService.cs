@@ -43,23 +43,29 @@ public sealed class GuildDataService : IHostedService
     {
         var tasks = new List<Task>();
         var datas = _datas.Values.ToArray();
-        foreach (var data in datas)
+        foreach (var data in datas.Where(data => !data.DataLoadFailed))
         {
-            await using var settingsStream = File.Create(data.SettingsPath);
-            tasks.Add(JsonSerializer.SerializeAsync(settingsStream, data.Settings, cancellationToken: ct));
-
-            await using var eventsStream = File.Create(data.ScheduledEventsPath);
-            tasks.Add(JsonSerializer.SerializeAsync(eventsStream, data.ScheduledEvents, cancellationToken: ct));
+            tasks.Add(SerializeObjectSafelyAsync(data.Settings, data.SettingsPath, ct));
+            tasks.Add(SerializeObjectSafelyAsync(data.ScheduledEvents, data.ScheduledEventsPath, ct));
 
             var memberDatas = data.MemberData.Values.ToArray();
-            foreach (var memberData in memberDatas)
-            {
-                await using var memberDataStream = File.Create($"{data.MemberDataPath}/{memberData.Id}.json");
-                tasks.Add(JsonSerializer.SerializeAsync(memberDataStream, memberData, cancellationToken: ct));
-            }
+            tasks.AddRange(memberDatas.Select(memberData =>
+                SerializeObjectSafelyAsync(memberData, $"{data.MemberDataPath}/{memberData.Id}.json", ct)));
         }
 
         await Task.WhenAll(tasks);
+    }
+
+    private static async Task SerializeObjectSafelyAsync<T>(T obj, string path, CancellationToken ct)
+    {
+        var tempFilePath = path + ".tmp";
+        await using (var tempFileStream = File.Create(tempFilePath))
+        {
+            await JsonSerializer.SerializeAsync(tempFileStream, obj, cancellationToken: ct);
+        }
+
+        File.Copy(tempFilePath, path, true);
+        File.Delete(tempFilePath);
     }
 
     public async Task<GuildData> GetData(Snowflake guildId, CancellationToken ct = default)
@@ -88,20 +94,50 @@ public sealed class GuildDataService : IHostedService
             await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
         }
 
+        var dataLoadFailed = false;
+
         await using var settingsStream = File.OpenRead(settingsPath);
-        var jsonSettings
-            = JsonNode.Parse(settingsStream);
+        JsonNode? jsonSettings = null;
+        try
+        {
+            jsonSettings = JsonNode.Parse(settingsStream);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Guild settings load failed: {Path}", settingsPath);
+            dataLoadFailed = true;
+        }
 
         await using var eventsStream = File.OpenRead(scheduledEventsPath);
-        var events
-            = await JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
+        Dictionary<ulong, ScheduledEventData>? events = null;
+        try
+        {
+            events = await JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
                 eventsStream, cancellationToken: ct);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Guild scheduled events load failed: {Path}", scheduledEventsPath);
+            dataLoadFailed = true;
+        }
 
         var memberData = new Dictionary<ulong, MemberData>();
         foreach (var dataFileInfo in Directory.CreateDirectory(memberDataPath).GetFiles())
         {
             await using var dataStream = dataFileInfo.OpenRead();
-            var data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
+            MemberData? data;
+            try
+            {
+                data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Member data load failed: {MemberDataPath}/{FileName}", memberDataPath,
+                    dataFileInfo.Name);
+                dataLoadFailed = true;
+                continue;
+            }
+
             if (data is null)
             {
                 continue;
@@ -113,7 +149,8 @@ public sealed class GuildDataService : IHostedService
         var finalData = new GuildData(
             jsonSettings ?? new JsonObject(), settingsPath,
             events ?? new Dictionary<ulong, ScheduledEventData>(), scheduledEventsPath,
-            memberData, memberDataPath);
+            memberData, memberDataPath,
+            dataLoadFailed);
 
         _datas.TryAdd(guildId, finalData);
 
@@ -129,7 +166,8 @@ public sealed class GuildDataService : IHostedService
             Directory.CreateDirectory($"{newPath}/..");
             Directory.Move(oldPath, newPath);
 
-            _logger.LogInformation("Moved guild data to separate folder: \"{OldPath}\" -> \"{NewPath}\"", oldPath, newPath);
+            _logger.LogInformation("Moved guild data to separate folder: \"{OldPath}\" -> \"{NewPath}\"", oldPath,
+                newPath);
         }
     }
 

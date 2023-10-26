@@ -570,4 +570,10 @@
   <data name="MessagesClearedFiltered" xml:space="preserve">
       <value>Cleared {0} messages from {1}</value>
   </data>
+  <data name="DataLoadFailedTitle" xml:space="preserve">
+      <value>An error occurred during guild data load.</value>
+  </data>
+  <data name="DataLoadFailedDescription" xml:space="preserve">
+      <value>This will lead to unexpected behavior. Data will no longer be saved</value>
+  </data>
 </root>
