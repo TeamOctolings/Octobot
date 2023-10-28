@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
@@ -67,7 +68,8 @@ public class KickCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteKick(
         [Description("Member to kick")] IUser target,
-        [Description("Kick reason")] string reason)
+        [Description("Kick reason")] [MaxLength(256)]
+        string reason)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {

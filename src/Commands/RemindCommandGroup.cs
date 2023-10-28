@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
@@ -119,7 +120,8 @@ public class RemindCommandGroup : CommandGroup
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
         TimeSpan @in,
-        [Description("Reminder text")] string text)
+        [Description("Reminder text")] [MaxLength(512)]
+        string text)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {

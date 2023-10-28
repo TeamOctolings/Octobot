@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
@@ -72,7 +73,8 @@ public class BanCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteBanAsync(
         [Description("User to ban")] IUser target,
-        [Description("Ban reason")] string reason,
+        [Description("Ban reason")] [MaxLength(256)]
+        string reason,
         [Description("Ban duration")] TimeSpan? duration = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
@@ -216,7 +218,8 @@ public class BanCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteUnban(
         [Description("User to unban")] IUser target,
-        [Description("Unban reason")] string reason)
+        [Description("Unban reason")] [MaxLength(256)]
+        string reason)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
