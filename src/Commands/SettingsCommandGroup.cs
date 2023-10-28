@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Json.Nodes;
 using JetBrains.Annotations;
@@ -167,7 +168,8 @@ public class SettingsCommandGroup : CommandGroup
     public async Task<Result> ExecuteEditSettingsAsync(
         [Description("The setting whose value you want to change")]
         AllOptionsEnum setting,
-        [Description("Setting value")] string value)
+        [Description("Setting value")] [MaxLength(512)]
+        string value)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
@@ -69,7 +70,8 @@ public class MuteCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteMute(
         [Description("Member to mute")] IUser target,
-        [Description("Mute reason")] string reason,
+        [Description("Mute reason")] [MaxLength(256)]
+        string reason,
         [Description("Mute duration")] TimeSpan duration)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
@@ -233,7 +235,8 @@ public class MuteCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteUnmute(
         [Description("Member to unmute")] IUser target,
-        [Description("Unmute reason")] string reason)
+        [Description("Unmute reason")] [MaxLength(256)]
+        string reason)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
