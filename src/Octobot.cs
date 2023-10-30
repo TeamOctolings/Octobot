@@ -78,7 +78,7 @@ public sealed class Octobot
                     services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>()
                         // Init
                         .AddDiscordCaching()
-                        .AddDiscordCommands(true)
+                        .AddDiscordCommands(true, false)
                         // Slash command event handlers
                         .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
