@@ -27,12 +27,12 @@ namespace Octobot.Commands;
 public class RemindCommandGroup : CommandGroup
 {
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
 
     public RemindCommandGroup(
-        ICommandContext context, GuildDataService guildData, FeedbackService feedback,
+        ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
         IDiscordRestUserAPI userApi)
     {
         _context = context;

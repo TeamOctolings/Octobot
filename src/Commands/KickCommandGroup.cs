@@ -26,7 +26,7 @@ public class KickCommandGroup : CommandGroup
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
@@ -34,7 +34,7 @@ public class KickCommandGroup : CommandGroup
 
     public KickCommandGroup(
         ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
-        FeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
+        IFeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
         UtilityService utility)
     {
         _context = context;

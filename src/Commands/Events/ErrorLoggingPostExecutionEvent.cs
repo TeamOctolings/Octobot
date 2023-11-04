@@ -18,10 +18,10 @@ namespace Octobot.Commands.Events;
 public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
 {
     private readonly ILogger<ErrorLoggingPostExecutionEvent> _logger;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly IDiscordRestUserAPI _userApi;
 
-    public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger, FeedbackService feedback,
+    public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger, IFeedbackService feedback,
         IDiscordRestUserAPI userApi)
     {
         _logger = logger;
