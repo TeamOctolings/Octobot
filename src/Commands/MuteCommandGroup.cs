@@ -28,14 +28,14 @@ namespace Octobot.Commands;
 public class MuteCommandGroup : CommandGroup
 {
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
     private readonly UtilityService _utility;
 
     public MuteCommandGroup(
-        ICommandContext context, GuildDataService guildData, FeedbackService feedback,
+        ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
         IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, UtilityService utility)
     {
         _context = context;

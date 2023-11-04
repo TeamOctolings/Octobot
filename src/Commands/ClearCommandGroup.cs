@@ -27,14 +27,14 @@ public class ClearCommandGroup : CommandGroup
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
     private readonly UtilityService _utility;
 
     public ClearCommandGroup(
         IDiscordRestChannelAPI channelApi, ICommandContext context, GuildDataService guildData,
-        FeedbackService feedback, IDiscordRestUserAPI userApi, UtilityService utility)
+        IFeedbackService feedback, IDiscordRestUserAPI userApi, UtilityService utility)
     {
         _channelApi = channelApi;
         _context = context;
