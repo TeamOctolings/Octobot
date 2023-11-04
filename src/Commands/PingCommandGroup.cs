@@ -27,13 +27,13 @@ public class PingCommandGroup : CommandGroup
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly DiscordGatewayClient _client;
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
 
     public PingCommandGroup(
         IDiscordRestChannelAPI channelApi, ICommandContext context, DiscordGatewayClient client,
-        GuildDataService guildData, FeedbackService feedback, IDiscordRestUserAPI userApi)
+        GuildDataService guildData, IFeedbackService feedback, IDiscordRestUserAPI userApi)
     {
         _channelApi = channelApi;
         _context = context;

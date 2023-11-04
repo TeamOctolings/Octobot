@@ -26,13 +26,13 @@ namespace Octobot.Commands;
 public class ToolsCommandGroup : CommandGroup
 {
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
 
     public ToolsCommandGroup(
-        ICommandContext context, FeedbackService feedback,
+        ICommandContext context, IFeedbackService feedback,
         GuildDataService guildData, IDiscordRestGuildAPI guildApi,
         IDiscordRestUserAPI userApi, IDiscordRestChannelAPI channelApi)
     {

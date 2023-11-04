@@ -32,14 +32,14 @@ public class AboutCommandGroup : CommandGroup
     };
 
     private readonly ICommandContext _context;
-    private readonly FeedbackService _feedback;
+    private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
     private readonly IDiscordRestGuildAPI _guildApi;
 
     public AboutCommandGroup(
         ICommandContext context, GuildDataService guildData,
-        FeedbackService feedback, IDiscordRestUserAPI userApi,
+        IFeedbackService feedback, IDiscordRestUserAPI userApi,
         IDiscordRestGuildAPI guildApi)
     {
         _context = context;
