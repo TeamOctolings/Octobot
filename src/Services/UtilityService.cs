@@ -63,7 +63,7 @@ public sealed class UtilityService : IHostedService
     ///     </list>
     /// </returns>
     public async Task<Result<string?>> CheckInteractionsAsync(
-        Snowflake guildId, Snowflake interacterId, Snowflake targetId, string action, CancellationToken ct = default)
+        Snowflake guildId, Snowflake? interacterId, Snowflake targetId, string action, CancellationToken ct = default)
     {
         if (interacterId == targetId)
         {
@@ -100,7 +100,12 @@ public sealed class UtilityService : IHostedService
             return Result<string?>.FromError(rolesResult);
         }
 
-        var interacterResult = await _guildApi.GetGuildMemberAsync(guildId, interacterId, ct);
+        if (interacterId is null)
+        {
+            return CheckInteractions(action, guild, roles, targetMember, currentMember, currentMember);
+        }
+
+        var interacterResult = await _guildApi.GetGuildMemberAsync(guildId, interacterId.Value, ct);
         return interacterResult.IsDefined(out var interacter)
             ? CheckInteractions(action, guild, roles, targetMember, currentMember, interacter)
             : Result<string?>.FromError(interacterResult);
@@ -245,5 +250,31 @@ public sealed class UtilityService : IHostedService
         }
 
         return Result.FromSuccess();
+    }
+
+    public async Task<Result<Snowflake>> GetEmergencyFeedbackChannel(IGuild guild, GuildData data, CancellationToken ct)
+    {
+        var privateFeedback = GuildSettings.PrivateFeedbackChannel.Get(data.Settings);
+        if (!privateFeedback.Empty())
+        {
+            return privateFeedback;
+        }
+
+        var publicFeedback = GuildSettings.PublicFeedbackChannel.Get(data.Settings);
+        if (!publicFeedback.Empty())
+        {
+            return publicFeedback;
+        }
+
+        if (guild.SystemChannelID.AsOptional().IsDefined(out var systemChannel))
+        {
+            return systemChannel;
+        }
+
+        var channelsResult = await _guildApi.GetGuildChannelsAsync(guild.ID, ct);
+
+        return channelsResult.IsDefined(out var channels)
+            ? channels[0].ID
+            : Result<Snowflake>.FromError(channelsResult);
     }
 }

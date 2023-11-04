@@ -29,14 +29,16 @@ public sealed partial class MemberUpdateService : BackgroundService
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<MemberUpdateService> _logger;
+    private readonly UtilityService _utility;
 
     public MemberUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildAPI guildApi,
-        GuildDataService guildData, ILogger<MemberUpdateService> logger)
+        GuildDataService guildData, ILogger<MemberUpdateService> logger, UtilityService utility)
     {
         _channelApi = channelApi;
         _guildApi = guildApi;
         _guildData = guildData;
         _logger = logger;
+        _utility = utility;
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -90,19 +92,18 @@ public sealed partial class MemberUpdateService : BackgroundService
             return failedResults.AggregateErrors();
         }
 
+        var interactionResult
+            = await _utility.CheckInteractionsAsync(guildId, null, id, "Update", ct);
+        if (!interactionResult.IsSuccess)
+        {
+            return Result.FromError(interactionResult);
+        }
+
+        var canInteract = interactionResult.Entity is null;
+
         if (data.MutedUntil is null)
         {
             data.Roles = guildMember.Roles.ToList().ConvertAll(r => r.Value);
-        }
-
-        var autoUnmuteResult = await TryAutoUnmuteAsync(guildId, id, data, ct);
-        failedResults.AddIfFailed(autoUnmuteResult);
-
-        if (!defaultRole.Empty() && !data.Roles.Contains(defaultRole.Value))
-        {
-            var addResult = await _guildApi.AddGuildMemberRoleAsync(
-                guildId, id, defaultRole, ct: ct);
-            failedResults.AddIfFailed(addResult);
         }
 
         if (!guildMember.User.IsDefined(out var user))
@@ -115,6 +116,21 @@ public sealed partial class MemberUpdateService : BackgroundService
         {
             var reminderTickResult = await TickReminderAsync(data.Reminders[i], user, data, ct);
             failedResults.AddIfFailed(reminderTickResult);
+        }
+
+        if (!canInteract)
+        {
+            return Result.FromSuccess();
+        }
+
+        var autoUnmuteResult = await TryAutoUnmuteAsync(guildId, id, data, ct);
+        failedResults.AddIfFailed(autoUnmuteResult);
+
+        if (!defaultRole.Empty() && !data.Roles.Contains(defaultRole.Value))
+        {
+            var addResult = await _guildApi.AddGuildMemberRoleAsync(
+                guildId, id, defaultRole, ct: ct);
+            failedResults.AddIfFailed(addResult);
         }
 
         if (GuildSettings.RenameHoistedUsers.Get(guildData.Settings))
