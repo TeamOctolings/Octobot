@@ -48,7 +48,6 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         var data = await _guildData.GetData(guild.ID, ct);
         var cfg = data.Settings;
-
         foreach (var member in guild.Members.Where(m => m.User.HasValue))
         {
             data.GetOrCreateMemberData(member.User.Value.ID);
