@@ -48,6 +48,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         var data = await _guildData.GetData(guild.ID, ct);
         var cfg = data.Settings;
+
         foreach (var member in guild.Members.Where(m => m.User.HasValue))
         {
             data.GetOrCreateMemberData(member.User.Value.ID);
@@ -64,7 +65,14 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             return await SendDataLoadFailed(guild, data, bot, ct);
         }
 
-        _logger.LogInformation("Loaded guild {ID} (\"{Name}\")", guild.ID, guild.Name);
+        var ownerResult = await _userApi.GetUserAsync(guild.OwnerID, ct);
+        if (!ownerResult.IsDefined(out var owner))
+        {
+            return Result.FromError(ownerResult);
+        }
+
+        _logger.LogInformation("Loaded guild \"{Name}\" ({ID}) owned by {Owner} ({OwnerID}) with {MemberCount} members",
+            guild.Name, guild.ID, owner.GetTag(), owner.ID, guild.MemberCount);
 
         if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
