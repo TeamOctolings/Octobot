@@ -96,7 +96,7 @@ public class AboutCommandGroup : CommandGroup
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl("https://mctaylors.ddns.net/cdn/octobot-banner.png")
+            .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
