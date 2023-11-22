@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ReSharper CLI InspectCode
-        uses: muno92/resharper_inspectcode@1.9.1
+        uses: muno92/resharper_inspectcode@1.10.3
         with:
           solutionPath: ./Octobot.sln
           ignoreIssueType: InvertIf, ConvertIfStatementToSwitchStatement
