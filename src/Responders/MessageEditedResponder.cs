@@ -72,7 +72,8 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             cacheKey, ct);
         if (!messageResult.IsDefined(out var message))
         {
-            return Result.FromError(messageResult);
+            _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
+            return Result.FromSuccess();
         }
 
         if (message.Content == newContent)
