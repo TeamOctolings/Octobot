@@ -100,7 +100,7 @@ public sealed class GuildDataService : IHostedService
         JsonNode? jsonSettings = null;
         try
         {
-            jsonSettings = JsonNode.Parse(settingsStream);
+            jsonSettings = await JsonNode.ParseAsync(settingsStream, cancellationToken: ct);
         }
         catch (Exception e)
         {
