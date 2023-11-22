@@ -15,6 +15,15 @@ body:
       validations:
           required: true
     - type: textarea
+      id: expected-vs-actual-behavior
+      attributes:
+        label: Expected vs. Actual Behavior
+        description: |
+          Provide a description of the expected behavior compared to the actual behavior.
+        placeholder: Expected vs. Actual Behavior
+      validations:
+        required: true
+    - type: textarea
       id: repro-steps
       attributes:
           label: Reproduction Steps
@@ -24,53 +33,11 @@ body:
       validations:
           required: true
     - type: textarea
-      id: expected-behavior
-      attributes:
-          label: Expected behavior
-          description: |
-              Provide a description of the expected behavior.
-          placeholder: Expected behavior
-      validations:
-          required: true
-    - type: textarea
-      id: actual-behavior
-      attributes:
-          label: Actual behavior
-          description: |
-              Provide a description of the actual behavior observed. If applicable please include any error messages, exception stacktraces or memory dumps.
-          placeholder: Actual behavior
-      validations:
-          required: true
-    - type: textarea
-      id: known-workarounds
-      attributes:
-          label: Known Workarounds
-          description: |
-              Please provide a description of any known workarounds.
-          placeholder: Known Workarounds
-      validations:
-          required: false
-    - type: textarea
-      id: configuration
-      attributes:
-          label: Configuration
-          description: |
-              Please provide more information on your configuration:
-                * Which version of .NET is the bot running on?
-                * What OS and version, and what distro if applicable?
-                * What is the architecture (x64, x86, ARM, ARM64)?
-                * Do you know whether it is specific to that configuration?
-                * If possible, please provide the Configuration.json for the affected guild
-                * If applicable, provide the member data JSON for the affected members
-          placeholder: Configuration
-      validations:
-          required: false
-    - type: textarea
       id: other-info
       attributes:
-          label: Other information
+          label: Other Information
           description: |
               If you have an idea where the problem might lie, let us know that here. Please include any pointers to code, relevant changes, or related issues you know of.
-          placeholder: Other information
+          placeholder: Other Information
       validations:
           required: false
