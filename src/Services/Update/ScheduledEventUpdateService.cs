@@ -104,14 +104,13 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     {
         foreach (var @event in events)
         {
-            if (!data.ScheduledEvents.ContainsKey(@event.ID.Value))
+            if (!data.ScheduledEvents.TryGetValue(@event.ID.Value, out var eventData))
             {
                 data.ScheduledEvents.Add(@event.ID.Value,
                     new ScheduledEventData(@event.ID.Value, @event.Name, @event.ScheduledStartTime, @event.Status));
                 continue;
             }
 
-            var eventData = data.ScheduledEvents[@event.ID.Value];
             eventData.Name = @event.Name;
             eventData.ScheduledStartTime = @event.ScheduledStartTime;
             if (!eventData.ScheduleOnStatusUpdated)
