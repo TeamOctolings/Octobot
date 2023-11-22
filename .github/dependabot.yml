@@ -26,3 +26,7 @@ updates:
     labels:
       - "type: change"
       - "area: build/ci"
+    groups:
+      remora:
+        patterns:
+          - "Remora.Discord.*"
