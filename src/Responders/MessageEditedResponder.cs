@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.Channels;
 using DiffPlex.DiffBuilder;
 using JetBrains.Annotations;
 using Octobot.Data;
@@ -65,6 +66,11 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
         if (!gatewayEvent.ID.IsDefined(out var messageId))
         {
             return new ArgumentNullError(nameof(gatewayEvent.ID));
+        }
+
+        if (gatewayEvent.Author.Value.IsBot == true)
+        {
+            return Result.FromSuccess();
         }
 
         var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
