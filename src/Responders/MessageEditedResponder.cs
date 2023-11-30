@@ -67,7 +67,8 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             return new ArgumentNullError(nameof(gatewayEvent.ID));
         }
 
-        if (gatewayEvent.Author.Value.IsBot == true)
+        gatewayEvent.Author.Value.IsBot.TryGet(out var isBot);
+        if (isBot)
         {
             return Result.FromSuccess();
         }
