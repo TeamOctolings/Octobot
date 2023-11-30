@@ -1,5 +1,4 @@
 using System.Text;
-using System.Threading.Channels;
 using DiffPlex.DiffBuilder;
 using JetBrains.Annotations;
 using Octobot.Data;
