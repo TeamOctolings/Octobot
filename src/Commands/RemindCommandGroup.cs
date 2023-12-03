@@ -72,10 +72,10 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, guildId, CancellationToken);
     }
 
-    private async Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, CancellationToken ct)
+    private async Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, Snowflake guildId, CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
@@ -94,7 +94,8 @@ public class RemindCommandGroup : CommandGroup
                 .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
                 .Append(" - ")
                 .AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
-                .Append(" - ").AppendLine(reminder.Message);
+                .AppendLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.Channel}/{reminder.MessageId}")
+                );
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -138,12 +139,12 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, text, data, channelId, executor, guildId, CancellationToken);
+        return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(
         TimeSpan @in, string text, GuildData data,
-        Snowflake channelId, IUser executor, Snowflake guildId, CancellationToken ct = default)
+        Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var memberData = data.GetOrCreateMemberData(executor.ID);
@@ -158,20 +159,20 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count + 1))
             .Build();
-        var message = await _feedback.SendContextualEmbedAsync(embed.Entity, ct: ct);
-        var messageId = message.Entity.ID.Value;
-        var builderMessage = new StringBuilder().AppendLine(
-            string.Format(Messages.DescriptionActionJumpToMessage,
-                $"https://discord.com/channels/{guildId}/{channelId}/{messageId}"));
+        var messageResult = await _feedback.SendContextualEmbedAsync(embed.Entity, ct: ct);
+        if (!messageResult.IsDefined(out var output)) { return (Result)messageResult; }
+
+        var messageId = output.ID.Value;
+
         memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
                 Channel = channelId.Value,
                 Text = text,
-                Message = builderMessage.ToString()
+                MessageId = messageId.ToString()
             });
-        return Result.FromSuccess();
+        return (Result)messageResult;
     }
 
     /// <summary>

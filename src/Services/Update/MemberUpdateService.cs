@@ -114,7 +114,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         for (var i = data.Reminders.Count - 1; i >= 0; i--)
         {
-            var reminderTickResult = await TickReminderAsync(data.Reminders[i], user, data, ct);
+            var reminderTickResult = await TickReminderAsync(data.Reminders[i], user, data, guildId, ct);
             failedResults.AddIfFailed(reminderTickResult);
         }
 
@@ -217,7 +217,8 @@ public sealed partial class MemberUpdateService : BackgroundService
     [GeneratedRegex("[^0-9A-Za-zА-Яа-яЁё]")]
     private static partial Regex IllegalChars();
 
-    private async Task<Result> TickReminderAsync(Reminder reminder, IUser user, MemberData data, CancellationToken ct)
+    private async Task<Result> TickReminderAsync(Reminder reminder, IUser user, MemberData data, Snowflake guildId,
+        CancellationToken ct)
     {
         if (DateTimeOffset.UtcNow < reminder.At)
         {
@@ -226,8 +227,9 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
-            .WithDescription(
+            .WithTitle(
                 string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
+            .WithDescription(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.Channel}/{reminder.MessageId}"))
             .WithColour(ColorsList.Magenta)
             .Build();
 
