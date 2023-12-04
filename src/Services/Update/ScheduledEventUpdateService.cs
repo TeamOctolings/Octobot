@@ -126,7 +126,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     {
         var filtered = from.Where(schEvent => schEvent.ID == id);
         var filteredArray = filtered.ToArray();
-        return filteredArray.Length != 0
+        return filteredArray.Length > 0
             ? Result<IGuildScheduledEvent>.FromSuccess(filteredArray.Single())
             : new NotFoundError();
     }
