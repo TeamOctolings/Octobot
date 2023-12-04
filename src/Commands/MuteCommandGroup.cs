@@ -136,8 +136,8 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendLineWithBullet(string.Format(Messages.DescriptionActionReason, reason))
-            .AppendWithBullet(string.Format(
+        var description = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
+            .AppendBulletPoint(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
         var logResult = _utility.LogActionAsync(
