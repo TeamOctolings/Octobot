@@ -90,10 +90,9 @@ public class RemindCommandGroup : CommandGroup
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.Append("- ").AppendLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
-                .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-                .Append(" - ")
-                .AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
+            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -155,9 +154,9 @@ public class RemindCommandGroup : CommandGroup
                 Text = text
             });
 
-        var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
+        var builder = new StringBuilder().AppendBulletPointLine(string.Format(
                 Messages.ReminderText, Markdown.InlineCode(text)))
-            .Append("- ").Append(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
@@ -215,8 +214,8 @@ public class RemindCommandGroup : CommandGroup
         var reminder = data.Reminders[index];
 
         var description = new StringBuilder()
-            .Append("- ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-            .Append("- ").AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
 
         data.Reminders.RemoveAt(index);
 
