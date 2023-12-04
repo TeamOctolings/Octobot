@@ -134,7 +134,7 @@ public class KickCommandGroup : CommandGroup
         {
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereKicked)
-                .WithDescription($"- {string.Format(Messages.DescriptionActionReason, reason)}")
+                .WithDescription(string.Format(Messages.DescriptionActionReason, reason).AddBulletPoint())
                 .WithActionFooter(executor)
                 .WithCurrentTimestamp()
                 .WithColour(ColorsList.Red)
@@ -159,7 +159,7 @@ public class KickCommandGroup : CommandGroup
         data.GetOrCreateMemberData(target.ID).Roles.Clear();
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
-        var description = $"- {string.Format(Messages.DescriptionActionReason, reason)}";
+        var description = string.Format(Messages.DescriptionActionReason, reason).AddBulletPoint();
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)

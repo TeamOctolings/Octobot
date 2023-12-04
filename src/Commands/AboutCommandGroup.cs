@@ -88,7 +88,7 @@ public class AboutCommandGroup : CommandGroup
                 guildId, dev.Id, ct);
             var tag = guildMemberResult.IsSuccess ? $"<@{dev.Id}>" : $"@{dev.Username}";
 
-            builder.AppendLine($"- {tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
+            builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
         builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Octobot)");

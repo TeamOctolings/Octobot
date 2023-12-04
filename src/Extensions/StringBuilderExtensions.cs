@@ -9,6 +9,11 @@ public static class StringBuilderExtensions
         return builder.Append("- ").Append(text);
     }
 
+    public static StringBuilder AppendSubBulletPoint(this StringBuilder builder, string? text)
+    {
+        return builder.Append(" - ").Append(text);
+    }
+
     public static StringBuilder AppendBulletPointLine(this StringBuilder builder, string? text)
     {
         return builder.Append("- ").AppendLine(text);
