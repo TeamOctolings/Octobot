@@ -135,11 +135,10 @@ public class BanCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
         }
 
-        var builder = new StringBuilder().Append("- ")
-            .AppendLine(string.Format(Messages.DescriptionActionReason, reason));
+        var builder = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason));
         if (duration is not null)
         {
-            builder.Append("- ").Append(
+            builder.AppendBulletPoint(
                 string.Format(
                     Messages.DescriptionActionExpiresAt,
                     Markdown.Timestamp(DateTimeOffset.UtcNow.Add(duration.Value))));
@@ -274,8 +273,7 @@ public class BanCommandGroup : CommandGroup
             .WithColour(ColorsList.Green).Build();
 
         var title = string.Format(Messages.UserUnbanned, target.GetTag());
-        var description = new StringBuilder().Append("- ")
-            .Append(string.Format(Messages.DescriptionActionReason, reason));
+        var description = new StringBuilder().AppendBulletPoint(string.Format(Messages.DescriptionActionReason, reason));
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, executor, title, description.ToString(), target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
