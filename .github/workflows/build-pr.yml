@@ -26,6 +26,6 @@ jobs:
         uses: muno92/resharper_inspectcode@1.11.0
         with:
           solutionPath: ./Octobot.sln
-          ignoreIssueType: InvertIf, ConvertIfStatementToSwitchStatement
+          ignoreIssueType: InvertIf, ConvertIfStatementToSwitchStatement, ConvertToPrimaryConstructor
           extensions: ReSharperPlugin.CognitiveComplexity
           solutionWideAnalysis: true

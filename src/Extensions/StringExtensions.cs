@@ -45,7 +45,7 @@ public static class StringExtensions
     {
         s = s.SanitizeForBlockCode();
         return
-            $"```{language}\n{s.SanitizeForBlockCode()}{(s.EndsWith("`", StringComparison.Ordinal) || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
+            $"```{language}\n{s.SanitizeForBlockCode()}{(s.EndsWith('`') || string.IsNullOrWhiteSpace(s) ? " " : "")}```";
     }
 
     public static string Localized(this string key)
