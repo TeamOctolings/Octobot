@@ -8,7 +8,7 @@ public static class CollectionExtensions
         this IEnumerable<TSource> source, Func<TSource, TResult> selector)
     {
         var list = source.ToList();
-        return list.Any() ? list.Max(selector) : default;
+        return list.Count != 0 ? list.Max(selector) : default;
     }
 
     public static void AddIfFailed(this List<Result> list, Result result)
