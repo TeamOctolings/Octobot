@@ -102,11 +102,11 @@ public class ToolsCommandGroup : CommandGroup
 
         if (target.GlobalName is not null)
         {
-            builder.Append("- ").AppendLine(Messages.UserInfoDisplayName)
+            builder.AppendLineWithBullet(Messages.UserInfoDisplayName)
                 .AppendLine(Markdown.InlineCode(target.GlobalName));
         }
 
-        builder.Append("- ").AppendLine(Messages.UserInfoDiscordUserSince)
+        builder.AppendLineWithBullet(Messages.UserInfoDiscordUserSince)
             .AppendLine(Markdown.Timestamp(target.ID.Timestamp));
 
         var memberData = data.GetOrCreateMemberData(target.ID);
@@ -170,23 +170,23 @@ public class ToolsCommandGroup : CommandGroup
     {
         if (guildMember.Nickname.IsDefined(out var nickname))
         {
-            builder.Append("- ").AppendLine(Messages.UserInfoGuildNickname)
+            builder.AppendLineWithBullet(Messages.UserInfoGuildNickname)
                 .AppendLine(Markdown.InlineCode(nickname));
         }
 
-        builder.Append("- ").AppendLine(Messages.UserInfoGuildMemberSince)
+        builder.AppendLineWithBullet(Messages.UserInfoGuildMemberSince)
             .AppendLine(Markdown.Timestamp(guildMember.JoinedAt));
 
         if (guildMember.PremiumSince.IsDefined(out var premiumSince))
         {
-            builder.Append("- ").AppendLine(Messages.UserInfoGuildMemberPremiumSince)
+            builder.AppendLineWithBullet(Messages.UserInfoGuildMemberPremiumSince)
                 .AppendLine(Markdown.Timestamp(premiumSince.Value));
             color = ColorsList.Magenta;
         }
 
         if (guildMember.Roles.Count > 0)
         {
-            builder.Append("- ").AppendLine(Messages.UserInfoGuildRoles);
+            builder.AppendLineWithBullet(Messages.UserInfoGuildRoles);
             for (var i = 0; i < guildMember.Roles.Count - 1; i++)
             {
                 builder.Append($"<@&{guildMember.Roles[i]}>, ");
@@ -202,30 +202,30 @@ public class ToolsCommandGroup : CommandGroup
     {
         if (memberData.BannedUntil < DateTimeOffset.MaxValue)
         {
-            builder.Append("- ").AppendLine(Messages.UserInfoBanned)
-                .Append(" - ").AppendLine(string.Format(
+            builder.AppendLineWithBullet(Messages.UserInfoBanned)
+                .AppendLineWithSubBullet(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.BannedUntil.Value)));
             return;
         }
 
-        builder.Append("- ").AppendLine(Messages.UserInfoBannedPermanently);
+        builder.AppendLineWithBullet(Messages.UserInfoBannedPermanently);
     }
 
     private static void AppendMuteInformation(
         MemberData memberData, DateTimeOffset? communicationDisabledUntil, StringBuilder builder)
     {
-        builder.Append("- ").AppendLine(Messages.UserInfoMuted);
+        builder.AppendLineWithBullet(Messages.UserInfoMuted);
         if (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil)
         {
-            builder.Append(" - ").AppendLine(Messages.UserInfoMutedByMuteRole)
-                .Append(" - ").AppendLine(string.Format(
+            builder.AppendLineWithSubBullet(Messages.UserInfoMutedByMuteRole)
+                .AppendLineWithSubBullet(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(memberData.MutedUntil.Value)));
         }
 
         if (communicationDisabledUntil is not null)
         {
-            builder.Append(" - ").AppendLine(Messages.UserInfoMutedByTimeout)
-                .Append(" - ").AppendLine(string.Format(
+            builder.AppendLineWithSubBullet(Messages.UserInfoMutedByTimeout)
+                .AppendLineWithSubBullet(string.Format(
                     Messages.DescriptionActionExpiresAt, Markdown.Timestamp(communicationDisabledUntil.Value)));
         }
     }
@@ -282,13 +282,13 @@ public class ToolsCommandGroup : CommandGroup
 
         if (guild.Description is not null)
         {
-            description.Append("- ").AppendLine(Messages.GuildInfoDescription)
+            description.AppendLineWithBullet(Messages.GuildInfoDescription)
                 .AppendLine(Markdown.InlineCode(guild.Description));
         }
 
-        description.Append("- ").AppendLine(Messages.GuildInfoCreatedAt)
+        description.AppendLineWithBullet(Messages.GuildInfoCreatedAt)
             .AppendLine(Markdown.Timestamp(guild.ID.Timestamp))
-            .Append("- ").AppendLine(Messages.GuildInfoOwner)
+            .AppendLineWithBullet(Messages.GuildInfoOwner)
             .AppendLine(Mention.User(guild.OwnerID));
 
         var embedColor = ColorsList.Cyan;
@@ -296,9 +296,9 @@ public class ToolsCommandGroup : CommandGroup
         if (guild.PremiumTier > PremiumTier.None)
         {
             description.Append("### ").AppendLine(Messages.GuildInfoServerBoost)
-                .Append("- ").Append(Messages.GuildInfoBoostTier)
+                .AppendWithBullet(Messages.GuildInfoBoostTier)
                 .Append(": ").AppendLine(Markdown.InlineCode(guild.PremiumTier.ToString()))
-                .Append("- ").Append(Messages.GuildInfoBoostCount)
+                .AppendWithBullet(Messages.GuildInfoBoostCount)
                 .Append(": ").AppendLine(Markdown.InlineCode(guild.PremiumSubscriptionCount.ToString()));
             embedColor = ColorsList.Magenta;
         }
@@ -362,14 +362,14 @@ public class ToolsCommandGroup : CommandGroup
 
         var description = new StringBuilder().Append("# ").Append(i);
 
-        description.AppendLine().Append("- ").Append(string.Format(
+        description.AppendLine().AppendWithBullet(string.Format(
             Messages.RandomMin, Markdown.InlineCode(min.ToString())));
         if (secondNullable is null && first >= secondDefault)
         {
             description.Append(' ').Append(Messages.Default);
         }
 
-        description.AppendLine().Append("- ").Append(string.Format(
+        description.AppendLine().AppendWithBullet(string.Format(
             Messages.RandomMax, Markdown.InlineCode(max.ToString())));
         if (secondNullable is null && first < secondDefault)
         {
@@ -449,7 +449,7 @@ public class ToolsCommandGroup : CommandGroup
 
         foreach (var markdownTimestamp in AllStyles.Select(style => Markdown.Timestamp(timestamp, style)))
         {
-            description.Append("- ").Append(Markdown.InlineCode(markdownTimestamp))
+            description.AppendWithBullet(Markdown.InlineCode(markdownTimestamp))
                 .Append(" → ").AppendLine(markdownTimestamp);
         }
 
