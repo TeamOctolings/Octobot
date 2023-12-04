@@ -63,9 +63,4 @@ public static class StringExtensions
     {
         return WebUtility.UrlEncode(s).Replace('+', ' ');
     }
-
-    public static string AddBulletPoint(this string s)
-    {
-        return $"- {s}";
-    }
 }

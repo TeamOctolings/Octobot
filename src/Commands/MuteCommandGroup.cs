@@ -325,7 +325,7 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
-        var description = string.Format(Messages.DescriptionActionReason, reason).AddBulletPoint();
+        var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, executor, title, description, target, ColorsList.Green, ct: ct);
         if (!logResult.IsSuccess)
