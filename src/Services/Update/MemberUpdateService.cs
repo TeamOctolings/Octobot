@@ -229,7 +229,7 @@ public sealed partial class MemberUpdateService : BackgroundService
                 string.Format(Messages.Reminder, user.GetTag()), user)
             .WithTitle(
                 string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
-            .WithDescription(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.Channel}/{reminder.MessageId}"))
+            .WithDescription(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"))
             .WithColour(ColorsList.Magenta)
             .Build();
 
@@ -239,7 +239,7 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
 
         var messageResult = await _channelApi.CreateMessageAsync(
-            reminder.Channel.ToSnowflake(), Mention.User(user), embeds: new[] { built }, ct: ct);
+            reminder.ChannelId.ToSnowflake(), Mention.User(user), embeds: new[] { built }, ct: ct);
         if (!messageResult.IsSuccess)
         {
             return Result.FromError(messageResult);
