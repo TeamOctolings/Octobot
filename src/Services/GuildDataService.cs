@@ -39,7 +39,7 @@ public sealed class GuildDataService : IHostedService
         SaveAsync(CancellationToken.None).GetAwaiter().GetResult();
     }
 
-    public async Task SaveAsync(CancellationToken ct)
+    public Task SaveAsync(CancellationToken ct)
     {
         var tasks = new List<Task>();
         var datas = _datas.Values.ToArray();
@@ -53,7 +53,7 @@ public sealed class GuildDataService : IHostedService
                 SerializeObjectSafelyAsync(memberData, $"{data.MemberDataPath}/{memberData.Id}.json", ct)));
         }
 
-        await Task.WhenAll(tasks);
+        return Task.WhenAll(tasks);
     }
 
     private static async Task SerializeObjectSafelyAsync<T>(T obj, string path, CancellationToken ct)
