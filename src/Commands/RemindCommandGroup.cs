@@ -163,14 +163,13 @@ public class RemindCommandGroup : CommandGroup
             return (Result)messageResult;
         }
 
-        var messageId = message.ID.Value;
         memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
                 ChannelId = channelId.Value,
                 Text = text,
-                MessageId = messageId
+                MessageId = message.ID.Value
             });
         return (Result)messageResult;
     }
