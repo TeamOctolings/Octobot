@@ -276,7 +276,7 @@ public class ToolsCommandGroup : CommandGroup
         return await ShowGuildInfoAsync(bot, guild, CancellationToken);
     }
 
-    private async Task<Result> ShowGuildInfoAsync(IUser bot, IGuild guild, CancellationToken ct)
+    private Task<Result> ShowGuildInfoAsync(IUser bot, IGuild guild, CancellationToken ct)
     {
         var description = new StringBuilder().AppendLine($"## {guild.Name}");
 
@@ -312,7 +312,7 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {guild.ID.ToString()}")
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -349,7 +349,7 @@ public class ToolsCommandGroup : CommandGroup
         return await SendRandomNumberAsync(first, second, executor, CancellationToken);
     }
 
-    private async Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
+    private Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
         IUser executor, CancellationToken ct)
     {
         const long secondDefault = 0;
@@ -389,7 +389,7 @@ public class ToolsCommandGroup : CommandGroup
             .WithColour(embedColor)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     private static readonly TimestampStyle[] AllStyles =
@@ -435,7 +435,7 @@ public class ToolsCommandGroup : CommandGroup
         return await SendTimestampAsync(offset, executor, CancellationToken);
     }
 
-    private async Task<Result> SendTimestampAsync(TimeSpan? offset, IUser executor, CancellationToken ct)
+    private Task<Result> SendTimestampAsync(TimeSpan? offset, IUser executor, CancellationToken ct)
     {
         var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
 
@@ -459,6 +459,6 @@ public class ToolsCommandGroup : CommandGroup
             .WithColour(ColorsList.Blue)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 }

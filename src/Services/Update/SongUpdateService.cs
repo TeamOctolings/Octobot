@@ -26,10 +26,7 @@ public sealed class SongUpdateService : BackgroundService
         ("Squid Sisters", "Ink Me Up", new TimeSpan(0, 2, 13))
     };
 
-    private readonly List<Activity> _activityList = new(1)
-    {
-        new Activity("with Remora.Discord", ActivityType.Game)
-    };
+    private readonly List<Activity> _activityList = [new Activity("with Remora.Discord", ActivityType.Game)];
 
     private readonly DiscordGatewayClient _client;
     private readonly GuildDataService _guildData;
