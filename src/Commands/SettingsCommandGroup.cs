@@ -138,9 +138,9 @@ public class SettingsCommandGroup : CommandGroup
             var optionName = AllOptions[i].Name;
             var optionValue = AllOptions[i].Display(cfg);
 
-            description.AppendLine($"- {$"Settings{optionName}".Localized()}")
-                .Append($" - {Markdown.InlineCode(optionName)}: ")
-                .AppendLine(optionValue);
+            description.AppendBulletPointLine($"Settings{optionName}".Localized())
+                .AppendSubBulletPoint(Markdown.InlineCode(optionName))
+                .Append(": ").AppendLine(optionValue);
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, bot)

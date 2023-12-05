@@ -72,10 +72,10 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, guildId, CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, CancellationToken);
     }
 
-    private async Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, Snowflake guildId, CancellationToken ct)
+    private async Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
@@ -90,12 +90,9 @@ public class RemindCommandGroup : CommandGroup
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.Append("- ").AppendLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
-                .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-                .Append(" - ")
-                .AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
-                .AppendLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.Channel}/{reminder.MessageId}")
-                );
+            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -149,30 +146,26 @@ public class RemindCommandGroup : CommandGroup
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var memberData = data.GetOrCreateMemberData(executor.ID);
 
-        var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
-                Messages.ReminderText, Markdown.InlineCode(text)))
-            .Append("- ").Append(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
-
-        var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
-            .WithDescription(builder.ToString())
-            .WithColour(ColorsList.Green)
-            .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count + 1))
-            .Build();
-        var messageResult = await _feedback.SendContextualEmbedAsync(embed.Entity, ct: ct);
-        if (!messageResult.IsDefined(out var output)) { return (Result)messageResult; }
-
-        var messageId = output.ID.Value;
-
         memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
                 Channel = channelId.Value,
-                Text = text,
-                MessageId = messageId.ToString()
+                Text = text
             });
-        return (Result)messageResult;
+
+        var builder = new StringBuilder().AppendBulletPointLine(string.Format(
+                Messages.ReminderText, Markdown.InlineCode(text)))
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
+
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
+            .WithDescription(builder.ToString())
+            .WithColour(ColorsList.Green)
+            .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -221,8 +214,8 @@ public class RemindCommandGroup : CommandGroup
         var reminder = data.Reminders[index];
 
         var description = new StringBuilder()
-            .Append("- ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-            .Append("- ").AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
 
         data.Reminders.RemoveAt(index);
 
