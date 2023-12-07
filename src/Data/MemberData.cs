@@ -18,6 +18,6 @@ public sealed class MemberData
     public ulong Id { get; }
     public DateTimeOffset? BannedUntil { get; set; }
     public DateTimeOffset? MutedUntil { get; set; }
-    public List<ulong> Roles { get; set; } = new();
-    public List<Reminder> Reminders { get; } = new();
+    public List<ulong> Roles { get; set; } = [];
+    public List<Reminder> Reminders { get; } = [];
 }

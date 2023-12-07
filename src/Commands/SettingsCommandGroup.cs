@@ -105,7 +105,7 @@ public class SettingsCommandGroup : CommandGroup
         return await SendSettingsListAsync(cfg, bot, page, CancellationToken);
     }
 
-    private async Task<Result> SendSettingsListAsync(JsonNode cfg, IUser bot, int page,
+    private Task<Result> SendSettingsListAsync(JsonNode cfg, IUser bot, int page,
         CancellationToken ct = default)
     {
         var description = new StringBuilder();
@@ -124,7 +124,7 @@ public class SettingsCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
         }
 
         footer.Append($"{Messages.Page} {page}/{totalPages} ");
@@ -149,7 +149,7 @@ public class SettingsCommandGroup : CommandGroup
             .WithFooter(footer.ToString())
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
