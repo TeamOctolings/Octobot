@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -227,9 +228,8 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
-            .WithTitle(
-                string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
-            .WithDescription(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"))
+            .WithDescription(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)) +
+                             $" (https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId})")
             .WithColour(ColorsList.Magenta)
             .Build();
 

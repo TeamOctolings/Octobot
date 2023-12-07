@@ -31,14 +31,18 @@ public class RemindCommandGroup : CommandGroup
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
 
+    // ReSharper disable once NotAccessedField.Local
+    private readonly IDiscordRestInteractionAPI _interactionApi;
+
     public RemindCommandGroup(
         ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestUserAPI userApi)
+        IDiscordRestUserAPI userApi, IDiscordRestInteractionAPI interactionApi)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+        _interactionApi = interactionApi;
     }
 
     /// <summary>
@@ -163,6 +167,8 @@ public class RemindCommandGroup : CommandGroup
             return (Result)messageResult;
         }
 
+        // var a = await _interactionApi.GetOriginalInteractionResponseAsync(message.Application.Value.ID.Value, "", ct);
+        //TODO
         memberData.Reminders.Add(
             new Reminder
             {
@@ -171,6 +177,7 @@ public class RemindCommandGroup : CommandGroup
                 Text = text,
                 MessageId = message.ID.Value
             });
+
         return (Result)messageResult;
     }
 
