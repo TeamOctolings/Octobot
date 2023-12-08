@@ -16,6 +16,7 @@
         <Company>LabsDevelopment</Company>
         <NeutralLanguage>en</NeutralLanguage>
         <Description>A general-purpose Discord bot for moderation written in C#</Description>
+        <ApplicationIcon>docs/octobot.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
