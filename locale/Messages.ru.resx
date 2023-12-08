@@ -345,8 +345,8 @@
   <data name="DescriptionExternalEventCreated" xml:space="preserve">
     <value>Событие пройдёт с {0} до {1} в {2}</value>
   </data>
-  <data name="EventDetailsButton" xml:space="preserve">
-    <value>Подробнее о событии</value>
+  <data name="OpenEventInfoButton" xml:space="preserve">
+      <value>Открыть сведения о событии</value>
   </data>
   <data name="EventDuration" xml:space="preserve">
     <value>Событие длилось `{0}`</value>

@@ -348,8 +348,8 @@
   <data name="DescriptionExternalEventCreated" xml:space="preserve">
     <value>The event will start at {0} until {1} in {2}</value>
   </data>
-  <data name="EventDetailsButton" xml:space="preserve">
-    <value>Event details</value>
+  <data name="OpenEventInfoButton" xml:space="preserve">
+      <value>Open Event Info</value>
   </data>
   <data name="EventDuration" xml:space="preserve">
     <value>The event has lasted for `{0}`</value>
