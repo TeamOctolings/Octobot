@@ -138,9 +138,7 @@ public class RemindCommandGroup : CommandGroup
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
-        var interactionToken = _context.Interaction.Token;
-        var applicationId = _context.Interaction.ApplicationID;
-        return await AddReminderAsync(@in, text, data, channelId, executor, interactionToken, applicationId, CancellationToken);
+        return await AddReminderAsync(@in, text, data, channelId, executor, _context.Interaction.Token, _context.Interaction.ApplicationID, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(TimeSpan @in, string text, GuildData data,
@@ -148,9 +146,8 @@ public class RemindCommandGroup : CommandGroup
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var memberData = data.GetOrCreateMemberData(executor.ID);
-
-        var builder = new StringBuilder().AppendBulletPointLine(string.Format(
-                Messages.ReminderText, Markdown.InlineCode(text)))
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
 
         var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(applicationId, interactionToken, ct);
@@ -159,28 +156,21 @@ public class RemindCommandGroup : CommandGroup
             return (Result)responseResult;
         }
 
-        var interactionValue = response.ID;
         memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
                 ChannelId = channelId.Value,
                 Text = text,
-                MessageId = interactionValue.Value
+                MessageId = response.ID.Value
             });
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
-            .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count + 1))
+            .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
-        var messageResult = await _feedback.SendContextualEmbedAsync(embed.Entity, ct: ct);
-        if (!messageResult.IsDefined(out _))
-        {
-            return (Result)messageResult;
-        }
-
-        return (Result)messageResult;
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
