@@ -138,19 +138,16 @@ public class RemindCommandGroup : CommandGroup
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
-        return await AddReminderAsync(@in, text, data, channelId, executor, _context.Interaction.Token, _context.Interaction.ApplicationID, CancellationToken);
+
+        return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
     }
 
     private async Task<Result> AddReminderAsync(TimeSpan @in, string text, GuildData data,
-        Snowflake channelId, IUser executor, string interactionToken, Snowflake applicationId, CancellationToken ct = default)
+        Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
-        var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var memberData = data.GetOrCreateMemberData(executor.ID);
-        var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
-            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
-
-        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(applicationId, interactionToken, ct);
+        var remindAt = DateTimeOffset.UtcNow.Add(@in);
+        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
         if (!responseResult.IsDefined(out var response))
         {
             return (Result)responseResult;
@@ -164,12 +161,17 @@ public class RemindCommandGroup : CommandGroup
                 Text = text,
                 MessageId = response.ID.Value
             });
+
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
+
         return await _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
