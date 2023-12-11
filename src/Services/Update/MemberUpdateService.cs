@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -225,10 +226,13 @@ public sealed partial class MemberUpdateService : BackgroundService
             return Result.FromSuccess();
         }
 
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
+            .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
+
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
-            .WithDescription(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)) +
-                             $" (https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId})")
+            .WithDescription(string.Format(builder.ToString()))
             .WithColour(ColorsList.Magenta)
             .Build();
 

@@ -30,18 +30,18 @@ public class RemindCommandGroup : CommandGroup
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-
-    // ReSharper disable once NotAccessedField.Local
+    private readonly IInteractionCommandContext _interactionContext;
     private readonly IDiscordRestInteractionAPI _interactionApi;
 
     public RemindCommandGroup(
         ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestUserAPI userApi, IDiscordRestInteractionAPI interactionApi)
+        IDiscordRestUserAPI userApi, IInteractionCommandContext interactionContext, IDiscordRestInteractionAPI interactionApi)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+        _interactionContext = interactionContext;
         _interactionApi = interactionApi;
     }
 
@@ -138,15 +138,17 @@ public class RemindCommandGroup : CommandGroup
             return Result.FromError(executorResult);
         }
 
+        var interactionToken = _interactionContext.Interaction.Token;
+        var applicationId = _interactionContext.Interaction.ApplicationID;
+
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
+        return await AddReminderAsync(@in, text, data, channelId, executor, interactionToken, applicationId, CancellationToken);
     }
 
-    private async Task<Result> AddReminderAsync(
-        TimeSpan @in, string text, GuildData data,
-        Snowflake channelId, IUser executor, CancellationToken ct = default)
+    private async Task<Result> AddReminderAsync(TimeSpan @in, string text, GuildData data,
+        Snowflake channelId, IUser executor, string interactionToken, Snowflake applicationId, CancellationToken ct = default)
     {
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var memberData = data.GetOrCreateMemberData(executor.ID);
@@ -162,20 +164,25 @@ public class RemindCommandGroup : CommandGroup
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count + 1))
             .Build();
         var messageResult = await _feedback.SendContextualEmbedAsync(embed.Entity, ct: ct);
-        if (!messageResult.IsDefined(out var message))
+        if (!messageResult.IsDefined(out _))
         {
             return (Result)messageResult;
         }
 
-        // var a = await _interactionApi.GetOriginalInteractionResponseAsync(message.Application.Value.ID.Value, "", ct);
-        //TODO
+        var a = await _interactionApi.GetOriginalInteractionResponseAsync(applicationId, interactionToken, ct);
+        if (!a.IsDefined(out var interaction))
+        {
+            return (Result)a;
+        }
+
+        var interactionValue = interaction.Interaction.Value.ID;
         memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
                 ChannelId = channelId.Value,
                 Text = text,
-                MessageId = message.ID.Value
+                MessageId = interactionValue.Value
             });
 
         return (Result)messageResult;
