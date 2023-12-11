@@ -10,26 +10,29 @@ public sealed class SongUpdateService : BackgroundService
 {
     private static readonly (string Author, string Name, TimeSpan Duration)[] SongList =
     {
-        ("Yoko & the Gold Bazookas", "Rockagilly Blues", new TimeSpan(0, 3, 37)),
-        ("Splatoon 3", "Seep and Destroy", new TimeSpan(0, 2, 42)),
-        ("Deep Cut", "Big Betrayal", new TimeSpan(0, 1, 42)),
-        ("Squid Sisters", "Tomorrow's Nostalgia Today", new TimeSpan(0, 2, 8)),
-        ("Deep Cut", "Anarchy Rainbow", new TimeSpan(0, 1, 51)),
-        ("Squid Sisters feat. Ian BGM", "Liquid Sunshine", new TimeSpan(0, 1, 32)),
-        ("Damp Socks feat. Off the Hook", "Candy-Coated Rocks", new TimeSpan(0, 1, 11)),
-        ("H2Whoa", "Aquasonic", new TimeSpan(0, 1, 1)),
-        ("Yoko & the Gold Bazookas", "Ska-BLAM", new TimeSpan(0, 4, 4)),
-        ("Off the Hook", "Muck Warfare", new TimeSpan(0, 3, 39)),
-        ("Off the Hook", "Acid Hues", new TimeSpan(0, 3, 39)),
-        ("Off the Hook", "Shark Bytes", new TimeSpan(0, 3, 48)),
-        ("DJ Octavio feat. Squid Sisters & Deep Cut", "Calamari Inkantation 3MIX", new TimeSpan(0, 7, 9)),
-        ("Squid Sisters", "Ink Me Up", new TimeSpan(0, 2, 13))
+        ("Yoko & the Gold Bazookas", "Rockagilly Blues", new TimeSpan(0, 2, 52)),
+        ("Deep Cut", "Big Betrayal", new TimeSpan(0, 5, 55)),
+        ("Squid Sisters", "Tomorrow's Nostalgia Today", new TimeSpan(0, 3, 7)),
+        ("Deep Cut", "Anarchy Rainbow", new TimeSpan(0, 3, 20)),
+        ("Squid Sisters feat. Ian BGM", "Liquid Sunshine", new TimeSpan(0, 2, 37)),
+        ("Damp Socks feat. Off the Hook", "Candy-Coated Rocks", new TimeSpan(0, 2, 58)),
+        ("H2Whoa", "Aquasonic", new TimeSpan(0, 2, 51)),
+        ("Yoko & the Gold Bazookas", "Ska-BLAM", new TimeSpan(0, 2, 57)),
+        ("Off the Hook", "Muck Warfare", new TimeSpan(0, 3, 20)),
+        ("Off the Hook", "Acid Hues", new TimeSpan(0, 3, 15)),
+        ("Off the Hook", "Shark Bytes", new TimeSpan(0, 3, 34)),
+        ("Squid Sisters", "Calamari Inkantation", new TimeSpan(0, 2, 14)),
+        ("Squid Sisters", "Ink Me Up", new TimeSpan(0, 2, 13)),
+        ("Chirpy Chips", "No Quarters", new TimeSpan(0, 2, 36)),
+        ("Chirpy Chips", "Shellfie", new TimeSpan(0, 2, 1)),
+        ("Dedf1sh", "#11 above", new TimeSpan(0, 2, 10)),
+        ("Callie", "Bomb Rush Blush", new TimeSpan(0, 2, 18)),
+        ("Turquoise October", "Octoling Rendezvous", new TimeSpan(0, 1, 57)),
+        ("Damp Socks feat. Off the Hook", "Tentacle to the Metal", new TimeSpan(0, 2, 51)),
+        ("Off the Hook", "Fly Octo Fly ~ Ebb & Flow (Octo)", new TimeSpan(0, 3, 5))
     };
 
-    private readonly List<Activity> _activityList = new(1)
-    {
-        new Activity("with Remora.Discord", ActivityType.Game)
-    };
+    private readonly List<Activity> _activityList = [new Activity("with Remora.Discord", ActivityType.Game)];
 
     private readonly DiscordGatewayClient _client;
     private readonly GuildDataService _guildData;

@@ -75,7 +75,7 @@ public class RemindCommandGroup : CommandGroup
         return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, CancellationToken);
     }
 
-    private async Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, CancellationToken ct)
+    private Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
@@ -83,17 +83,16 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var builder = new StringBuilder();
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.Append("- ").AppendLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
-                .Append(" - ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-                .Append(" - ")
-                .AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
+            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -102,7 +101,7 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Cyan)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(
+        return _feedback.SendContextualEmbedResultAsync(
             embed, ct);
     }
 
@@ -140,7 +139,7 @@ public class RemindCommandGroup : CommandGroup
         return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
     }
 
-    private async Task<Result> AddReminderAsync(
+    private Task<Result> AddReminderAsync(
         TimeSpan @in, string text, GuildData data,
         Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
@@ -155,9 +154,9 @@ public class RemindCommandGroup : CommandGroup
                 Text = text
             });
 
-        var builder = new StringBuilder().Append("- ").AppendLine(string.Format(
+        var builder = new StringBuilder().AppendBulletPointLine(string.Format(
                 Messages.ReminderText, Markdown.InlineCode(text)))
-            .Append("- ").Append(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
@@ -166,7 +165,7 @@ public class RemindCommandGroup : CommandGroup
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct);
     }
 
     /// <summary>
@@ -200,7 +199,7 @@ public class RemindCommandGroup : CommandGroup
         return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
     }
 
-    private async Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
+    private Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
         CancellationToken ct)
     {
         if (index >= data.Reminders.Count)
@@ -209,14 +208,14 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
         }
 
         var reminder = data.Reminders[index];
 
         var description = new StringBuilder()
-            .Append("- ").AppendLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-            .Append("- ").AppendLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
 
         data.Reminders.RemoveAt(index);
 
@@ -225,7 +224,7 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(
+        return _feedback.SendContextualEmbedResultAsync(
             embed, ct);
     }
 }
