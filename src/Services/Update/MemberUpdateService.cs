@@ -232,7 +232,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
-            .WithDescription(string.Format(builder.ToString()))
+            .WithDescription(builder.ToString())
             .WithColour(ColorsList.Magenta)
             .Build();
 

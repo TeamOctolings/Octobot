@@ -26,22 +26,20 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class RemindCommandGroup : CommandGroup
 {
-    private readonly ICommandContext _context;
+    private readonly IInteractionCommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly IInteractionCommandContext _interactionContext;
     private readonly IDiscordRestInteractionAPI _interactionApi;
 
     public RemindCommandGroup(
-        ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestUserAPI userApi, IInteractionCommandContext interactionContext, IDiscordRestInteractionAPI interactionApi)
+        IInteractionCommandContext context, GuildDataService guildData, IFeedbackService feedback,
+        IDiscordRestUserAPI userApi, IDiscordRestInteractionAPI interactionApi)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
-        _interactionContext = interactionContext;
         _interactionApi = interactionApi;
     }
 
@@ -138,12 +136,10 @@ public class RemindCommandGroup : CommandGroup
             return Result.FromError(executorResult);
         }
 
-        var interactionToken = _interactionContext.Interaction.Token;
-        var applicationId = _interactionContext.Interaction.ApplicationID;
-
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
-
+        var interactionToken = _context.Interaction.Token;
+        var applicationId = _context.Interaction.ApplicationID;
         return await AddReminderAsync(@in, text, data, channelId, executor, interactionToken, applicationId, CancellationToken);
     }
 
@@ -157,6 +153,21 @@ public class RemindCommandGroup : CommandGroup
                 Messages.ReminderText, Markdown.InlineCode(text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
 
+        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(applicationId, interactionToken, ct);
+        if (!responseResult.IsDefined(out var response))
+        {
+            return (Result)responseResult;
+        }
+
+        var interactionValue = response.ID;
+        memberData.Reminders.Add(
+            new Reminder
+            {
+                At = remindAt,
+                ChannelId = channelId.Value,
+                Text = text,
+                MessageId = interactionValue.Value
+            });
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
@@ -168,22 +179,6 @@ public class RemindCommandGroup : CommandGroup
         {
             return (Result)messageResult;
         }
-
-        var a = await _interactionApi.GetOriginalInteractionResponseAsync(applicationId, interactionToken, ct);
-        if (!a.IsDefined(out var interaction))
-        {
-            return (Result)a;
-        }
-
-        var interactionValue = interaction.Interaction.Value.ID;
-        memberData.Reminders.Add(
-            new Reminder
-            {
-                At = remindAt,
-                ChannelId = channelId.Value,
-                Text = text,
-                MessageId = interactionValue.Value
-            });
 
         return (Result)messageResult;
     }
