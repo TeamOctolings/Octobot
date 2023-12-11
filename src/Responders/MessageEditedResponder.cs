@@ -67,12 +67,7 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             return new ArgumentNullError(nameof(gatewayEvent.ID));
         }
 
-        if (!gatewayEvent.Author.IsDefined(out var author))
-        {
-            return new ArgumentNullError(nameof(gatewayEvent.Author));
-        }
-
-        if (author.IsBot.OrDefault(false))
+        if (gatewayEvent.Author.IsDefined(out var author) && author.IsBot.OrDefault(false))
         {
             return Result.FromSuccess();
         }
