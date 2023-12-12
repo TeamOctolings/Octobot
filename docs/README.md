@@ -24,7 +24,7 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 
 ## Running Octobot
 
-1. Install [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+1. Install [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 2. Go to the [Discord Developer Portal](https://discord.com/developers), create a new application and get a bot token. Don't forget to also enable all intents!
 3. Clone this repository and open `Octobot` folder.
 ```
