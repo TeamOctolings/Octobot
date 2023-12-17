@@ -348,7 +348,7 @@
   <data name="DescriptionExternalEventCreated" xml:space="preserve">
     <value>движуха будет происходить с {0} до {1} в {2}</value>
   </data>
-  <data name="OpenEventInfoButton" xml:space="preserve">
+  <data name="ButtonOpenEventInfo" xml:space="preserve">
       <value>открыть ивент</value>
   </data>
   <data name="EventDuration" xml:space="preserve">
@@ -396,7 +396,7 @@
   <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>девелоперы:</value>
   </data>
-  <data name="AboutTitleRepository" xml:space="preserve">
+  <data name="ButtonOpenRepository" xml:space="preserve">
     <value>репа Octobot (тык)</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
@@ -581,5 +581,8 @@
   </data>
   <data name="ContactDevelopers" xml:space="preserve">
       <value>если ты это читаешь второй раз за сегодня, пиши разрабам</value>
+  </data>
+  <data name="ButtonReportIssue" xml:space="preserve">
+      <value>зарепортить баг</value>
   </data>
 </root>

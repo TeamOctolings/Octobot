@@ -345,7 +345,7 @@
   <data name="DescriptionExternalEventCreated" xml:space="preserve">
     <value>Событие пройдёт с {0} до {1} в {2}</value>
   </data>
-  <data name="OpenEventInfoButton" xml:space="preserve">
+  <data name="ButtonOpenEventInfo" xml:space="preserve">
       <value>Открыть сведения о событии</value>
   </data>
   <data name="EventDuration" xml:space="preserve">
@@ -396,7 +396,7 @@
   <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>Разработчики:</value>
   </data>
-  <data name="AboutTitleRepository" xml:space="preserve">
+  <data name="ButtonOpenRepository" xml:space="preserve">
     <value>Исходный код Octobot</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
@@ -581,5 +581,8 @@
   </data>
   <data name="ContactDevelopers" xml:space="preserve">
       <value>Обратись к разработчикам, если проблема возникнет снова.</value>
+  </data>
+  <data name="ButtonReportIssue" xml:space="preserve">
+      <value>Сообщить о проблеме</value>
   </data>
 </root>

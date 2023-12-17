@@ -222,7 +222,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         var button = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.OpenEventInfoButton,
+            Messages.ButtonOpenEventInfo,
             new PartialEmoji(Name: "📋"),
             URL: $"https://discord.com/events/{scheduledEvent.GuildID}/{scheduledEvent.ID}"
         );

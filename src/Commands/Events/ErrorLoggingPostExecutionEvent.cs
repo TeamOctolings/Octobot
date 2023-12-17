@@ -1,8 +1,11 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Octobot.Extensions;
+using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.API.Objects;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Feedback.Messages;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Commands.Services;
 using Remora.Discord.Extensions.Embeds;
@@ -65,6 +68,17 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             .WithColour(ColorsList.Red)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        var issuesButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            Messages.ButtonReportIssue,
+            new PartialEmoji(Name: "⚠️"),
+            URL: Octobot.IssuesUrl
+        );
+
+        return await _feedback.SendContextualEmbedResultAsync(embed,
+            new FeedbackMessageOptions(MessageComponents: new[]
+            {
+                new ActionRowComponent(new[] { issuesButton })
+            }), ct);
     }
 }
