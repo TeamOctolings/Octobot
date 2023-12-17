@@ -77,7 +77,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             return Result.FromError(embed);
         }
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: new[] { built },
             allowedMentions: Octobot.NoMentions, ct: ct);
     }

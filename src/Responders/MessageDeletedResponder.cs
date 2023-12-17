@@ -103,7 +103,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
             return Result.FromError(embed);
         }
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },
             allowedMentions: Octobot.NoMentions, ct: ct);
     }

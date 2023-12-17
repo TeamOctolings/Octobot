@@ -97,7 +97,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             return Result.FromError(embed);
         }
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built }, ct: ct);
     }
 
@@ -121,7 +121,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             return Result.FromError(channelResult);
         }
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             channel, embeds: new[] { errorBuilt }, ct: ct);
     }
 }

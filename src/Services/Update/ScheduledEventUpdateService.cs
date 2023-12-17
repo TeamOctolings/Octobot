@@ -231,7 +231,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             URL: $"https://discord.com/events/{scheduledEvent.GuildID}/{scheduledEvent.ID}"
         );
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             GuildSettings.EventNotificationChannel.Get(settings), roleMention, embeds: new[] { built },
             components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
     }
@@ -322,7 +322,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(startedEmbed);
         }
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
             content, embeds: new[] { startedBuilt }, ct: ct);
     }
@@ -353,7 +353,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(completedEmbed);
         }
 
-        var createResult = (Result)await _channelApi.CreateMessageAsync(
+        var createResult = await _channelApi.CreateMessageResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
             embeds: new[] { completedBuilt }, ct: ct);
         if (createResult.IsSuccess)
@@ -385,7 +385,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(embed);
         }
 
-        var createResult = (Result)await _channelApi.CreateMessageAsync(
+        var createResult = await _channelApi.CreateMessageResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings), embeds: new[] { built }, ct: ct);
         if (createResult.IsSuccess)
         {
@@ -450,7 +450,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             return Result.FromError(earlyResult);
         }
 
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
             content,
             embeds: new[] { earlyBuilt }, ct: ct);
