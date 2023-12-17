@@ -98,13 +98,9 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
             .WithTimestamp(message.Timestamp)
             .WithColour(ColorsList.Red)
             .Build();
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
 
-        return await _channelApi.CreateMessageResultAsync(
-            GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
+            GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed,
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 }

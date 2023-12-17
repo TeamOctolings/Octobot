@@ -1,6 +1,8 @@
-﻿using OneOf;
+﻿using System.Buffers;
+using OneOf;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
 using Remora.Results;
 
@@ -8,16 +10,26 @@ namespace Octobot.Extensions;
 
 public static class ChannelApiExtensions
 {
-    public static async Task<Result> CreateMessageResultAsync(this IDiscordRestChannelAPI channelApi,
+    public static async Task<Result> CreateMessageWithEmbedResultAsync(this IDiscordRestChannelAPI channelApi,
         Snowflake channelId, Optional<string> message = default, Optional<string> nonce = default,
-        Optional<bool> isTextToSpeech = default, Optional<IReadOnlyList<IEmbed>> embeds = default,
+        Optional<bool> isTextToSpeech = default, Optional<Result<Embed>> embedResult = default,
         Optional<IAllowedMentions> allowedMentions = default, Optional<IMessageReference> messageRefenence = default,
         Optional<IReadOnlyList<IMessageComponent>> components = default,
         Optional<IReadOnlyList<Snowflake>> stickerIds = default,
         Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
         Optional<MessageFlags> flags = default, CancellationToken ct = default)
     {
-        return (Result)await channelApi.CreateMessageAsync(channelId, message, nonce, isTextToSpeech, embeds,
+        if (!embedResult.IsDefined() || !embedResult.Value.IsDefined(out var embed))
+        {
+            return Result.FromError(embedResult.Value);
+        }
+
+        var rented = ArrayPool<Embed>.Shared.Rent(1);
+        rented[0] = embed;
+        var result = (Result)await channelApi.CreateMessageAsync(channelId, message, nonce, isTextToSpeech, rented,
             allowedMentions, messageRefenence, components, stickerIds, attachments, flags, ct);
+        ArrayPool<Embed>.Shared.Return(rented);
+
+        return result;
     }
 }

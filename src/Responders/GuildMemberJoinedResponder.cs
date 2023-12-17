@@ -72,13 +72,9 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             .WithTimestamp(gatewayEvent.JoinedAt)
             .WithColour(ColorsList.Green)
             .Build();
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
 
-        return await _channelApi.CreateMessageResultAsync(
-            GuildSettings.PublicFeedbackChannel.Get(cfg), embeds: new[] { built },
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
+            GuildSettings.PublicFeedbackChannel.Get(cfg), embedResult: embed,
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 
