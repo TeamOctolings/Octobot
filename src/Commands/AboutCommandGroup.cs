@@ -36,18 +36,15 @@ public class AboutCommandGroup : CommandGroup
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
-    private readonly IDiscordRestUserAPI _userApi;
     private readonly IDiscordRestGuildAPI _guildApi;
 
     public AboutCommandGroup(
         ICommandContext context, GuildDataService guildData,
-        IFeedbackService feedback, IDiscordRestUserAPI userApi,
-        IDiscordRestGuildAPI guildApi)
+        IFeedbackService feedback, IDiscordRestGuildAPI guildApi)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
-        _userApi = userApi;
         _guildApi = guildApi;
     }
 
@@ -69,19 +66,13 @@ public class AboutCommandGroup : CommandGroup
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
         }
 
-        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
-        if (!botResult.IsDefined(out var bot))
-        {
-            return Result.FromError(botResult);
-        }
-
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        return await SendAboutBotAsync(bot, guildId, CancellationToken);
+        return await SendAboutBotAsync(guildId, CancellationToken);
     }
 
-    private async Task<Result> SendAboutBotAsync(IUser bot, Snowflake guildId, CancellationToken ct = default)
+    private async Task<Result> SendAboutBotAsync(Snowflake guildId, CancellationToken ct = default)
     {
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
         foreach (var dev in Developers)
@@ -93,7 +84,8 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, bot)
+        var embed = new EmbedBuilder()
+            .WithAuthor(Messages.AboutBot, "https://cdn.mctaylors.ru/octobot-icon.png")
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
