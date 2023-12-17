@@ -8,9 +8,11 @@ using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.API.Objects;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Feedback.Messages;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Rest.Core;
@@ -30,6 +32,8 @@ public class AboutCommandGroup : CommandGroup
         ("mctaylors", new Snowflake(326642240229474304)),
         ("neroduckale", new Snowflake(474943797063843851))
     };
+
+    private const string RepositoryUrl = "https://github.com/LabsDevelopment/Octobot";
 
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
@@ -91,14 +95,22 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
-        builder.Append($"### [{Messages.AboutTitleRepository}](https://github.com/LabsDevelopment/Octobot)");
-
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        var button = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            Messages.AboutTitleRepository,
+            URL: RepositoryUrl
+        );
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct,
+            new FeedbackMessageOptions(MessageComponents: new[]
+            {
+                new ActionRowComponent(new[] { button })
+            }));
     }
 }
