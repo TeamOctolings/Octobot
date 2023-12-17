@@ -179,7 +179,8 @@ public class RemindCommandGroup : CommandGroup
 
         var memberData = data.GetOrCreateMemberData(executor.ID);
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
-        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
+        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(
+            _context.Interaction.ApplicationID, _context.Interaction.Token, ct);
         if (!responseResult.IsDefined(out var response))
         {
             return (Result)responseResult;
@@ -197,8 +198,8 @@ public class RemindCommandGroup : CommandGroup
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
-        var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
+        var embed = new EmbedBuilder()
+            .WithSmallTitle(string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
@@ -235,7 +236,8 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
+        return await DeleteReminderAsync(
+            data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
     }
 
     private Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
@@ -243,7 +245,8 @@ public class RemindCommandGroup : CommandGroup
     {
         if (index >= data.Reminders.Count)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.InvalidReminderPosition, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -258,7 +261,8 @@ public class RemindCommandGroup : CommandGroup
 
         data.Reminders.RemoveAt(index);
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, bot)
+        var embed = new EmbedBuilder()
+            .WithSmallTitle(Messages.ReminderDeleted, bot)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Green)
             .Build();
