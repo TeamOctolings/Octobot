@@ -99,6 +99,6 @@ public class AboutCommandGroup : CommandGroup
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }
