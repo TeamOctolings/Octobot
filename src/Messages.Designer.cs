@@ -1036,5 +1036,21 @@ namespace Octobot {
                 return ResourceManager.GetString("ButtonReportIssue", resourceCulture);
             }
         }
+
+        internal static string ReminderInvalidTimeSpan
+        {
+            get
+            {
+                return ResourceManager.GetString("ReminderInvalidTimeSpan", resourceCulture);
+            }
+        }
+
+        internal static string ReminderNegativeTimeSpan
+        {
+            get
+            {
+                return ResourceManager.GetString("ReminderNegativeTimeSpan", resourceCulture);
+            }
+        }
     }
 }

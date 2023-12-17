@@ -2,11 +2,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using JetBrains.Annotations;
+using NGettext.Plural.Ast;
 using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
+using Remora.Commands.Parsers;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Attributes;
@@ -74,10 +76,12 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot, CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot,
+            CancellationToken);
     }
 
-    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot, CancellationToken ct)
+    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot,
+        CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
@@ -92,10 +96,12 @@ public class RemindCommandGroup : CommandGroup
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
+            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition,
+                    Markdown.InlineCode((i + 1).ToString())))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
-                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
+                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
+                    $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -120,13 +126,19 @@ public class RemindCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
-        TimeSpan @in,
+        string @in,
         [Description("Reminder text")] [MaxLength(512)]
         string text)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
@@ -138,12 +150,34 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
+        return await AddReminderAsync(@in, text, data, channelId, bot, executor, CancellationToken);
     }
 
-    private async Task<Result> AddReminderAsync(TimeSpan @in, string text, GuildData data,
-        Snowflake channelId, IUser executor, CancellationToken ct = default)
+    private async Task<Result> AddReminderAsync(string strIn, string text, GuildData data,
+        Snowflake channelId, IUser bot, IUser executor, CancellationToken ct = default)
     {
+        if (strIn.StartsWith('-'))
+        {
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.ReminderNegativeTimeSpan, bot)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+        }
+
+        var parser = new TimeSpanParser();
+        var parseResult = await parser.TryParseAsync(strIn, ct);
+        if (!parseResult.IsDefined(out var @in))
+        {
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.ReminderInvalidTimeSpan, bot)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+        }
+
         var memberData = data.GetOrCreateMemberData(executor.ID);
         var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
