@@ -7,6 +7,7 @@ using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Gateway.Events;
+using Remora.Discord.API.Objects;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
@@ -112,7 +113,14 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             .WithColour(ColorsList.Red)
             .Build();
 
-        return await _channelApi.CreateMessageWithEmbedResultAsync(
-            channel, embedResult: errorEmbed, ct: ct);
+        var issuesButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            Messages.ButtonReportIssue,
+            new PartialEmoji(Name: "⚠️"),
+            URL: Links.Issues
+        );
+
+        return await _channelApi.CreateMessageWithEmbedResultAsync(channel, embedResult: errorEmbed,
+            components: new[] { new ActionRowComponent(new[] { issuesButton }) }, ct: ct);
     }
 }

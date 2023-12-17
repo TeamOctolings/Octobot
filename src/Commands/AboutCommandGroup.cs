@@ -33,8 +33,6 @@ public class AboutCommandGroup : CommandGroup
         ("neroduckale", new Snowflake(474943797063843851))
     };
 
-    private const string RepositoryUrl = "https://github.com/LabsDevelopment/Octobot";
-
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
@@ -101,16 +99,24 @@ public class AboutCommandGroup : CommandGroup
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
             .Build();
 
-        var button = new ButtonComponent(
+        var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.AboutTitleRepository,
-            URL: RepositoryUrl
+            Messages.ButtonOpenRepository,
+            new PartialEmoji(Name: "🌐"),
+            URL: Links.Repository
+        );
+
+        var issuesButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            Messages.ButtonReportIssue,
+            new PartialEmoji(Name: "⚠️"),
+            URL: Links.Issues
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
-                new ActionRowComponent(new[] { button })
+                new ActionRowComponent(new[] { repositoryButton, issuesButton })
             }), ct);
     }
 }

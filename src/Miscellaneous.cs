@@ -17,3 +17,12 @@ public static class ColorsList
     public static readonly Color Black = Color.Black;
     public static readonly Color White = Color.WhiteSmoke;
 }
+
+/// <summary>
+///     Contains all links used in buttons.
+/// </summary>
+public static class Links
+{
+    public const string Repository = "https://github.com/LabsDevelopment/Octobot";
+    public const string Issues = $"{Repository}/issues";
+}

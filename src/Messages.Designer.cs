@@ -534,9 +534,9 @@ namespace Octobot {
             }
         }
 
-        internal static string OpenEventInfoButton {
+        internal static string ButtonOpenEventInfo {
             get {
-                return ResourceManager.GetString("OpenEventInfoButton", resourceCulture);
+                return ResourceManager.GetString("ButtonOpenEventInfo", resourceCulture);
             }
         }
 
@@ -630,9 +630,9 @@ namespace Octobot {
             }
         }
 
-        internal static string AboutTitleRepository {
+        internal static string ButtonOpenRepository {
             get {
-                return ResourceManager.GetString("AboutTitleRepository", resourceCulture);
+                return ResourceManager.GetString("ButtonOpenRepository", resourceCulture);
             }
         }
 
@@ -1026,6 +1026,14 @@ namespace Octobot {
             get
             {
                 return ResourceManager.GetString("ContactDevelopers", resourceCulture);
+            }
+        }
+
+        internal static string ButtonReportIssue
+        {
+            get
+            {
+                return ResourceManager.GetString("ButtonReportIssue", resourceCulture);
             }
         }
     }
