@@ -121,7 +121,7 @@ public class ClearCommandGroup : CommandGroup
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoMessagesToClear, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var title = author is not null
@@ -146,6 +146,6 @@ public class ClearCommandGroup : CommandGroup
         var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }

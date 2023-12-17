@@ -124,7 +124,7 @@ public class SettingsCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
         }
 
         footer.Append($"{Messages.Page} {page}/{totalPages} ");
@@ -149,7 +149,7 @@ public class SettingsCommandGroup : CommandGroup
             .WithFooter(footer.ToString())
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -207,7 +207,7 @@ public class SettingsCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var builder = new StringBuilder();
@@ -230,7 +230,7 @@ public class SettingsCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -284,7 +284,7 @@ public class SettingsCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     private async Task<Result> ResetAllSettingsAsync(JsonNode cfg, IUser bot,
@@ -305,6 +305,6 @@ public class SettingsCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }
