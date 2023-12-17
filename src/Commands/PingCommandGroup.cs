@@ -97,6 +97,6 @@ public class PingCommandGroup : CommandGroup
             .WithCurrentTimestamp()
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }

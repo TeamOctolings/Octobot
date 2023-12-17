@@ -112,13 +112,9 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             .WithTimestamp(timestamp.Value)
             .WithColour(ColorsList.Yellow)
             .Build();
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
 
-        return (Result)await _channelApi.CreateMessageAsync(
-            GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built },
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
+            GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed,
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 }

@@ -101,7 +101,7 @@ public class MuteCommandGroup : CommandGroup
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken);
         }
 
         return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot, CancellationToken);
@@ -124,7 +124,7 @@ public class MuteCommandGroup : CommandGroup
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
@@ -151,7 +151,7 @@ public class MuteCommandGroup : CommandGroup
                 string.Format(Messages.UserMuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     private async Task<Result> SelectMuteMethodAsync(
@@ -202,7 +202,7 @@ public class MuteCommandGroup : CommandGroup
                 .WithDescription(Messages.DurationRequiredForTimeOuts)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
@@ -266,7 +266,7 @@ public class MuteCommandGroup : CommandGroup
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken);
         }
 
         return await RemoveMuteAsync(executor, target, reason, guildId, data, channelId, bot, CancellationToken);
@@ -289,7 +289,7 @@ public class MuteCommandGroup : CommandGroup
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, ct);
@@ -307,7 +307,7 @@ public class MuteCommandGroup : CommandGroup
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotMuted, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var removeMuteRoleAsync =
@@ -337,7 +337,7 @@ public class MuteCommandGroup : CommandGroup
                 string.Format(Messages.UserUnmuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     private async Task<Result> RemoveMuteRoleAsync(

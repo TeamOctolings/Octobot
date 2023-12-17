@@ -163,7 +163,7 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {target.ID.ToString()}")
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     private static Color AppendGuildInformation(Color color, IGuildMember guildMember, StringBuilder builder)
@@ -312,7 +312,7 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {guild.ID.ToString()}")
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -389,7 +389,7 @@ public class ToolsCommandGroup : CommandGroup
             .WithColour(embedColor)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     private static readonly TimestampStyle[] AllStyles =
@@ -459,6 +459,6 @@ public class ToolsCommandGroup : CommandGroup
             .WithColour(ColorsList.Blue)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }

@@ -226,26 +226,19 @@ public sealed class UtilityService : IHostedService
             .WithColour(color)
             .Build();
 
-        if (!logEmbed.IsDefined(out var logBuilt))
-        {
-            return Result.FromError(logEmbed);
-        }
-
-        var builtArray = new[] { logBuilt };
-
         // Not awaiting to reduce response time
         if (isPublic && publicChannel != channelId)
         {
-            _ = _channelApi.CreateMessageAsync(
-                publicChannel, embeds: builtArray,
+            _ = _channelApi.CreateMessageWithEmbedResultAsync(
+                publicChannel, embedResult: logEmbed,
                 ct: ct);
         }
 
         if (privateChannel != publicChannel
             && privateChannel != channelId)
         {
-            _ = _channelApi.CreateMessageAsync(
-                privateChannel, embeds: builtArray,
+            _ = _channelApi.CreateMessageWithEmbedResultAsync(
+                privateChannel, embedResult: logEmbed,
                 ct: ct);
         }
 

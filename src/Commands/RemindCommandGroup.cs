@@ -26,19 +26,21 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class RemindCommandGroup : CommandGroup
 {
-    private readonly ICommandContext _context;
+    private readonly IInteractionCommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
+    private readonly IDiscordRestInteractionAPI _interactionApi;
 
     public RemindCommandGroup(
-        ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestUserAPI userApi)
+        IInteractionCommandContext context, GuildDataService guildData, IFeedbackService feedback,
+        IDiscordRestUserAPI userApi, IDiscordRestInteractionAPI interactionApi)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+        _interactionApi = interactionApi;
     }
 
     /// <summary>
@@ -72,10 +74,10 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), executor, bot, CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot, CancellationToken);
     }
 
-    private Task<Result> ListRemindersAsync(MemberData data, IUser executor, IUser bot, CancellationToken ct)
+    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot, CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
@@ -83,7 +85,7 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var builder = new StringBuilder();
@@ -92,7 +94,8 @@ public class RemindCommandGroup : CommandGroup
             var reminder = data.Reminders[i];
             builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
-                .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
+                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -101,8 +104,7 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Cyan)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(
-            embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -139,25 +141,29 @@ public class RemindCommandGroup : CommandGroup
         return await AddReminderAsync(@in, text, data, channelId, executor, CancellationToken);
     }
 
-    private Task<Result> AddReminderAsync(
-        TimeSpan @in, string text, GuildData data,
+    private async Task<Result> AddReminderAsync(TimeSpan @in, string text, GuildData data,
         Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
-        var remindAt = DateTimeOffset.UtcNow.Add(@in);
         var memberData = data.GetOrCreateMemberData(executor.ID);
+        var remindAt = DateTimeOffset.UtcNow.Add(@in);
+        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
+        if (!responseResult.IsDefined(out var response))
+        {
+            return (Result)responseResult;
+        }
 
         memberData.Reminders.Add(
             new Reminder
             {
                 At = remindAt,
-                Channel = channelId.Value,
-                Text = text
+                ChannelId = channelId.Value,
+                Text = text,
+                MessageId = response.ID.Value
             });
 
-        var builder = new StringBuilder().AppendBulletPointLine(string.Format(
-                Messages.ReminderText, Markdown.InlineCode(text)))
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
-
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
@@ -165,7 +171,7 @@ public class RemindCommandGroup : CommandGroup
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -208,7 +214,7 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var reminder = data.Reminders[index];
@@ -224,7 +230,6 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(
-            embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }

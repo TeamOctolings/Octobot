@@ -117,7 +117,7 @@ public class BanCommandGroup : CommandGroup
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserAlreadyBanned, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var interactionResult
@@ -132,7 +132,7 @@ public class BanCommandGroup : CommandGroup
             var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
         }
 
         var builder = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason));
@@ -158,12 +158,7 @@ public class BanCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            if (!dmEmbed.IsDefined(out var dmBuilt))
-            {
-                return Result.FromError(dmEmbed);
-            }
-
-            await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: ct);
+            await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
         var banResult = await _guildApi.CreateGuildBanAsync(
@@ -190,7 +185,7 @@ public class BanCommandGroup : CommandGroup
             return Result.FromError(logResult.Error);
         }
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -255,7 +250,7 @@ public class BanCommandGroup : CommandGroup
             var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotBanned, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
         }
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
@@ -281,6 +276,6 @@ public class BanCommandGroup : CommandGroup
             return Result.FromError(logResult.Error);
         }
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }
