@@ -4,7 +4,6 @@
 
 <a href="https://github.com/LabsDevelopment/Octobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LabsDevelopment/Octobot?logo=git"></img></a>
 <a href="https://github.com/Remora/Remora.Discord"><img src="https://img.shields.io/badge/powered_by-Remora.Discord-blue"></img></a>
-<a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
 <a href="https://github.com/LabsDevelopment/Octobot/commit/master"><img src="https://img.shields.io/github/last-commit/LabsDevelopment/Octobot?logo=github"></img></a>
 
 Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/LabsDevelopment) in C# and Remora.Discord
@@ -21,6 +20,13 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 *...a-a-and more!*
 
 [//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
+
+## Invite Octobot <a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
+
+Did you know that Octobot is a public bot? You can invite it to your server and try it without compiling it!
+<p align="center">
+    <a href="https://discord.com/api/oauth2/authorize?client_id=855023234407333888&permissions=1383382133894&scope=bot%20applications.commands"><img src="https://cdn.mctaylors.ru/discord-add-app.png"></img></a>
+</p>
 
 ## Running Octobot
 
