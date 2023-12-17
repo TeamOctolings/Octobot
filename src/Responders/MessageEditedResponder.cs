@@ -36,18 +36,22 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
 
     public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default)
     {
+        if (!gatewayEvent.ID.IsDefined(out var messageId))
+        {
+            return new ArgumentNullError(nameof(gatewayEvent.ID));
+        }
+
+        if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
+        {
+            return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
+        }
+
         if (!gatewayEvent.GuildID.IsDefined(out var guildId))
         {
             return Result.FromSuccess();
         }
 
-        var cfg = await _guildData.GetSettings(guildId, ct);
-        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
-        {
-            return Result.FromSuccess();
-        }
-
-        if (!gatewayEvent.Content.IsDefined(out var newContent))
+        if (gatewayEvent.Author.IsDefined(out var author) && author.IsBot.OrDefault(false))
         {
             return Result.FromSuccess();
         }
@@ -57,14 +61,15 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             return Result.FromSuccess(); // The message wasn't actually edited
         }
 
-        if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
+        if (!gatewayEvent.Content.IsDefined(out var newContent))
         {
-            return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
+            return Result.FromSuccess();
         }
 
-        if (!gatewayEvent.ID.IsDefined(out var messageId))
+        var cfg = await _guildData.GetSettings(guildId, ct);
+        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
-            return new ArgumentNullError(nameof(gatewayEvent.ID));
+            return Result.FromSuccess();
         }
 
         var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
