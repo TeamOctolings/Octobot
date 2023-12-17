@@ -92,17 +92,19 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             .WithCurrentTimestamp()
             .WithColour(ColorsList.Blue)
             .Build();
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
 
-        return (Result)await _channelApi.CreateMessageAsync(
-            GuildSettings.PrivateFeedbackChannel.Get(cfg), embeds: new[] { built }, ct: ct);
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
+            GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed, ct: ct);
     }
 
     private async Task<Result> SendDataLoadFailed(IGuild guild, GuildData data, IUser bot, CancellationToken ct)
     {
+        var channelResult = await _utility.GetEmergencyFeedbackChannel(guild, data, ct);
+        if (!channelResult.IsDefined(out var channel))
+        {
+            return Result.FromError(channelResult);
+        }
+
         var errorEmbed = new EmbedBuilder()
             .WithSmallTitle(Messages.DataLoadFailedTitle, bot)
             .WithDescription(Messages.DataLoadFailedDescription)
@@ -110,18 +112,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             .WithColour(ColorsList.Red)
             .Build();
 
-        if (!errorEmbed.IsDefined(out var errorBuilt))
-        {
-            return Result.FromError(errorEmbed);
-        }
-
-        var channelResult = await _utility.GetEmergencyFeedbackChannel(guild, data, ct);
-        if (!channelResult.IsDefined(out var channel))
-        {
-            return Result.FromError(channelResult);
-        }
-
-        return (Result)await _channelApi.CreateMessageAsync(
-            channel, embeds: new[] { errorBuilt }, ct: ct);
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
+            channel, embedResult: errorEmbed, ct: ct);
     }
 }

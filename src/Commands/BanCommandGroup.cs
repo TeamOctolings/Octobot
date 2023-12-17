@@ -158,12 +158,7 @@ public class BanCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            if (!dmEmbed.IsDefined(out var dmBuilt))
-            {
-                return Result.FromError(dmEmbed);
-            }
-
-            await _channelApi.CreateMessageAsync(dmChannel.ID, embeds: new[] { dmBuilt }, ct: ct);
+            await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
         var banResult = await _guildApi.CreateGuildBanAsync(
