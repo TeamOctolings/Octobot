@@ -65,6 +65,6 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             .WithColour(ColorsList.Red)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }
