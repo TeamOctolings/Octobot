@@ -27,7 +27,8 @@ public sealed class Octobot
     public static readonly AllowedMentions NoMentions = new(
         Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
 
-    public const string RepositoryUrl = "https://github.com/LabsDevelopment/Octobot";
+    public const string OrganizationUrl = "https://github.com/LabsDevelopment";
+    public const string RepositoryUrl = $"{OrganizationUrl}/Octobot";
     public const string IssuesUrl = $"{RepositoryUrl}/issues";
 
     public static async Task Main(string[] args)

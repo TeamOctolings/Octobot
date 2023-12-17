@@ -585,4 +585,7 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Report an issue</value>
   </data>
+  <data name="AboutBotDescription" xml:space="preserve">
+      <value>Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team]({0}) in C# and Remora.Discord.</value>
+  </data>
 </root>

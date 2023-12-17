@@ -1036,5 +1036,13 @@ namespace Octobot {
                 return ResourceManager.GetString("ButtonReportIssue", resourceCulture);
             }
         }
+
+        internal static string AboutBotDescription
+        {
+            get
+            {
+                return ResourceManager.GetString("AboutBotDescription", resourceCulture);
+            }
+        }
     }
 }

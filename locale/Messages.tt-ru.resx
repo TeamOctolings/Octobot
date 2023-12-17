@@ -585,4 +585,7 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>зарепортить баг</value>
   </data>
+  <data name="AboutBotDescription" xml:space="preserve">
+      <value>вииимо! звать меня Octobot (а в прошлом Boyfriend) и я бот который будет модерировать твой сервер. я написан [чуваками из Labs Development]({0}) на C# и Remora.Discord</value>
+  </data>
 </root>

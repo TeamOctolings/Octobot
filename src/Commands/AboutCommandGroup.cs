@@ -83,7 +83,8 @@ public class AboutCommandGroup : CommandGroup
 
     private async Task<Result> SendAboutBotAsync(IUser bot, Snowflake guildId, CancellationToken ct = default)
     {
-        var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
+        var builder = new StringBuilder().AppendLine(string.Format(Messages.AboutBotDescription, Octobot.OrganizationUrl))
+            .Append("### ").AppendLine(Messages.AboutTitleDevelopers);
         foreach (var dev in Developers)
         {
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(

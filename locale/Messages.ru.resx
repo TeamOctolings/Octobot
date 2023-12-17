@@ -585,4 +585,7 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Сообщить о проблеме</value>
   </data>
+  <data name="AboutBotDescription" xml:space="preserve">
+      <value>Виимо! Я — бот общего назначения для модерации (ранее известный как Boyfriend), написанный [командой Labs Development]({0}) на C# и Remora.Discord.</value>
+  </data>
 </root>
