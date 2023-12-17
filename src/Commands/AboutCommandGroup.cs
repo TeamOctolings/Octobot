@@ -103,14 +103,14 @@ public class AboutCommandGroup : CommandGroup
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
             new PartialEmoji(Name: "🌐"),
-            URL: Links.Repository
+            URL: Octobot.IssuesUrl
         );
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Links.Issues
+            URL: Octobot.IssuesUrl
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
