@@ -24,12 +24,7 @@ public static class ChannelApiExtensions
             return Result.FromError(embedResult.Value);
         }
 
-        var rented = ArrayPool<Embed>.Shared.Rent(1);
-        rented[0] = embed;
-        var result = (Result)await channelApi.CreateMessageAsync(channelId, message, nonce, isTextToSpeech, rented,
+        return (Result)await channelApi.CreateMessageAsync(channelId, message, nonce, isTextToSpeech, new[] { embed },
             allowedMentions, messageRefenence, components, stickerIds, attachments, flags, ct);
-        ArrayPool<Embed>.Shared.Return(rented);
-
-        return result;
     }
 }
