@@ -215,10 +215,6 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             .WithCurrentTimestamp()
             .WithColour(ColorsList.White)
             .Build();
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
 
         var roleMention = !GuildSettings.EventNotificationRole.Get(settings).Empty()
             ? Mention.Role(GuildSettings.EventNotificationRole.Get(settings))
@@ -231,8 +227,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             URL: $"https://discord.com/events/{scheduledEvent.GuildID}/{scheduledEvent.ID}"
         );
 
-        return (Result)await _channelApi.CreateMessageAsync(
-            GuildSettings.EventNotificationChannel.Get(settings), roleMention, embeds: new[] { built },
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
+            GuildSettings.EventNotificationChannel.Get(settings), roleMention, embedResult: embed,
             components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
     }
 
@@ -317,14 +313,9 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             .WithCurrentTimestamp()
             .Build();
 
-        if (!startedEmbed.IsDefined(out var startedBuilt))
-        {
-            return Result.FromError(startedEmbed);
-        }
-
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
-            content, embeds: new[] { startedBuilt }, ct: ct);
+            content, embedResult: startedEmbed, ct: ct);
     }
 
     private async Task<Result> SendScheduledEventCompletedMessage(ScheduledEventData eventData, GuildData data,
@@ -348,14 +339,9 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             .WithCurrentTimestamp()
             .Build();
 
-        if (!completedEmbed.IsDefined(out var completedBuilt))
-        {
-            return Result.FromError(completedEmbed);
-        }
-
-        var createResult = (Result)await _channelApi.CreateMessageAsync(
+        var createResult = await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
-            embeds: new[] { completedBuilt }, ct: ct);
+            embedResult: completedEmbed, ct: ct);
         if (createResult.IsSuccess)
         {
             data.ScheduledEvents.Remove(eventData.Id);
@@ -380,13 +366,8 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             .WithCurrentTimestamp()
             .Build();
 
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
-
-        var createResult = (Result)await _channelApi.CreateMessageAsync(
-            GuildSettings.EventNotificationChannel.Get(data.Settings), embeds: new[] { built }, ct: ct);
+        var createResult = await _channelApi.CreateMessageWithEmbedResultAsync(
+            GuildSettings.EventNotificationChannel.Get(data.Settings), embedResult: embed, ct: ct);
         if (createResult.IsSuccess)
         {
             data.ScheduledEvents.Remove(eventData.Id);
@@ -445,14 +426,9 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             .WithColour(ColorsList.Default)
             .Build();
 
-        if (!earlyResult.IsDefined(out var earlyBuilt))
-        {
-            return Result.FromError(earlyResult);
-        }
-
-        return (Result)await _channelApi.CreateMessageAsync(
+        return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.EventNotificationChannel.Get(data.Settings),
             content,
-            embeds: new[] { earlyBuilt }, ct: ct);
+            embedResult: earlyResult, ct: ct);
     }
 }

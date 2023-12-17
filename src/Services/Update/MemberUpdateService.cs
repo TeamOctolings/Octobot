@@ -236,16 +236,11 @@ public sealed partial class MemberUpdateService : BackgroundService
             .WithColour(ColorsList.Magenta)
             .Build();
 
-        if (!embed.IsDefined(out var built))
-        {
-            return Result.FromError(embed);
-        }
-
-        var messageResult = await _channelApi.CreateMessageAsync(
-            reminder.ChannelId.ToSnowflake(), Mention.User(user), embeds: new[] { built }, ct: ct);
+        var messageResult = await _channelApi.CreateMessageWithEmbedResultAsync(
+            reminder.ChannelId.ToSnowflake(), Mention.User(user), embedResult: embed, ct: ct);
         if (!messageResult.IsSuccess)
         {
-            return Result.FromError(messageResult);
+            return messageResult;
         }
 
         data.Reminders.Remove(reminder);
