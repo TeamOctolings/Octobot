@@ -23,7 +23,7 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 
 ## Invite Octobot <a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
 
-Did you know that Octobot is a public bot? You can invite it to your server and try it without building it!
+Did you know that Octobot is a public bot? You can invite it to your server and use it without building it!
 <p align="center">
     <a href="https://discord.com/api/oauth2/authorize?client_id=855023234407333888&permissions=1383382133894&scope=bot%20applications.commands"><img src="https://cdn.mctaylors.ru/discord-add-app.png"></img></a>
 </p>
