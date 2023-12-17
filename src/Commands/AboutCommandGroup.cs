@@ -85,7 +85,7 @@ public class AboutCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder()
-            .WithAuthor(Messages.AboutBot, "https://cdn.mctaylors.ru/octobot-icon.png")
+            .WithAuthor(Messages.AboutBot, iconUrl: "https://cdn.mctaylors.ru/octobot-icon.png")
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
