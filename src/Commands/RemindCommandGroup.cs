@@ -85,7 +85,7 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var builder = new StringBuilder();
@@ -104,8 +104,7 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Cyan)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(
-            embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -172,7 +171,7 @@ public class RemindCommandGroup : CommandGroup
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
     /// <summary>
@@ -215,7 +214,7 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var reminder = data.Reminders[index];
@@ -231,7 +230,6 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(
-            embed, ct);
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }

@@ -100,17 +100,17 @@ public class AboutCommandGroup : CommandGroup
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
             .Build();
-
+            
         var button = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.AboutTitleRepository,
             URL: RepositoryUrl
         );
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct,
+        return await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
                 new ActionRowComponent(new[] { button })
-            }));
+            }), ct);
     }
 }

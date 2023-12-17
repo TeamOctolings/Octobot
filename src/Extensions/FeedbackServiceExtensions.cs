@@ -8,8 +8,8 @@ namespace Octobot.Extensions;
 public static class FeedbackServiceExtensions
 {
     public static async Task<Result> SendContextualEmbedResultAsync(
-        this IFeedbackService feedback, Result<Embed> embedResult, CancellationToken ct = default,
-        FeedbackMessageOptions? options = null)
+        this IFeedbackService feedback, Result<Embed> embedResult,
+        FeedbackMessageOptions? options = null, CancellationToken ct = default)
     {
         if (!embedResult.IsDefined(out var embed))
         {

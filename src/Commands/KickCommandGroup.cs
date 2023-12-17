@@ -104,7 +104,7 @@ public class KickCommandGroup : CommandGroup
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(embed, CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken);
         }
 
         return await KickUserAsync(executor, target, reason, guild, channelId, data, bot, CancellationToken);
@@ -126,7 +126,7 @@ public class KickCommandGroup : CommandGroup
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var dmChannelResult = await _userApi.CreateDMAsync(target.ID, ct);
@@ -171,6 +171,6 @@ public class KickCommandGroup : CommandGroup
                 string.Format(Messages.UserKicked, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct);
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 }
