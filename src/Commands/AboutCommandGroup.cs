@@ -103,7 +103,7 @@ public class AboutCommandGroup : CommandGroup
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
             new PartialEmoji(Name: "🌐"),
-            URL: Octobot.IssuesUrl
+            URL: Octobot.RepositoryUrl
         );
 
         var issuesButton = new ButtonComponent(
