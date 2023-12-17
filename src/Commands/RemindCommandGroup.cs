@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using JetBrains.Annotations;
-using NGettext.Plural.Ast;
 using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Services;
