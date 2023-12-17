@@ -100,7 +100,7 @@ public class AboutCommandGroup : CommandGroup
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
             .Build();
-            
+
         var button = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.AboutTitleRepository,
