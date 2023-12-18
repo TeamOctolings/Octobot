@@ -88,7 +88,9 @@ public class AboutCommandGroup : CommandGroup
         {
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(
                 guildId, dev.Id, ct);
-            var tag = guildMemberResult.IsSuccess ? $"<@{dev.Id}>" : $"@{dev.Username}";
+            var tag = guildMemberResult.IsSuccess
+                ? $"<@{dev.Id}>"
+                : MarkdownExtensions.Hyperlink($"@{dev.Username}", $"https://github.com/{dev.Username}");
 
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
