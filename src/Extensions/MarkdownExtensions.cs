@@ -13,4 +13,17 @@ public static class MarkdownExtensions
     {
         return $"- {text}";
     }
+
+    /// <summary>
+    /// Formats a string to use Markdown URL formatting.
+    /// </summary>
+    /// <param name="text">The input text to format.</param>
+    /// <param name="url">The URL to use in formatting.</param>
+    /// <returns>
+    /// A markdown-formatted string with URL.
+    /// </returns>
+    public static string Url(string text, string url)
+    {
+        return $"[{text}]({url})";
+    }
 }
