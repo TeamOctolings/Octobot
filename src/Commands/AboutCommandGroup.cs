@@ -90,7 +90,7 @@ public class AboutCommandGroup : CommandGroup
                 guildId, dev.Id, ct);
             var tag = guildMemberResult.IsSuccess
                 ? $"<@{dev.Id}>"
-                : MarkdownExtensions.Url($"@{dev.Username}", $"https://github.com/{dev.Username}");
+                : MarkdownExtensions.Hyperlink($"@{dev.Username}", $"https://github.com/{dev.Username}");
 
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
