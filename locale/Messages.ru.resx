@@ -588,7 +588,4 @@
   <data name="ReminderInvalidTimeSpan" xml:space="preserve">
       <value>Указано некорректное время отправки напоминания.</value>
   </data>
-  <data name="ReminderNegativeTimeSpan" xml:space="preserve">
-      <value>Указано отрицательное время отправки напоминания.</value>
-  </data>
 </root>

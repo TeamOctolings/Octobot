@@ -1044,13 +1044,5 @@ namespace Octobot {
                 return ResourceManager.GetString("ReminderInvalidTimeSpan", resourceCulture);
             }
         }
-
-        internal static string ReminderNegativeTimeSpan
-        {
-            get
-            {
-                return ResourceManager.GetString("ReminderNegativeTimeSpan", resourceCulture);
-            }
-        }
     }
 }

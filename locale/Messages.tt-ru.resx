@@ -588,7 +588,4 @@
   <data name="ReminderInvalidTimeSpan" xml:space="preserve">
       <value>ты там правильно напиши когда мне тебя пинать</value>
   </data>
-  <data name="ReminderNegativeTimeSpan" xml:space="preserve">
-      <value>ты там минусы не пиши когда мне тебя пинать</value>
-  </data>
 </root>

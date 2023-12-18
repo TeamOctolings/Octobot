@@ -75,12 +75,10 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot,
-            CancellationToken);
+        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot, CancellationToken);
     }
 
-    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot,
-        CancellationToken ct)
+    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot, CancellationToken ct)
     {
         if (data.Reminders.Count == 0)
         {
@@ -95,12 +93,10 @@ public class RemindCommandGroup : CommandGroup
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition,
-                    Markdown.InlineCode((i + 1).ToString())))
+            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
-                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
-                    $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
+                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -115,7 +111,7 @@ public class RemindCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that schedules a reminder with the specified text.
     /// </summary>
-    /// <param name="in">The period of time which must pass before the reminder will be sent.</param>
+    /// <param name="timeSpanString">The period of time which must pass before the reminder will be sent.</param>
     /// <param name="text">The text of the reminder.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
@@ -125,7 +121,8 @@ public class RemindCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
-        string @in,
+        [Option("in")]
+        string timeSpanString,
         [Description("Reminder text")] [MaxLength(512)]
         string text)
     {
@@ -149,25 +146,14 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(@in, text, data, channelId, bot, executor, CancellationToken);
+        return await AddReminderAsync(timeSpanString, text, data, channelId, bot, executor, CancellationToken);
     }
 
-    private async Task<Result> AddReminderAsync(string strIn, string text, GuildData data,
+    private async Task<Result> AddReminderAsync(string timeSpanString, string text, GuildData data,
         Snowflake channelId, IUser bot, IUser executor, CancellationToken ct = default)
     {
-        if (strIn.StartsWith('-'))
-        {
-            var failedEmbed = new EmbedBuilder()
-                .WithSmallTitle(Messages.ReminderNegativeTimeSpan, bot)
-                .WithColour(ColorsList.Red)
-                .Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
-        }
-
-        var parser = new TimeSpanParser();
-        var parseResult = await parser.TryParseAsync(strIn, ct);
-        if (!parseResult.IsDefined(out var @in))
+        var timeSpan = await ParseReminderAsync(timeSpanString, ct);
+        if (timeSpan == TimeSpan.Zero)
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.ReminderInvalidTimeSpan, bot)
@@ -178,9 +164,8 @@ public class RemindCommandGroup : CommandGroup
         }
 
         var memberData = data.GetOrCreateMemberData(executor.ID);
-        var remindAt = DateTimeOffset.UtcNow.Add(@in);
-        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(
-            _context.Interaction.ApplicationID, _context.Interaction.Token, ct);
+        var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
+        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
         if (!responseResult.IsDefined(out var response))
         {
             return (Result)responseResult;
@@ -198,14 +183,27 @@ public class RemindCommandGroup : CommandGroup
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
-        var embed = new EmbedBuilder()
-            .WithSmallTitle(string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Green)
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
+    private static async Task<TimeSpan> ParseReminderAsync(string timeSpanString, CancellationToken ct)
+    {
+        if (timeSpanString.StartsWith('-'))
+        {
+            return TimeSpan.Zero;
+        }
+
+        var parseResult = await new TimeSpanParser().TryParseAsync(timeSpanString, ct);
+        return !parseResult.IsDefined(out var @in)
+            ? TimeSpan.Zero
+            : @in;
     }
 
     /// <summary>
@@ -236,8 +234,7 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await DeleteReminderAsync(
-            data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
+        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
     }
 
     private Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
@@ -245,8 +242,7 @@ public class RemindCommandGroup : CommandGroup
     {
         if (index >= data.Reminders.Count)
         {
-            var failedEmbed = new EmbedBuilder()
-                .WithSmallTitle(Messages.InvalidReminderPosition, bot)
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -261,8 +257,7 @@ public class RemindCommandGroup : CommandGroup
 
         data.Reminders.RemoveAt(index);
 
-        var embed = new EmbedBuilder()
-            .WithSmallTitle(Messages.ReminderDeleted, bot)
+        var embed = new EmbedBuilder().WithSmallTitle(Messages.ReminderDeleted, bot)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Green)
             .Build();
