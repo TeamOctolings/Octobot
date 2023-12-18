@@ -95,7 +95,8 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, bot)
+        var embed = new EmbedBuilder()
+            .WithSmallTitle(string.Format(Messages.AboutBot, bot.Username), bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")

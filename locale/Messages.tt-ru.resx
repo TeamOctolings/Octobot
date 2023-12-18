@@ -400,7 +400,7 @@
     <value>репа Octobot (тык)</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>немного об Octobot</value>
+      <value>немного об {0}</value>
   </data>
   <data name="AboutDeveloper@mctaylors" xml:space="preserve">
     <value>скучный девелопер + дизайнер создавший Octobot's Wiki</value>

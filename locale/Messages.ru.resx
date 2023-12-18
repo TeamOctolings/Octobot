@@ -400,7 +400,7 @@
     <value>Исходный код Octobot</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>Об Octobot</value>
+      <value>Об {0}</value>
   </data>
   <data name="AboutDeveloper@neroduckale" xml:space="preserve">
     <value>разработчик</value>
