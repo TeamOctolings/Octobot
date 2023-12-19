@@ -25,6 +25,18 @@ public static class GuildSettings
     public static readonly Option<string> WelcomeMessage = new("WelcomeMessage", "default");
 
     /// <summary>
+    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when member leaves the server.
+    /// </summary>
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item>No message will be sent if set to "off", "disable" or "disabled".</item>
+    ///         <item><see cref="Messages.DefaultLeaveMessage" /> will be sent if set to "default" or "reset"</item>
+    ///     </list>
+    /// </remarks>
+    /// <seealso cref="GuildMemberLeftResponder" />
+    public static readonly Option<string> LeaveMessage = new("LeaveMessage", "default");
+
+    /// <summary>
     ///     Controls whether or not the <see cref="Messages.Ready" /> message should be sent
     ///     in <see cref="PrivateFeedbackChannel" /> on startup.
     /// </summary>

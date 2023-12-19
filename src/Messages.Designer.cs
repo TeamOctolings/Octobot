@@ -1036,5 +1036,23 @@ namespace Octobot {
                 return ResourceManager.GetString("ButtonReportIssue", resourceCulture);
             }
         }
+
+        internal static string DefaultLeaveMessage {
+            get {
+                return ResourceManager.GetString("DefaultLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string SettingsLeaveMessage {
+            get {
+                return ResourceManager.GetString("SettingsLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string SettingsSendLeaveMessages {
+            get {
+                return ResourceManager.GetString("SettingsSendLeaveMessages", resourceCulture);
+            }
+        }
     }
 }

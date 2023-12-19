@@ -39,6 +39,7 @@ public class SettingsCommandGroup : CommandGroup
     {
         GuildSettings.Language,
         GuildSettings.WelcomeMessage,
+        GuildSettings.LeaveMessage,
         GuildSettings.ReceiveStartupMessages,
         GuildSettings.RemoveRolesOnMute,
         GuildSettings.ReturnRolesOnRejoin,
