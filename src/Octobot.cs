@@ -2,11 +2,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Octobot.Commands;
 using Octobot.Commands.Events;
 using Octobot.Services;
 using Octobot.Services.Update;
-using Remora.Commands.Extensions;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
@@ -14,8 +12,8 @@ using Remora.Discord.Caching.Extensions;
 using Remora.Discord.Caching.Services;
 using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Services;
+using Remora.Discord.Extensions.Extensions;
 using Remora.Discord.Gateway;
-using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Hosting.Extensions;
 using Remora.Rest.Core;
 using Serilog.Extensions.Logging;
@@ -82,6 +80,8 @@ public sealed class Octobot
                         // Init
                         .AddDiscordCaching()
                         .AddDiscordCommands(true, false)
+                        .AddRespondersFromAssembly(typeof(Octobot).Assembly)
+                        .AddCommandGroupsFromAssembly(typeof(Octobot).Assembly)
                         // Slash command event handlers
                         .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
@@ -91,25 +91,7 @@ public sealed class Octobot
                         .AddHostedService<GuildDataService>(provider => provider.GetRequiredService<GuildDataService>())
                         .AddHostedService<MemberUpdateService>()
                         .AddHostedService<ScheduledEventUpdateService>()
-                        .AddHostedService<SongUpdateService>()
-                        // Slash commands
-                        .AddCommandTree()
-                        .WithCommandGroup<AboutCommandGroup>()
-                        .WithCommandGroup<BanCommandGroup>()
-                        .WithCommandGroup<ClearCommandGroup>()
-                        .WithCommandGroup<KickCommandGroup>()
-                        .WithCommandGroup<MuteCommandGroup>()
-                        .WithCommandGroup<PingCommandGroup>()
-                        .WithCommandGroup<RemindCommandGroup>()
-                        .WithCommandGroup<SettingsCommandGroup>()
-                        .WithCommandGroup<ToolsCommandGroup>();
-                    var responderTypes = typeof(Octobot).Assembly
-                        .GetExportedTypes()
-                        .Where(t => t.IsResponder());
-                    foreach (var responderType in responderTypes)
-                    {
-                        services.AddResponder(responderType);
-                    }
+                        .AddHostedService<SongUpdateService>();
                 }
             ).ConfigureLogging(
                 c => c.AddConsole()
