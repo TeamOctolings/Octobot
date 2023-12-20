@@ -18,7 +18,7 @@ public static class GuildSettings
     /// <remarks>
     ///     <list type="bullet">
     ///         <item>No message will be sent if set to "off", "disable" or "disabled".</item>
-    ///         <item><see cref="Messages.DefaultWelcomeMessage" /> will be sent if set to "default" or "reset"</item>
+    ///         <item><see cref="Messages.DefaultWelcomeMessage" /> will be sent if set to "default" or "reset".</item>
     ///     </list>
     /// </remarks>
     /// <seealso cref="GuildMemberJoinedResponder" />
@@ -30,7 +30,7 @@ public static class GuildSettings
     /// <remarks>
     ///     <list type="bullet">
     ///         <item>No message will be sent if set to "off", "disable" or "disabled".</item>
-    ///         <item><see cref="Messages.DefaultLeaveMessage" /> will be sent if set to "default" or "reset"</item>
+    ///         <item><see cref="Messages.DefaultLeaveMessage" /> will be sent if set to "default" or "reset".</item>
     ///     </list>
     /// </remarks>
     /// <seealso cref="GuildMemberLeftResponder" />
