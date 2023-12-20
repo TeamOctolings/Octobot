@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Text;
 using System.Text.Json.Nodes;
-using Microsoft.Extensions.Hosting;
 using Octobot.Data;
 using Octobot.Extensions;
 using Remora.Discord.API.Abstractions.Objects;
