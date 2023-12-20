@@ -36,7 +36,7 @@ public class SettingsCommandGroup : CommandGroup
     ///     that the orders match.
     /// </remarks>
     private static readonly IOption[] AllOptions =
-    {
+    [
         GuildSettings.Language,
         GuildSettings.WelcomeMessage,
         GuildSettings.ReceiveStartupMessages,
@@ -51,7 +51,7 @@ public class SettingsCommandGroup : CommandGroup
         GuildSettings.MuteRole,
         GuildSettings.EventNotificationRole,
         GuildSettings.EventEarlyNotificationOffset
-    };
+    ];
 
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
