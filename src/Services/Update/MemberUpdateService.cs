@@ -16,7 +16,7 @@ namespace Octobot.Services.Update;
 public sealed partial class MemberUpdateService : BackgroundService
 {
     private static readonly string[] GenericNicknames =
-    {
+    [
         "Albatross", "Alpha", "Anchor", "Banjo", "Bell", "Beta", "Blackbird", "Bulldog", "Canary",
         "Cat", "Calf", "Cyclone", "Daisy", "Dalmatian", "Dart", "Delta", "Diamond", "Donkey", "Duck",
         "Emu", "Eclipse", "Flamingo", "Flute", "Frog", "Goose", "Hatchet", "Heron", "Husky", "Hurricane",
@@ -24,16 +24,16 @@ public sealed partial class MemberUpdateService : BackgroundService
         "Nautilus", "Ostrich", "Octopus", "Pelican", "Puffin", "Pyramid", "Rattle", "Robin", "Rose",
         "Salmon", "Seal", "Shark", "Sheep", "Snake", "Sonar", "Stump", "Sparrow", "Toaster", "Toucan",
         "Torus", "Violet", "Vortex", "Vulture", "Wagon", "Whale", "Woodpecker", "Zebra", "Zigzag"
-    };
+    ];
 
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<MemberUpdateService> _logger;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public MemberUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildAPI guildApi,
-        GuildDataService guildData, ILogger<MemberUpdateService> logger, UtilityService utility)
+        GuildDataService guildData, ILogger<MemberUpdateService> logger, Utility utility)
     {
         _channelApi = channelApi;
         _guildApi = guildApi;

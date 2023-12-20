@@ -400,7 +400,7 @@
     <value>Octobot's source code</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>About Octobot</value>
+      <value>About {0}</value>
   </data>
   <data name="AboutDeveloper@mctaylors" xml:space="preserve">
     <value>developer &amp; designer, Octobot's Wiki creator</value>

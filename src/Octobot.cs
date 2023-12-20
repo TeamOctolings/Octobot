@@ -87,7 +87,7 @@ public sealed class Octobot
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
                         // Services
                         .AddSingleton<GuildDataService>()
-                        .AddSingleton<UtilityService>()
+                        .AddSingleton<Utility>()
                         .AddHostedService<MemberUpdateService>()
                         .AddHostedService<ScheduledEventUpdateService>()
                         .AddHostedService<SongUpdateService>()
