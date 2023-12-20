@@ -9,7 +9,7 @@ namespace Octobot.Services.Update;
 public sealed class SongUpdateService : BackgroundService
 {
     private static readonly (string Author, string Name, TimeSpan Duration)[] SongList =
-    {
+    [
         ("Yoko & the Gold Bazookas", "Rockagilly Blues", new TimeSpan(0, 2, 52)),
         ("Deep Cut", "Big Betrayal", new TimeSpan(0, 5, 55)),
         ("Squid Sisters", "Tomorrow's Nostalgia Today", new TimeSpan(0, 3, 7)),
@@ -30,7 +30,7 @@ public sealed class SongUpdateService : BackgroundService
         ("Turquoise October", "Octoling Rendezvous", new TimeSpan(0, 1, 57)),
         ("Damp Socks feat. Off the Hook", "Tentacle to the Metal", new TimeSpan(0, 2, 51)),
         ("Off the Hook", "Fly Octo Fly ~ Ebb & Flow (Octo)", new TimeSpan(0, 3, 5))
-    };
+    ];
 
     private readonly List<Activity> _activityList = [new Activity("with Remora.Discord", ActivityType.Game)];
 

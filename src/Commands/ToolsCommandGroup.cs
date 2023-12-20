@@ -393,7 +393,7 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     private static readonly TimestampStyle[] AllStyles =
-    {
+    [
         TimestampStyle.ShortDate,
         TimestampStyle.LongDate,
         TimestampStyle.ShortTime,
@@ -401,7 +401,7 @@ public class ToolsCommandGroup : CommandGroup
         TimestampStyle.ShortDateTime,
         TimestampStyle.LongDateTime,
         TimestampStyle.RelativeTime
-    };
+    ];
 
     /// <summary>
     ///     A slash command that shows the current timestamp with an optional offset in all styles supported by Discord.

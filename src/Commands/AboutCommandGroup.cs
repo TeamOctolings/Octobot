@@ -28,11 +28,11 @@ namespace Octobot.Commands;
 public class AboutCommandGroup : CommandGroup
 {
     private static readonly (string Username, Snowflake Id)[] Developers =
-    {
+    [
         ("Octol1ttle", new Snowflake(504343489664909322)),
         ("mctaylors", new Snowflake(326642240229474304)),
         ("neroduckale", new Snowflake(474943797063843851))
-    };
+    ];
 
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
