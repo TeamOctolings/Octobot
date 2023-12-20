@@ -24,11 +24,11 @@ namespace Octobot;
 
 public sealed class Octobot
 {
-    public static readonly AllowedMentions NoMentions = new(
-        Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
-
     public const string RepositoryUrl = "https://github.com/LabsDevelopment/Octobot";
     public const string IssuesUrl = $"{RepositoryUrl}/issues";
+
+    public static readonly AllowedMentions NoMentions = new(
+        Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
 
     public static async Task Main(string[] args)
     {
@@ -86,12 +86,12 @@ public sealed class Octobot
                         .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
                         // Services
-                        .AddSingleton<GuildDataService>()
                         .AddSingleton<Utility>()
+                        .AddSingleton<GuildDataService>()
+                        .AddHostedService<GuildDataService>(provider => provider.GetRequiredService<GuildDataService>())
                         .AddHostedService<MemberUpdateService>()
                         .AddHostedService<ScheduledEventUpdateService>()
                         .AddHostedService<SongUpdateService>()
-                        .AddHostedService<BackgroundGuildDataSaverService>()
                         // Slash commands
                         .AddCommandTree()
                         .WithCommandGroup<AboutCommandGroup>()
