@@ -124,30 +124,19 @@ public class ToolsCommandGroup : CommandGroup
 
         var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
                       communicationDisabledUntil is not null;
+        var wasBanned = memberData.BannedUntil is not null;
+        var wasKicked = memberData.Kicked;
 
-        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, target.ID, ct);
-
-        if (isMuted || existingBanResult.IsDefined())
+        if (isMuted || wasBanned || wasKicked)
         {
             builder.Append("### ")
                 .AppendLine(Markdown.Bold(Messages.UserInfoPunishments));
+
+            embedColor = AppendPunishmentsInformation(isMuted, wasKicked, wasBanned, memberData,
+                builder, embedColor, communicationDisabledUntil);
         }
 
-        if (isMuted)
-        {
-            AppendMuteInformation(memberData, communicationDisabledUntil, builder);
-
-            embedColor = ColorsList.Red;
-        }
-
-        if (existingBanResult.IsDefined())
-        {
-            AppendBanInformation(memberData, builder);
-
-            embedColor = ColorsList.Black;
-        }
-
-        if (!guildMemberResult.IsSuccess && !existingBanResult.IsDefined())
+        if (!guildMemberResult.IsSuccess || !wasBanned || !wasKicked)
         {
             builder.Append("### ")
                 .AppendLine(Markdown.Bold(Messages.UserInfoNotOnGuild));
@@ -164,6 +153,29 @@ public class ToolsCommandGroup : CommandGroup
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
+    private static Color AppendPunishmentsInformation(bool isMuted, bool wasKicked, bool wasBanned,
+        MemberData memberData, StringBuilder builder, Color embedColor, DateTimeOffset? communicationDisabledUntil)
+    {
+        if (isMuted)
+        {
+            AppendMuteInformation(memberData, communicationDisabledUntil, builder);
+            embedColor = ColorsList.Red;
+        }
+
+        if (wasKicked)
+        {
+            builder.AppendBulletPointLine(Messages.UserInfoKicked);
+        }
+
+        if (wasBanned)
+        {
+            AppendBanInformation(memberData, builder);
+            embedColor = ColorsList.Black;
+        }
+
+        return embedColor;
     }
 
     private static Color AppendGuildInformation(Color color, IGuildMember guildMember, StringBuilder builder)
