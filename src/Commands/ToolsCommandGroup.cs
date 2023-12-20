@@ -136,7 +136,7 @@ public class ToolsCommandGroup : CommandGroup
                 builder, embedColor, communicationDisabledUntil);
         }
 
-        if (!guildMemberResult.IsSuccess || !wasBanned || !wasKicked)
+        if (!guildMemberResult.IsSuccess && !wasBanned)
         {
             builder.Append("### ")
                 .AppendLine(Markdown.Bold(Messages.UserInfoNotOnGuild));
