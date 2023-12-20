@@ -1048,11 +1048,5 @@ namespace Octobot {
                 return ResourceManager.GetString("SettingsLeaveMessage", resourceCulture);
             }
         }
-
-        internal static string SettingsSendLeaveMessages {
-            get {
-                return ResourceManager.GetString("SettingsSendLeaveMessages", resourceCulture);
-            }
-        }
     }
 }

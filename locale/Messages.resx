@@ -588,9 +588,6 @@
   <data name="DefaultLeaveMessage" xml:space="preserve">
       <value>See you soon, {0}!</value>
   </data>
-  <data name="SettingsSendLeaveMessages" xml:space="preserve">
-      <value>Send leave messages</value>
-  </data>
   <data name="SettingsLeaveMessage" xml:space="preserve">
       <value>Leave message</value>
   </data>

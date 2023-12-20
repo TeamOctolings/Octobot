@@ -13,7 +13,7 @@ public static class GuildSettings
     public static readonly LanguageOption Language = new("Language", "en");
 
     /// <summary>
-    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a new member joins the server.
+    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a new member joins the guild.
     /// </summary>
     /// <remarks>
     ///     <list type="bullet">
@@ -25,7 +25,7 @@ public static class GuildSettings
     public static readonly Option<string> WelcomeMessage = new("WelcomeMessage", "default");
 
     /// <summary>
-    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when member leaves the server.
+    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a member leaves the guild.
     /// </summary>
     /// <remarks>
     ///     <list type="bullet">
