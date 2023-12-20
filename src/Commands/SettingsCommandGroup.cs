@@ -57,11 +57,11 @@ public class SettingsCommandGroup : CommandGroup
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public SettingsCommandGroup(
         ICommandContext context, GuildDataService guildData,
-        IFeedbackService feedback, IDiscordRestUserAPI userApi, UtilityService utility)
+        IFeedbackService feedback, IDiscordRestUserAPI userApi, Utility utility)
     {
         _context = context;
         _guildData = guildData;

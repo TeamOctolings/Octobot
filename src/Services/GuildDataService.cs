@@ -11,7 +11,7 @@ namespace Octobot.Services;
 /// <summary>
 ///     Handles saving, loading, initializing and providing <see cref="GuildData" />.
 /// </summary>
-public sealed class GuildDataService : IHostedService
+public sealed class GuildDataService
 {
     private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
     private readonly ILogger<GuildDataService> _logger;
@@ -22,16 +22,6 @@ public sealed class GuildDataService : IHostedService
     {
         _logger = logger;
         lifetime.ApplicationStopping.Register(ApplicationStopping);
-    }
-
-    public Task StartAsync(CancellationToken ct)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken ct)
-    {
-        return Task.CompletedTask;
     }
 
     private void ApplicationStopping()

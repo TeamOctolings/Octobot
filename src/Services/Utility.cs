@@ -17,14 +17,14 @@ namespace Octobot.Services;
 ///     Provides utility methods that cannot be transformed to extension methods because they require usage
 ///     of some Discord APIs.
 /// </summary>
-public sealed class UtilityService : IHostedService
+public sealed class Utility
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly IDiscordRestUserAPI _userApi;
 
-    public UtilityService(
+    public Utility(
         IDiscordRestChannelAPI channelApi, IDiscordRestGuildScheduledEventAPI eventApi, IDiscordRestGuildAPI guildApi,
         IDiscordRestUserAPI userApi)
     {
@@ -32,16 +32,6 @@ public sealed class UtilityService : IHostedService
         _eventApi = eventApi;
         _guildApi = guildApi;
         _userApi = userApi;
-    }
-
-    public Task StartAsync(CancellationToken ct)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken ct)
-    {
-        return Task.CompletedTask;
     }
 
     /// <summary>
