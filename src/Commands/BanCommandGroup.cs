@@ -33,12 +33,12 @@ public class BanCommandGroup : CommandGroup
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public BanCommandGroup(
         ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
         IFeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
-        UtilityService utility)
+        Utility utility)
     {
         _context = context;
         _channelApi = channelApi;

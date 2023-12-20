@@ -30,10 +30,10 @@ public sealed partial class MemberUpdateService : BackgroundService
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<MemberUpdateService> _logger;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public MemberUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildAPI guildApi,
-        GuildDataService guildData, ILogger<MemberUpdateService> logger, UtilityService utility)
+        GuildDataService guildData, ILogger<MemberUpdateService> logger, Utility utility)
     {
         _channelApi = channelApi;
         _guildApi = guildApi;
