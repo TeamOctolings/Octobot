@@ -15,6 +15,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Messages;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
@@ -90,7 +91,7 @@ public class AboutCommandGroup : CommandGroup
                 guildId, dev.Id, ct);
             var tag = guildMemberResult.IsSuccess
                 ? $"<@{dev.Id}>"
-                : MarkdownExtensions.Hyperlink($"@{dev.Username}", $"https://github.com/{dev.Username}");
+                : Markdown.Hyperlink($"@{dev.Username}", $"https://github.com/{dev.Username}");
 
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
