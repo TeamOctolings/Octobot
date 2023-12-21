@@ -585,4 +585,7 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Report an issue</value>
   </data>
+  <data name="UserInfoKicked" xml:space="preserve">
+      <value>Kicked</value>
+  </data>
 </root>

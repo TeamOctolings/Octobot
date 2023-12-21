@@ -43,6 +43,8 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var cfg = data.Settings;
         var memberData = data.GetOrCreateMemberData(user.ID);
 
+        memberData.Kicked = false;
+
         var returnRolesResult = await TryReturnRolesAsync(cfg, memberData, gatewayEvent.GuildID, user.ID, ct);
         if (!returnRolesResult.IsSuccess)
         {

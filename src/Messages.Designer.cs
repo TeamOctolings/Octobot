@@ -1036,5 +1036,13 @@ namespace Octobot {
                 return ResourceManager.GetString("ButtonReportIssue", resourceCulture);
             }
         }
+
+        internal static string UserInfoKicked
+        {
+            get
+            {
+                return ResourceManager.GetString("UserInfoKicked", resourceCulture);
+            }
+        }
     }
 }

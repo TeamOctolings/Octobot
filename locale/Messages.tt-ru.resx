@@ -502,7 +502,7 @@
     <value>приколы полученные по заслугам</value>
   </data>
   <data name="UserInfoBannedPermanently" xml:space="preserve">
-    <value>забанен</value>
+    <value>пермабан</value>
   </data>
   <data name="UserInfoNotOnGuild" xml:space="preserve">
     <value>вышел из сервера</value>
@@ -584,5 +584,8 @@
   </data>
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>зарепортить баг</value>
+  </data>
+  <data name="UserInfoKicked" xml:space="preserve">
+      <value>кикнут</value>
   </data>
 </root>
