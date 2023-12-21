@@ -123,7 +123,7 @@ public class ToolsCommandGroup : CommandGroup
         }
 
         var wasMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
-                      communicationDisabledUntil is not null;
+                       communicationDisabledUntil is not null;
         var wasBanned = memberData.BannedUntil is not null;
         var wasKicked = memberData.Kicked;
 
