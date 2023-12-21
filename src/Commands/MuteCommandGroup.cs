@@ -300,9 +300,9 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var memberData = data.GetOrCreateMemberData(target.ID);
-        var isMuted = memberData.MutedUntil is not null || communicationDisabledUntil is not null;
+        var wasMuted = memberData.MutedUntil is not null || communicationDisabledUntil is not null;
 
-        if (!isMuted)
+        if (!wasMuted)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotMuted, bot)
                 .WithColour(ColorsList.Red).Build();

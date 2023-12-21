@@ -502,7 +502,7 @@
     <value>приколы полученные по заслугам</value>
   </data>
   <data name="UserInfoBannedPermanently" xml:space="preserve">
-    <value>забанен</value>
+    <value>пермабан</value>
   </data>
   <data name="UserInfoNotOnGuild" xml:space="preserve">
     <value>вышел из сервера</value>
@@ -590,5 +590,8 @@
   </data>
   <data name="SettingsLeaveMessage" xml:space="preserve">
       <value>до свидания (типо настройка)</value>
+  </data>
+  <data name="UserInfoKicked" xml:space="preserve">
+      <value>кикнут</value>
   </data>
 </root>

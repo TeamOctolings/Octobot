@@ -151,7 +151,9 @@ public class KickCommandGroup : CommandGroup
             return Result.FromError(kickResult.Error);
         }
 
-        data.GetOrCreateMemberData(target.ID).Roles.Clear();
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.Roles.Clear();
+        memberData.Kicked = true;
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));
