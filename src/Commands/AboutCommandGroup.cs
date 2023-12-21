@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -36,20 +37,22 @@ public class AboutCommandGroup : CommandGroup
 
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
-    private readonly GuildDataService _guildData;
-    private readonly IDiscordRestUserAPI _userApi;
     private readonly IDiscordRestGuildAPI _guildApi;
+    private readonly GuildDataService _guildData;
+    private readonly Profiler _profiler;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public AboutCommandGroup(
         ICommandContext context, GuildDataService guildData,
         IFeedbackService feedback, IDiscordRestUserAPI userApi,
-        IDiscordRestGuildAPI guildApi)
+        IDiscordRestGuildAPI guildApi, Profiler profiler)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
         _guildApi = guildApi;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -65,25 +68,35 @@ public class AboutCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteAboutAsync()
     {
+        _profiler.Push("about_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
+        _profiler.Pop();
 
-        return await SendAboutBotAsync(bot, guildId, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await SendAboutBotAsync(bot, guildId, CancellationToken));
     }
 
     private async Task<Result> SendAboutBotAsync(IUser bot, Snowflake guildId, CancellationToken ct = default)
     {
+        _profiler.Push("main");
+        _profiler.Push("builder_construction");
         var builder = new StringBuilder().Append("### ").AppendLine(Messages.AboutTitleDevelopers);
         foreach (var dev in Developers)
         {
@@ -96,6 +109,8 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.AboutBot, bot.Username), bot)
             .WithDescription(builder.ToString())
@@ -117,10 +132,10 @@ public class AboutCommandGroup : CommandGroup
             URL: Octobot.IssuesUrl
         );
 
-        return await _feedback.SendContextualEmbedResultAsync(embed,
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
                 new ActionRowComponent(new[] { repositoryButton, issuesButton })
-            }), ct);
+            }), ct));
     }
 }

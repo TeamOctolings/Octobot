@@ -3,9 +3,6 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using Remora.Results;
 
-// TODO: remove in future profiler PRs
-// ReSharper disable All
-
 namespace Octobot.Services.Profiler;
 
 /// <summary>
@@ -14,9 +11,10 @@ namespace Octobot.Services.Profiler;
 /// <remarks>Resolve <see cref="ProfilerFactory"/> instead in singletons.</remarks>
 public sealed class Profiler
 {
-    private const int MaxProfilerTime = 1000; // milliseconds
+    private const int MaxProfilerTime = 10; // milliseconds
     private readonly List<ProfilerEvent> _events = [];
     private readonly ILogger<Profiler> _logger;
+    private int _runningStopwatches;
 
     public Profiler(ILogger<Profiler> logger)
     {
@@ -29,10 +27,12 @@ public sealed class Profiler
     /// <param name="id">The ID of the event.</param>
     public void Push(string id)
     {
+        _runningStopwatches++;
         _events.Add(new ProfilerEvent
         {
             Id = id,
-            Stopwatch = Stopwatch.StartNew()
+            Stopwatch = Stopwatch.StartNew(),
+            NestingLevel = _runningStopwatches - 1
         });
     }
 
@@ -42,18 +42,25 @@ public sealed class Profiler
     /// <exception cref="InvalidOperationException">Thrown if the profiler contains no events.</exception>
     public void Pop()
     {
-        if (_events.Count is 0)
+        if (_runningStopwatches is 0)
         {
             throw new InvalidOperationException("Nothing to pop");
         }
 
-        _events.Last().Stopwatch.Stop();
+        _runningStopwatches--;
+        _events.FindLast(item => item.Stopwatch.IsRunning).Stopwatch.Stop();
+    }
+
+    public Result PopWithResult(Result result)
+    {
+        Pop();
+        return result;
     }
 
     /// <summary>
     /// If the profiler took too long to execute, this will log a warning with per-event time usage
     /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException">Thrown if there are stopwatches still running.</exception>
     private void Report()
     {
         var main = _events[0];
@@ -67,17 +74,15 @@ public sealed class Profiler
         for (var i = 1; i < _events.Count; i++)
         {
             var profilerEvent = _events[i];
-            if (profilerEvent.Stopwatch.IsRunning)
-            {
-                throw new InvalidOperationException(
-                    $"Tried to report on a profiler with running stopwatches: {profilerEvent.Id}");
-            }
-
-            builder.AppendLine($"{profilerEvent.Id}: {profilerEvent.Stopwatch.ElapsedMilliseconds}ms");
+            builder.Append(' ', profilerEvent.NestingLevel * 4)
+                .AppendLine($"{profilerEvent.Id}: {profilerEvent.Stopwatch.ElapsedMilliseconds}ms");
             unprofiled -= profilerEvent.Stopwatch.ElapsedMilliseconds;
         }
 
-        builder.AppendLine($"<unprofiled>: {unprofiled}ms");
+        if (unprofiled > 0)
+        {
+            builder.AppendLine($"<unprofiled>: {unprofiled}ms");
+        }
 
         _logger.LogWarning("Profiler {ID} took {Elapsed} milliseconds to execute (max: {Max}ms):{Events}", main.Id,
             main.Stopwatch.ElapsedMilliseconds, MaxProfilerTime, builder.ToString());
@@ -86,9 +91,13 @@ public sealed class Profiler
     /// <summary>
     /// <see cref="Pop"/> the profiler and <see cref="Report"/> on it afterwards.
     /// </summary>
-    public void PopAndReport()
+    private void PopAndReport()
     {
-        Pop();
+        while (_runningStopwatches > 0)
+        {
+            Pop();
+        }
+
         Report();
     }
 
