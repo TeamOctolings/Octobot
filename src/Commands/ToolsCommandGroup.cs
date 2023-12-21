@@ -122,17 +122,17 @@ public class ToolsCommandGroup : CommandGroup
             embedColor = AppendGuildInformation(embedColor, guildMember, builder);
         }
 
-        var isMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
+        var wasMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
                       communicationDisabledUntil is not null;
         var wasBanned = memberData.BannedUntil is not null;
         var wasKicked = memberData.Kicked;
 
-        if (isMuted || wasBanned || wasKicked)
+        if (wasMuted || wasBanned || wasKicked)
         {
             builder.Append("### ")
                 .AppendLine(Markdown.Bold(Messages.UserInfoPunishments));
 
-            embedColor = AppendPunishmentsInformation(isMuted, wasKicked, wasBanned, memberData,
+            embedColor = AppendPunishmentsInformation(wasMuted, wasKicked, wasBanned, memberData,
                 builder, embedColor, communicationDisabledUntil);
         }
 
@@ -155,10 +155,10 @@ public class ToolsCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
-    private static Color AppendPunishmentsInformation(bool isMuted, bool wasKicked, bool wasBanned,
+    private static Color AppendPunishmentsInformation(bool wasMuted, bool wasKicked, bool wasBanned,
         MemberData memberData, StringBuilder builder, Color embedColor, DateTimeOffset? communicationDisabledUntil)
     {
-        if (isMuted)
+        if (wasMuted)
         {
             AppendMuteInformation(memberData, communicationDisabledUntil, builder);
             embedColor = ColorsList.Red;
