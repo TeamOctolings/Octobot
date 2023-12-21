@@ -584,7 +584,7 @@
   </data>
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Report an issue</value>
-  </data
+  </data>
   <data name="DefaultLeaveMessage" xml:space="preserve">
       <value>See you soon, {0}!</value>
   </data>

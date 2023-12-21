@@ -35,6 +35,17 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
         var data = await _guildData.GetData(gatewayEvent.GuildID, ct);
         var cfg = data.Settings;
 
+        var memberData = data.GetOrCreateMemberData(user.ID);
+        if (memberData.BannedUntil is not null)
+        {
+            return Result.FromSuccess();
+        }
+
+        if (memberData.Kicked)
+        {
+            return Result.FromSuccess();
+        }
+
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
             || GuildSettings.LeaveMessage.Get(cfg) is "off" or "disable" or "disabled")
         {
