@@ -585,7 +585,7 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Report an issue</value>
   </data>
-  <data name="ReminderInvalidTimeSpan" xml:space="preserve">
-      <value>Incorrect reminder send time specified.</value>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+      <value>Incorrect time specified.</value>
   </data>
 </root>

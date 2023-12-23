@@ -585,7 +585,7 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>зарепортить баг</value>
   </data>
-  <data name="ReminderInvalidTimeSpan" xml:space="preserve">
-      <value>ты там правильно напиши когда мне тебя пинать</value>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+      <value>ты там правильно напиши таймспан</value>
   </data>
 </root>

@@ -7,7 +7,6 @@ using Octobot.Extensions;
 using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
-using Remora.Commands.Parsers;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Attributes;
@@ -18,6 +17,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
+using TimeSpanParser = Octobot.Parsers.TimeSpanParser;
 
 namespace Octobot.Commands;
 
@@ -111,7 +111,7 @@ public class RemindCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that schedules a reminder with the specified text.
     /// </summary>
-    /// <param name="timeSpanString">The period of time which must pass before the reminder will be sent.</param>
+    /// <param name="stringIn">The period of time which must pass before the reminder will be sent.</param>
     /// <param name="text">The text of the reminder.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
@@ -122,7 +122,7 @@ public class RemindCommandGroup : CommandGroup
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
         [Option("in")]
-        string timeSpanString,
+        string stringIn,
         [Description("Reminder text")] [MaxLength(512)]
         string text)
     {
@@ -146,17 +146,22 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await AddReminderAsync(timeSpanString, text, data, channelId, bot, executor, CancellationToken);
+        return await AddReminderAsync(stringIn, text, data, channelId, bot, executor, CancellationToken);
     }
 
-    private async Task<Result> AddReminderAsync(string timeSpanString, string text, GuildData data,
+    private async Task<Result> AddReminderAsync(string stringIn, string text, GuildData data,
         Snowflake channelId, IUser bot, IUser executor, CancellationToken ct = default)
     {
-        var timeSpan = await ParseReminderAsync(timeSpanString, ct);
-        if (timeSpan == TimeSpan.Zero)
+        var parseResult = TimeSpanParser.TryParse(stringIn, ct);
+        if (!parseResult.IsDefined(out var timeSpanIn))
+        {
+            return Result.FromError(parseResult);
+        }
+
+        if (timeSpanIn == TimeSpan.Zero)
         {
             var failedEmbed = new EmbedBuilder()
-                .WithSmallTitle(Messages.ReminderInvalidTimeSpan, bot)
+                .WithSmallTitle(Messages.InvalidTimeSpan, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -164,7 +169,7 @@ public class RemindCommandGroup : CommandGroup
         }
 
         var memberData = data.GetOrCreateMemberData(executor.ID);
-        var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
+        var remindAt = DateTimeOffset.UtcNow.Add(timeSpanIn);
         var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
         if (!responseResult.IsDefined(out var response))
         {
@@ -191,19 +196,6 @@ public class RemindCommandGroup : CommandGroup
             .Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
-    }
-
-    private static async Task<TimeSpan> ParseReminderAsync(string timeSpanString, CancellationToken ct)
-    {
-        if (timeSpanString.StartsWith('-'))
-        {
-            return TimeSpan.Zero;
-        }
-
-        var parseResult = await new TimeSpanParser().TryParseAsync(timeSpanString, ct);
-        return !parseResult.IsDefined(out var @in)
-            ? TimeSpan.Zero
-            : @in;
     }
 
     /// <summary>
