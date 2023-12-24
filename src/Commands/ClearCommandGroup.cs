@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -29,12 +30,13 @@ public class ClearCommandGroup : CommandGroup
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
+    private readonly Profiler _profiler;
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
     public ClearCommandGroup(
         IDiscordRestChannelAPI channelApi, ICommandContext context, GuildDataService guildData,
-        IFeedbackService feedback, IDiscordRestUserAPI userApi, Utility utility)
+        IFeedbackService feedback, IDiscordRestUserAPI userApi, Utility utility, Profiler profiler)
     {
         _channelApi = channelApi;
         _context = context;
@@ -42,6 +44,7 @@ public class ClearCommandGroup : CommandGroup
         _feedback = feedback;
         _userApi = userApi;
         _utility = utility;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -66,41 +69,56 @@ public class ClearCommandGroup : CommandGroup
         int amount,
         IUser? author = null)
     {
+        _profiler.Push("clear_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         // The bot's avatar is used when sending messages
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("channel_messages_get");
         var messagesResult = await _channelApi.GetChannelMessagesAsync(
             channelId, limit: amount + 1, ct: CancellationToken);
         if (!messagesResult.IsDefined(out var messages))
         {
-            return Result.FromError(messagesResult);
+            return _profiler.ReportWithResult(Result.FromError(messagesResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await ClearMessagesAsync(executor, author, data, channelId, messages, bot, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await ClearMessagesAsync(executor, author, data, channelId, messages, bot,
+            CancellationToken));
     }
 
     private async Task<Result> ClearMessagesAsync(
         IUser executor, IUser? author, GuildData data, Snowflake channelId, IReadOnlyList<IMessage> messages, IUser bot,
         CancellationToken ct = default)
     {
+        _profiler.Push("main");
+        _profiler.Push("builder_construction");
         var idList = new List<Snowflake>(messages.Count);
         var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
         for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Octobot is thinking...')
@@ -116,26 +134,32 @@ public class ClearCommandGroup : CommandGroup
             builder.Append(message.Content.InBlockCode());
         }
 
+        _profiler.Pop();
         if (idList.Count == 0)
         {
-            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoMessagesToClear, bot)
+            _profiler.Push("no_messages_send");
+            var noMessagesEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoMessagesToClear, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(noMessagesEmbed, ct: ct));
         }
 
+        _profiler.Push("messages_bulk_delete");
+        var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
+            channelId, idList, executor.GetTag().EncodeHeader(), ct);
+        if (!deleteResult.IsSuccess)
+        {
+            return _profiler.PopWithResult(Result.FromError(deleteResult.Error));
+        }
+
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var title = author is not null
             ? string.Format(Messages.MessagesClearedFiltered, idList.Count.ToString(), author.GetTag())
             : string.Format(Messages.MessagesCleared, idList.Count.ToString());
         var description = builder.ToString();
 
-        var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
-            channelId, idList, executor.GetTag().EncodeHeader(), ct);
-        if (!deleteResult.IsSuccess)
-        {
-            return Result.FromError(deleteResult.Error);
-        }
-
+        _profiler.Push("action_log");
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, executor, title, description, bot, ColorsList.Red, false, ct);
         if (!logResult.IsSuccess)
@@ -143,9 +167,10 @@ public class ClearCommandGroup : CommandGroup
             return Result.FromError(logResult.Error);
         }
 
+        _profiler.Pop();
+
         var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithColour(ColorsList.Green).Build();
-
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 }
