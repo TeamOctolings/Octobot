@@ -27,17 +27,17 @@ public sealed class Profiler
     /// <param name="id">The ID of the event.</param>
     public void Push(string id)
     {
-        _runningStopwatches++;
         _events.Add(new ProfilerEvent
         {
             Id = id,
             Stopwatch = Stopwatch.StartNew(),
             NestingLevel = _runningStopwatches - 1
         });
+        _runningStopwatches++;
     }
 
     /// <summary>
-    /// Pops the last pushed event from the profiler.
+    /// Pops the last running event from the profiler.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown if the profiler contains no events.</exception>
     public void Pop()
@@ -47,10 +47,15 @@ public sealed class Profiler
             throw new InvalidOperationException("Nothing to pop");
         }
 
-        _runningStopwatches--;
         _events.FindLast(item => item.Stopwatch.IsRunning).Stopwatch.Stop();
+        _runningStopwatches--;
     }
 
+    /// <summary>
+    ///     <see cref="Pop" /> on the profiler and return a <see cref="Result{TEntity}" />.
+    /// </summary>
+    /// <param name="result">The result to be returned.</param>
+    /// <returns>The original result.</returns>
     public Result PopWithResult(Result result)
     {
         Pop();
@@ -60,7 +65,6 @@ public sealed class Profiler
     /// <summary>
     /// If the profiler took too long to execute, this will log a warning with per-event time usage
     /// </summary>
-    /// <exception cref="InvalidOperationException">Thrown if there are stopwatches still running.</exception>
     private void Report()
     {
         var main = _events[0];
@@ -76,7 +80,10 @@ public sealed class Profiler
             var profilerEvent = _events[i];
             builder.Append(' ', profilerEvent.NestingLevel * 4)
                 .AppendLine($"{profilerEvent.Id}: {profilerEvent.Stopwatch.ElapsedMilliseconds}ms");
-            unprofiled -= profilerEvent.Stopwatch.ElapsedMilliseconds;
+            if (profilerEvent.NestingLevel is 0)
+            {
+                unprofiled -= profilerEvent.Stopwatch.ElapsedMilliseconds;
+            }
         }
 
         if (unprofiled > 0)
@@ -89,7 +96,7 @@ public sealed class Profiler
     }
 
     /// <summary>
-    /// <see cref="Pop"/> the profiler and <see cref="Report"/> on it afterwards.
+    /// <see cref="Pop"/> all running events in the profiler and <see cref="Report"/> on it afterwards.
     /// </summary>
     private void PopAndReport()
     {
@@ -104,8 +111,8 @@ public sealed class Profiler
     /// <summary>
     /// <see cref="PopAndReport"/> on the profiler and return a <see cref="Result{TEntity}"/>.
     /// </summary>
-    /// <param name="result"></param>
-    /// <returns></returns>
+    /// <param name="result">The result to be returned.</param>
+    /// <returns>The original result.</returns>
     public Result ReportWithResult(Result result)
     {
         PopAndReport();
