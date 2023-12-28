@@ -17,7 +17,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
-using TimeSpanParser = Octobot.Parsers.TimeSpanParser;
+using Octobot.Parsers;
 
 namespace Octobot.Commands;
 

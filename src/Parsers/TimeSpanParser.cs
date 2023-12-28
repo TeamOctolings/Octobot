@@ -22,12 +22,13 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
 
     public static Result<TimeSpan> TryParse(string timeSpanString, CancellationToken ct = default)
     {
+        var timeSpan = TimeSpan.Zero;
+        timeSpanString = timeSpanString.Trim();
+
         if (timeSpanString.StartsWith('-'))
         {
-            return TimeSpan.Zero;
+            return timeSpan;
         }
-
-        timeSpanString = timeSpanString.Trim();
 
         if (TimeSpan.TryParse(timeSpanString, DateTimeFormatInfo.InvariantInfo, out var parsedTimeSpan))
         {
@@ -37,10 +38,9 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         var matches = ParseRegex().Matches(timeSpanString);
         if (matches.Count is 0)
         {
-            return TimeSpan.Zero;
+            return timeSpan;
         }
 
-        var timeSpan = TimeSpan.Zero;
         foreach (var groups in matches.Select(match => match.Groups
                      .Cast<Group>()
                      .Where(g => g.Success)
@@ -50,7 +50,7 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
             foreach ((var key, var groupValue) in groups)
             {
                 return !double.TryParse(groupValue, out var parsedGroupValue)
-                    ? TimeSpan.Zero
+                    ? timeSpan
                     : ParseFromRegex(timeSpan, key, groupValue, parsedGroupValue);
             }
         }
