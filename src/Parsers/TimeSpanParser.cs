@@ -2,32 +2,32 @@
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using Remora.Commands.Parsers;
-using Remora.Results;
 
 namespace Octobot.Parsers;
 
 /// <summary>
-///     Parses <see cref="TimeSpan"/> from <see cref="string"/>.
+///     Parses <see cref="TimeSpan"/>s.
 /// </summary>
-/// <returns>
-///     Parsed <see cref="TimeSpan"/>.
-/// </returns>
-/// <remarks>
-///     If parse wasn't successful, <see cref="TimeSpanParser"/> will return <see cref="TimeSpan.Zero"/>.
-/// </remarks>
 [PublicAPI]
 public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
 {
     private static readonly Regex Pattern = ParseRegex();
 
-    public static Result<TimeSpan> TryParse(string timeSpanString, CancellationToken ct = default)
+    /// <summary>
+    ///     Parses <see cref="TimeSpan"/> from <see cref="string"/>.
+    /// </summary>
+    /// <returns>
+    ///     Parsed <see cref="TimeSpan"/>.
+    /// </returns>
+    /// <remarks>
+    ///     If parse wasn't successful, <see cref="TimeSpanParser"/> will return <see cref="TimeSpan.Zero"/>.
+    /// </remarks>
+    public static TimeSpan TryParse(string timeSpanString, CancellationToken ct = default)
     {
         if (timeSpanString.StartsWith('-'))
         {
             return TimeSpan.Zero;
         }
-
-        timeSpanString = timeSpanString.Trim();
 
         if (TimeSpan.TryParse(timeSpanString, DateTimeFormatInfo.InvariantInfo, out var parsedTimeSpan))
         {
@@ -49,16 +49,16 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         {
             foreach ((var key, var groupValue) in groups)
             {
-                return !double.TryParse(groupValue, out var parsedGroupValue)
-                    ? TimeSpan.Zero
-                    : ParseFromRegex(timeSpan, key, groupValue, parsedGroupValue);
+                return double.TryParse(groupValue, out var parsedGroupValue)
+                    ? ParseFromRegex(timeSpan, key, groupValue, parsedGroupValue)
+                    : TimeSpan.Zero;
             }
         }
 
         return timeSpan;
     }
 
-    private static Result<TimeSpan> ParseFromRegex(TimeSpan timeSpan,
+    private static TimeSpan ParseFromRegex(TimeSpan timeSpan,
         string key, string groupValue, double parsedGroupValue)
     {
         if (key is "Years" or "Months")

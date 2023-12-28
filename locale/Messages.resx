@@ -586,7 +586,7 @@
       <value>Report an issue</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
-      <value>Incorrect time specified.</value>
+      <value>Time specified incorrectly!</value>
   </data>
   <data name="UserInfoKicked" xml:space="preserve">
       <value>Kicked</value>

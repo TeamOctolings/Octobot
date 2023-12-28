@@ -586,7 +586,7 @@
       <value>Сообщить о проблеме</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
-      <value>Указано некорректное время.</value>
+      <value>Неправильно указано время!</value>
   </data>
   <data name="UserInfoKicked" xml:space="preserve">
       <value>Выгнан</value>
