@@ -15,6 +15,7 @@ using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Messages;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Discord.Extensions.Embeds;
+using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
 
@@ -27,11 +28,11 @@ namespace Octobot.Commands;
 public class AboutCommandGroup : CommandGroup
 {
     private static readonly (string Username, Snowflake Id)[] Developers =
-    {
+    [
         ("Octol1ttle", new Snowflake(504343489664909322)),
         ("mctaylors", new Snowflake(326642240229474304)),
         ("neroduckale", new Snowflake(474943797063843851))
-    };
+    ];
 
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
@@ -88,12 +89,15 @@ public class AboutCommandGroup : CommandGroup
         {
             var guildMemberResult = await _guildApi.GetGuildMemberAsync(
                 guildId, dev.Id, ct);
-            var tag = guildMemberResult.IsSuccess ? $"<@{dev.Id}>" : $"@{dev.Username}";
+            var tag = guildMemberResult.IsSuccess
+                ? $"<@{dev.Id}>"
+                : Markdown.Hyperlink($"@{dev.Username}", $"https://github.com/{dev.Username}");
 
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
-        var embed = new EmbedBuilder().WithSmallTitle(Messages.AboutBot, bot)
+        var embed = new EmbedBuilder()
+            .WithSmallTitle(string.Format(Messages.AboutBot, bot.Username), bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")

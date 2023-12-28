@@ -400,7 +400,7 @@
     <value>Octobot's source code</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
-    <value>About Octobot</value>
+      <value>About {0}</value>
   </data>
   <data name="AboutDeveloper@mctaylors" xml:space="preserve">
     <value>developer &amp; designer, Octobot's Wiki creator</value>
@@ -587,5 +587,8 @@
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>Incorrect time specified.</value>
+  </data>
+  <data name="UserInfoKicked" xml:space="preserve">
+      <value>Kicked</value>
   </data>
 </root>

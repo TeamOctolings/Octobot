@@ -30,12 +30,12 @@ public class KickCommandGroup : CommandGroup
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public KickCommandGroup(
         ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
         IFeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
-        UtilityService utility)
+        Utility utility)
     {
         _context = context;
         _channelApi = channelApi;
@@ -151,7 +151,9 @@ public class KickCommandGroup : CommandGroup
             return Result.FromError(kickResult.Error);
         }
 
-        data.GetOrCreateMemberData(target.ID).Roles.Clear();
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.Roles.Clear();
+        memberData.Kicked = true;
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));

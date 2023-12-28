@@ -19,10 +19,10 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<ScheduledEventUpdateService> _logger;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public ScheduledEventUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildScheduledEventAPI eventApi,
-        GuildDataService guildData, ILogger<ScheduledEventUpdateService> logger, UtilityService utility)
+        GuildDataService guildData, ILogger<ScheduledEventUpdateService> logger, Utility utility)
     {
         _channelApi = channelApi;
         _eventApi = eventApi;

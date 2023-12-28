@@ -25,11 +25,11 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
     private readonly GuildDataService _guildData;
     private readonly ILogger<GuildLoadedResponder> _logger;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public GuildLoadedResponder(
         IDiscordRestChannelAPI channelApi, GuildDataService guildData, ILogger<GuildLoadedResponder> logger,
-        IDiscordRestUserAPI userApi, UtilityService utility)
+        IDiscordRestUserAPI userApi, Utility utility)
     {
         _channelApi = channelApi;
         _guildData = guildData;

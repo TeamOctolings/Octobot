@@ -20,7 +20,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DiffPlex" Version="1.7.1" />
+        <PackageReference Include="DiffPlex" Version="1.7.2" />
         <PackageReference Include="Humanizer.Core.ru" Version="2.14.1" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />

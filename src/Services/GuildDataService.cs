@@ -11,35 +11,23 @@ namespace Octobot.Services;
 /// <summary>
 ///     Handles saving, loading, initializing and providing <see cref="GuildData" />.
 /// </summary>
-public sealed class GuildDataService : IHostedService
+public sealed class GuildDataService : BackgroundService
 {
     private readonly ConcurrentDictionary<Snowflake, GuildData> _datas = new();
     private readonly ILogger<GuildDataService> _logger;
 
-    // https://github.com/dotnet/aspnetcore/issues/39139
-    public GuildDataService(
-        IHostApplicationLifetime lifetime, ILogger<GuildDataService> logger)
+    public GuildDataService(ILogger<GuildDataService> logger)
     {
         _logger = logger;
-        lifetime.ApplicationStopping.Register(ApplicationStopping);
     }
 
-    public Task StartAsync(CancellationToken ct)
+    public override Task StopAsync(CancellationToken ct)
     {
-        return Task.CompletedTask;
+        base.StopAsync(ct);
+        return SaveAsync(ct);
     }
 
-    public Task StopAsync(CancellationToken ct)
-    {
-        return Task.CompletedTask;
-    }
-
-    private void ApplicationStopping()
-    {
-        SaveAsync(CancellationToken.None).GetAwaiter().GetResult();
-    }
-
-    public Task SaveAsync(CancellationToken ct)
+    private Task SaveAsync(CancellationToken ct)
     {
         var tasks = new List<Task>();
         var datas = _datas.Values.ToArray();
@@ -66,6 +54,16 @@ public sealed class GuildDataService : IHostedService
 
         File.Copy(tempFilePath, path, true);
         File.Delete(tempFilePath);
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken ct)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
+
+        while (await timer.WaitForNextTickAsync(ct))
+        {
+            await SaveAsync(ct);
+        }
     }
 
     public async Task<GuildData> GetData(Snowflake guildId, CancellationToken ct = default)

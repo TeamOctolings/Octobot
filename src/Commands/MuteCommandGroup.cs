@@ -32,11 +32,11 @@ public class MuteCommandGroup : CommandGroup
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly UtilityService _utility;
+    private readonly Utility _utility;
 
     public MuteCommandGroup(
         ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, UtilityService utility)
+        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, Utility utility)
     {
         _context = context;
         _guildData = guildData;
@@ -300,9 +300,9 @@ public class MuteCommandGroup : CommandGroup
         }
 
         var memberData = data.GetOrCreateMemberData(target.ID);
-        var isMuted = memberData.MutedUntil is not null || communicationDisabledUntil is not null;
+        var wasMuted = memberData.MutedUntil is not null || communicationDisabledUntil is not null;
 
-        if (!isMuted)
+        if (!wasMuted)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserNotMuted, bot)
                 .WithColour(ColorsList.Red).Build();
