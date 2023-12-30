@@ -135,6 +135,7 @@ public class KickCommandGroup : CommandGroup
         IUser executor, IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser bot,
         CancellationToken ct = default)
     {
+        _profiler.Push("main");
         _profiler.Push("interactions_check");
         var interactionResult
             = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Kick", ct);
