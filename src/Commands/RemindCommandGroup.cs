@@ -17,7 +17,7 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
-using TimeSpanParser = Octobot.Parsers.TimeSpanParser;
+using Octobot.Parsers;
 
 namespace Octobot.Commands;
 
@@ -146,8 +146,8 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        var timeSpan = TimeSpanParser.TryParse(stringTimeSpan, CancellationToken);
-        if (timeSpan.Equals(TimeSpan.Zero))
+        var parseResult = TimeSpanParser.TryParse(stringTimeSpan, CancellationToken);
+        if (!parseResult.IsDefined(out var timeSpan))
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)

@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using Remora.Commands.Parsers;
+using Remora.Results;
 
 namespace Octobot.Parsers;
 
@@ -20,13 +21,13 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
     ///     Parsed <see cref="TimeSpan"/>.
     /// </returns>
     /// <remarks>
-    ///     If parse wasn't successful, <see cref="TimeSpanParser"/> will return <see cref="TimeSpan.Zero"/>.
+    ///     If parse wasn't successful, <see cref="TimeSpanParser"/> will return <see cref="ArgumentInvalidError"/>.
     /// </remarks>
-    public static TimeSpan TryParse(string timeSpanString, CancellationToken ct = default)
+    public static Result<TimeSpan> TryParse(string timeSpanString, CancellationToken ct = default)
     {
         if (timeSpanString.StartsWith('-'))
         {
-            return TimeSpan.Zero;
+            return new ArgumentInvalidError(nameof(timeSpanString), "TimeSpan cannot be inverted.");
         }
 
         if (TimeSpan.TryParse(timeSpanString, DateTimeFormatInfo.InvariantInfo, out var parsedTimeSpan))
@@ -37,7 +38,7 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         var matches = ParseRegex().Matches(timeSpanString);
         if (matches.Count is 0)
         {
-            return TimeSpan.Zero;
+            return new ArgumentInvalidError(nameof(timeSpanString), "Invalid TimeSpan.");
         }
 
         var timeSpan = TimeSpan.Zero;
