@@ -20,6 +20,11 @@ using Remora.Rest.Core;
 using Serilog.Extensions.Logging;
 
 namespace Octobot;
+// TODO: better organizing of interaction checks (and other related chains of method calls)
+// TODO: avoid nesting as much as possible (like embed sending :/)
+// TODO: remove stuff that doesn't need to be profiled
+// if it needs to be profiled, try to put it inside of 'if' blocks so it doesn't appear all the time
+// (so we know e.g. if a feature is active or not)
 
 public sealed class Octobot
 {

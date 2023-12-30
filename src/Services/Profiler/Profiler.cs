@@ -58,6 +58,7 @@ public sealed class Profiler
     /// <returns>The original result.</returns>
     public Result PopWithResult(Result result)
     {
+        Debug.Assert(result.IsSuccess);
         Pop();
         return result;
     }
@@ -115,6 +116,7 @@ public sealed class Profiler
     /// <returns>The original result.</returns>
     public Result ReportWithResult(Result result)
     {
+        Debug.Assert(result.IsSuccess);
         PopAndReport();
         return result;
     }
