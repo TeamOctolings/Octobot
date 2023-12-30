@@ -6,6 +6,7 @@ using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Parsers;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Octobot.Services.Update;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -32,12 +33,13 @@ public class MuteCommandGroup : CommandGroup
     private readonly IFeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
+    private readonly Profiler _profiler;
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
     public MuteCommandGroup(
         ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, Utility utility)
+        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, Utility utility, Profiler profiler)
     {
         _context = context;
         _guildData = guildData;
@@ -45,6 +47,7 @@ public class MuteCommandGroup : CommandGroup
         _guildApi = guildApi;
         _userApi = userApi;
         _utility = utility;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -76,34 +79,46 @@ public class MuteCommandGroup : CommandGroup
         [Description("Mute duration")] [Option("duration")]
         string stringDuration)
     {
+        _profiler.Push("mute_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         // The bot's avatar is used when sending error messages
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
+        _profiler.Push("target_get");
         var memberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, CancellationToken);
         if (!memberResult.IsSuccess)
         {
+            _profiler.Push("not_found_send");
             var embed = new EmbedBuilder().WithSmallTitle(Messages.UserNotFoundShort, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken);
+            return _profiler.ReportWithResult(
+                await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken));
         }
 
         var parseResult = TimeSpanParser.TryParse(stringDuration);
@@ -124,47 +139,56 @@ public class MuteCommandGroup : CommandGroup
         IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
+        _profiler.Push("main");
+        _profiler.Push("interactions_check");
         var interactionResult
             = await _utility.CheckInteractionsAsync(
                 guildId, executor.ID, target.ID, "Mute", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return _profiler.PopWithResult(Result.FromError(interactionResult));
         }
 
+        _profiler.Pop();
         if (interactionResult.Entity is not null)
         {
+            _profiler.Push("interactions_failed_send");
             var failedEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct));
         }
 
-        var until = DateTimeOffset.UtcNow.Add(duration); // >:)
+        var until = DateTimeOffset.UtcNow.Add(duration);
 
-        var muteMethodResult = await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
+        var muteMethodResult =
+            await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
         if (!muteMethodResult.IsSuccess)
         {
-            return muteMethodResult;
+            return _profiler.PopWithResult(muteMethodResult);
         }
 
+        _profiler.Push("embed_send");
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
+        var description = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
             .AppendBulletPoint(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
+        _profiler.Push("action_log");
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
         if (!logResult.IsSuccess)
         {
-            return Result.FromError(logResult.Error);
+            return _profiler.PopWithResult(Result.FromError(logResult.Error));
         }
 
+        _profiler.Pop();
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserMuted, target.GetTag()), target)
             .WithColour(ColorsList.Green).Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     private async Task<Result> SelectMuteMethodAsync(
@@ -175,18 +199,17 @@ public class MuteCommandGroup : CommandGroup
 
         if (muteRole.Empty())
         {
-            var timeoutResult = await TimeoutUserAsync(executor, target, reason, duration, guildId, bot, until, ct);
-            return timeoutResult;
+            return await TimeoutUserAsync(executor, target, reason, duration, guildId, bot, until, ct);
         }
 
-        var muteRoleResult = await RoleMuteUserAsync(executor, target, reason, guildId, data, until, muteRole, ct);
-        return muteRoleResult;
+        return await RoleMuteUserAsync(executor, target, reason, guildId, data, until, muteRole, ct);
     }
 
     private async Task<Result> RoleMuteUserAsync(
         IUser executor, IUser target, string reason, Snowflake guildId, GuildData data,
         DateTimeOffset until, Snowflake muteRole, CancellationToken ct)
     {
+        _profiler.Push("user_role_mute");
         var assignRoles = new List<Snowflake> { muteRole };
         var memberData = data.GetOrCreateMemberData(target.ID);
         if (!GuildSettings.RemoveRolesOnMute.Get(data.Settings))
@@ -194,6 +217,7 @@ public class MuteCommandGroup : CommandGroup
             assignRoles.AddRange(memberData.Roles.ConvertAll(r => r.ToSnowflake()));
         }
 
+        _profiler.Push("guild_member_modify");
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, roles: assignRoles,
             reason: $"({executor.GetTag()}) {reason}".EncodeHeader(), ct: ct);
@@ -202,26 +226,32 @@ public class MuteCommandGroup : CommandGroup
             memberData.MutedUntil = until;
         }
 
-        return muteResult;
+        _profiler.Pop();
+        return _profiler.PopWithResult(muteResult);
     }
 
     private async Task<Result> TimeoutUserAsync(
         IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId,
         IUser bot, DateTimeOffset until, CancellationToken ct)
     {
+        _profiler.Push("user_timeout");
         if (duration.TotalDays >= 28)
         {
+            _profiler.Push("cannot_mute_send");
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.BotCannotMuteTarget, bot)
                 .WithDescription(Messages.DurationRequiredForTimeOuts)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct));
         }
 
+        _profiler.Push("guild_member_modify");
         var muteResult = await _guildApi.ModifyGuildMemberAsync(
             guildId, target.ID, reason: $"({executor.GetTag()}) {reason}".EncodeHeader(),
             communicationDisabledUntil: until, ct: ct);
-        return muteResult;
+        _profiler.Pop();
+
+        return _profiler.PopWithResult(muteResult);
     }
 
     /// <summary>
@@ -354,7 +384,8 @@ public class MuteCommandGroup : CommandGroup
     }
 
     private async Task<Result> RemoveMuteRoleAsync(
-        IUser executor, IUser target, string reason, Snowflake guildId, MemberData memberData, CancellationToken ct = default)
+        IUser executor, IUser target, string reason, Snowflake guildId, MemberData memberData,
+        CancellationToken ct = default)
     {
         if (memberData.MutedUntil is null)
         {
