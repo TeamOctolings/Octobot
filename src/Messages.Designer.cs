@@ -1037,6 +1037,14 @@ namespace Octobot {
             }
         }
 
+        internal static string InvalidTimeSpan
+        {
+            get
+            {
+                return ResourceManager.GetString("InvalidTimeSpan", resourceCulture);
+            }
+        }
+
         internal static string UserInfoKicked
         {
             get

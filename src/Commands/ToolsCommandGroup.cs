@@ -4,6 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
+using Octobot.Parsers;
 using Octobot.Services;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
@@ -418,7 +419,7 @@ public class ToolsCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that shows the current timestamp with an optional offset in all styles supported by Discord.
     /// </summary>
-    /// <param name="offset">The offset for the current timestamp.</param>
+    /// <param name="stringOffset">The offset for the current timestamp.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
@@ -427,12 +428,18 @@ public class ToolsCommandGroup : CommandGroup
     [Description("Shows a timestamp in all styles")]
     [UsedImplicitly]
     public async Task<Result> ExecuteTimestampAsync(
-        [Description("Offset from current time")]
-        TimeSpan? offset = null)
+        [Description("Offset from current time")] [Option("offset")]
+        string? stringOffset = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
             return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
@@ -443,6 +450,22 @@ public class ToolsCommandGroup : CommandGroup
 
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        if (stringOffset is null)
+        {
+            return await SendTimestampAsync(null, executor, CancellationToken);
+        }
+
+        var parseResult = TimeSpanParser.TryParse(stringOffset);
+        if (!parseResult.IsDefined(out var offset))
+        {
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+        }
 
         return await SendTimestampAsync(offset, executor, CancellationToken);
     }

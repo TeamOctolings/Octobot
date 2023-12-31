@@ -1,13 +1,11 @@
 using System.Text.Json.Nodes;
-using Remora.Commands.Parsers;
+using Octobot.Parsers;
 using Remora.Results;
 
 namespace Octobot.Data.Options;
 
 public sealed class TimeSpanOption : Option<TimeSpan>
 {
-    private static readonly TimeSpanParser Parser = new();
-
     public TimeSpanOption(string name, TimeSpan defaultValue) : base(name, defaultValue) { }
 
     public override TimeSpan Get(JsonNode settings)
@@ -29,6 +27,6 @@ public sealed class TimeSpanOption : Option<TimeSpan>
 
     private static Result<TimeSpan> ParseTimeSpan(string from)
     {
-        return Parser.TryParseAsync(from).AsTask().GetAwaiter().GetResult();
+        return TimeSpanParser.TryParse(from);
     }
 }

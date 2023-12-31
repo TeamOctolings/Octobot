@@ -585,6 +585,9 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Сообщить о проблеме</value>
   </data>
+  <data name="InvalidTimeSpan" xml:space="preserve">
+      <value>Неправильно указано время!</value>
+  </data>
   <data name="UserInfoKicked" xml:space="preserve">
       <value>Выгнан</value>
   </data>
