@@ -33,9 +33,9 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         }
 
         var matches = ParseRegex().Matches(timeSpanString);
-        return matches.Count is 0
-            ? new ArgumentInvalidError(nameof(timeSpanString), "The regex did not produce any matches.")
-            : ParseFromRegex(matches);
+        return matches.Count > 0
+            ? ParseFromRegex(matches)
+            : new ArgumentInvalidError(nameof(timeSpanString), "The regex did not produce any matches.");
     }
 
     private static Result<TimeSpan> ParseFromRegex(MatchCollection matches)
@@ -50,10 +50,9 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         {
             foreach ((var key, var groupValue) in groups)
             {
-                if (!double.TryParse(groupValue, out var parsedGroupValue) ||
-                    !int.TryParse(groupValue, out var parsedIntegerValue))
+                if (!int.TryParse(groupValue, out var parsedIntegerValue))
                 {
-                    return new ArgumentInvalidError(nameof(groupValue), "The input value encountered a parsing error.");
+                    return new ArgumentInvalidError(nameof(groupValue), "The input value was not an integer.");
                 }
 
                 var now = DateTimeOffset.UtcNow;
@@ -61,11 +60,11 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
                 {
                     "Years" => now.AddYears(parsedIntegerValue) - now,
                     "Months" => now.AddMonths(parsedIntegerValue) - now,
-                    "Weeks" => TimeSpan.FromDays(parsedGroupValue * 7),
-                    "Days" => TimeSpan.FromDays(parsedGroupValue),
-                    "Hours" => TimeSpan.FromHours(parsedGroupValue),
-                    "Minutes" => TimeSpan.FromMinutes(parsedGroupValue),
-                    "Seconds" => TimeSpan.FromSeconds(parsedGroupValue),
+                    "Weeks" => TimeSpan.FromDays(parsedIntegerValue * 7),
+                    "Days" => TimeSpan.FromDays(parsedIntegerValue),
+                    "Hours" => TimeSpan.FromHours(parsedIntegerValue),
+                    "Minutes" => TimeSpan.FromMinutes(parsedIntegerValue),
+                    "Seconds" => TimeSpan.FromSeconds(parsedIntegerValue),
                     _ => throw new ArgumentOutOfRangeException(key)
                 };
             }
