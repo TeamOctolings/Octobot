@@ -146,7 +146,7 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        var parseResult = TimeSpanParser.TryParse(stringTimeSpan, CancellationToken);
+        var parseResult = TimeSpanParser.TryParse(stringTimeSpan);
         if (!parseResult.IsDefined(out var timeSpan))
         {
             var failedEmbed = new EmbedBuilder()

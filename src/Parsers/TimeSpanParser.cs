@@ -23,11 +23,11 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
     /// <remarks>
     ///     If parse wasn't successful, <see cref="TimeSpanParser"/> will return <see cref="ArgumentInvalidError"/>.
     /// </remarks>
-    public static Result<TimeSpan> TryParse(string timeSpanString, CancellationToken ct = default)
+    public static Result<TimeSpan> TryParse(string timeSpanString)
     {
         if (timeSpanString.StartsWith('-'))
         {
-            return new ArgumentInvalidError(nameof(timeSpanString), "TimeSpan cannot be inverted.");
+            return new ArgumentInvalidError(nameof(timeSpanString), "TimeSpans cannot be negative.");
         }
 
         if (TimeSpan.TryParse(timeSpanString, DateTimeFormatInfo.InvariantInfo, out var parsedTimeSpan))
@@ -38,10 +38,16 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         var matches = ParseRegex().Matches(timeSpanString);
         if (matches.Count is 0)
         {
-            return new ArgumentInvalidError(nameof(timeSpanString), "Invalid TimeSpan.");
+            return new ArgumentInvalidError(nameof(timeSpanString), "The regex did not produce any matches.");
         }
 
+        return ParseFromRegex(matches);
+    }
+
+    private static TimeSpan ParseFromRegex(MatchCollection matches)
+    {
         var timeSpan = TimeSpan.Zero;
+
         foreach (var groups in matches.Select(match => match.Groups
                      .Cast<Group>()
                      .Where(g => g.Success)
@@ -50,57 +56,26 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         {
             foreach ((var key, var groupValue) in groups)
             {
-                return double.TryParse(groupValue, out var parsedGroupValue)
-                    ? ParseFromRegex(timeSpan, key, groupValue, parsedGroupValue)
-                    : TimeSpan.Zero;
+                if (!double.TryParse(groupValue, out var parsedGroupValue) ||
+                    !int.TryParse(groupValue, out var parsedIntegerValue))
+                {
+                    return TimeSpan.Zero;
+                }
+
+                var now = DateTimeOffset.UtcNow;
+                timeSpan += key switch
+                {
+                    "Years" => now.AddYears(parsedIntegerValue) - now,
+                    "Months" => now.AddMonths(parsedIntegerValue) - now,
+                    "Weeks" => TimeSpan.FromDays(parsedGroupValue * 7),
+                    "Days" => TimeSpan.FromDays(parsedGroupValue),
+                    "Hours" => TimeSpan.FromHours(parsedGroupValue),
+                    "Minutes" => TimeSpan.FromMinutes(parsedGroupValue),
+                    "Seconds" => TimeSpan.FromSeconds(parsedGroupValue),
+                    _ => throw new ArgumentOutOfRangeException(key)
+                };
             }
         }
-
-        return timeSpan;
-    }
-
-    private static TimeSpan ParseFromRegex(TimeSpan timeSpan,
-        string key, string groupValue, double parsedGroupValue)
-    {
-        if (key is "Years" or "Months")
-        {
-            if (!int.TryParse(groupValue, out var parsedIntegerValue))
-            {
-                return TimeSpan.Zero;
-            }
-
-            switch (key)
-            {
-                case "Years":
-                {
-                    var now = DateTimeOffset.UtcNow;
-                    var then = now.AddYears(parsedIntegerValue);
-
-                    timeSpan += then - now;
-                    break;
-                }
-                case "Months":
-                {
-                    var now = DateTimeOffset.UtcNow;
-                    var then = now.AddMonths(parsedIntegerValue);
-
-                    timeSpan += then - now;
-                    break;
-                }
-            }
-
-            return timeSpan;
-        }
-
-        timeSpan += key switch
-        {
-            "Weeks" => TimeSpan.FromDays(parsedGroupValue * 7),
-            "Days" => TimeSpan.FromDays(parsedGroupValue),
-            "Hours" => TimeSpan.FromHours(parsedGroupValue),
-            "Minutes" => TimeSpan.FromMinutes(parsedGroupValue),
-            "Seconds" => TimeSpan.FromSeconds(parsedGroupValue),
-            _ => throw new ArgumentOutOfRangeException(key)
-        };
 
         return timeSpan;
     }
