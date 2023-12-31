@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -29,11 +30,12 @@ public class PingCommandGroup : CommandGroup
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
+    private readonly Profiler _profiler;
     private readonly IDiscordRestUserAPI _userApi;
 
     public PingCommandGroup(
         IDiscordRestChannelAPI channelApi, ICommandContext context, DiscordGatewayClient client,
-        GuildDataService guildData, IFeedbackService feedback, IDiscordRestUserAPI userApi)
+        GuildDataService guildData, IFeedbackService feedback, IDiscordRestUserAPI userApi, Profiler profiler)
     {
         _channelApi = channelApi;
         _context = context;
@@ -41,6 +43,7 @@ public class PingCommandGroup : CommandGroup
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -56,29 +59,39 @@ public class PingCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecutePingAsync()
     {
-        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
+        _profiler.Push("ping_command");
+        _profiler.Push("preparation");
+        if (true || !_context.TryGetContextIDs(out var guildId, out var channelId, out _))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
+        _profiler.Pop();
 
-        return await SendLatencyAsync(channelId, bot, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await SendLatencyAsync(channelId, bot, CancellationToken));
     }
 
     private async Task<Result> SendLatencyAsync(
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
+        _profiler.Push("main");
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0)
         {
+            _profiler.Push("channel_messages_get");
             // No heartbeat has occurred, estimate latency from local time and "Octobot is thinking..." message
             var lastMessageResult = await _channelApi.GetChannelMessagesAsync(
                 channelId, limit: 1, ct: ct);
@@ -87,9 +100,11 @@ public class PingCommandGroup : CommandGroup
                 return Result.FromError(lastMessageResult);
             }
 
+            _profiler.Pop();
             latency = DateTimeOffset.UtcNow.Subtract(lastMessage.Single().Timestamp).TotalMilliseconds;
         }
 
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
             .WithTitle($"Sound{Random.Shared.Next(1, 4)}".Localized())
             .WithDescription($"{latency:F0}{Messages.Milliseconds}")
@@ -97,6 +112,6 @@ public class PingCommandGroup : CommandGroup
             .WithCurrentTimestamp()
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 }
