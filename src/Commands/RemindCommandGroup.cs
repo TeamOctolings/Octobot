@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -30,18 +31,20 @@ public class RemindCommandGroup : CommandGroup
     private readonly IInteractionCommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
-    private readonly IDiscordRestUserAPI _userApi;
     private readonly IDiscordRestInteractionAPI _interactionApi;
+    private readonly Profiler _profiler;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public RemindCommandGroup(
         IInteractionCommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestUserAPI userApi, IDiscordRestInteractionAPI interactionApi)
+        IDiscordRestUserAPI userApi, IDiscordRestInteractionAPI interactionApi, Profiler profiler)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
         _interactionApi = interactionApi;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -53,59 +56,79 @@ public class RemindCommandGroup : CommandGroup
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
-    public async Task<Result> ExecuteListReminderAsync()
+    public async Task<Result> ExecuteListRemindersAsync()
     {
+        _profiler.Push("list_reminders_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId,
+            executor, bot,
+            CancellationToken));
     }
 
-    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot, CancellationToken ct)
+    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot,
+        CancellationToken ct)
     {
+        _profiler.Push("main");
         if (data.Reminders.Count == 0)
         {
+            _profiler.Push("no_reminders_send");
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.NoRemindersFound, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct));
         }
 
+        _profiler.Push("builder_construction");
         var builder = new StringBuilder();
         for (var i = 0; i < data.Reminders.Count; i++)
         {
             var reminder = data.Reminders[i];
-            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
+            builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition,
+                    Markdown.InlineCode((i + 1).ToString())))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
-                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
+                .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
+                    $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderList, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     /// <summary>
@@ -126,9 +149,12 @@ public class RemindCommandGroup : CommandGroup
         [Description("Reminder text")] [MaxLength(512)]
         string text)
     {
+        _profiler.Push("reminder_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
@@ -137,14 +163,18 @@ public class RemindCommandGroup : CommandGroup
             return Result.FromError(botResult);
         }
 
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
         var parseResult = TimeSpanParser.TryParse(timeSpanString);
         if (!parseResult.IsDefined(out var timeSpan))
@@ -156,6 +186,10 @@ public class RemindCommandGroup : CommandGroup
 
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await AddReminderAsync(@in, text, data, channelId, executor,
+            CancellationToken));
+    }
 
         return await AddReminderAsync(timeSpan, text, data, channelId, executor, CancellationToken);
     }
@@ -163,13 +197,20 @@ public class RemindCommandGroup : CommandGroup
     private async Task<Result> AddReminderAsync(TimeSpan timeSpan, string text, GuildData data,
         Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
+        _profiler.Push("main");
         var memberData = data.GetOrCreateMemberData(executor.ID);
-        var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
-        var responseResult = await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID, _context.Interaction.Token, ct);
+        var remindAt = DateTimeOffset.UtcNow.Add(@in);
+
+        _profiler.Push("original_response_get");
+        var responseResult =
+            await _interactionApi.GetOriginalInteractionResponseAsync(_context.Interaction.ApplicationID,
+                _context.Interaction.Token, ct);
         if (!responseResult.IsDefined(out var response))
         {
-            return (Result)responseResult;
+            return _profiler.PopWithResult(Result.FromError(responseResult));
         }
+
+        _profiler.Pop();
 
         memberData.Reminders.Add(
             new Reminder
@@ -180,6 +221,7 @@ public class RemindCommandGroup : CommandGroup
                 MessageId = response.ID.Value
             });
 
+        _profiler.Push("embed_send");
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
@@ -190,7 +232,7 @@ public class RemindCommandGroup : CommandGroup
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     /// <summary>
@@ -207,33 +249,44 @@ public class RemindCommandGroup : CommandGroup
         [Description("Position in list")] [MinValue(1)]
         int position)
     {
+        _profiler.Push("delete_reminder_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await DeleteReminderAsync(data.GetOrCreateMemberData(executorId), position - 1, bot, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await DeleteReminderAsync(data.GetOrCreateMemberData(executorId),
+            position - 1, bot, CancellationToken));
     }
 
     private Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
         CancellationToken ct)
     {
+        _profiler.Push("main");
         if (index >= data.Reminders.Count)
         {
+            _profiler.Push("invalid_position_send");
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct));
         }
 
         var reminder = data.Reminders[index];
@@ -249,6 +302,6 @@ public class RemindCommandGroup : CommandGroup
             .WithColour(ColorsList.Green)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 }

@@ -63,6 +63,13 @@ public sealed class Profiler
         return result;
     }
 
+    public Task<Result> PopWithResult(Task<Result> result)
+    {
+        LogResultStackTrace(result.GetAwaiter().GetResult());
+        Pop();
+        return result;
+    }
+
     /// <summary>
     /// If the profiler took too long to execute, this will log a warning with per-event time usage
     /// </summary>
