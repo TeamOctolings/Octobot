@@ -35,6 +35,7 @@ public static class LoggerExtensions
             return;
         }
 
-        logger.LogWarning("{UserMessage}\n{ResultErrorMessage}", message, result.Error.Message);
+        logger.LogWarning("{UserMessage}{NewLine}{ResultErrorMessage}", message, Environment.NewLine,
+            result.Error.Message);
     }
 }
