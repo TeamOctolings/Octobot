@@ -58,7 +58,7 @@ public sealed class Profiler
     /// <returns>The original result.</returns>
     public Result PopWithResult(Result result)
     {
-        Debug.Assert(result.IsSuccess);
+        LogResultStackTrace(result);
         Pop();
         return result;
     }
@@ -116,7 +116,7 @@ public sealed class Profiler
     /// <returns>The original result.</returns>
     public Result ReportWithResult(Result result)
     {
-        Debug.Assert(result.IsSuccess);
+        LogResultStackTrace(result);
         PopAndReport();
         return result;
     }
@@ -128,5 +128,15 @@ public sealed class Profiler
     public Result ReportWithSuccess()
     {
         return ReportWithResult(Result.FromSuccess());
+    }
+
+    [Conditional("DEBUG")]
+    private void LogResultStackTrace(Result result)
+    {
+        if (!result.IsSuccess)
+        {
+            _logger.LogError("Profiled result was not successful: {ResultMessage}{NewLine}{StackTrace}",
+                result.Error.Message, Environment.NewLine, new StackTrace(2, true).ToString());
+        }
     }
 }
