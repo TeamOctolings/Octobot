@@ -33,12 +33,9 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         }
 
         var matches = ParseRegex().Matches(timeSpanString);
-        if (matches.Count is 0)
-        {
-            return new ArgumentInvalidError(nameof(timeSpanString), "The regex did not produce any matches.");
-        }
-
-        return ParseFromRegex(matches);
+        return matches.Count is 0
+            ? new ArgumentInvalidError(nameof(timeSpanString), "The regex did not produce any matches.")
+            : ParseFromRegex(matches);
     }
 
     private static Result<TimeSpan> ParseFromRegex(MatchCollection matches)
