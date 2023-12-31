@@ -73,6 +73,6 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         return timeSpan;
     }
 
-    [GeneratedRegex("(?<Years>\\d+(?=y|л|г))|(?<Months>\\d+(?=mo|мес))|(?<Weeks>\\d+(?=w|н|нед))|(?<Days>\\d+(?=d|дн))|(?<Hours>\\d+(?=h|ч))|(?<Minutes>\\d+(?=m|min|мин|м))|(?<Seconds>\\d+(?=s|sec|с|сек))")]
+    [GeneratedRegex("(?<Years>\\d+(?=y|л|г))|(?<Months>\\d+(?=mo|мес))|(?<Weeks>\\d+(?=w|н|нед))|(?<Days>\\d+(?=d|д|дн))|(?<Hours>\\d+(?=h|ч))|(?<Minutes>\\d+(?=m|min|мин|м))|(?<Seconds>\\d+(?=s|sec|с|сек))")]
     private static partial Regex ParseRegex();
 }
