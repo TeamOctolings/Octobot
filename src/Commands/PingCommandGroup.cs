@@ -61,7 +61,7 @@ public class PingCommandGroup : CommandGroup
     {
         _profiler.Push("ping_command");
         _profiler.Push("preparation");
-        if (true || !_context.TryGetContextIDs(out var guildId, out var channelId, out _))
+        if (!_context.TryGetContextIDs(out var guildId, out var channelId, out _))
         {
             return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
                 "Unable to retrieve necessary IDs from command context"));
