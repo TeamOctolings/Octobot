@@ -111,7 +111,7 @@ public class RemindCommandGroup : CommandGroup
     /// <summary>
     ///     A slash command that schedules a reminder with the specified text.
     /// </summary>
-    /// <param name="stringTimeSpan">The period of time which must pass before the reminder will be sent.</param>
+    /// <param name="timeSpanString">The period of time which must pass before the reminder will be sent.</param>
     /// <param name="text">The text of the reminder.</param>
     /// <returns>A feedback sending result which may or may not have succeeded.</returns>
     [Command("remind")]
@@ -122,7 +122,7 @@ public class RemindCommandGroup : CommandGroup
     public async Task<Result> ExecuteReminderAsync(
         [Description("After what period of time mention the reminder")]
         [Option("in")]
-        string stringTimeSpan,
+        string timeSpanString,
         [Description("Reminder text")] [MaxLength(512)]
         string text)
     {
@@ -146,7 +146,7 @@ public class RemindCommandGroup : CommandGroup
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        var parseResult = TimeSpanParser.TryParse(stringTimeSpan);
+        var parseResult = TimeSpanParser.TryParse(timeSpanString);
         if (!parseResult.IsDefined(out var timeSpan))
         {
             var failedEmbed = new EmbedBuilder()

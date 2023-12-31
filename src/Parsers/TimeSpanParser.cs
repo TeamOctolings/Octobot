@@ -15,14 +15,11 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
     private static readonly Regex Pattern = ParseRegex();
 
     /// <summary>
-    ///     Parses <see cref="TimeSpan"/> from <see cref="string"/>.
+    ///     Parses a <see cref="TimeSpan"/> from the <paramref name="timeSpanString"/>.
     /// </summary>
     /// <returns>
-    ///     Parsed <see cref="TimeSpan"/>.
+    ///     The parsed <see cref="TimeSpan"/>, or <see cref="ArgumentInvalidError"/> if parsing failed.
     /// </returns>
-    /// <remarks>
-    ///     If parse wasn't successful, <see cref="TimeSpanParser"/> will return <see cref="ArgumentInvalidError"/>.
-    /// </remarks>
     public static Result<TimeSpan> TryParse(string timeSpanString)
     {
         if (timeSpanString.StartsWith('-'))
@@ -44,7 +41,7 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
         return ParseFromRegex(matches);
     }
 
-    private static TimeSpan ParseFromRegex(MatchCollection matches)
+    private static Result<TimeSpan> ParseFromRegex(MatchCollection matches)
     {
         var timeSpan = TimeSpan.Zero;
 
@@ -59,7 +56,7 @@ public partial class TimeSpanParser : AbstractTypeParser<TimeSpan>
                 if (!double.TryParse(groupValue, out var parsedGroupValue) ||
                     !int.TryParse(groupValue, out var parsedIntegerValue))
                 {
-                    return TimeSpan.Zero;
+                    return new ArgumentInvalidError(nameof(groupValue), "The input value encountered a parsing error.");
                 }
 
                 var now = DateTimeOffset.UtcNow;
