@@ -10,7 +10,6 @@ using Octobot.Services.Profiler;
 using Octobot.Services.Update;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
-using Remora.Commands.Parsers;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Commands.Attributes;
@@ -123,22 +122,28 @@ public class BanCommandGroup : CommandGroup
 
         if (stringDuration is null)
         {
-            return await BanUserAsync(executor, target, reason, null, guild, data, channelId, bot,
-                CancellationToken);
+            _profiler.Pop();
+            return _profiler.ReportWithResult(await BanUserAsync(executor, target, reason, null, guild, data, channelId,
+                bot,
+                CancellationToken));
         }
 
         var parseResult = TimeSpanParser.TryParse(stringDuration);
         if (!parseResult.IsDefined(out var duration))
         {
+            _profiler.Push("invalid_timespan_send");
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+            return _profiler.ReportWithResult(
+                await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken));
         }
 
-        return await BanUserAsync(executor, target, reason, duration, guild, data, channelId, bot, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await BanUserAsync(executor, target, reason, duration, guild, data, channelId,
+            bot, CancellationToken));
     }
 
     private async Task<Result> BanUserAsync(

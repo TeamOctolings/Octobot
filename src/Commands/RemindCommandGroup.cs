@@ -4,6 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
+using Octobot.Parsers;
 using Octobot.Services;
 using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
@@ -18,7 +19,6 @@ using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
-using Octobot.Parsers;
 
 namespace Octobot.Commands;
 
@@ -143,8 +143,7 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteReminderAsync(
-        [Description("After what period of time mention the reminder")]
-        [Option("in")]
+        [Description("After what period of time mention the reminder")] [Option("in")]
         string timeSpanString,
         [Description("Reminder text")] [MaxLength(512)]
         string text)
@@ -157,12 +156,14 @@ public class RemindCommandGroup : CommandGroup
                 "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
             return Result.FromError(botResult);
         }
 
+        _profiler.Pop();
         _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
@@ -179,19 +180,19 @@ public class RemindCommandGroup : CommandGroup
         var parseResult = TimeSpanParser.TryParse(timeSpanString);
         if (!parseResult.IsDefined(out var timeSpan))
         {
+            _profiler.Push("invalid_timespan_send");
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+            return _profiler.ReportWithResult(
+                await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken));
         }
-        _profiler.Pop();
-        return _profiler.ReportWithResult(await AddReminderAsync(@in, text, data, channelId, executor,
-            CancellationToken));
-    }
 
-        return await AddReminderAsync(timeSpan, text, data, channelId, executor, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await AddReminderAsync(timeSpan, text, data, channelId, executor,
+            CancellationToken));
     }
 
     private async Task<Result> AddReminderAsync(TimeSpan timeSpan, string text, GuildData data,
@@ -199,7 +200,7 @@ public class RemindCommandGroup : CommandGroup
     {
         _profiler.Push("main");
         var memberData = data.GetOrCreateMemberData(executor.ID);
-        var remindAt = DateTimeOffset.UtcNow.Add(@in);
+        var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
 
         _profiler.Push("original_response_get");
         var responseResult =

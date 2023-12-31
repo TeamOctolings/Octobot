@@ -122,18 +122,23 @@ public class MuteCommandGroup : CommandGroup
                 await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken));
         }
 
+        _profiler.Pop();
         var parseResult = TimeSpanParser.TryParse(stringDuration);
         if (!parseResult.IsDefined(out var duration))
         {
+            _profiler.Push("invalid_timespan_send");
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+            return _profiler.ReportWithResult(
+                await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken));
         }
 
-        return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await MuteUserAsync(executor, target, reason, duration, guildId, data,
+            channelId, bot, CancellationToken));
     }
 
     private async Task<Result> MuteUserAsync(
