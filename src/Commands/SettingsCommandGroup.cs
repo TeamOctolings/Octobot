@@ -7,6 +7,7 @@ using Octobot.Data;
 using Octobot.Data.Options;
 using Octobot.Extensions;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -56,18 +57,20 @@ public class SettingsCommandGroup : CommandGroup
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
+    private readonly Profiler _profiler;
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
     public SettingsCommandGroup(
         ICommandContext context, GuildDataService guildData,
-        IFeedbackService feedback, IDiscordRestUserAPI userApi, Utility utility)
+        IFeedbackService feedback, IDiscordRestUserAPI userApi, Utility utility, Profiler profiler)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _userApi = userApi;
         _utility = utility;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -88,21 +91,29 @@ public class SettingsCommandGroup : CommandGroup
         [Description("Settings list page")] [MinValue(1)]
         int page)
     {
+        _profiler.Push("list_settings_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
+        _profiler.Pop();
 
-        return await SendSettingsListAsync(cfg, bot, page, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await SendSettingsListAsync(cfg, bot, page, CancellationToken));
     }
 
     private Task<Result> SendSettingsListAsync(JsonNode cfg, IUser bot, int page,
@@ -119,14 +130,16 @@ public class SettingsCommandGroup : CommandGroup
 
         if (firstOptionOnPage >= AllOptions.Length)
         {
+            _profiler.Push("not_found_send");
             var errorEmbed = new EmbedBuilder().WithSmallTitle(Messages.PageNotFound, bot)
                 .WithDescription(string.Format(Messages.PagesAllowed, Markdown.Bold(totalPages.ToString())))
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
+            return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct));
         }
 
+        _profiler.Push("builder_construction");
         footer.Append($"{Messages.Page} {page}/{totalPages} ");
         for (var i = 0; i < totalPages; i++)
         {
@@ -143,13 +156,15 @@ public class SettingsCommandGroup : CommandGroup
                 .Append(": ").AppendLine(optionValue);
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(Messages.SettingsListTitle, bot)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Default)
             .WithFooter(footer.ToString())
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     /// <summary>
@@ -171,53 +186,63 @@ public class SettingsCommandGroup : CommandGroup
         [Description("Setting value")] [MaxLength(512)]
         string value)
     {
+        _profiler.Push("edit_settings_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await EditSettingAsync(AllOptions[(int)setting], value, data, channelId, executor, bot,
-            CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await EditSettingAsync(AllOptions[(int)setting], value, data, channelId,
+            executor, bot,
+            CancellationToken));
     }
 
     private async Task<Result> EditSettingAsync(
         IOption option, string value, GuildData data, Snowflake channelId, IUser executor, IUser bot,
         CancellationToken ct = default)
     {
+        _profiler.Push("main");
         var setResult = option.Set(data.Settings, value);
         if (!setResult.IsSuccess)
         {
+            _profiler.Push("not_changed_send");
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.SettingNotChanged, bot)
                 .WithDescription(setResult.Error.Message)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct));
         }
 
-        var builder = new StringBuilder();
-
-        builder.Append(Markdown.InlineCode(option.Name))
-            .Append($" {Messages.SettingIsNow} ")
-            .Append(option.Display(data.Settings));
+        _profiler.Push("embed_send");
         var title = Messages.SettingSuccessfullyChanged;
-        var description = builder.ToString();
+        var description = $"{Markdown.InlineCode(option.Name)} {Messages.SettingIsNow} {option.Display(data.Settings)}";
 
+        _profiler.Push("action_log");
         var logResult = _utility.LogActionAsync(
             data.Settings, channelId, executor, title, description, bot, ColorsList.Magenta, false, ct);
         if (!logResult.IsSuccess)
@@ -225,12 +250,13 @@ public class SettingsCommandGroup : CommandGroup
             return Result.FromError(logResult.Error);
         }
 
+        _profiler.Pop();
         var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithDescription(description)
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     /// <summary>
@@ -248,48 +274,59 @@ public class SettingsCommandGroup : CommandGroup
     public async Task<Result> ExecuteResetSettingsAsync(
         [Description("Setting to reset")] AllOptionsEnum? setting = null)
     {
+        _profiler.Push("reset_settings_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
+        _profiler.Pop();
 
+        _profiler.Pop();
         if (setting is not null)
         {
-            return await ResetSingleSettingAsync(cfg, bot, AllOptions[(int)setting], CancellationToken);
+            return _profiler.ReportWithResult(await ResetSingleSettingAsync(cfg, bot, AllOptions[(int)setting],
+                CancellationToken));
         }
 
-        return await ResetAllSettingsAsync(cfg, bot, CancellationToken);
+        return _profiler.ReportWithResult(await ResetAllSettingsAsync(cfg, bot, CancellationToken));
     }
 
     private async Task<Result> ResetSingleSettingAsync(JsonNode cfg, IUser bot,
         IOption option, CancellationToken ct = default)
     {
+        _profiler.Push("single_setting_reset");
         var resetResult = option.Reset(cfg);
         if (!resetResult.IsSuccess)
         {
             return Result.FromError(resetResult.Error);
         }
 
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.SingleSettingReset, option.Name), bot)
             .WithColour(ColorsList.Green)
             .Build();
-
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     private async Task<Result> ResetAllSettingsAsync(JsonNode cfg, IUser bot,
         CancellationToken ct = default)
     {
+        _profiler.Push("all_settings_reset");
         var failedResults = new List<Result>();
         foreach (var resetResult in AllOptions.Select(option => option.Reset(cfg)))
         {
@@ -301,10 +338,11 @@ public class SettingsCommandGroup : CommandGroup
             return failedResults.AggregateErrors();
         }
 
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(Messages.AllSettingsReset, bot)
             .WithColour(ColorsList.Green)
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 }
