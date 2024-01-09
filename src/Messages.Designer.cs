@@ -1052,5 +1052,11 @@ namespace Octobot {
                 return ResourceManager.GetString("UserInfoKicked", resourceCulture);
             }
         }
+
+        internal static string ReminderEdited {
+            get {
+                return ResourceManager.GetString("ReminderEdited", resourceCulture);
+            }
+        }
     }
 }

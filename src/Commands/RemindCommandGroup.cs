@@ -193,6 +193,124 @@ public class RemindCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
+    public enum Parameters
+    {
+        [UsedImplicitly] Time,
+        [UsedImplicitly] Text
+    }
+
+    /// <summary>
+    ///     A slash command that edits a scheduled reminder using the specified text or time.
+    /// </summary>
+    /// <param name="position">The list position of the reminder to edit.</param>
+    /// <param name="parameter">The reminder's parameter to edit.</param>
+    /// <param name="value">The new value for the reminder as a text or time.</param>
+    /// <returns>A feedback sending result which may or may not have succeeded.</returns>
+    [Command("editremind")]
+    [Description("Edit a reminder")]
+    [DiscordDefaultDMPermission(false)]
+    [RequireContext(ChannelContext.Guild)]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteEditReminderAsync(
+        [Description("Position in list")] [MinValue(1)]
+        int position,
+        [Description("Parameter to edit")] Parameters parameter,
+        [Description("Parameter's new value")] string value)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
+        }
+
+        var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
+        if (!executorResult.IsDefined(out var executor))
+        {
+            return Result.FromError(executorResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        var memberData = data.GetOrCreateMemberData(executor.ID);
+
+        if (parameter is Parameters.Time)
+        {
+            return await EditReminderTimeAsync(position, value, memberData, bot, executor, CancellationToken);
+        }
+
+        return await EditReminderTextAsync(position, value, memberData, executor, CancellationToken);
+    }
+
+    private async Task<Result> EditReminderTimeAsync(int position, string value, MemberData data,
+        IUser bot, IUser executor, CancellationToken ct = default)
+    {
+        var parseResult = TimeSpanParser.TryParse(value);
+        if (!parseResult.IsDefined(out var timeSpan))
+        {
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+        }
+
+        var oldReminder = data.Reminders[position];
+        var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
+
+        data.Reminders.Add(
+            oldReminder with
+            {
+                At = remindAt
+            });
+
+        data.Reminders.RemoveAt(position);
+
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(oldReminder.Text)))
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.ReminderEdited, executor.GetTag()), executor)
+            .WithDescription(builder.ToString())
+            .WithColour(ColorsList.Cyan)
+            .WithFooter(string.Format(Messages.ReminderPosition, data.Reminders.Count))
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
+    private async Task<Result> EditReminderTextAsync(int position, string value, MemberData data,
+        IUser executor, CancellationToken ct = default)
+    {
+        var oldReminder = data.Reminders[position];
+
+        data.Reminders.Add(
+            oldReminder with
+            {
+                Text = value
+            });
+
+        data.Reminders.RemoveAt(position);
+
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(value)))
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(oldReminder.At)));
+        var embed = new EmbedBuilder().WithSmallTitle(
+                string.Format(Messages.ReminderEdited, executor.GetTag()), executor)
+            .WithDescription(builder.ToString())
+            .WithColour(ColorsList.Cyan)
+            .WithFooter(string.Format(Messages.ReminderPosition, data.Reminders.Count))
+            .Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
     /// <summary>
     ///     A slash command that deletes a reminder using its list position.
     /// </summary>
