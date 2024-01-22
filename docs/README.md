@@ -6,7 +6,7 @@
 <a href="https://github.com/Remora/Remora.Discord"><img src="https://img.shields.io/badge/powered_by-Remora.Discord-blue"></img></a>
 <a href="https://github.com/TeamOctolings/Octobot/commit/master"><img src="https://img.shields.io/github/last-commit/TeamOctolings/Octobot?logo=github"></img></a>
 
-Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/TeamOctolings) in C# and Remora.Discord
+Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Team Octolings](https://github.com/TeamOctolings) in C# and Remora.Discord
 
 ## Features
 
