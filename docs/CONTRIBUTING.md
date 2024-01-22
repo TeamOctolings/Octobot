@@ -29,7 +29,7 @@ While pull requests from unaffiliated contributors are welcome, please note that
 internal issues that haven't been published to the issue tracker yet. Reviewing PRs is done on a best-effort basis, so
 please be aware that it may take a while before a core maintainer gets around to review your change.
 
-The [issue tracker](https://github.com/LabsDevelopment/Octobot/issues) should provide plenty of issues to start with.
+The [issue tracker](https://github.com/TeamOctolings/Octobot/issues) should provide plenty of issues to start with.
 Make sure to check that an issue you're planning to resolve does not already have people working on it and that there
 are no PRs associated with it
 
