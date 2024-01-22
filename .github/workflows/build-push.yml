@@ -1,0 +1,64 @@
+name: "Publish and deploy"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  upload-solution:
+    name: Upload Octobot to production
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Publish solution
+        run: dotnet publish $PUBLISH_FLAGS
+        env:
+          PUBLISH_FLAGS: ${{vars.PUBLISH_FLAGS}}
+
+      - name: Setup SSH key
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          ssh-keyscan -H $SSH_HOST > ~/.ssh/known_hosts
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+
+      - name: Stop currently running instance
+        run: |
+          ssh $SSH_USER@$SSH_HOST $STOP_COMMAND
+        shell: bash
+        env:
+          SSH_USER: ${{secrets.SSH_USER}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+          STOP_COMMAND: ${{vars.STOP_COMMAND}}
+
+      - name: Upload published solution
+        run: |
+          scp -r $UPLOAD_FROM $SSH_USER@$SSH_HOST:$UPLOAD_TO
+        shell: bash
+        env:
+          SSH_USER: ${{secrets.SSH_USER}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+          UPLOAD_FROM: ${{vars.UPLOAD_FROM}}
+          UPLOAD_TO: ${{vars.UPLOAD_TO}}
+
+      - name: Start new instance
+        run: |
+          ssh $SSH_USER@$SSH_HOST $START_COMMAND
+        shell: bash
+        env:
+          SSH_USER: ${{secrets.SSH_USER}}
+          SSH_HOST: ${{secrets.SSH_HOST}}
+          START_COMMAND: ${{vars.START_COMMAND}}
