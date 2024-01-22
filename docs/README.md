@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://cdn.mctaylors.ru/octobot-banner.png" alt="Octobot banner"/>
+    <img src="octobot-banner.png" alt="Octobot banner"/>
 </p>
 
 <a href="https://github.com/TeamOctolings/Octobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/TeamOctolings/Octobot?logo=git"></img></a>
