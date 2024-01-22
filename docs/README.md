@@ -19,18 +19,6 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 
 *...a-a-and more!*
 
-[//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
-
-## Invite Octobot <a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
-
-Did you know that Octobot is a public bot? You can invite it to your server and use it without building it!
-<p align="center">
-    <a href="https://discord.com/api/oauth2/authorize?client_id=855023234407333888&permissions=1383382133894&scope=bot%20applications.commands"><img src="https://cdn.mctaylors.ru/discord-add-app.png"></img></a>
-</p>
-
-> [!IMPORTANT]  
-> The bot will not be able to respond in private channels unless you have configured permissions for the bot in those channels.
-
 ## Building Octobot
 
 1. Install [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
