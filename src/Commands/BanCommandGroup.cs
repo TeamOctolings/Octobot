@@ -54,7 +54,7 @@ public class BanCommandGroup : CommandGroup
     ///     A slash command that bans a Discord user with the specified reason.
     /// </summary>
     /// <param name="target">The user to ban.</param>
-    /// <param name="stringDuration">The duration for this ban. The user will be automatically unbanned after this duration.</param>
+    /// <param name="duration">The duration for this ban. The user will be automatically unbanned after this duration.</param>
     /// <param name="reason">
     ///     The reason for this ban. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.CreateGuildBanAsync" />.
@@ -76,8 +76,7 @@ public class BanCommandGroup : CommandGroup
         [Description("User to ban")] IUser target,
         [Description("Ban reason")] [MaxLength(256)]
         string reason,
-        [Description("Ban duration")] [Option("duration")]
-        string? stringDuration = null)
+        [Description("Ban duration")] string? duration = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
@@ -106,14 +105,14 @@ public class BanCommandGroup : CommandGroup
         var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        if (stringDuration is null)
+        if (duration is null)
         {
             return await BanUserAsync(executor, target, reason, null, guild, data, channelId, bot,
                 CancellationToken);
         }
 
-        var parseResult = TimeSpanParser.TryParse(stringDuration);
-        if (!parseResult.IsDefined(out var duration))
+        var parseResult = TimeSpanParser.TryParse(duration);
+        if (!parseResult.IsDefined(out var timeSpan))
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
@@ -123,7 +122,7 @@ public class BanCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        return await BanUserAsync(executor, target, reason, duration, guild, data, channelId, bot, CancellationToken);
+        return await BanUserAsync(executor, target, reason, timeSpan, guild, data, channelId, bot, CancellationToken);
     }
 
     private async Task<Result> BanUserAsync(
