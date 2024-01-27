@@ -6,6 +6,7 @@ using Octobot.Data;
 using Octobot.Extensions;
 using Octobot.Parsers;
 using Octobot.Services;
+using Octobot.Services.Profiler;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
@@ -31,17 +32,19 @@ public class ToolsCommandGroup : CommandGroup
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
+    private readonly Profiler _profiler;
 
     public ToolsCommandGroup(
         ICommandContext context, IFeedbackService feedback,
         GuildDataService guildData, IDiscordRestGuildAPI guildApi,
-        IDiscordRestUserAPI userApi, IDiscordRestChannelAPI channelApi)
+        IDiscordRestUserAPI userApi, IDiscordRestChannelAPI channelApi, Profiler profiler)
     {
         _context = context;
         _guildData = guildData;
         _feedback = feedback;
         _guildApi = guildApi;
         _userApi = userApi;
+        _profiler = profiler;
     }
 
     /// <summary>
@@ -73,32 +76,44 @@ public class ToolsCommandGroup : CommandGroup
         [Description("User to show info about")]
         IUser? target = null)
     {
+        _profiler.Push("userinfo_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
             return Result.FromError(botResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
             return Result.FromError(executorResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await ShowUserInfoAsync(target ?? executor, bot, data, guildId, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await ShowUserInfoAsync(target ?? executor, bot, data, guildId, CancellationToken));
     }
 
     private async Task<Result> ShowUserInfoAsync(
         IUser target, IUser bot, GuildData data, Snowflake guildId, CancellationToken ct = default)
     {
+        _profiler.Push("main");
+        _profiler.Push("builder_construction");
         var builder = new StringBuilder().AppendLine($"### <@{target.ID}>");
 
         if (target.GlobalName is not null)
@@ -118,9 +133,11 @@ public class ToolsCommandGroup : CommandGroup
         DateTimeOffset? communicationDisabledUntil = null;
         if (guildMemberResult.IsDefined(out var guildMember))
         {
+            _profiler.Push("append_guild");
             communicationDisabledUntil = guildMember.CommunicationDisabledUntil.OrDefault(null);
 
             embedColor = AppendGuildInformation(embedColor, guildMember, builder);
+            _profiler.Pop();
         }
 
         var wasMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
@@ -130,11 +147,13 @@ public class ToolsCommandGroup : CommandGroup
 
         if (wasMuted || wasBanned || wasKicked)
         {
+            _profiler.Push("append_punishments");
             builder.Append("### ")
                 .AppendLine(Markdown.Bold(Messages.UserInfoPunishments));
 
             embedColor = AppendPunishmentsInformation(wasMuted, wasKicked, wasBanned, memberData,
                 builder, embedColor, communicationDisabledUntil);
+            _profiler.Pop();
         }
 
         if (!guildMemberResult.IsSuccess && !wasBanned)
@@ -145,6 +164,8 @@ public class ToolsCommandGroup : CommandGroup
             embedColor = ColorsList.Default;
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.InformationAbout, target.GetTag()), bot)
             .WithDescription(builder.ToString())
@@ -153,7 +174,8 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {target.ID.ToString()}")
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        _profiler.Pop();
+        return await _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     private static Color AppendPunishmentsInformation(bool wasMuted, bool wasKicked, bool wasBanned,
@@ -266,31 +288,43 @@ public class ToolsCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteGuildInfoAsync()
     {
+        _profiler.Push("guildinfo_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
             return Result.FromError(botResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_get");
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
             return Result.FromError(guildResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await ShowGuildInfoAsync(bot, guild, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await ShowGuildInfoAsync(bot, guild, CancellationToken));
     }
 
     private Task<Result> ShowGuildInfoAsync(IUser bot, IGuild guild, CancellationToken ct)
     {
+        _profiler.Push("main");
+        _profiler.Push("builder_construction");
         var description = new StringBuilder().AppendLine($"## {guild.Name}");
 
         if (guild.Description is not null)
@@ -316,6 +350,8 @@ public class ToolsCommandGroup : CommandGroup
             embedColor = ColorsList.Magenta;
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.InformationAbout, guild.Name), bot)
             .WithDescription(description.ToString())
@@ -325,7 +361,8 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {guild.ID.ToString()}")
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        _profiler.Pop();
+        return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     /// <summary>
@@ -345,26 +382,37 @@ public class ToolsCommandGroup : CommandGroup
         [Description("Second number (Default: 0)")]
         long? second = null)
     {
+        _profiler.Push("userinfo_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
             return Result.FromError(executorResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
-        return await SendRandomNumberAsync(first, second, executor, CancellationToken);
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await SendRandomNumberAsync(first, second, executor, CancellationToken));
     }
 
     private Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
         IUser executor, CancellationToken ct)
     {
+        _profiler.Push("main");
+        _profiler.Push("random_number_get");
         const long secondDefault = 0;
         var second = secondNullable ?? secondDefault;
 
@@ -373,6 +421,8 @@ public class ToolsCommandGroup : CommandGroup
 
         var i = Random.Shared.NextInt64(min, max + 1);
 
+        _profiler.Pop();
+        _profiler.Push("builder_construction");
         var description = new StringBuilder().Append("# ").Append(i);
 
         description.AppendLine().AppendBulletPoint(string.Format(
@@ -396,13 +446,16 @@ public class ToolsCommandGroup : CommandGroup
             embedColor = ColorsList.Red;
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.RandomTitle, executor.GetTag()), executor)
             .WithDescription(description.ToString())
             .WithColour(embedColor)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        _profiler.Pop();
+        return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     private static readonly TimestampStyle[] AllStyles =
@@ -431,31 +484,42 @@ public class ToolsCommandGroup : CommandGroup
         [Description("Offset from current time")] [Option("offset")]
         string? stringOffset = null)
     {
+        _profiler.Push("timestamp_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
             return Result.FromError(botResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
             return Result.FromError(executorResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_settings_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
+        _profiler.Pop();
         if (stringOffset is null)
         {
-            return await SendTimestampAsync(null, executor, CancellationToken);
+            _profiler.Pop();
+            return _profiler.ReportWithResult(await SendTimestampAsync(null, executor, CancellationToken));
         }
 
+        _profiler.Push("parse_input");
         var parseResult = TimeSpanParser.TryParse(stringOffset);
         if (!parseResult.IsDefined(out var offset))
         {
@@ -467,11 +531,15 @@ public class ToolsCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        return await SendTimestampAsync(offset, executor, CancellationToken);
+        _profiler.Pop();
+        _profiler.Pop();
+        return _profiler.ReportWithResult(await SendTimestampAsync(offset, executor, CancellationToken));
     }
 
     private Task<Result> SendTimestampAsync(TimeSpan? offset, IUser executor, CancellationToken ct)
     {
+        _profiler.Push("main");
+        _profiler.Push("builder_construction");
         var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
 
         var description = new StringBuilder().Append("# ").AppendLine(timestamp.ToString());
@@ -488,12 +556,15 @@ public class ToolsCommandGroup : CommandGroup
                 .Append(" → ").AppendLine(markdownTimestamp);
         }
 
+        _profiler.Pop();
+        _profiler.Push("embed_send");
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.TimestampTitle, executor.GetTag()), executor)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Blue)
             .Build();
 
-        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        _profiler.Pop();
+        return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 }
