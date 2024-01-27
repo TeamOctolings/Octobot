@@ -267,7 +267,7 @@ public class RemindCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
         var oldReminder = data.Reminders[index];
