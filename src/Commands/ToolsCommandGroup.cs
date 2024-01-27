@@ -105,6 +105,7 @@ public class ToolsCommandGroup : CommandGroup
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
         _profiler.Pop();
 
+        _profiler.Pop();
         return _profiler.ReportWithResult(await ShowUserInfoAsync(target ?? executor, bot, data, guildId, CancellationToken));
     }
 
@@ -128,7 +129,7 @@ public class ToolsCommandGroup : CommandGroup
 
         var embedColor = ColorsList.Cyan;
 
-        _profiler.Push("member_guild_get");
+        _profiler.Push("guild_member_get");
         var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, ct);
         _profiler.Pop();
         DateTimeOffset? communicationDisabledUntil = null;
@@ -146,13 +147,11 @@ public class ToolsCommandGroup : CommandGroup
 
         if (wasMuted || wasBanned || wasKicked)
         {
-            _profiler.Push("append_punishments");
             builder.Append("### ")
                 .AppendLine(Markdown.Bold(Messages.UserInfoPunishments));
 
             embedColor = AppendPunishmentsInformation(wasMuted, wasKicked, wasBanned, memberData,
                 builder, embedColor, communicationDisabledUntil);
-            _profiler.Pop();
         }
 
         if (!guildMemberResult.IsSuccess && !wasBanned)
@@ -173,7 +172,6 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {target.ID.ToString()}")
             .Build();
 
-        _profiler.Pop();
         return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
@@ -316,6 +314,7 @@ public class ToolsCommandGroup : CommandGroup
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
         _profiler.Pop();
 
+        _profiler.Pop();
         return _profiler.ReportWithResult(await ShowGuildInfoAsync(bot, guild, CancellationToken));
     }
 
@@ -359,7 +358,6 @@ public class ToolsCommandGroup : CommandGroup
             .WithFooter($"ID: {guild.ID.ToString()}")
             .Build();
 
-        _profiler.Pop();
         return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
@@ -388,7 +386,6 @@ public class ToolsCommandGroup : CommandGroup
                 "Unable to retrieve necessary IDs from command context"));
         }
 
-        _profiler.Pop();
         _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
@@ -402,6 +399,7 @@ public class ToolsCommandGroup : CommandGroup
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
         _profiler.Pop();
 
+        _profiler.Pop();
         return _profiler.ReportWithResult(await SendRandomNumberAsync(first, second, executor, CancellationToken));
     }
 
@@ -409,7 +407,6 @@ public class ToolsCommandGroup : CommandGroup
         IUser executor, CancellationToken ct)
     {
         _profiler.Push("main");
-        _profiler.Push("random_number_get");
         const long secondDefault = 0;
         var second = secondNullable ?? secondDefault;
 
@@ -418,7 +415,6 @@ public class ToolsCommandGroup : CommandGroup
 
         var i = Random.Shared.NextInt64(min, max + 1);
 
-        _profiler.Pop();
         _profiler.Push("builder_construction");
         var description = new StringBuilder().Append("# ").Append(i);
 
@@ -451,7 +447,6 @@ public class ToolsCommandGroup : CommandGroup
             .WithColour(embedColor)
             .Build();
 
-        _profiler.Pop();
         return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
@@ -560,7 +555,6 @@ public class ToolsCommandGroup : CommandGroup
             .WithColour(ColorsList.Blue)
             .Build();
 
-        _profiler.Pop();
         return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 }
