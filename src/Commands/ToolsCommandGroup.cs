@@ -88,7 +88,7 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
         _profiler.Pop();
@@ -96,7 +96,7 @@ public class ToolsCommandGroup : CommandGroup
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
         _profiler.Pop();
@@ -105,7 +105,6 @@ public class ToolsCommandGroup : CommandGroup
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
         _profiler.Pop();
 
-        _profiler.Pop();
         return _profiler.ReportWithResult(await ShowUserInfoAsync(target ?? executor, bot, data, guildId, CancellationToken));
     }
 
@@ -129,15 +128,15 @@ public class ToolsCommandGroup : CommandGroup
 
         var embedColor = ColorsList.Cyan;
 
+        _profiler.Push("member_guild_get");
         var guildMemberResult = await _guildApi.GetGuildMemberAsync(guildId, target.ID, ct);
+        _profiler.Pop();
         DateTimeOffset? communicationDisabledUntil = null;
         if (guildMemberResult.IsDefined(out var guildMember))
         {
-            _profiler.Push("append_guild");
             communicationDisabledUntil = guildMember.CommunicationDisabledUntil.OrDefault(null);
 
             embedColor = AppendGuildInformation(embedColor, guildMember, builder);
-            _profiler.Pop();
         }
 
         var wasMuted = (memberData.MutedUntil is not null && DateTimeOffset.UtcNow <= memberData.MutedUntil) ||
@@ -175,7 +174,7 @@ public class ToolsCommandGroup : CommandGroup
             .Build();
 
         _profiler.Pop();
-        return await _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     private static Color AppendPunishmentsInformation(bool wasMuted, bool wasKicked, bool wasBanned,
@@ -300,7 +299,7 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
         _profiler.Pop();
@@ -308,7 +307,7 @@ public class ToolsCommandGroup : CommandGroup
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return _profiler.ReportWithResult(Result.FromError(guildResult));
         }
 
         _profiler.Pop();
@@ -317,7 +316,6 @@ public class ToolsCommandGroup : CommandGroup
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
         _profiler.Pop();
 
-        _profiler.Pop();
         return _profiler.ReportWithResult(await ShowGuildInfoAsync(bot, guild, CancellationToken));
     }
 
@@ -395,7 +393,7 @@ public class ToolsCommandGroup : CommandGroup
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
         _profiler.Pop();
@@ -404,7 +402,6 @@ public class ToolsCommandGroup : CommandGroup
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
         _profiler.Pop();
 
-        _profiler.Pop();
         return _profiler.ReportWithResult(await SendRandomNumberAsync(first, second, executor, CancellationToken));
     }
 
@@ -496,7 +493,7 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return _profiler.ReportWithResult(Result.FromError(botResult));
         }
 
         _profiler.Pop();
@@ -504,7 +501,7 @@ public class ToolsCommandGroup : CommandGroup
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
         _profiler.Pop();
@@ -515,7 +512,6 @@ public class ToolsCommandGroup : CommandGroup
         _profiler.Pop();
         if (stringOffset is null)
         {
-            _profiler.Pop();
             return _profiler.ReportWithResult(await SendTimestampAsync(null, executor, CancellationToken));
         }
 
@@ -523,15 +519,15 @@ public class ToolsCommandGroup : CommandGroup
         var parseResult = TimeSpanParser.TryParse(stringOffset);
         if (!parseResult.IsDefined(out var offset))
         {
+            _profiler.Push("not_parsed_send");
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+            return _profiler.ReportWithResult(await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken));
         }
 
-        _profiler.Pop();
         _profiler.Pop();
         return _profiler.ReportWithResult(await SendTimestampAsync(offset, executor, CancellationToken));
     }
