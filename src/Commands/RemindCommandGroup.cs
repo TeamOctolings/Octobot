@@ -241,15 +241,24 @@ public class RemindCommandGroup : CommandGroup
 
         if (parameter is Parameters.Time)
         {
-            return await EditReminderTimeAsync(position, value, memberData, bot, executor, CancellationToken);
+            return await EditReminderTimeAsync(position - 1, value, memberData, bot, executor, CancellationToken);
         }
 
-        return await EditReminderTextAsync(position, value, memberData, executor, CancellationToken);
+        return await EditReminderTextAsync(position - 1, value, memberData, bot, executor, CancellationToken);
     }
 
-    private async Task<Result> EditReminderTimeAsync(int position, string value, MemberData data,
+    private async Task<Result> EditReminderTimeAsync(int index, string value, MemberData data,
         IUser bot, IUser executor, CancellationToken ct = default)
     {
+        if (index >= data.Reminders.Count)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+        }
+
         var parseResult = TimeSpanParser.TryParse(value);
         if (!parseResult.IsDefined(out var timeSpan))
         {
@@ -261,7 +270,7 @@ public class RemindCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        var oldReminder = data.Reminders[position];
+        var oldReminder = data.Reminders[index];
         var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
 
         data.Reminders.Add(
@@ -270,7 +279,7 @@ public class RemindCommandGroup : CommandGroup
                 At = remindAt
             });
 
-        data.Reminders.RemoveAt(position);
+        data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(oldReminder.Text)))
@@ -285,10 +294,19 @@ public class RemindCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
-    private async Task<Result> EditReminderTextAsync(int position, string value, MemberData data,
-        IUser executor, CancellationToken ct = default)
+    private async Task<Result> EditReminderTextAsync(int index, string value, MemberData data,
+        IUser bot, IUser executor, CancellationToken ct = default)
     {
-        var oldReminder = data.Reminders[position];
+        if (index >= data.Reminders.Count)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+        }
+
+        var oldReminder = data.Reminders[index];
 
         data.Reminders.Add(
             oldReminder with
@@ -296,7 +314,7 @@ public class RemindCommandGroup : CommandGroup
                 Text = value
             });
 
-        data.Reminders.RemoveAt(position);
+        data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(value)))
