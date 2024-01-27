@@ -273,12 +273,7 @@ public class RemindCommandGroup : CommandGroup
         var oldReminder = data.Reminders[index];
         var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
 
-        data.Reminders.Add(
-            oldReminder with
-            {
-                At = remindAt
-            });
-
+        data.Reminders.Add(oldReminder with { At = remindAt });
         data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
@@ -308,12 +303,7 @@ public class RemindCommandGroup : CommandGroup
 
         var oldReminder = data.Reminders[index];
 
-        data.Reminders.Add(
-            oldReminder with
-            {
-                Text = value
-            });
-
+        data.Reminders.Add(oldReminder with { Text = value });
         data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
