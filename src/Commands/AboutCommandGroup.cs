@@ -100,7 +100,7 @@ public class AboutCommandGroup : CommandGroup
             .WithSmallTitle(string.Format(Messages.AboutBot, bot.Username), bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl("https://cdn.mctaylors.ru/octobot-banner.png")
+            .WithImageUrl("https://i.ibb.co/fS6wZhh/octobot-banner.png")
             .Build();
 
         var repositoryButton = new ButtonComponent(
