@@ -156,7 +156,7 @@ public class RemindCommandGroup : CommandGroup
                 "Unable to retrieve necessary IDs from command context"));
         }
 
-        _profiler.Push("current_get");
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
@@ -260,57 +260,67 @@ public class RemindCommandGroup : CommandGroup
         [Description("Parameter to edit")] Parameters parameter,
         [Description("Parameter's new value")] string value)
     {
+        _profiler.Push("list_reminders_command");
+        _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
-            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+            return _profiler.ReportWithResult(new ArgumentInvalidError(nameof(_context),
+                "Unable to retrieve necessary IDs from command context"));
         }
 
+        _profiler.Push("current_user_get");
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
             return Result.FromError(botResult);
         }
 
+        _profiler.Pop();
+        _profiler.Push("executor_get");
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return _profiler.ReportWithResult(Result.FromError(executorResult));
         }
 
+        _profiler.Pop();
+        _profiler.Push("guild_data_get");
         var data = await _guildData.GetData(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
+        _profiler.Pop();
 
         var memberData = data.GetOrCreateMemberData(executor.ID);
 
-        if (parameter is Parameters.Time)
-        {
-            return await EditReminderTimeAsync(position - 1, value, memberData, bot, executor, CancellationToken);
-        }
-
-        return await EditReminderTextAsync(position - 1, value, memberData, bot, executor, CancellationToken);
+        _profiler.Pop();
+        return parameter is Parameters.Time
+            ? _profiler.ReportWithResult(await EditReminderTimeAsync(position - 1, value, memberData, bot, executor, CancellationToken))
+            : _profiler.ReportWithResult(await EditReminderTextAsync(position - 1, value, memberData, bot, executor, CancellationToken));
     }
 
     private async Task<Result> EditReminderTimeAsync(int index, string value, MemberData data,
         IUser bot, IUser executor, CancellationToken ct = default)
     {
+        _profiler.Push("main");
         if (index >= data.Reminders.Count)
         {
+            _profiler.Push("not_edited_send");
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.InvalidReminderPosition, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.ReportWithResult(await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct));
         }
 
         var parseResult = TimeSpanParser.TryParse(value);
         if (!parseResult.IsDefined(out var timeSpan))
         {
+            _profiler.Push("not_parsed_send");
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
                 .WithColour(ColorsList.Red)
                 .Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+            return _profiler.ReportWithResult(await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken));
         }
 
         var oldReminder = data.Reminders[index];
@@ -319,6 +329,7 @@ public class RemindCommandGroup : CommandGroup
         data.Reminders.Add(oldReminder with { At = remindAt });
         data.Reminders.RemoveAt(index);
 
+        _profiler.Push("embed_send");
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(oldReminder.Text)))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
@@ -329,7 +340,8 @@ public class RemindCommandGroup : CommandGroup
             .WithFooter(string.Format(Messages.ReminderPosition, data.Reminders.Count))
             .Build();
 
-        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+        _profiler.Pop();
+        return _profiler.PopWithResult(await _feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
     private async Task<Result> EditReminderTextAsync(int index, string value, MemberData data,
