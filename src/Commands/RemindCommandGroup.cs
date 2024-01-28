@@ -260,7 +260,7 @@ public class RemindCommandGroup : CommandGroup
         [Description("Parameter to edit")] Parameters parameter,
         [Description("Parameter's new value")] string value)
     {
-        _profiler.Push("list_reminders_command");
+        _profiler.Push("edit_reminder_command");
         _profiler.Push("preparation");
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
