@@ -511,7 +511,6 @@ public class ToolsCommandGroup : CommandGroup
             return _profiler.ReportWithResult(await SendTimestampAsync(null, executor, CancellationToken));
         }
 
-        _profiler.Push("parse_input");
         var parseResult = TimeSpanParser.TryParse(stringOffset);
         if (!parseResult.IsDefined(out var offset))
         {
