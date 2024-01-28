@@ -507,6 +507,7 @@ public class ToolsCommandGroup : CommandGroup
         _profiler.Pop();
         if (stringOffset is null)
         {
+            _profiler.Pop();
             return _profiler.ReportWithResult(await SendTimestampAsync(null, executor, CancellationToken));
         }
 
