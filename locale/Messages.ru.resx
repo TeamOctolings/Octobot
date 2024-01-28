@@ -591,4 +591,7 @@
   <data name="UserInfoKicked" xml:space="preserve">
       <value>Выгнан</value>
   </data>
+  <data name="ReminderEdited" xml:space="preserve">
+      <value>Напоминание отредактировано</value>
+  </data>
 </root>

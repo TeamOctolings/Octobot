@@ -591,4 +591,7 @@
   <data name="UserInfoKicked" xml:space="preserve">
       <value>Kicked</value>
   </data>
+  <data name="ReminderEdited" xml:space="preserve">
+      <value>Reminder edited</value>
+  </data>
 </root>
