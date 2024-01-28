@@ -119,6 +119,7 @@ public class SettingsCommandGroup : CommandGroup
     private Task<Result> SendSettingsListAsync(JsonNode cfg, IUser bot, int page,
         CancellationToken ct = default)
     {
+        _profiler.Push("main");
         var description = new StringBuilder();
         var footer = new StringBuilder();
 
@@ -164,6 +165,7 @@ public class SettingsCommandGroup : CommandGroup
             .WithFooter(footer.ToString())
             .Build();
 
+        _profiler.Pop();
         return _profiler.PopWithResult(_feedback.SendContextualEmbedResultAsync(embed, ct: ct));
     }
 
