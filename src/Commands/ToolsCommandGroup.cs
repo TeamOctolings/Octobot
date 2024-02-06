@@ -101,10 +101,10 @@ public class ToolsCommandGroup : CommandGroup
     {
         var builder = new StringBuilder().AppendLine($"### <@{target.ID}>");
 
-        if (target.GlobalName is not null)
+        if (target.GlobalName.IsDefined(out var globalName))
         {
             builder.AppendBulletPointLine(Messages.UserInfoDisplayName)
-                .AppendLine(Markdown.InlineCode(target.GlobalName));
+                .AppendLine(Markdown.InlineCode(globalName));
         }
 
         builder.AppendBulletPointLine(Messages.UserInfoDiscordUserSince)
