@@ -196,12 +196,8 @@ public class BanCommandGroup : CommandGroup
                 title, target)
             .WithColour(ColorsList.Green).Build();
 
-        var logResult = _utility.LogActionAsync(
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
@@ -287,12 +283,9 @@ public class BanCommandGroup : CommandGroup
 
         var title = string.Format(Messages.UserUnbanned, target.GetTag());
         var description = new StringBuilder().AppendBulletPoint(string.Format(Messages.DescriptionActionReason, reason));
-        var logResult = _utility.LogActionAsync(
+
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description.ToString(), target, ColorsList.Green, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }

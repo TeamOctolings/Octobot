@@ -157,12 +157,9 @@ public class KickCommandGroup : CommandGroup
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));
-        var logResult = _utility.LogActionAsync(
+
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserKicked, target.GetTag()), target)
