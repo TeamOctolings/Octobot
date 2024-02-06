@@ -153,12 +153,8 @@ public class MuteCommandGroup : CommandGroup
             .AppendBulletPoint(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
-        var logResult = _utility.LogActionAsync(
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserMuted, target.GetTag()), target)
@@ -339,12 +335,9 @@ public class MuteCommandGroup : CommandGroup
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));
-        var logResult = _utility.LogActionAsync(
+
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Green, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnmuted, target.GetTag()), target)
