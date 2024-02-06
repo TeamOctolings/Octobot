@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Octobot.Commands.Events;
 using Octobot.Services;
-using Octobot.Services.Profiler;
 using Octobot.Services.Update;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
@@ -87,8 +86,6 @@ public sealed class Octobot
                         .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
                         // Services
-                        .AddTransient<Profiler>()
-                        .AddSingleton<ProfilerFactory>()
                         .AddSingleton<Utility>()
                         .AddSingleton<GuildDataService>()
                         .AddHostedService<GuildDataService>(provider => provider.GetRequiredService<GuildDataService>())
