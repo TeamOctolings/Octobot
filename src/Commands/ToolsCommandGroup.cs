@@ -21,7 +21,7 @@ using Remora.Results;
 namespace Octobot.Commands;
 
 /// <summary>
-///     Handles tool commands: /userinfo, /guildinfo, /random, /timestamp.
+///     Handles tool commands: /userinfo, /guildinfo, /random, /timestamp, /8ball.
 /// </summary>
 [UsedImplicitly]
 public class ToolsCommandGroup : CommandGroup
@@ -492,6 +492,67 @@ public class ToolsCommandGroup : CommandGroup
                 string.Format(Messages.TimestampTitle, executor.GetTag()), executor)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Blue)
+            .Build();
+
+        return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
+    /// <summary>
+    ///     A slash command that shows a random magic 8-ball's answer.
+    /// </summary>
+    /// <param name="question">Unused input.</param>
+    /// <remarks>
+    ///     The 8-Ball answers were taken from <a href="https://en.wikipedia.org/wiki/Magic_8_Ball#Possible_answers">Wikipedia</a>.
+    /// </remarks>
+    /// <returns>
+    ///     A feedback sending result which may have succeeded.
+    /// </returns>
+    [Command("8ball")]
+    [DiscordDefaultDMPermission(false)]
+    [Description("Ask a question to")]
+    [UsedImplicitly]
+    public async Task<Result> ExecuteEightBallAsync(
+        // let the user think he's actually asking the ball a question
+        string question)
+    {
+        if (!_context.TryGetContextIDs(out var guildId, out _, out _))
+        {
+            return new ArgumentInvalidError(nameof(_context), "Unable to retrieve necessary IDs from command context");
+        }
+
+        var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
+        if (!botResult.IsDefined(out var bot))
+        {
+            return Result.FromError(botResult);
+        }
+
+        var data = await _guildData.GetData(guildId, CancellationToken);
+        Messages.Culture = GuildSettings.Language.Get(data.Settings);
+
+        return await AnswerEightBallAsync(bot, CancellationToken);
+    }
+
+    private static readonly string[] AnswerTypes =
+    [
+        "Positive", "Questionable", "Neutral", "Negative"
+    ];
+
+    private Task<Result> AnswerEightBallAsync(IUser bot, CancellationToken ct)
+    {
+        var typeNumber = Random.Shared.Next(0, 4);
+        var embedColor = typeNumber switch
+        {
+            0 => ColorsList.Blue,
+            1 => ColorsList.Green,
+            2 => ColorsList.Yellow,
+            3 => ColorsList.Red,
+            _ => ColorsList.Default
+        };
+
+        var answer = $"EightBall{AnswerTypes[typeNumber]}{Random.Shared.Next(1, 6)}".Localized();
+
+        var embed = new EmbedBuilder().WithSmallTitle(answer, bot)
+            .WithColour(embedColor)
             .Build();
 
         return _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
