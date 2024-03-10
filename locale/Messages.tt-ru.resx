@@ -594,39 +594,6 @@
   <data name="ReminderEdited" xml:space="preserve">
       <value>напоминалка подправлена</value>
   </data>
-  <data name="EightBallQuestionable5" xml:space="preserve">
-      <value>мгм</value>
-  </data>
-  <data name="EightBallNegative1" xml:space="preserve">
-      <value>даже не думай</value>
-  </data>
-  <data name="EightBallNegative2" xml:space="preserve">
-      <value>мое завление это нет</value>
-  </data>
-  <data name="EightBallNegative3" xml:space="preserve">
-      <value>я тут посчитал, короче нет</value>
-  </data>
-  <data name="EightBallNegative4" xml:space="preserve">
-      <value>выглядит такое себе</value>
-  </data>
-  <data name="EightBallNegative5" xml:space="preserve">
-      <value>чот сомневаюсь</value>
-  </data>
-  <data name="EightBallNeutral1" xml:space="preserve">
-      <value>ну-ка попробуй снова</value>
-  </data>
-  <data name="EightBallNeutral2" xml:space="preserve">
-      <value>давай позже</value>
-  </data>
-  <data name="EightBallNeutral3" xml:space="preserve">
-      <value>щас пока не скажу</value>
-  </data>
-  <data name="EightBallNeutral4" xml:space="preserve">
-      <value>я не могу сейчас предсказать</value>
-  </data>
-  <data name="EightBallNeutral5" xml:space="preserve">
-      <value>ну сконцентрируйся и давай еще раз</value>
-  </data>
   <data name="EightBallPositive1" xml:space="preserve">
       <value>абсолютли</value>
   </data>
@@ -653,5 +620,38 @@
   </data>
   <data name="EightBallQuestionable4" xml:space="preserve">
       <value>мне сказали ок</value>
+  </data>
+  <data name="EightBallQuestionable5" xml:space="preserve">
+      <value>мгм</value>
+  </data>
+  <data name="EightBallNeutral1" xml:space="preserve">
+      <value>ну-ка попробуй снова</value>
+  </data>
+  <data name="EightBallNeutral2" xml:space="preserve">
+      <value>давай позже</value>
+  </data>
+  <data name="EightBallNeutral3" xml:space="preserve">
+      <value>щас пока не скажу</value>
+  </data>
+  <data name="EightBallNeutral4" xml:space="preserve">
+      <value>я не могу сейчас предсказать</value>
+  </data>
+  <data name="EightBallNeutral5" xml:space="preserve">
+      <value>ну сконцентрируйся и давай еще раз</value>
+  </data>
+  <data name="EightBallNegative1" xml:space="preserve">
+      <value>даже не думай</value>
+  </data>
+  <data name="EightBallNegative2" xml:space="preserve">
+      <value>мое завление это нет</value>
+  </data>
+  <data name="EightBallNegative3" xml:space="preserve">
+      <value>я тут посчитал, короче нет</value>
+  </data>
+  <data name="EightBallNegative4" xml:space="preserve">
+      <value>выглядит такое себе</value>
+  </data>
+  <data name="EightBallNegative5" xml:space="preserve">
+      <value>чот сомневаюсь</value>
   </data>
 </root>
