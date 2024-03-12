@@ -546,7 +546,7 @@ public class ToolsCommandGroup : CommandGroup
             1 => ColorsList.Green,
             2 => ColorsList.Yellow,
             3 => ColorsList.Red,
-            _ => throw new ArgumentOutOfRangeException(nameof(typeNumber))
+            _ => throw new ArgumentOutOfRangeException(null, nameof(typeNumber))
         };
 
         var answer = $"EightBall{AnswerTypes[typeNumber]}{Random.Shared.Next(1, 6)}".Localized();
