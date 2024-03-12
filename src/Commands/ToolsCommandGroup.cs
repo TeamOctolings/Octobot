@@ -509,7 +509,7 @@ public class ToolsCommandGroup : CommandGroup
     /// </returns>
     [Command("8ball")]
     [DiscordDefaultDMPermission(false)]
-    [Description("Ask a question to")]
+    [Description("Ask the magic 8-ball a question")]
     [UsedImplicitly]
     public async Task<Result> ExecuteEightBallAsync(
         // let the user think he's actually asking the ball a question
@@ -546,7 +546,7 @@ public class ToolsCommandGroup : CommandGroup
             1 => ColorsList.Green,
             2 => ColorsList.Yellow,
             3 => ColorsList.Red,
-            _ => ColorsList.Default
+            _ => throw new ArgumentOutOfRangeException(nameof(typeNumber))
         };
 
         var answer = $"EightBall{AnswerTypes[typeNumber]}{Random.Shared.Next(1, 6)}".Localized();
