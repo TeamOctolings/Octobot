@@ -505,7 +505,7 @@ public class ToolsCommandGroup : CommandGroup
     ///     The 8-Ball answers were taken from <a href="https://en.wikipedia.org/wiki/Magic_8_Ball#Possible_answers">Wikipedia</a>.
     /// </remarks>
     /// <returns>
-    ///     A feedback sending result which may have succeeded.
+    ///     A feedback sending result which may or may not have succeeded.
     /// </returns>
     [Command("8ball")]
     [DiscordDefaultDMPermission(false)]
