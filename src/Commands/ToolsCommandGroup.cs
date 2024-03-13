@@ -498,7 +498,7 @@ public class ToolsCommandGroup : CommandGroup
     }
 
     /// <summary>
-    ///     A slash command that shows a random magic 8-ball's answer.
+    ///     A slash command that shows a random answer from the Magic 8-Ball.
     /// </summary>
     /// <param name="question">Unused input.</param>
     /// <remarks>
