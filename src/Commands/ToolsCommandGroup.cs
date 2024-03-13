@@ -509,7 +509,7 @@ public class ToolsCommandGroup : CommandGroup
     /// </returns>
     [Command("8ball")]
     [DiscordDefaultDMPermission(false)]
-    [Description("Ask the magic 8-ball a question")]
+    [Description("Ask the Magic 8-Ball a question")]
     [UsedImplicitly]
     public async Task<Result> ExecuteEightBallAsync(
         // let the user think he's actually asking the ball a question
