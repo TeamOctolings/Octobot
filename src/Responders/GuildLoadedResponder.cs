@@ -117,7 +117,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Octobot.IssuesUrl
+            URL: $"{ThisAssembly.Git.RepositoryUrl}/issues"
         );
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(channel, embedResult: errorEmbed,

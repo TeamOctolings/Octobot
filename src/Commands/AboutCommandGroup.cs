@@ -96,30 +96,30 @@ public class AboutCommandGroup : CommandGroup
             builder.AppendBulletPointLine($"{tag} — {$"AboutDeveloper@{dev.Username}".Localized()}");
         }
 
-        var footer = ThisAssembly.Git.IsDirty
-            ? $"{ThisAssembly.Git.Branch}-{ThisAssembly.Git.Commit}-dirty"
-            : $"{ThisAssembly.Git.Branch}-{ThisAssembly.Git.Commit}";
-
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.AboutBot, bot.Username), bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://i.ibb.co/fS6wZhh/octobot-banner.png")
-            .WithFooter(string.Format(Messages.Version, footer))
+            .WithFooter(string.Format(Messages.Version, ThisAssembly.Git.IsDirty
+                ? $"{ThisAssembly.Git.Branch}-{ThisAssembly.Git.Commit}-dirty"
+                // ReSharper disable once HeuristicUnreachableCode
+                //                        ^^^  while being reachable, however
+                : $"{ThisAssembly.Git.Branch}-{ThisAssembly.Git.Commit}"))
             .Build();
 
         var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
             new PartialEmoji(Name: "🌐"),
-            URL: Octobot.RepositoryUrl
+            URL: ThisAssembly.Git.RepositoryUrl
         );
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Octobot.IssuesUrl
+            URL: $"{ThisAssembly.Git.RepositoryUrl}/issues"
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
