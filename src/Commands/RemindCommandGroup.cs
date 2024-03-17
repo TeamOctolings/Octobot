@@ -120,7 +120,7 @@ public class RemindCommandGroup : CommandGroup
     [RequireContext(ChannelContext.Guild)]
     [UsedImplicitly]
     public async Task<Result> ExecuteReminderAsync(
-        [Description("After what period of time mention the reminder")]
+        [Description("After what period of time mention the reminder (e.g. 1h30m)")]
         [Option("in")]
         string timeSpanString,
         [Description("Reminder text")] [MaxLength(512)]
@@ -151,6 +151,7 @@ public class RemindCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -264,6 +265,7 @@ public class RemindCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 

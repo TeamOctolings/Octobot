@@ -76,7 +76,8 @@ public class BanCommandGroup : CommandGroup
         [Description("User to ban")] IUser target,
         [Description("Ban reason")] [MaxLength(256)]
         string reason,
-        [Description("Ban duration")] string? duration = null)
+        [Description("Ban duration (e.g. 1h30m)")]
+        string? duration = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
@@ -116,6 +117,7 @@ public class BanCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 

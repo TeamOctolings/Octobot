@@ -1178,5 +1178,11 @@ namespace Octobot {
                 return ResourceManager.GetString("EightBallNegative5", resourceCulture);
             }
         }
+
+        internal static string TimeSpanExample {
+            get {
+                return ResourceManager.GetString("TimeSpanExample", resourceCulture);
+            }
+        }
     }
 }
