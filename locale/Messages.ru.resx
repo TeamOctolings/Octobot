@@ -657,4 +657,7 @@
   <data name="TimeSpanExample" xml:space="preserve">
       <value>Пример правильного ввода: `1ч30м`</value>
   </data>
+  <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
+      <value>Канал для приветствий</value>
+  </data>
 </root>

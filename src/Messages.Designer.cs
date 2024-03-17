@@ -1184,5 +1184,12 @@ namespace Octobot {
                 return ResourceManager.GetString("TimeSpanExample", resourceCulture);
             }
         }
+
+        internal static string SettingsWelcomeMessagesChannel
+        {
+            get {
+                return ResourceManager.GetString("SettingsWelcomeMessagesChannel", resourceCulture);
+            }
+        }
     }
 }
