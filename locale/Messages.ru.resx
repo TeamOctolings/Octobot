@@ -657,4 +657,7 @@
   <data name="TimeSpanExample" xml:space="preserve">
       <value>Пример правильного ввода: `1ч30м`</value>
   </data>
+  <data name="Version" xml:space="preserve">
+      <value>Версия: {0}</value>
+  </data>
 </root>

@@ -657,4 +657,7 @@
   <data name="TimeSpanExample" xml:space="preserve">
       <value>правильно пишут так: `1h30m`</value>
   </data>
+  <data name="Version" xml:space="preserve">
+      <value>{0}</value>
+  </data>
 </root>
