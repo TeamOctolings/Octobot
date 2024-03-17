@@ -151,6 +151,7 @@ public class RemindCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 
@@ -264,6 +265,7 @@ public class RemindCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 

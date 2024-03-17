@@ -654,4 +654,7 @@
   <data name="EightBallNegative5" xml:space="preserve">
       <value>Весьма сомнительно</value>
   </data>
+  <data name="TimeSpanExample" xml:space="preserve">
+      <value>Пример правильного ввода: `1h30m`</value>
+  </data>
 </root>

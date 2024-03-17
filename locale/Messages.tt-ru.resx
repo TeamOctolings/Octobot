@@ -654,4 +654,7 @@
   <data name="EightBallNegative5" xml:space="preserve">
       <value>чот сомневаюсь</value>
   </data>
+  <data name="TimeSpanExample" xml:space="preserve">
+      <value>правильно пишут так: `1h30m`</value>
+  </data>
 </root>

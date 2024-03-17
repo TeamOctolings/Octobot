@@ -461,6 +461,7 @@ public class ToolsCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 

@@ -73,7 +73,7 @@ public class MuteCommandGroup : CommandGroup
         [Description("Member to mute")] IUser target,
         [Description("Mute reason")] [MaxLength(256)]
         string reason,
-        [Description("Mute duration")] [Option("duration")]
+        [Description("Mute duration (e.g. 1h30m)")] [Option("duration")]
         string stringDuration)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
@@ -111,6 +111,7 @@ public class MuteCommandGroup : CommandGroup
         {
             var failedEmbed = new EmbedBuilder()
                 .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
                 .WithColour(ColorsList.Red)
                 .Build();
 
