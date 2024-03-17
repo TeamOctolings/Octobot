@@ -655,6 +655,6 @@
       <value>Весьма сомнительно</value>
   </data>
   <data name="TimeSpanExample" xml:space="preserve">
-      <value>Пример правильного ввода: `1h30m`</value>
+      <value>Пример правильного ввода: `1ч30м`</value>
   </data>
 </root>
