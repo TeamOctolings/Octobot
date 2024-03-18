@@ -51,7 +51,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             return Result.FromError(returnRolesResult.Error);
         }
 
-        if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+        if (GuildSettings.WelcomeMessagesChannel.Get(cfg).Empty()
             || GuildSettings.WelcomeMessage.Get(cfg) is "off" or "disable" or "disabled")
         {
             return Result.FromSuccess();
@@ -76,7 +76,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             .Build();
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
-            GuildSettings.PublicFeedbackChannel.Get(cfg), embedResult: embed,
+            GuildSettings.WelcomeMessagesChannel.Get(cfg), embedResult: embed,
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 

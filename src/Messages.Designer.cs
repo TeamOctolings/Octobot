@@ -1190,5 +1190,11 @@ namespace Octobot {
                 return ResourceManager.GetString("Version", resourceCulture);
             }
         }
+
+        internal static string SettingsWelcomeMessagesChannel {
+            get {
+                return ResourceManager.GetString("SettingsWelcomeMessagesChannel", resourceCulture);
+            }
+        }
     }
 }

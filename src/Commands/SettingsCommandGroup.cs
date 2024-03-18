@@ -46,6 +46,7 @@ public class SettingsCommandGroup : CommandGroup
         GuildSettings.RenameHoistedUsers,
         GuildSettings.PublicFeedbackChannel,
         GuildSettings.PrivateFeedbackChannel,
+        GuildSettings.WelcomeMessagesChannel,
         GuildSettings.EventNotificationChannel,
         GuildSettings.DefaultRole,
         GuildSettings.MuteRole,

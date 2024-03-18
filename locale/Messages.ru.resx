@@ -660,4 +660,7 @@
   <data name="Version" xml:space="preserve">
       <value>Версия: {0}</value>
   </data>
+  <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
+      <value>Канал для приветствий</value>
+  </data>
 </root>
