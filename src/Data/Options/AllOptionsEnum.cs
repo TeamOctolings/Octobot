@@ -21,6 +21,7 @@ public enum AllOptionsEnum
     [UsedImplicitly] RenameHoistedUsers,
     [UsedImplicitly] PublicFeedbackChannel,
     [UsedImplicitly] PrivateFeedbackChannel,
+    [UsedImplicitly] WelcomeMessagesChannel,
     [UsedImplicitly] EventNotificationChannel,
     [UsedImplicitly] DefaultRole,
     [UsedImplicitly] MuteRole,
