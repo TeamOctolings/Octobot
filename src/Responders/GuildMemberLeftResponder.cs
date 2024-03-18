@@ -35,11 +35,13 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
         var data = await _guildData.GetData(gatewayEvent.GuildID, ct);
         var cfg = data.Settings;
 
-        await Task.Delay(1000, ct);
-        // if you'll find a better solution, go ahead and make a PR
-
         var memberData = data.GetOrCreateMemberData(user.ID);
-        if (memberData.BannedUntil is not null || memberData.Kicked)
+        if (memberData.BannedUntil is not null)
+        {
+            return Result.FromSuccess();
+        }
+
+        if (memberData.Kicked)
         {
             return Result.FromSuccess();
         }
