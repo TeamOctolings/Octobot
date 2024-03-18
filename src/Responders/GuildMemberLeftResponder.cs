@@ -36,12 +36,7 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
         var cfg = data.Settings;
 
         var memberData = data.GetOrCreateMemberData(user.ID);
-        if (memberData.BannedUntil is not null)
-        {
-            return Result.FromSuccess();
-        }
-
-        if (memberData.Kicked)
+        if (memberData.BannedUntil is not null || memberData.Kicked)
         {
             return Result.FromSuccess();
         }
