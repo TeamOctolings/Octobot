@@ -143,17 +143,19 @@ public class KickCommandGroup : CommandGroup
             await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.Kicked = true;
+
         var kickResult = await _guildApi.RemoveGuildMemberAsync(
             guild.ID, target.ID, $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct);
         if (!kickResult.IsSuccess)
         {
+            memberData.Kicked = false;
             return Result.FromError(kickResult.Error);
         }
 
-        var memberData = data.GetOrCreateMemberData(target.ID);
         memberData.Roles.Clear();
-        memberData.Kicked = true;
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));
