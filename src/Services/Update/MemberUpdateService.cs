@@ -151,6 +151,13 @@ public sealed partial class MemberUpdateService : BackgroundService
             return Result.FromSuccess();
         }
 
+        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, id, ct);
+        if (!existingBanResult.IsDefined())
+        {
+            data.BannedUntil = null;
+            return Result.FromSuccess();
+        }
+
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
             guildId, id, Messages.PunishmentExpired.EncodeHeader(), ct);
         if (unbanResult.IsSuccess)
