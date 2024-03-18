@@ -41,7 +41,7 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
             return Result.FromSuccess();
         }
 
-        if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+        if (GuildSettings.WelcomeMessagesChannel.Get(cfg).Empty()
             || GuildSettings.LeaveMessage.Get(cfg) is "off" or "disable" or "disabled")
         {
             return Result.FromSuccess();
@@ -66,7 +66,7 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
             .Build();
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
-            GuildSettings.PublicFeedbackChannel.Get(cfg), embedResult: embed,
+            GuildSettings.WelcomeMessagesChannel.Get(cfg), embedResult: embed,
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 }
