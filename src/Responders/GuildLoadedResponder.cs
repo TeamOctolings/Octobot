@@ -88,7 +88,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var i = Random.Shared.Next(1, 4);
 
         var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
-            .WithTitle($"Sound{i}".Localized())
+            .WithTitle($"Loaded{i}".Localized())
             .WithDescription(Messages.Ready)
             .WithCurrentTimestamp()
             .WithColour(ColorsList.Blue)
