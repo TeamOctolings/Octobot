@@ -108,39 +108,15 @@ namespace Octobot {
             }
         }
 
-        internal static string ChannelNotSpecified {
-            get {
-                return ResourceManager.GetString("ChannelNotSpecified", resourceCulture);
-            }
-        }
-
-        internal static string RoleNotSpecified {
-            get {
-                return ResourceManager.GetString("RoleNotSpecified", resourceCulture);
-            }
-        }
-
         internal static string SettingsLang {
             get {
                 return ResourceManager.GetString("SettingsLang", resourceCulture);
             }
         }
 
-        internal static string SettingsPrefix {
-            get {
-                return ResourceManager.GetString("SettingsPrefix", resourceCulture);
-            }
-        }
-
         internal static string SettingsRemoveRolesOnMute {
             get {
                 return ResourceManager.GetString("SettingsRemoveRolesOnMute", resourceCulture);
-            }
-        }
-
-        internal static string SettingsSendWelcomeMessages {
-            get {
-                return ResourceManager.GetString("SettingsSendWelcomeMessages", resourceCulture);
             }
         }
 
@@ -240,12 +216,6 @@ namespace Octobot {
             }
         }
 
-        internal static string SettingsEventStartedReceivers {
-            get {
-                return ResourceManager.GetString("SettingsEventStartedReceivers", resourceCulture);
-            }
-        }
-
         internal static string EventStarted {
             get {
                 return ResourceManager.GetString("EventStarted", resourceCulture);
@@ -273,12 +243,6 @@ namespace Octobot {
         internal static string SettingsNothingChanged {
             get {
                 return ResourceManager.GetString("SettingsNothingChanged", resourceCulture);
-            }
-        }
-
-        internal static string SettingNotDefined {
-            get {
-                return ResourceManager.GetString("SettingNotDefined", resourceCulture);
             }
         }
 
@@ -717,18 +681,6 @@ namespace Octobot {
         internal static string PagesAllowed {
             get {
                 return ResourceManager.GetString("PagesAllowed", resourceCulture);
-            }
-        }
-
-        internal static string Next {
-            get {
-                return ResourceManager.GetString("Next", resourceCulture);
-            }
-        }
-
-        internal static string Previous {
-            get {
-                return ResourceManager.GetString("Previous", resourceCulture);
             }
         }
 

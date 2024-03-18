@@ -135,23 +135,11 @@
   <data name="Milliseconds" xml:space="preserve">
     <value>мс</value>
   </data>
-  <data name="ChannelNotSpecified" xml:space="preserve">
-    <value>Не указан</value>
-  </data>
-  <data name="RoleNotSpecified" xml:space="preserve">
-    <value>Не указана</value>
-  </data>
   <data name="SettingsLanguage" xml:space="preserve">
     <value>Язык</value>
   </data>
-  <data name="SettingsPrefix" xml:space="preserve">
-    <value>Префикс</value>
-  </data>
   <data name="SettingsRemoveRolesOnMute" xml:space="preserve">
     <value>Удалять роли при муте</value>
-  </data>
-  <data name="SettingsSendWelcomeMessages" xml:space="preserve">
-    <value>Отправлять приветствия</value>
   </data>
   <data name="SettingsMuteRole" xml:space="preserve">
     <value>Роль мута</value>
@@ -195,9 +183,6 @@
   <data name="SettingsEventNotificationChannel" xml:space="preserve">
     <value>Канал для уведомлений о событиях</value>
   </data>
-  <data name="SettingsEventStartedReceivers" xml:space="preserve">
-    <value>Получатели уведомлений о начале событий</value>
-  </data>
   <data name="EventStarted" xml:space="preserve">
     <value>Событие "{0}" началось</value>
   </data>
@@ -212,9 +197,6 @@
   </data>
   <data name="SettingsNothingChanged" xml:space="preserve">
     <value>Ничего не изменилось! Значение настройки `{0}` уже {1}</value>
-  </data>
-  <data name="SettingNotDefined" xml:space="preserve">
-    <value>Не указано</value>
   </data>
   <data name="MissingUser" xml:space="preserve">
     <value>Надо указать пользователя!</value>
@@ -443,12 +425,6 @@
   </data>
   <data name="PagesAllowed" xml:space="preserve">
     <value>Всего есть {0} страниц(-ы)</value>
-  </data>
-  <data name="Next" xml:space="preserve">
-    <value>Далее</value>
-  </data>
-  <data name="Previous" xml:space="preserve">
-    <value>Назад</value>
   </data>
   <data name="ReminderList" xml:space="preserve">
     <value>Напоминания {0}</value>
