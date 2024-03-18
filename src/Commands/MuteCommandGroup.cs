@@ -4,6 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
+using Octobot.Parsers;
 using Octobot.Services;
 using Octobot.Services.Update;
 using Remora.Commands.Attributes;
@@ -50,7 +51,7 @@ public class MuteCommandGroup : CommandGroup
     ///     A slash command that mutes a Discord member with the specified reason.
     /// </summary>
     /// <param name="target">The member to mute.</param>
-    /// <param name="duration">The duration for this mute. The member will be automatically unmuted after this duration.</param>
+    /// <param name="stringDuration">The duration for this mute. The member will be automatically unmuted after this duration.</param>
     /// <param name="reason">
     ///     The reason for this mute. Must be encoded with <see cref="StringExtensions.EncodeHeader" /> when passed to
     ///     <see cref="IDiscordRestGuildAPI.ModifyGuildMemberAsync" />.
@@ -72,7 +73,8 @@ public class MuteCommandGroup : CommandGroup
         [Description("Member to mute")] IUser target,
         [Description("Mute reason")] [MaxLength(256)]
         string reason,
-        [Description("Mute duration")] TimeSpan duration)
+        [Description("Mute duration (e.g. 1h30m)")] [Option("duration")]
+        string stringDuration)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
@@ -102,6 +104,18 @@ public class MuteCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(embed, ct: CancellationToken);
+        }
+
+        var parseResult = TimeSpanParser.TryParse(stringDuration);
+        if (!parseResult.IsDefined(out var duration))
+        {
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
         return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot, CancellationToken);
@@ -140,12 +154,8 @@ public class MuteCommandGroup : CommandGroup
             .AppendBulletPoint(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
-        var logResult = _utility.LogActionAsync(
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserMuted, target.GetTag()), target)
@@ -326,12 +336,9 @@ public class MuteCommandGroup : CommandGroup
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));
-        var logResult = _utility.LogActionAsync(
+
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Green, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.UserUnmuted, target.GetTag()), target)

@@ -47,6 +47,7 @@ public class SettingsCommandGroup : CommandGroup
         GuildSettings.RenameHoistedUsers,
         GuildSettings.PublicFeedbackChannel,
         GuildSettings.PrivateFeedbackChannel,
+        GuildSettings.WelcomeMessagesChannel,
         GuildSettings.EventNotificationChannel,
         GuildSettings.DefaultRole,
         GuildSettings.MuteRole,
@@ -219,12 +220,8 @@ public class SettingsCommandGroup : CommandGroup
         var title = Messages.SettingSuccessfullyChanged;
         var description = builder.ToString();
 
-        var logResult = _utility.LogActionAsync(
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, bot, ColorsList.Magenta, false, ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithDescription(description)

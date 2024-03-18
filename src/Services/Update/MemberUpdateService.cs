@@ -185,7 +185,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         var currentNickname = member.Nickname.IsDefined(out var nickname)
             ? nickname
-            : user.GlobalName ?? user.Username;
+            : user.GlobalName.OrDefault(user.Username);
         var characterList = currentNickname.ToList();
         var usernameChanged = false;
         foreach (var character in currentNickname)

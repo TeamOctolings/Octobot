@@ -9,11 +9,11 @@
         <Title>Octobot</Title>
         <Authors>Octol1ttle, mctaylors, neroduckale</Authors>
         <Copyright>AGPLv3</Copyright>
-        <PackageProjectUrl>https://github.com/LabsDevelopment/Octobot</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/LabsDevelopment/Octobot/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/LabsDevelopment/Octobot</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/TeamOctolings/Octobot</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/TeamOctolings/Octobot/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/TeamOctolings/Octobot</RepositoryUrl>
         <RepositoryType>github</RepositoryType>
-        <Company>LabsDevelopment</Company>
+        <Company>TeamOctolings</Company>
         <NeutralLanguage>en</NeutralLanguage>
         <Description>A general-purpose Discord bot for moderation written in C#</Description>
         <ApplicationIcon>docs/octobot.ico</ApplicationIcon>
@@ -26,10 +26,10 @@
         <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
         <PackageReference Include="Remora.Commands" Version="10.0.5" />
-        <PackageReference Include="Remora.Discord.Caching" Version="37.0.0" />
-        <PackageReference Include="Remora.Discord.Extensions" Version="5.3.2" />
-        <PackageReference Include="Remora.Discord.Hosting" Version="6.0.7" />
-        <PackageReference Include="Remora.Discord.Interactivity" Version="4.5.1" />
+        <PackageReference Include="Remora.Discord.Caching" Version="38.0.1" />
+        <PackageReference Include="Remora.Discord.Extensions" Version="5.3.4" />
+        <PackageReference Include="Remora.Discord.Hosting" Version="6.0.9" />
+        <PackageReference Include="Remora.Discord.Interactivity" Version="4.5.3" />
         <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     </ItemGroup>
     <ItemGroup>

@@ -4,6 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
+using Octobot.Parsers;
 using Octobot.Services;
 using Octobot.Services.Update;
 using Remora.Commands.Attributes;
@@ -75,7 +76,8 @@ public class BanCommandGroup : CommandGroup
         [Description("User to ban")] IUser target,
         [Description("Ban reason")] [MaxLength(256)]
         string reason,
-        [Description("Ban duration")] TimeSpan? duration = null)
+        [Description("Ban duration (e.g. 1h30m)")]
+        string? duration = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
         {
@@ -104,7 +106,25 @@ public class BanCommandGroup : CommandGroup
         var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await BanUserAsync(executor, target, reason, duration, guild, data, channelId, bot, CancellationToken);
+        if (duration is null)
+        {
+            return await BanUserAsync(executor, target, reason, null, guild, data, channelId, bot,
+                CancellationToken);
+        }
+
+        var parseResult = TimeSpanParser.TryParse(duration);
+        if (!parseResult.IsDefined(out var timeSpan))
+        {
+            var failedEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.InvalidTimeSpan, bot)
+                .WithDescription(Messages.TimeSpanExample)
+                .WithColour(ColorsList.Red)
+                .Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
+        }
+
+        return await BanUserAsync(executor, target, reason, timeSpan, guild, data, channelId, bot, CancellationToken);
     }
 
     private async Task<Result> BanUserAsync(
@@ -178,12 +198,8 @@ public class BanCommandGroup : CommandGroup
                 title, target)
             .WithColour(ColorsList.Green).Build();
 
-        var logResult = _utility.LogActionAsync(
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Red, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
@@ -269,12 +285,9 @@ public class BanCommandGroup : CommandGroup
 
         var title = string.Format(Messages.UserUnbanned, target.GetTag());
         var description = new StringBuilder().AppendBulletPoint(string.Format(Messages.DescriptionActionReason, reason));
-        var logResult = _utility.LogActionAsync(
+
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description.ToString(), target, ColorsList.Green, ct: ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }

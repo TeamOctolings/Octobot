@@ -136,12 +136,8 @@ public class ClearCommandGroup : CommandGroup
             return Result.FromError(deleteResult.Error);
         }
 
-        var logResult = _utility.LogActionAsync(
+        _utility.LogAction(
             data.Settings, channelId, executor, title, description, bot, ColorsList.Red, false, ct);
-        if (!logResult.IsSuccess)
-        {
-            return Result.FromError(logResult.Error);
-        }
 
         var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithColour(ColorsList.Green).Build();

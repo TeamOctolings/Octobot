@@ -28,9 +28,10 @@ public class MessageCreateResponder : IResponder<IMessageCreate>
                 "whoami" => "`nobody`",
                 "сука !!" => "`root`",
                 "воооо" => "`removing /...`",
-                "пон" => "https://cdn.upload.systems/uploads/2LNfUSwM.jpg",
+                "пон" => "https://i.ibb.co/Kw6QVcw/parry.jpg",
                 "++++" => "#",
                 "осу" => "https://github.com/ppy/osu",
+                "лан" => "https://i.ibb.co/VYH2QLc/lan.jpg",
                 _ => default(Optional<string>)
             });
         return Task.FromResult(Result.FromSuccess());

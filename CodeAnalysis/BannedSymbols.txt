@@ -18,3 +18,5 @@ P:System.DateTime.Now;Use System.DateTime.UtcNow instead.
 P:System.DateTimeOffset.Now;Use System.DateTimeOffset.UtcNow instead.
 P:System.DateTimeOffset.DateTime;Use System.DateTimeOffset.UtcDateTime instead.
 M:System.IO.File.OpenWrite(System.String);File.OpenWrite(string) does not clear the file before writing to it. Use File.Create(string) instead.
+M:System.Threading.Thread.Sleep(System.Int32);Use Task.Delay(int, CancellationToken) instead.
+M:System.Threading.Thread.Sleep(System.TimeSpan);Use Task.Delay(TimeSpan, CancellationToken) instead.

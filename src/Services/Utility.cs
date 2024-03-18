@@ -196,7 +196,7 @@ public sealed class Utility
     /// </param>
     /// <param name="ct">The cancellation token for this operation.</param>
     /// <returns>A result which has succeeded.</returns>
-    public Result LogActionAsync(
+    public void LogAction(
         JsonNode cfg, Snowflake channelId, IUser user, string title, string description, IUser avatar,
         Color color, bool isPublic = true, CancellationToken ct = default)
     {
@@ -205,7 +205,7 @@ public sealed class Utility
         if (GuildSettings.PublicFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId)
             && GuildSettings.PrivateFeedbackChannel.Get(cfg).EmptyOrEqualTo(channelId))
         {
-            return Result.FromSuccess();
+            return;
         }
 
         var logEmbed = new EmbedBuilder().WithSmallTitle(title, avatar)
@@ -230,8 +230,6 @@ public sealed class Utility
                 privateChannel, embedResult: logEmbed,
                 ct: ct);
         }
-
-        return Result.FromSuccess();
     }
 
     public async Task<Result<Snowflake>> GetEmergencyFeedbackChannel(IGuild guild, GuildData data, CancellationToken ct)

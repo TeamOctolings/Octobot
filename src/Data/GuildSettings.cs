@@ -68,6 +68,11 @@ public static class GuildSettings
     /// </summary>
     public static readonly SnowflakeOption PrivateFeedbackChannel = new("PrivateFeedbackChannel");
 
+    /// <summary>
+    ///     Controls what channel should welcome messages be sent to.
+    /// </summary>
+    public static readonly SnowflakeOption WelcomeMessagesChannel = new("WelcomeMessagesChannel");
+
     public static readonly SnowflakeOption EventNotificationChannel = new("EventNotificationChannel");
     public static readonly SnowflakeOption DefaultRole = new("DefaultRole");
     public static readonly SnowflakeOption MuteRole = new("MuteRole");

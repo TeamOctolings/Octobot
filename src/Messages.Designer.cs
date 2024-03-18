@@ -1046,14 +1046,157 @@ namespace Octobot {
         internal static string SettingsLeaveMessage {
             get {
                 return ResourceManager.GetString("SettingsLeaveMessage", resourceCulture);
-                }
+            }
         }
 
-        internal static string UserInfoKicked
-        {
-            get
-            {
+        internal static string InvalidTimeSpan {
+            get {
+                return ResourceManager.GetString("InvalidTimeSpan", resourceCulture);
+            }
+        }
+
+        internal static string UserInfoKicked {
+            get {
                 return ResourceManager.GetString("UserInfoKicked", resourceCulture);
+            }
+        }
+
+        internal static string ReminderEdited {
+            get {
+                return ResourceManager.GetString("ReminderEdited", resourceCulture);
+            }
+        }
+
+        internal static string EightBallPositive1 {
+            get {
+                return ResourceManager.GetString("EightBallPositive1", resourceCulture);
+            }
+        }
+
+        internal static string EightBallPositive2 {
+            get {
+                return ResourceManager.GetString("EightBallPositive2", resourceCulture);
+            }
+        }
+
+        internal static string EightBallPositive3 {
+            get {
+                return ResourceManager.GetString("EightBallPositive3", resourceCulture);
+            }
+        }
+
+        internal static string EightBallPositive4 {
+            get {
+                return ResourceManager.GetString("EightBallPositive4", resourceCulture);
+            }
+        }
+
+        internal static string EightBallPositive5 {
+            get {
+                return ResourceManager.GetString("EightBallPositive5", resourceCulture);
+            }
+        }
+
+        internal static string EightBallQuestionable1 {
+            get {
+                return ResourceManager.GetString("EightBallQuestionable1", resourceCulture);
+            }
+        }
+
+        internal static string EightBallQuestionable2 {
+            get {
+                return ResourceManager.GetString("EightBallQuestionable2", resourceCulture);
+            }
+        }
+
+        internal static string EightBallQuestionable3 {
+            get {
+                return ResourceManager.GetString("EightBallQuestionable3", resourceCulture);
+            }
+        }
+
+        internal static string EightBallQuestionable4 {
+            get {
+                return ResourceManager.GetString("EightBallQuestionable4", resourceCulture);
+            }
+        }
+
+        internal static string EightBallQuestionable5 {
+            get {
+                return ResourceManager.GetString("EightBallQuestionable5", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNeutral1 {
+            get {
+                return ResourceManager.GetString("EightBallNeutral1", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNeutral2 {
+            get {
+                return ResourceManager.GetString("EightBallNeutral2", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNeutral3 {
+            get {
+                return ResourceManager.GetString("EightBallNeutral3", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNeutral4 {
+            get {
+                return ResourceManager.GetString("EightBallNeutral4", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNeutral5 {
+            get {
+                return ResourceManager.GetString("EightBallNeutral5", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNegative1 {
+            get {
+                return ResourceManager.GetString("EightBallNegative1", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNegative2 {
+            get {
+                return ResourceManager.GetString("EightBallNegative2", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNegative3 {
+            get {
+                return ResourceManager.GetString("EightBallNegative3", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNegative4 {
+            get {
+                return ResourceManager.GetString("EightBallNegative4", resourceCulture);
+            }
+        }
+
+        internal static string EightBallNegative5 {
+            get {
+                return ResourceManager.GetString("EightBallNegative5", resourceCulture);
+            }
+        }
+
+        internal static string TimeSpanExample {
+            get {
+                return ResourceManager.GetString("TimeSpanExample", resourceCulture);
+            }
+        }
+
+        internal static string SettingsWelcomeMessagesChannel
+        {
+            get {
+                return ResourceManager.GetString("SettingsWelcomeMessagesChannel", resourceCulture);
             }
         }
     }

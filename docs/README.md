@@ -1,12 +1,12 @@
 <p align="center">
-    <img src="https://cdn.mctaylors.ru/octobot-banner.png" alt="Octobot banner"/>
+    <img src="octobot-banner.png" alt="Octobot banner"/>
 </p>
 
-<a href="https://github.com/LabsDevelopment/Octobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LabsDevelopment/Octobot?logo=git"></img></a>
+<a href="https://github.com/TeamOctolings/Octobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/TeamOctolings/Octobot?logo=git"></img></a>
 <a href="https://github.com/Remora/Remora.Discord"><img src="https://img.shields.io/badge/powered_by-Remora.Discord-blue"></img></a>
-<a href="https://github.com/LabsDevelopment/Octobot/commit/master"><img src="https://img.shields.io/github/last-commit/LabsDevelopment/Octobot?logo=github"></img></a>
+<a href="https://github.com/TeamOctolings/Octobot/commit/master"><img src="https://img.shields.io/github/last-commit/TeamOctolings/Octobot?logo=github"></img></a>
 
-Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Labs Development Team](https://github.com/LabsDevelopment) in C# and Remora.Discord
+Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) written by [Team Octolings](https://github.com/TeamOctolings) in C# and Remora.Discord
 
 ## Features
 
@@ -19,25 +19,13 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 
 *...a-a-and more!*
 
-[//]: # (if you are reading this, message @mctaylors and ask him to bring back the wiki)
-
-## Invite Octobot <a href="https://github.com/LabsDevelopment/Octobot/deployments/production"><img src="https://img.shields.io/github/actions/workflow/status/LabsDevelopment/Octobot/.github/workflows/build-push.yml?logo=github&label=production"></img></a>
-
-Did you know that Octobot is a public bot? You can invite it to your server and use it without building it!
-<p align="center">
-    <a href="https://discord.com/api/oauth2/authorize?client_id=855023234407333888&permissions=1383382133894&scope=bot%20applications.commands"><img src="https://cdn.mctaylors.ru/discord-add-app.png"></img></a>
-</p>
-
-> [!IMPORTANT]  
-> The bot will not be able to respond in private channels unless you have configured permissions for the bot in those channels.
-
 ## Building Octobot
 
 1. Install [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 2. Go to the [Discord Developer Portal](https://discord.com/developers), create a new application and get a bot token. Don't forget to also enable all intents!
 3. Clone this repository and open `Octobot` folder.
 ```
-git clone https://github.com/LabsDevelopment/Octobot
+git clone https://github.com/TeamOctolings/Octobot
 cd Octobot
 ```
 4. Run Octobot using `dotnet` with `BOT_TOKEN` variable.
