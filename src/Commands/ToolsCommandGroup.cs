@@ -35,7 +35,7 @@ public class ToolsCommandGroup : CommandGroup
     public ToolsCommandGroup(
         ICommandContext context, IFeedbackService feedback,
         GuildDataService guildData, IDiscordRestGuildAPI guildApi,
-        IDiscordRestUserAPI userApi, IDiscordRestChannelAPI channelApi)
+        IDiscordRestUserAPI userApi)
     {
         _context = context;
         _guildData = guildData;
