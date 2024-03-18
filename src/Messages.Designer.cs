@@ -66,21 +66,21 @@ namespace Octobot {
             }
         }
 
-        internal static string Sound1 {
+        internal static string Loaded1 {
             get {
-                return ResourceManager.GetString("Sound1", resourceCulture);
+                return ResourceManager.GetString("Loaded1", resourceCulture);
             }
         }
 
-        internal static string Sound2 {
+        internal static string Loaded2 {
             get {
-                return ResourceManager.GetString("Sound2", resourceCulture);
+                return ResourceManager.GetString("Loaded2", resourceCulture);
             }
         }
 
-        internal static string Sound3 {
+        internal static string Loaded3 {
             get {
-                return ResourceManager.GetString("Sound3", resourceCulture);
+                return ResourceManager.GetString("Loaded3", resourceCulture);
             }
         }
 
