@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, welcome to {1}</value>
   </data>
-  <data name="Sound1" xml:space="preserve">
+  <data name="Loaded1" xml:space="preserve">
       <value>Veemo!</value>
   </data>
-  <data name="Sound2" xml:space="preserve">
+  <data name="Loaded2" xml:space="preserve">
       <value>Woomy!</value>
   </data>
-  <data name="Sound3" xml:space="preserve">
+  <data name="Loaded3" xml:space="preserve">
       <value>Ngyes!</value>
   </data>
   <data name="YouWereBanned" xml:space="preserve">
