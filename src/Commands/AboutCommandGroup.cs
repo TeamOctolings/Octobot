@@ -111,28 +111,14 @@ public class AboutCommandGroup : CommandGroup
             URL: BuildInfo.RepositoryUrl
         );
 
-        if (BuildInfo.IsDirty)
-        {
-            var dirtyButton = new ButtonComponent(
-                ButtonComponentStyle.Link,
-                Messages.ButtonDirty,
-                new PartialEmoji(Name: "⚠️"),
-                URL: BuildInfo.IssuesUrl,
-                IsDisabled: true
-            );
-
-            return await _feedback.SendContextualEmbedResultAsync(embed,
-                new FeedbackMessageOptions(MessageComponents: new[]
-                {
-                    new ActionRowComponent(new[] { repositoryButton, dirtyButton })
-                }), ct);
-        }
-
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.ButtonReportIssue,
+            BuildInfo.IsDirty
+                ? Messages.ButtonReportIssue
+                : Messages.ButtonDirty,
             new PartialEmoji(Name: "⚠️"),
-            URL: BuildInfo.IssuesUrl
+            URL: BuildInfo.IssuesUrl,
+            IsDisabled: BuildInfo.IsDirty
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,

@@ -68,28 +68,14 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             .WithColour(ColorsList.Red)
             .Build();
 
-        if (BuildInfo.IsDirty)
-        {
-            var dirtyButton = new ButtonComponent(
-                ButtonComponentStyle.Link,
-                Messages.ButtonDirty,
-                new PartialEmoji(Name: "⚠️"),
-                URL: BuildInfo.IssuesUrl,
-                IsDisabled: true
-            );
-
-            return await _feedback.SendContextualEmbedResultAsync(embed,
-                new FeedbackMessageOptions(MessageComponents: new[]
-                {
-                    new ActionRowComponent(new[] { dirtyButton })
-                }), ct);
-        }
-
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.ButtonReportIssue,
+            BuildInfo.IsDirty
+                ? Messages.ButtonReportIssue
+                : Messages.ButtonDirty,
             new PartialEmoji(Name: "⚠️"),
-            URL: BuildInfo.IssuesUrl
+            URL: BuildInfo.IssuesUrl,
+            IsDisabled: BuildInfo.IsDirty
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,

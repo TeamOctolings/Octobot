@@ -664,6 +664,6 @@
       <value>Welcome messages channel</value>
   </data>
   <data name="ButtonDirty" xml:space="preserve">
-      <value>Can't report an issue in the under development version</value>
+      <value>Can't report an issue in the development version</value>
   </data>
 </root>
