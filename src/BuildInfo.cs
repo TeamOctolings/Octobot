@@ -10,7 +10,7 @@ public static class BuildInfo
         }
     }
 
-    public static string Issues
+    public static string IssuesUrl
     {
         get
         {
