@@ -22,9 +22,6 @@ namespace Octobot;
 
 public sealed class Octobot
 {
-    public const string RepositoryUrl = "https://github.com/TeamOctolings/Octobot";
-    public const string IssuesUrl = $"{RepositoryUrl}/issues";
-
     public static readonly AllowedMentions NoMentions = new(
         Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
 
