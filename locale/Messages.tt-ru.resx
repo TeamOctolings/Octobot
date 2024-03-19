@@ -663,4 +663,7 @@
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>канал куда говорить здравствуйте</value>
   </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>вот иди сам и почини что сломал</value>
+  </data>
 </root>

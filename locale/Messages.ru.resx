@@ -663,4 +663,7 @@
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>Канал для приветствий</value>
   </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>Нельзя сообщить о проблеме в dirty версии</value>
+  </data>
 </root>

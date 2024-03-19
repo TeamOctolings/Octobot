@@ -34,7 +34,7 @@ public static class BuildInfo
         }
     }
 
-    private static bool IsDirty
+    public static bool IsDirty
     {
         get
         {

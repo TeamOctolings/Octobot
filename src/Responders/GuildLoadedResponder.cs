@@ -113,6 +113,19 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             .WithColour(ColorsList.Red)
             .Build();
 
+        if (BuildInfo.IsDirty)
+        {
+            var dirtyButton = new ButtonComponent(
+                ButtonComponentStyle.Link,
+                Messages.ButtonDirty,
+                new PartialEmoji(Name: "⚠️"),
+                IsDisabled: true
+            );
+
+            return await _channelApi.CreateMessageWithEmbedResultAsync(channel, embedResult: errorEmbed,
+                components: new[] { new ActionRowComponent(new[] { dirtyButton }) }, ct: ct);
+        }
+
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
