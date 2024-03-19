@@ -101,26 +101,21 @@ public class AboutCommandGroup : CommandGroup
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://i.ibb.co/fS6wZhh/octobot-banner.png")
-            // ThisAssembly.Git.IsDirty already returns true or false.
-            // ReSharper disable HeuristicUnreachableCode
-            .WithFooter(string.Format(Messages.Version, ThisAssembly.Git.IsDirty
-                ? $"{ThisAssembly.Git.Branch}-{ThisAssembly.Git.Commit}-dirty"
-                : $"{ThisAssembly.Git.Branch}-{ThisAssembly.Git.Commit}"))
-            // ReSharper restore HeuristicUnreachableCode
+            .WithFooter(string.Format(Messages.Version, BuildInfo.Version))
             .Build();
 
         var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
             new PartialEmoji(Name: "🌐"),
-            URL: ThisAssembly.Git.RepositoryUrl
+            URL: BuildInfo.RepositoryUrl
         );
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: $"{ThisAssembly.Git.RepositoryUrl}/issues"
+            URL: BuildInfo.Issues
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,

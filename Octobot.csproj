@@ -17,14 +17,12 @@
         <NeutralLanguage>en</NeutralLanguage>
         <Description>A general-purpose Discord bot for moderation written in C#</Description>
         <ApplicationIcon>docs/octobot.ico</ApplicationIcon>
+        <GitVersion>false</GitVersion>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="DiffPlex" Version="1.7.2" />
-        <PackageReference Include="GitInfo" Version="3.3.4">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="GitInfo" Version="3.3.4" />
         <PackageReference Include="Humanizer.Core.ru" Version="2.14.1" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />

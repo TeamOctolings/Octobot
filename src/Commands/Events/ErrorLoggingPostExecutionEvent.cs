@@ -72,7 +72,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: $"{ThisAssembly.Git.RepositoryUrl}/issues"
+            URL: BuildInfo.Issues
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
