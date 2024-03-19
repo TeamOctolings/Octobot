@@ -110,7 +110,7 @@ public class KickCommandGroup : CommandGroup
         return await KickUserAsync(executor, target, reason, guild, channelId, data, bot, CancellationToken);
     }
 
-    private async Task<Result> KickUserAsync(
+    public async Task<Result> KickUserAsync(
         IUser executor, IUser target, string reason, IGuild guild, Snowflake channelId, GuildData data, IUser bot,
         CancellationToken ct = default)
     {

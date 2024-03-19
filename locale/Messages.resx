@@ -660,4 +660,34 @@
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>Welcome messages channel</value>
   </data>
+  <data name="UserWarned" xml:space="preserve">
+      <value>{0} received a warning</value>
+  </data>
+  <data name="UserWarnsRemoved" xml:space="preserve">
+      <value>{0} no longer has warnings</value>
+  </data>
+  <data name="YouHaveBeenWarned" xml:space="preserve">
+      <value>You have been warned</value>
+  </data>
+  <data name="YourWarningsHaveBeenRevoked" xml:space="preserve">
+      <value>Your warnings have been revoked</value>
+  </data>
+  <data name="DescriptionActionWarns" xml:space="preserve">
+      <value>Warns: {0}</value>
+  </data>
+  <data name="UserHasNoWarnings" xml:space="preserve">
+      <value>This user has no warnings!</value>
+  </data>
+  <data name="ReceivedTooManyWarnings" xml:space="preserve">
+      <value>Received too many warnings</value>
+  </data>
+  <data name="SettingsWarnPunishment" xml:space="preserve">
+      <value>Punishment type for warnings</value>
+  </data>
+  <data name="SettingsWarnThreshold" xml:space="preserve">
+      <value>Warnings threshold</value>
+  </data>
+  <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
+      <value>Punishment duration for warnings</value>
+  </data>
 </root>

@@ -13,12 +13,14 @@ namespace Octobot.Data.Options;
 public enum AllOptionsEnum
 {
     [UsedImplicitly] Language,
+    [UsedImplicitly] WarnPunishment,
     [UsedImplicitly] WelcomeMessage,
     [UsedImplicitly] ReceiveStartupMessages,
     [UsedImplicitly] RemoveRolesOnMute,
     [UsedImplicitly] ReturnRolesOnRejoin,
     [UsedImplicitly] AutoStartEvents,
     [UsedImplicitly] RenameHoistedUsers,
+    [UsedImplicitly] WarnsThreshold,
     [UsedImplicitly] PublicFeedbackChannel,
     [UsedImplicitly] PrivateFeedbackChannel,
     [UsedImplicitly] WelcomeMessagesChannel,
@@ -26,5 +28,6 @@ public enum AllOptionsEnum
     [UsedImplicitly] DefaultRole,
     [UsedImplicitly] MuteRole,
     [UsedImplicitly] EventNotificationRole,
-    [UsedImplicitly] EventEarlyNotificationOffset
+    [UsedImplicitly] EventEarlyNotificationOffset,
+    [UsedImplicitly] WarnPunishmentDuration
 }

@@ -121,7 +121,7 @@ public class MuteCommandGroup : CommandGroup
         return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot, CancellationToken);
     }
 
-    private async Task<Result> MuteUserAsync(
+    public async Task<Result> MuteUserAsync(
         IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {

@@ -1191,5 +1191,54 @@ namespace Octobot {
                 return ResourceManager.GetString("SettingsWelcomeMessagesChannel", resourceCulture);
             }
         }
+
+        internal static string UserWarned
+        {
+            get {
+                return ResourceManager.GetString("UserWarned", resourceCulture);
+            }
+        }
+
+        internal static string UserWarnsRemoved
+        {
+            get {
+                return ResourceManager.GetString("UserWarnsRemoved", resourceCulture);
+            }
+        }
+
+        internal static string YouHaveBeenWarned
+        {
+            get {
+                return ResourceManager.GetString("YouHaveBeenWarned", resourceCulture);
+            }
+        }
+
+        internal static string YourWarningsHaveBeenRevoked
+        {
+            get {
+                return ResourceManager.GetString("YourWarningsHaveBeenRevoked", resourceCulture);
+            }
+        }
+
+        internal static string DescriptionActionWarns
+        {
+            get {
+                return ResourceManager.GetString("DescriptionActionWarns", resourceCulture);
+            }
+        }
+
+        internal static string UserHasNoWarnings
+        {
+            get {
+                return ResourceManager.GetString("UserHasNoWarnings", resourceCulture);
+            }
+        }
+
+        internal static string ReceivedTooManyWarnings
+        {
+            get {
+                return ResourceManager.GetString("ReceivedTooManyWarnings", resourceCulture);
+            }
+        }
     }
 }

@@ -660,4 +660,34 @@
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>Канал для приветствий</value>
   </data>
+  <data name="UserWarned" xml:space="preserve">
+      <value>{0} получил предупреждение</value>
+  </data>
+  <data name="UserWarnsRemoved" xml:space="preserve">
+      <value>{0} больше не имеет предупреждений</value>
+  </data>
+  <data name="YouHaveBeenWarned" xml:space="preserve">
+      <value>Вы получили предупреждение</value>
+  </data>
+  <data name="YourWarningsHaveBeenRevoked" xml:space="preserve">
+      <value>Ваши предупреждения были отозваны</value>
+  </data>
+  <data name="DescriptionActionWarns" xml:space="preserve">
+      <value>Предупреждений: {0}</value>
+  </data>
+  <data name="UserHasNoWarnings" xml:space="preserve">
+      <value>Этот пользователь не имеет предупреждений!</value>
+  </data>
+  <data name="ReceivedTooManyWarnings" xml:space="preserve">
+      <value>Получил слишком много предупреждений</value>
+  </data>
+  <data name="SettingsWarnPunishment" xml:space="preserve">
+      <value>Тип наказания для предупреждений</value>
+  </data>
+  <data name="SettingsWarnThreshold" xml:space="preserve">
+      <value>Порог предупреждений</value>
+  </data>
+  <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
+      <value>Длительность наказания для предупреждений</value>
+  </data>
 </root>
