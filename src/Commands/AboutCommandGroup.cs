@@ -117,6 +117,7 @@ public class AboutCommandGroup : CommandGroup
                 ButtonComponentStyle.Link,
                 Messages.ButtonDirty,
                 new PartialEmoji(Name: "⚠️"),
+                URL: BuildInfo.IssuesUrl,
                 IsDisabled: true
             );
 

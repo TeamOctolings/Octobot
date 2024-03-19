@@ -74,6 +74,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
                 ButtonComponentStyle.Link,
                 Messages.ButtonDirty,
                 new PartialEmoji(Name: "⚠️"),
+                URL: BuildInfo.IssuesUrl,
                 IsDisabled: true
             );
 
