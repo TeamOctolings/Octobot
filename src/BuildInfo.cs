@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Octobot;
+﻿namespace Octobot;
 
 public static class BuildInfo
 {
