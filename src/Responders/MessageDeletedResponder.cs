@@ -83,10 +83,11 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        var builder = new StringBuilder().AppendLine(
-                string.Format(Messages.DescriptionActionJumpToChannel,
-                    Mention.Channel(gatewayEvent.ChannelID)))
-            .AppendLine(message.Content.InBlockCode());
+        var builder = new StringBuilder()
+            .AppendLine(message.Content.InBlockCode())
+            .AppendLine(
+                string.Format(Messages.DescriptionActionJumpToChannel, Mention.Channel(gatewayEvent.ChannelID))
+            );
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(
