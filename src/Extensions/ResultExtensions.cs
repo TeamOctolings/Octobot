@@ -24,7 +24,7 @@ public static class ResultExtensions
     [Conditional("DEBUG")]
     private static void LogResultStackTrace(Result result)
     {
-        if (Octobot.StaticLogger == null || result.IsSuccess)
+        if (Octobot.StaticLogger is null || result.IsSuccess)
         {
             return;
         }
