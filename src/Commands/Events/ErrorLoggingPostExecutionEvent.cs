@@ -71,8 +71,8 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             BuildInfo.IsDirty
-                ? Messages.ButtonReportIssue
-                : Messages.ButtonDirty,
+                ? Messages.ButtonDirty
+                : Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
             URL: BuildInfo.IssuesUrl,
             IsDisabled: BuildInfo.IsDirty
