@@ -585,6 +585,12 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>зарепортить баг</value>
   </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>ну, мы потеряли {0}</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>до свидания (типо настройка)</value>
+  </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>ты там правильно напиши таймспан</value>
   </data>

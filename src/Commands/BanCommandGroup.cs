@@ -181,17 +181,19 @@ public class BanCommandGroup : CommandGroup
             await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.BannedUntil
+            = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
+
         var banResult = await _guildApi.CreateGuildBanAsync(
             guild.ID, target.ID, reason: $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct: ct);
         if (!banResult.IsSuccess)
         {
+            memberData.BannedUntil = null;
             return Result.FromError(banResult.Error);
         }
 
-        var memberData = data.GetOrCreateMemberData(target.ID);
-        memberData.BannedUntil
-            = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
         memberData.Roles.Clear();
 
         var embed = new EmbedBuilder().WithSmallTitle(

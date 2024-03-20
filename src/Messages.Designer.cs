@@ -1037,18 +1037,26 @@ namespace Octobot {
             }
         }
 
-        internal static string InvalidTimeSpan
-        {
-            get
-            {
+        internal static string DefaultLeaveMessage {
+            get {
+                return ResourceManager.GetString("DefaultLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string SettingsLeaveMessage {
+            get {
+                return ResourceManager.GetString("SettingsLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string InvalidTimeSpan {
+            get {
                 return ResourceManager.GetString("InvalidTimeSpan", resourceCulture);
             }
         }
 
-        internal static string UserInfoKicked
-        {
-            get
-            {
+        internal static string UserInfoKicked {
+            get {
                 return ResourceManager.GetString("UserInfoKicked", resourceCulture);
             }
         }
