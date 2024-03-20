@@ -669,4 +669,7 @@
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>Welcome messages channel</value>
   </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>Can't report an issue in the development version</value>
+  </data>
 </root>

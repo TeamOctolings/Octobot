@@ -1204,5 +1204,11 @@ namespace Octobot {
                 return ResourceManager.GetString("SettingsWelcomeMessagesChannel", resourceCulture);
             }
         }
+
+        internal static string ButtonDirty {
+            get {
+                return ResourceManager.GetString("ButtonDirty", resourceCulture);
+            }
+        }
     }
 }

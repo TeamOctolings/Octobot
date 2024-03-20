@@ -115,9 +115,12 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.ButtonReportIssue,
+            BuildInfo.IsDirty
+                ? Messages.ButtonDirty
+                : Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: BuildInfo.IssuesUrl
+            URL: BuildInfo.IssuesUrl,
+            IsDisabled: BuildInfo.IsDirty
         );
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(channel, embedResult: errorEmbed,
