@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Loaded1" xml:space="preserve">
+  <data name="Generic1" xml:space="preserve">
       <value>Виимо!</value>
   </data>
-  <data name="Loaded2" xml:space="preserve">
+  <data name="Generic2" xml:space="preserve">
       <value>Вууми!</value>
   </data>
-  <data name="Loaded3" xml:space="preserve">
+  <data name="Generic3" xml:space="preserve">
       <value>Нгьес!</value>
   </data>
   <data name="PunishmentExpired" xml:space="preserve">
@@ -584,6 +584,12 @@
   </data>
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Сообщить о проблеме</value>
+  </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>До скорой встречи, {0}!</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>Сообщение о выходе</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>Неправильно указано время!</value>

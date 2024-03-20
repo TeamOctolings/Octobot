@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Loaded1" xml:space="preserve">
+  <data name="Generic1" xml:space="preserve">
       <value>вииимо!</value>
   </data>
-  <data name="Loaded2" xml:space="preserve">
+  <data name="Generic2" xml:space="preserve">
       <value>вуууми!</value>
   </data>
-  <data name="Loaded3" xml:space="preserve">
+  <data name="Generic3" xml:space="preserve">
       <value>нгьес!</value>
   </data>
   <data name="YouWereBanned" xml:space="preserve">
@@ -584,6 +584,12 @@
   </data>
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>зарепортить баг</value>
+  </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>ну, мы потеряли {0}</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>до свидания (типо настройка)</value>
   </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>ты там правильно напиши таймспан</value>

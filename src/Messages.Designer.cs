@@ -66,21 +66,21 @@ namespace Octobot {
             }
         }
 
-        internal static string Loaded1 {
+        internal static string Generic1 {
             get {
-                return ResourceManager.GetString("Loaded1", resourceCulture);
+                return ResourceManager.GetString("Generic1", resourceCulture);
             }
         }
 
-        internal static string Loaded2 {
+        internal static string Generic2 {
             get {
-                return ResourceManager.GetString("Loaded2", resourceCulture);
+                return ResourceManager.GetString("Generic2", resourceCulture);
             }
         }
 
-        internal static string Loaded3 {
+        internal static string Generic3 {
             get {
-                return ResourceManager.GetString("Loaded3", resourceCulture);
+                return ResourceManager.GetString("Generic3", resourceCulture);
             }
         }
 
@@ -1037,18 +1037,26 @@ namespace Octobot {
             }
         }
 
-        internal static string InvalidTimeSpan
-        {
-            get
-            {
+        internal static string DefaultLeaveMessage {
+            get {
+                return ResourceManager.GetString("DefaultLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string SettingsLeaveMessage {
+            get {
+                return ResourceManager.GetString("SettingsLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string InvalidTimeSpan {
+            get {
                 return ResourceManager.GetString("InvalidTimeSpan", resourceCulture);
             }
         }
 
-        internal static string UserInfoKicked
-        {
-            get
-            {
+        internal static string UserInfoKicked {
+            get {
                 return ResourceManager.GetString("UserInfoKicked", resourceCulture);
             }
         }
