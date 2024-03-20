@@ -2,51 +2,15 @@
 
 public static class BuildInfo
 {
-    public static string RepositoryUrl
-    {
-        get
-        {
-            return ThisAssembly.Git.RepositoryUrl;
-        }
-    }
+    public static string RepositoryUrl => ThisAssembly.Git.RepositoryUrl;
 
-    public static string IssuesUrl
-    {
-        get
-        {
-            return $"{RepositoryUrl}/issues";
-        }
-    }
+    public static string IssuesUrl => $"{RepositoryUrl}/issues";
 
-    private static string Commit
-    {
-        get
-        {
-            return ThisAssembly.Git.Commit;
-        }
-    }
+    private static string Commit => ThisAssembly.Git.Commit;
 
-    private static string Branch
-    {
-        get
-        {
-            return ThisAssembly.Git.Branch;
-        }
-    }
+    private static string Branch => ThisAssembly.Git.Branch;
 
-    public static bool IsDirty
-    {
-        get
-        {
-            return ThisAssembly.Git.IsDirty;
-        }
-    }
+    public static bool IsDirty => ThisAssembly.Git.IsDirty;
 
-    public static string Version
-    {
-        get
-        {
-            return IsDirty ? $"{Branch}-{Commit}-dirty" : $"{Branch}-{Commit}";
-        }
-    }
+    public static string Version => IsDirty ? $"{Branch}-{Commit}-dirty" : $"{Branch}-{Commit}";
 }
