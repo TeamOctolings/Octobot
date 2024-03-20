@@ -57,7 +57,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var botResult = await _userApi.GetCurrentUserAsync(ct);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         if (data.DataLoadFailed)
@@ -68,7 +68,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var ownerResult = await _userApi.GetUserAsync(guild.OwnerID, ct);
         if (!ownerResult.IsDefined(out var owner))
         {
-            return Result.FromError(ownerResult);
+            return ResultExtensions.FromError(ownerResult);
         }
 
         _logger.LogInformation("Loaded guild \"{Name}\" ({ID}) owned by {Owner} ({OwnerID}) with {MemberCount} members",
@@ -103,7 +103,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var channelResult = await _utility.GetEmergencyFeedbackChannel(guild, data, ct);
         if (!channelResult.IsDefined(out var channel))
         {
-            return Result.FromError(channelResult);
+            return ResultExtensions.FromError(channelResult);
         }
 
         var errorEmbed = new EmbedBuilder()

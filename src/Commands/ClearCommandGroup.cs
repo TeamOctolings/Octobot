@@ -75,20 +75,20 @@ public class ClearCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var messagesResult = await _channelApi.GetChannelMessagesAsync(
             channelId, limit: amount + 1, ct: CancellationToken);
         if (!messagesResult.IsDefined(out var messages))
         {
-            return Result.FromError(messagesResult);
+            return ResultExtensions.FromError(messagesResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -133,7 +133,7 @@ public class ClearCommandGroup : CommandGroup
             channelId, idList, executor.GetTag().EncodeHeader(), ct);
         if (!deleteResult.IsSuccess)
         {
-            return Result.FromError(deleteResult.Error);
+            return ResultExtensions.FromError(deleteResult);
         }
 
         _utility.LogAction(

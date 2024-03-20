@@ -53,7 +53,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
         if (!eventsResult.IsDefined(out var events))
         {
-            return Result.FromError(eventsResult);
+            return ResultExtensions.FromError(eventsResult);
         }
 
         SyncScheduledEvents(data, events);
@@ -204,7 +204,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         if (!embedDescriptionResult.IsDefined(out var embedDescription))
         {
-            return Result.FromError(embedDescriptionResult);
+            return ResultExtensions.FromError(embedDescriptionResult);
         }
 
         var embed = new EmbedBuilder()
@@ -298,12 +298,12 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             scheduledEvent, data, ct);
         if (!contentResult.IsDefined(out var content))
         {
-            return Result.FromError(contentResult);
+            return ResultExtensions.FromError(contentResult);
         }
 
         if (!embedDescriptionResult.IsDefined(out var embedDescription))
         {
-            return Result.FromError(embedDescriptionResult);
+            return ResultExtensions.FromError(embedDescriptionResult);
         }
 
         var startedEmbed = new EmbedBuilder()
@@ -416,7 +416,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             scheduledEvent, data, ct);
         if (!contentResult.IsDefined(out var content))
         {
-            return Result.FromError(contentResult);
+            return ResultExtensions.FromError(contentResult);
         }
 
         var earlyResult = new EmbedBuilder()

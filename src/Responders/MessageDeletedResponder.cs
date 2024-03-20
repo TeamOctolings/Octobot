@@ -51,7 +51,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
         var messageResult = await _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
         if (!messageResult.IsDefined(out var message))
         {
-            return Result.FromError(messageResult);
+            return ResultExtensions.FromError(messageResult);
         }
 
         if (string.IsNullOrWhiteSpace(message.Content))
@@ -63,7 +63,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
             guildId, actionType: AuditLogEvent.MessageDelete, limit: 1, ct: ct);
         if (!auditLogResult.IsDefined(out var auditLogPage))
         {
-            return Result.FromError(auditLogResult);
+            return ResultExtensions.FromError(auditLogResult);
         }
 
         var auditLog = auditLogPage.AuditLogEntries.Single();
@@ -78,7 +78,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         if (!deleterResult.IsDefined(out var deleter))
         {
-            return Result.FromError(deleterResult);
+            return ResultExtensions.FromError(deleterResult);
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);

@@ -20,7 +20,7 @@ public static class ChannelApiExtensions
     {
         if (!embedResult.IsDefined() || !embedResult.Value.IsDefined(out var embed))
         {
-            return Result.FromError(embedResult.Value);
+            return ResultExtensions.FromError(embedResult.Value);
         }
 
         return (Result)await channelApi.CreateMessageAsync(channelId, message, nonce, isTextToSpeech, new[] { embed },

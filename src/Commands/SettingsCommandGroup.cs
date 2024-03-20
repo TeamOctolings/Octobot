@@ -98,7 +98,7 @@ public class SettingsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
@@ -181,13 +181,13 @@ public class SettingsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -254,7 +254,7 @@ public class SettingsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
@@ -274,7 +274,7 @@ public class SettingsCommandGroup : CommandGroup
         var resetResult = option.Reset(cfg);
         if (!resetResult.IsSuccess)
         {
-            return Result.FromError(resetResult.Error);
+            return ResultExtensions.FromError(resetResult);
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(

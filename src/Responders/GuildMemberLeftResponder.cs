@@ -55,7 +55,7 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
         var guildResult = await _guildApi.GetGuildAsync(gatewayEvent.GuildID, ct: ct);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var embed = new EmbedBuilder()
@@ -70,4 +70,3 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 }
-

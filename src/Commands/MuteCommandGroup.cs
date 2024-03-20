@@ -85,13 +85,13 @@ public class MuteCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -130,7 +130,7 @@ public class MuteCommandGroup : CommandGroup
                 guildId, executor.ID, target.ID, "Mute", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -146,7 +146,7 @@ public class MuteCommandGroup : CommandGroup
         var muteMethodResult = await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
         if (!muteMethodResult.IsSuccess)
         {
-            return muteMethodResult;
+            return ResultExtensions.FromError(muteMethodResult);
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
@@ -257,14 +257,14 @@ public class MuteCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         // Needed to get the tag and avatar
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -291,7 +291,7 @@ public class MuteCommandGroup : CommandGroup
                 guildId, executor.ID, target.ID, "Unmute", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -324,14 +324,14 @@ public class MuteCommandGroup : CommandGroup
             await RemoveMuteRoleAsync(executor, target, reason, guildId, memberData, CancellationToken);
         if (!removeMuteRoleAsync.IsSuccess)
         {
-            return Result.FromError(removeMuteRoleAsync.Error);
+            return ResultExtensions.FromError(removeMuteRoleAsync);
         }
 
         var removeTimeoutResult =
             await RemoveTimeoutAsync(executor, target, reason, guildId, communicationDisabledUntil, CancellationToken);
         if (!removeTimeoutResult.IsSuccess)
         {
-            return Result.FromError(removeTimeoutResult.Error);
+            return ResultExtensions.FromError(removeTimeoutResult);
         }
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());

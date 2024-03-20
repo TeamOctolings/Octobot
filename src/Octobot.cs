@@ -1,7 +1,10 @@
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Octobot.Attributes;
 using Octobot.Commands.Events;
 using Octobot.Services;
 using Octobot.Services.Update;
@@ -25,10 +28,14 @@ public sealed class Octobot
     public static readonly AllowedMentions NoMentions = new(
         Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
 
+    [StaticCallersOnly]
+    public static ILogger<Octobot>? StaticLogger { get; private set; }
+
     public static async Task Main(string[] args)
     {
         var host = CreateHostBuilder(args).UseConsoleLifetime().Build();
         var services = host.Services;
+        StaticLogger = services.GetRequiredService<ILogger<Octobot>>();
 
         var slashService = services.GetRequiredService<SlashService>();
         // Providing a guild ID to this call will result in command duplicates!

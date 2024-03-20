@@ -73,7 +73,7 @@ public class AboutCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
