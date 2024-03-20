@@ -101,20 +101,21 @@ public class AboutCommandGroup : CommandGroup
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://i.ibb.co/fS6wZhh/octobot-banner.png")
+            .WithFooter(string.Format(Messages.Version, BuildInfo.Version))
             .Build();
 
         var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
             new PartialEmoji(Name: "🌐"),
-            URL: Octobot.RepositoryUrl
+            URL: BuildInfo.RepositoryUrl
         );
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Octobot.IssuesUrl
+            URL: BuildInfo.IssuesUrl
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,

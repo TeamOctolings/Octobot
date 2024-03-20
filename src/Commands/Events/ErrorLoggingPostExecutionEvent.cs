@@ -72,7 +72,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             ButtonComponentStyle.Link,
             Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Octobot.IssuesUrl
+            URL: BuildInfo.IssuesUrl
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
