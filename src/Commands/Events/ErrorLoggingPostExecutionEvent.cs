@@ -59,7 +59,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
         var botResult = await _userApi.GetCurrentUserAsync(ct);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(Messages.CommandExecutionFailed, bot)
@@ -78,10 +78,11 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             IsDisabled: BuildInfo.IsDirty
         );
 
-        return await _feedback.SendContextualEmbedResultAsync(embed,
+        return ResultExtensions.FromError(await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
                 new ActionRowComponent(new[] { issuesButton })
-            }), ct);
+            }), ct)
+        );
     }
 }

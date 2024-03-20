@@ -81,13 +81,13 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -274,13 +274,13 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -353,7 +353,7 @@ public class ToolsCommandGroup : CommandGroup
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -439,13 +439,13 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -524,7 +524,7 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);

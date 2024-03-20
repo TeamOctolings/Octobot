@@ -97,7 +97,7 @@ public sealed partial class MemberUpdateService : BackgroundService
             = await _utility.CheckInteractionsAsync(guildId, null, id, "Update", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         var canInteract = interactionResult.Entity is null;
@@ -247,7 +247,7 @@ public sealed partial class MemberUpdateService : BackgroundService
             reminder.ChannelId.ToSnowflake(), Mention.User(user), embedResult: embed, ct: ct);
         if (!messageResult.IsSuccess)
         {
-            return messageResult;
+            return ResultExtensions.FromError(messageResult);
         }
 
         data.Reminders.Remove(reminder);

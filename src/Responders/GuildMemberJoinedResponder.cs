@@ -48,7 +48,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var returnRolesResult = await TryReturnRolesAsync(cfg, memberData, gatewayEvent.GuildID, user.ID, ct);
         if (!returnRolesResult.IsSuccess)
         {
-            return Result.FromError(returnRolesResult.Error);
+            return ResultExtensions.FromError(returnRolesResult);
         }
 
         if (GuildSettings.WelcomeMessagesChannel.Get(cfg).Empty()
@@ -65,7 +65,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var guildResult = await _guildApi.GetGuildAsync(gatewayEvent.GuildID, ct: ct);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var embed = new EmbedBuilder()

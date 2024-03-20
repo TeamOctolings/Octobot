@@ -80,19 +80,19 @@ public class KickCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -118,7 +118,7 @@ public class KickCommandGroup : CommandGroup
             = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Kick", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -152,7 +152,7 @@ public class KickCommandGroup : CommandGroup
         if (!kickResult.IsSuccess)
         {
             memberData.Kicked = false;
-            return Result.FromError(kickResult.Error);
+            return ResultExtensions.FromError(kickResult);
         }
 
         memberData.Roles.Clear();

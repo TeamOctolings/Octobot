@@ -88,19 +88,19 @@ public class BanCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var data = await _guildData.GetData(guild.ID, CancellationToken);
@@ -144,7 +144,7 @@ public class BanCommandGroup : CommandGroup
             = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Ban", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -191,7 +191,7 @@ public class BanCommandGroup : CommandGroup
         if (!banResult.IsSuccess)
         {
             memberData.BannedUntil = null;
-            return Result.FromError(banResult.Error);
+            return ResultExtensions.FromError(banResult);
         }
 
         memberData.Roles.Clear();
@@ -242,14 +242,14 @@ public class BanCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         // Needed to get the tag and avatar
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -276,7 +276,7 @@ public class BanCommandGroup : CommandGroup
             ct);
         if (!unbanResult.IsSuccess)
         {
-            return Result.FromError(unbanResult.Error);
+            return ResultExtensions.FromError(unbanResult);
         }
 
         data.GetOrCreateMemberData(target.ID).BannedUntil = null;
