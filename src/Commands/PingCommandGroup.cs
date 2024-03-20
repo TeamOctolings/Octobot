@@ -91,7 +91,7 @@ public class PingCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
-            .WithTitle($"Sound{Random.Shared.Next(1, 4)}".Localized())
+            .WithTitle($"Generic{Random.Shared.Next(1, 4)}".Localized())
             .WithDescription($"{latency:F0}{Messages.Milliseconds}")
             .WithColour(latency < 250 ? ColorsList.Green : latency < 500 ? ColorsList.Yellow : ColorsList.Red)
             .WithCurrentTimestamp()
