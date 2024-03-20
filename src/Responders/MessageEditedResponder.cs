@@ -101,10 +101,11 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        var builder = new StringBuilder().AppendLine(
-                string.Format(Messages.DescriptionActionJumpToMessage,
-                    $"https://discord.com/channels/{guildId}/{channelId}/{messageId}"))
-            .AppendLine(diff.AsMarkdown());
+        var builder = new StringBuilder()
+            .AppendLine(diff.AsMarkdown())
+            .AppendLine(string.Format(Messages.DescriptionActionJumpToMessage,
+                $"https://discord.com/channels/{guildId}/{channelId}/{messageId}")
+            );
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.CachedMessageEdited, message.Author.GetTag()), message.Author)
