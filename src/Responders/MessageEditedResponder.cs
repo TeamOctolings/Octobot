@@ -46,28 +46,16 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
         }
 
-        if (!gatewayEvent.GuildID.IsDefined(out var guildId))
-        {
-            return Result.Success;
-        }
-
-        if (gatewayEvent.Author.IsDefined(out var author) && author.IsBot.OrDefault(false))
-        {
-            return Result.Success;
-        }
-
-        if (!gatewayEvent.EditedTimestamp.IsDefined(out var timestamp))
-        {
-            return Result.Success; // The message wasn't actually edited
-        }
-
-        if (!gatewayEvent.Content.IsDefined(out var newContent))
+        if (!gatewayEvent.GuildID.IsDefined(out var guildId)
+            || !gatewayEvent.Author.IsDefined(out var author)
+            || !gatewayEvent.EditedTimestamp.IsDefined(out var timestamp)
+            || !gatewayEvent.Content.IsDefined(out var newContent))
         {
             return Result.Success;
         }
 
         var cfg = await _guildData.GetSettings(guildId, ct);
-        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        if (author.IsBot.OrDefault(false) || GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
             return Result.Success;
         }
