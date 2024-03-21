@@ -74,12 +74,8 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         _logger.LogInformation("Loaded guild \"{Name}\" ({ID}) owned by {Owner} ({OwnerID}) with {MemberCount} members",
             guild.Name, guild.ID, owner.GetTag(), owner.ID, guild.MemberCount);
 
-        if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
-        {
-            return Result.Success;
-        }
-
-        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+            || !GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
             return Result.Success;
         }
