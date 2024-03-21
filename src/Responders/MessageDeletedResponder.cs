@@ -39,13 +39,13 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
     {
         if (!gatewayEvent.GuildID.IsDefined(out var guildId))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var cfg = await _guildData.GetSettings(guildId, ct);
         if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var messageResult = await _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
@@ -56,7 +56,7 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         if (string.IsNullOrWhiteSpace(message.Content))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var auditLogResult = await _auditLogApi.GetGuildAuditLogAsync(

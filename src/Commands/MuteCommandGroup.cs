@@ -118,7 +118,8 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot, CancellationToken);
+        return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot,
+            CancellationToken);
     }
 
     private async Task<Result> MuteUserAsync(
@@ -143,14 +144,16 @@ public class MuteCommandGroup : CommandGroup
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
 
-        var muteMethodResult = await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
+        var muteMethodResult =
+            await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
         if (!muteMethodResult.IsSuccess)
         {
             return ResultExtensions.FromError(muteMethodResult);
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
+        var description = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
             .AppendBulletPoint(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
@@ -348,11 +351,12 @@ public class MuteCommandGroup : CommandGroup
     }
 
     private async Task<Result> RemoveMuteRoleAsync(
-        IUser executor, IUser target, string reason, Snowflake guildId, MemberData memberData, CancellationToken ct = default)
+        IUser executor, IUser target, string reason, Snowflake guildId, MemberData memberData,
+        CancellationToken ct = default)
     {
         if (memberData.MutedUntil is null)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
@@ -372,7 +376,7 @@ public class MuteCommandGroup : CommandGroup
     {
         if (communicationDisabledUntil is null)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(

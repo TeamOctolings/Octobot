@@ -20,8 +20,8 @@ namespace Octobot.Commands.Events;
 [UsedImplicitly]
 public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
 {
-    private readonly ILogger<ErrorLoggingPostExecutionEvent> _logger;
     private readonly IFeedbackService _feedback;
+    private readonly ILogger<ErrorLoggingPostExecutionEvent> _logger;
     private readonly IDiscordRestUserAPI _userApi;
 
     public ErrorLoggingPostExecutionEvent(ILogger<ErrorLoggingPostExecutionEvent> logger, IFeedbackService feedback,
@@ -53,7 +53,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
 
         if (result.IsSuccess)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var botResult = await _userApi.GetCurrentUserAsync(ct);

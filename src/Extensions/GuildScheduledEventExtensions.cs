@@ -22,7 +22,7 @@ public static class GuildScheduledEventExtensions
         }
 
         return scheduledEvent.ScheduledEndTime.AsOptional().IsDefined(out endTime)
-            ? Result.FromSuccess()
+            ? Result.Success
             : new ArgumentNullError(nameof(scheduledEvent.ScheduledEndTime));
     }
 }

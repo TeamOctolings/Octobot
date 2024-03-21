@@ -32,7 +32,7 @@ public sealed partial class SnowflakeOption : Option<Snowflake>
         }
 
         settings[Name] = parsed;
-        return Result.FromSuccess();
+        return Result.Success;
     }
 
     [GeneratedRegex("[^0-9]")]

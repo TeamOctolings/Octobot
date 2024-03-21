@@ -35,7 +35,13 @@ public class Option<T> : IOption
     public virtual Result Set(JsonNode settings, string from)
     {
         settings[Name] = from;
-        return Result.FromSuccess();
+        return Result.Success;
+    }
+
+    public Result Reset(JsonNode settings)
+    {
+        settings[Name] = null;
+        return Result.Success;
     }
 
     /// <summary>
@@ -47,11 +53,5 @@ public class Option<T> : IOption
     {
         var property = settings[Name];
         return property != null ? property.GetValue<T>() : DefaultValue;
-    }
-
-    public Result Reset(JsonNode settings)
-    {
-        settings[Name] = null;
-        return Result.FromSuccess();
     }
 }
