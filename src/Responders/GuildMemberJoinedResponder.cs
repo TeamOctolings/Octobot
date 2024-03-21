@@ -54,7 +54,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         if (GuildSettings.WelcomeMessagesChannel.Get(cfg).Empty()
             || GuildSettings.WelcomeMessage.Get(cfg) is "off" or "disable" or "disabled")
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
@@ -85,7 +85,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
     {
         if (!GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var assignRoles = new List<Snowflake>();

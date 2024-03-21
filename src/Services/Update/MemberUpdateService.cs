@@ -121,7 +121,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         if (!canInteract)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var autoUnmuteResult = await TryAutoUnmuteAsync(guildId, id, data, ct);
@@ -148,14 +148,14 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         if (data.BannedUntil is null || DateTimeOffset.UtcNow <= data.BannedUntil)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, id, ct);
         if (!existingBanResult.IsDefined())
         {
             data.BannedUntil = null;
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
@@ -173,7 +173,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         if (data.MutedUntil is null || DateTimeOffset.UtcNow <= data.MutedUntil)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
@@ -209,7 +209,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         if (!usernameChanged)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var newNickname = string.Concat(characterList.ToArray());
@@ -230,12 +230,13 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         if (DateTimeOffset.UtcNow < reminder.At)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
-            .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
+            .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
+                $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
@@ -251,6 +252,6 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
 
         data.Reminders.Remove(reminder);
-        return Result.FromSuccess();
+        return Result.Success;
     }
 }

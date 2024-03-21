@@ -42,7 +42,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
     {
         if (!gatewayEvent.Guild.IsT0) // Guild is not IAvailableGuild
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var guild = gatewayEvent.Guild.AsT0;
@@ -76,12 +76,12 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);

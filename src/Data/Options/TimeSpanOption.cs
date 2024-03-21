@@ -22,6 +22,6 @@ public sealed class TimeSpanOption : Option<TimeSpan>
         }
 
         settings[Name] = span.ToString();
-        return Result.FromSuccess();
+        return Result.Success;
     }
 }

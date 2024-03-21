@@ -38,13 +38,13 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
         var memberData = data.GetOrCreateMemberData(user.ID);
         if (memberData.BannedUntil is not null || memberData.Kicked)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         if (GuildSettings.WelcomeMessagesChannel.Get(cfg).Empty()
             || GuildSettings.LeaveMessage.Get(cfg) is "off" or "disable" or "disabled")
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
