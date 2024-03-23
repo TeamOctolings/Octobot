@@ -241,7 +241,7 @@ public class SettingsCommandGroup : CommandGroup
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
     [RequireDiscordPermission(DiscordPermission.ManageGuild)]
-    [Description("Reset settings for this server")]
+    [Description("Reset settings for this guild")]
     [UsedImplicitly]
     public async Task<Result> ExecuteResetSettingsAsync(
         [Description("Setting to reset")] AllOptionsEnum? setting = null)

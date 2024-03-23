@@ -262,7 +262,7 @@ public class ToolsCommandGroup : CommandGroup
     /// </returns>
     [Command("guildinfo")]
     [DiscordDefaultDMPermission(false)]
-    [Description("Shows info current guild")]
+    [Description("Shows info about current guild")]
     [UsedImplicitly]
     public async Task<Result> ExecuteGuildInfoAsync()
     {
@@ -514,7 +514,7 @@ public class ToolsCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteEightBallAsync(
         // let the user think he's actually asking the ball a question
-        string question)
+        [Description("Question to ask")] string question)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {

@@ -672,4 +672,7 @@
   <data name="ButtonDirty" xml:space="preserve">
       <value>Can't report an issue in the development version</value>
   </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>Open Octobot's Wiki</value>
+  </data>
 </root>

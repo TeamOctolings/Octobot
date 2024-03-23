@@ -672,4 +672,7 @@
   <data name="ButtonDirty" xml:space="preserve">
       <value>Нельзя сообщить о проблеме в версии под разработкой</value>
   </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>Открыть Octobot's Wiki</value>
+  </data>
 </root>

@@ -6,6 +6,8 @@ public static class BuildInfo
 
     public static string IssuesUrl => $"{RepositoryUrl}/issues";
 
+    public static string WikiUrl => $"{RepositoryUrl}/wiki";
+
     private static string Commit => ThisAssembly.Git.Commit;
 
     private static string Branch => ThisAssembly.Git.Branch;
