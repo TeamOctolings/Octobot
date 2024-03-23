@@ -672,4 +672,7 @@
   <data name="ButtonDirty" xml:space="preserve">
       <value>вот иди сам и почини что сломал</value>
   </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>вики Octobot (жмак)</value>
+  </data>
 </root>

@@ -111,6 +111,13 @@ public class AboutCommandGroup : CommandGroup
             URL: BuildInfo.RepositoryUrl
         );
 
+        var wikiButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            Messages.ButtonOpenWiki,
+            new PartialEmoji(Name: "📖"),
+            URL: BuildInfo.WikiUrl
+        );
+
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             BuildInfo.IsDirty
@@ -124,7 +131,7 @@ public class AboutCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
-                new ActionRowComponent(new[] { repositoryButton, issuesButton })
+                new ActionRowComponent(new[] { repositoryButton, wikiButton, issuesButton })
             }), ct);
     }
 }

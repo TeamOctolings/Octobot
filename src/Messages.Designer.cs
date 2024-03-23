@@ -1210,5 +1210,11 @@ namespace Octobot {
                 return ResourceManager.GetString("ButtonDirty", resourceCulture);
             }
         }
+
+        internal static string ButtonOpenWiki {
+            get {
+                return ResourceManager.GetString("ButtonOpenWiki", resourceCulture);
+            }
+        }
     }
 }
