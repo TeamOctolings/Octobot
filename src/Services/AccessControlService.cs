@@ -85,10 +85,10 @@ public sealed class AccessControlService
             return Result<string?>.FromSuccess(null);
         }
 
-        var currentMemberResult = await _guildApi.GetGuildMemberAsync(guildId, bot.ID, ct);
-        if (!currentMemberResult.IsDefined(out var currentMember))
+        var botMemberResult = await _guildApi.GetGuildMemberAsync(guildId, bot.ID, ct);
+        if (!botMemberResult.IsDefined(out var botMember))
         {
-            return Result<string?>.FromError(currentMemberResult);
+            return Result<string?>.FromError(botMemberResult);
         }
 
         var rolesResult = await _guildApi.GetGuildRolesAsync(guildId, ct);
@@ -99,7 +99,7 @@ public sealed class AccessControlService
 
         if (interacterId is null)
         {
-            return CheckInteractions(action, guild, roles, targetMember, currentMember, currentMember);
+            return CheckInteractions(action, guild, roles, targetMember, botMember, botMember);
         }
 
         var interacterResult = await _guildApi.GetGuildMemberAsync(guildId, interacterId.Value, ct);
@@ -124,12 +124,12 @@ public sealed class AccessControlService
         }
 
         return hasPermission
-            ? CheckInteractions(action, guild, roles, targetMember, currentMember, interacter)
+            ? CheckInteractions(action, guild, roles, targetMember, botMember, interacter)
             : Result<string?>.FromSuccess($"UserCannot{action}Members".Localized());
     }
 
     private static Result<string?> CheckInteractions(
-        string action, IGuild guild, IReadOnlyList<IRole> roles, IGuildMember targetMember, IGuildMember currentMember,
+        string action, IGuild guild, IReadOnlyList<IRole> roles, IGuildMember targetMember, IGuildMember botMember,
         IGuildMember interacter)
     {
         if (!targetMember.User.IsDefined(out var targetUser))
@@ -142,7 +142,7 @@ public sealed class AccessControlService
             return new ArgumentNullError(nameof(interacter.User));
         }
 
-        if (currentMember.User == targetMember.User)
+        if (botMember.User == targetMember.User)
         {
             return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
         }
@@ -153,7 +153,7 @@ public sealed class AccessControlService
         }
 
         var targetRoles = roles.Where(r => targetMember.Roles.Contains(r.ID)).ToList();
-        var botRoles = roles.Where(r => currentMember.Roles.Contains(r.ID));
+        var botRoles = roles.Where(r => botMember.Roles.Contains(r.ID));
 
         var targetBotRoleDiff = targetRoles.MaxOrDefault(r => r.Position) - botRoles.MaxOrDefault(r => r.Position);
         if (targetBotRoleDiff >= 0)
