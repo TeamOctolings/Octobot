@@ -375,7 +375,7 @@ public class WarnCommandGroup : CommandGroup
     [Command("listwarn")]
     [DiscordDefaultDMPermission(false)]
     [Ephemeral]
-    [Description("(Ephemeral) Get your current warns")]
+    [Description("(Ephemeral) Get current warns")]
     [UsedImplicitly]
     public async Task<Result> ExecuteListWarnsAsync()
     {

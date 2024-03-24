@@ -1,6 +1,4 @@
-﻿using Remora.Rest.Core;
-
-namespace Octobot.Data;
+﻿namespace Octobot.Data;
 
 public struct Warn
 {
