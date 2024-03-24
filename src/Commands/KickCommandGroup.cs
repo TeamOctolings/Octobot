@@ -24,6 +24,7 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class KickCommandGroup : CommandGroup
 {
+    private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
@@ -32,16 +33,16 @@ public class KickCommandGroup : CommandGroup
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
-    public KickCommandGroup(
-        ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
-        IFeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
-        Utility utility)
+    public KickCommandGroup(AccessControlService access, IDiscordRestChannelAPI channelApi, ICommandContext context,
+        IFeedbackService feedback, IDiscordRestGuildAPI guildApi, GuildDataService guildData,
+        IDiscordRestUserAPI userApi, Utility utility)
     {
-        _context = context;
+        _access = access;
         _channelApi = channelApi;
-        _guildData = guildData;
+        _context = context;
         _feedback = feedback;
         _guildApi = guildApi;
+        _guildData = guildData;
         _userApi = userApi;
         _utility = utility;
     }
@@ -59,10 +60,10 @@ public class KickCommandGroup : CommandGroup
     ///     was kicked and vice-versa.
     /// </returns>
     [Command("kick", "кик")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.KickMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.KickMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers)]
     [Description("Kick member")]
     [UsedImplicitly]
@@ -115,7 +116,7 @@ public class KickCommandGroup : CommandGroup
         CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Kick", ct);
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Kick", ct);
         if (!interactionResult.IsSuccess)
         {
             return ResultExtensions.FromError(interactionResult);
@@ -134,7 +135,8 @@ public class KickCommandGroup : CommandGroup
         {
             var dmEmbed = new EmbedBuilder().WithGuildTitle(guild)
                 .WithTitle(Messages.YouWereKicked)
-                .WithDescription(MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason)))
+                .WithDescription(
+                    MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason)))
                 .WithActionFooter(executor)
                 .WithCurrentTimestamp()
                 .WithColour(ColorsList.Red)

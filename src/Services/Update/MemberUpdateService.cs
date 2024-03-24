@@ -26,20 +26,20 @@ public sealed partial class MemberUpdateService : BackgroundService
         "Torus", "Violet", "Vortex", "Vulture", "Wagon", "Whale", "Woodpecker", "Zebra", "Zigzag"
     ];
 
+    private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<MemberUpdateService> _logger;
-    private readonly Utility _utility;
 
-    public MemberUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildAPI guildApi,
-        GuildDataService guildData, ILogger<MemberUpdateService> logger, Utility utility)
+    public MemberUpdateService(AccessControlService access, IDiscordRestChannelAPI channelApi,
+        IDiscordRestGuildAPI guildApi, GuildDataService guildData, ILogger<MemberUpdateService> logger)
     {
+        _access = access;
         _channelApi = channelApi;
         _guildApi = guildApi;
         _guildData = guildData;
         _logger = logger;
-        _utility = utility;
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -94,7 +94,7 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
 
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guildId, null, id, "Update", ct);
+            = await _access.CheckInteractionsAsync(guildId, null, id, "Update", ct);
         if (!interactionResult.IsSuccess)
         {
             return ResultExtensions.FromError(interactionResult);

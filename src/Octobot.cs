@@ -88,8 +88,9 @@ public sealed class Octobot
                         .AddPreparationErrorEvent<LoggingPreparationErrorEvent>()
                         .AddPostExecutionEvent<ErrorLoggingPostExecutionEvent>()
                         // Services
-                        .AddSingleton<Utility>()
+                        .AddSingleton<AccessControlService>()
                         .AddSingleton<GuildDataService>()
+                        .AddSingleton<Utility>()
                         .AddHostedService<GuildDataService>(provider => provider.GetRequiredService<GuildDataService>())
                         .AddHostedService<MemberUpdateService>()
                         .AddHostedService<ScheduledEventUpdateService>()

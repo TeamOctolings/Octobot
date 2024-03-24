@@ -26,6 +26,7 @@ public enum AllOptionsEnum
     [UsedImplicitly] EventNotificationChannel,
     [UsedImplicitly] DefaultRole,
     [UsedImplicitly] MuteRole,
+    [UsedImplicitly] ModeratorRole,
     [UsedImplicitly] EventNotificationRole,
     [UsedImplicitly] EventEarlyNotificationOffset
 }
