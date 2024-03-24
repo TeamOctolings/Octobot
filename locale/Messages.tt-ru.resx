@@ -235,7 +235,7 @@
     <value>тебе нельзя мутить шизоидов</value>
   </data>
     <data name="UserCannotUnmuteMembers" xml:space="preserve">
-    <value>тебе нельзя размучивать шизоидов</value>
+    <value>тебе нельзя раззамучивать шизоидов</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
     <value>тебе нельзя редактировать дурку</value>
