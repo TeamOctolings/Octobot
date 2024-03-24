@@ -201,21 +201,6 @@
   <data name="MissingUser" xml:space="preserve">
     <value>Надо указать пользователя!</value>
   </data>
-  <data name="UserCannotBanMembers" xml:space="preserve">
-    <value>Ты не можешь банить пользователей на этом сервере!</value>
-  </data>
-  <data name="UserCannotManageMessages" xml:space="preserve">
-    <value>Ты не можешь управлять сообщениями этого сервера!</value>
-  </data>
-  <data name="UserCannotKickMembers" xml:space="preserve">
-    <value>Ты не можешь выгонять участников с этого сервера!</value>
-  </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
-    <value>Ты не можешь модерировать участников этого сервера!</value>
-  </data>
-  <data name="UserCannotManageGuild" xml:space="preserve">
-    <value>Ты не можешь настраивать этот сервер!</value>
-  </data>
   <data name="BotCannotBanMembers" xml:space="preserve">
     <value>Я не могу банить пользователей на этом сервере!</value>
   </data>

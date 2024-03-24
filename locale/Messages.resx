@@ -204,21 +204,6 @@
   <data name="MissingUser" xml:space="preserve">
     <value>You need to specify a user!</value>
   </data>
-  <data name="UserCannotBanMembers" xml:space="preserve">
-    <value>You cannot ban users from this guild!</value>
-  </data>
-  <data name="UserCannotManageMessages" xml:space="preserve">
-    <value>You cannot manage messages in this guild!</value>
-  </data>
-  <data name="UserCannotKickMembers" xml:space="preserve">
-    <value>You cannot kick members from this guild!</value>
-  </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
-    <value>You cannot moderate members in this guild!</value>
-  </data>
-  <data name="UserCannotManageGuild" xml:space="preserve">
-    <value>You cannot manage this guild!</value>
-  </data>
   <data name="BotCannotBanMembers" xml:space="preserve">
     <value>I cannot ban users from this guild!</value>
   </data>

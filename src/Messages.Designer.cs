@@ -246,36 +246,6 @@ namespace Octobot {
             }
         }
 
-        internal static string UserCannotBanMembers {
-            get {
-                return ResourceManager.GetString("UserCannotBanMembers", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotManageMessages {
-            get {
-                return ResourceManager.GetString("UserCannotManageMessages", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotKickMembers {
-            get {
-                return ResourceManager.GetString("UserCannotKickMembers", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotModerateMembers {
-            get {
-                return ResourceManager.GetString("UserCannotModerateMembers", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotManageGuild {
-            get {
-                return ResourceManager.GetString("UserCannotManageGuild", resourceCulture);
-            }
-        }
-
         internal static string BotCannotBanMembers {
             get {
                 return ResourceManager.GetString("BotCannotBanMembers", resourceCulture);
