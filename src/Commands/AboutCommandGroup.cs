@@ -73,7 +73,7 @@ public class AboutCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
@@ -101,26 +101,37 @@ public class AboutCommandGroup : CommandGroup
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
             .WithImageUrl("https://i.ibb.co/fS6wZhh/octobot-banner.png")
+            .WithFooter(string.Format(Messages.Version, BuildInfo.Version))
             .Build();
 
         var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
             new PartialEmoji(Name: "🌐"),
-            URL: Octobot.RepositoryUrl
+            URL: BuildInfo.RepositoryUrl
+        );
+
+        var wikiButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            Messages.ButtonOpenWiki,
+            new PartialEmoji(Name: "📖"),
+            URL: BuildInfo.WikiUrl
         );
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.ButtonReportIssue,
+            BuildInfo.IsDirty
+                ? Messages.ButtonDirty
+                : Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Octobot.IssuesUrl
+            URL: BuildInfo.IssuesUrl,
+            IsDisabled: BuildInfo.IsDirty
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
-                new ActionRowComponent(new[] { repositoryButton, issuesButton })
+                new ActionRowComponent(new[] { repositoryButton, wikiButton, issuesButton })
             }), ct);
     }
 }

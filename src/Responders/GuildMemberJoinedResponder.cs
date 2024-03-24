@@ -48,13 +48,13 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var returnRolesResult = await TryReturnRolesAsync(cfg, memberData, gatewayEvent.GuildID, user.ID, ct);
         if (!returnRolesResult.IsSuccess)
         {
-            return Result.FromError(returnRolesResult.Error);
+            return ResultExtensions.FromError(returnRolesResult);
         }
 
-        if (GuildSettings.PublicFeedbackChannel.Get(cfg).Empty()
+        if (GuildSettings.WelcomeMessagesChannel.Get(cfg).Empty()
             || GuildSettings.WelcomeMessage.Get(cfg) is "off" or "disable" or "disabled")
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
@@ -65,7 +65,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
         var guildResult = await _guildApi.GetGuildAsync(gatewayEvent.GuildID, ct: ct);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var embed = new EmbedBuilder()
@@ -76,7 +76,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
             .Build();
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
-            GuildSettings.PublicFeedbackChannel.Get(cfg), embedResult: embed,
+            GuildSettings.WelcomeMessagesChannel.Get(cfg), embedResult: embed,
             allowedMentions: Octobot.NoMentions, ct: ct);
     }
 
@@ -85,7 +85,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
     {
         if (!GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var assignRoles = new List<Snowflake>();

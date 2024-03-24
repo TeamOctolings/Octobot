@@ -14,6 +14,7 @@ public enum AllOptionsEnum
 {
     [UsedImplicitly] Language,
     [UsedImplicitly] WelcomeMessage,
+    [UsedImplicitly] LeaveMessage,
     [UsedImplicitly] ReceiveStartupMessages,
     [UsedImplicitly] RemoveRolesOnMute,
     [UsedImplicitly] ReturnRolesOnRejoin,
@@ -21,9 +22,11 @@ public enum AllOptionsEnum
     [UsedImplicitly] RenameHoistedUsers,
     [UsedImplicitly] PublicFeedbackChannel,
     [UsedImplicitly] PrivateFeedbackChannel,
+    [UsedImplicitly] WelcomeMessagesChannel,
     [UsedImplicitly] EventNotificationChannel,
     [UsedImplicitly] DefaultRole,
     [UsedImplicitly] MuteRole,
+    [UsedImplicitly] ModeratorRole,
     [UsedImplicitly] EventNotificationRole,
     [UsedImplicitly] EventEarlyNotificationOffset
 }

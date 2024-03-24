@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Sound1" xml:space="preserve">
+  <data name="Generic1" xml:space="preserve">
       <value>Виимо!</value>
   </data>
-  <data name="Sound2" xml:space="preserve">
+  <data name="Generic2" xml:space="preserve">
       <value>Вууми!</value>
   </data>
-  <data name="Sound3" xml:space="preserve">
+  <data name="Generic3" xml:space="preserve">
       <value>Нгьес!</value>
   </data>
   <data name="PunishmentExpired" xml:space="preserve">
@@ -200,6 +200,24 @@
   </data>
   <data name="MissingUser" xml:space="preserve">
     <value>Надо указать пользователя!</value>
+  </data>
+  <data name="UserCannotBanMembers" xml:space="preserve">
+    <value>Ты не можешь банить пользователей на этом сервере!</value>
+  </data>
+  <data name="UserCannotManageMessages" xml:space="preserve">
+    <value>Ты не можешь управлять сообщениями этого сервера!</value>
+  </data>
+  <data name="UserCannotKickMembers" xml:space="preserve">
+    <value>Ты не можешь выгонять участников с этого сервера!</value>
+  </data>
+    <data name="UserCannotMuteMembers" xml:space="preserve">
+    <value>Ты не можешь глушить участников этого сервера!</value>
+  </data>
+    <data name="UserCannotUnmuteMembers" xml:space="preserve">
+    <value>Ты не можешь разглушать участников этого сервера!</value>
+  </data>
+  <data name="UserCannotManageGuild" xml:space="preserve">
+    <value>Ты не можешь настраивать этот сервер!</value>
   </data>
   <data name="BotCannotBanMembers" xml:space="preserve">
     <value>Я не могу банить пользователей на этом сервере!</value>
@@ -546,6 +564,12 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Сообщить о проблеме</value>
   </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>До скорой встречи, {0}!</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>Сообщение о выходе</value>
+  </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>Неправильно указано время!</value>
   </data>
@@ -617,5 +641,20 @@
   </data>
   <data name="TimeSpanExample" xml:space="preserve">
       <value>Пример правильного ввода: `1ч30м`</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+      <value>Версия: {0}</value>
+  </data>
+  <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
+      <value>Канал для приветствий</value>
+  </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>Нельзя сообщить о проблеме в версии под разработкой</value>
+  </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>Открыть Octobot's Wiki</value>
+  </data>
+    <data name="SettingsModeratorRole" xml:space="preserve">
+      <value>Роль модератора</value>
   </data>
 </root>

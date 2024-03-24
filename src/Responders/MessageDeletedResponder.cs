@@ -39,31 +39,31 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
     {
         if (!gatewayEvent.GuildID.IsDefined(out var guildId))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var cfg = await _guildData.GetSettings(guildId, ct);
         if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var messageResult = await _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
         if (!messageResult.IsDefined(out var message))
         {
-            return Result.FromError(messageResult);
+            return ResultExtensions.FromError(messageResult);
         }
 
         if (string.IsNullOrWhiteSpace(message.Content))
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var auditLogResult = await _auditLogApi.GetGuildAuditLogAsync(
             guildId, actionType: AuditLogEvent.MessageDelete, limit: 1, ct: ct);
         if (!auditLogResult.IsDefined(out var auditLogPage))
         {
-            return Result.FromError(auditLogResult);
+            return ResultExtensions.FromError(auditLogResult);
         }
 
         var auditLog = auditLogPage.AuditLogEntries.Single();
@@ -78,15 +78,16 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         if (!deleterResult.IsDefined(out var deleter))
         {
-            return Result.FromError(deleterResult);
+            return ResultExtensions.FromError(deleterResult);
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        var builder = new StringBuilder().AppendLine(
-                string.Format(Messages.DescriptionActionJumpToChannel,
-                    Mention.Channel(gatewayEvent.ChannelID)))
-            .AppendLine(message.Content.InBlockCode());
+        var builder = new StringBuilder()
+            .AppendLine(message.Content.InBlockCode())
+            .AppendLine(
+                string.Format(Messages.DescriptionActionJumpToChannel, Mention.Channel(gatewayEvent.ChannelID))
+            );
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(

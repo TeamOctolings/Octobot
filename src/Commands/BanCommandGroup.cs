@@ -28,6 +28,7 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class BanCommandGroup : CommandGroup
 {
+    private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
@@ -36,16 +37,16 @@ public class BanCommandGroup : CommandGroup
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
-    public BanCommandGroup(
-        ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
-        IFeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
-        Utility utility)
+    public BanCommandGroup(AccessControlService access, IDiscordRestChannelAPI channelApi, ICommandContext context,
+        IFeedbackService feedback, IDiscordRestGuildAPI guildApi, GuildDataService guildData,
+        IDiscordRestUserAPI userApi, Utility utility)
     {
-        _context = context;
+        _access = access;
         _channelApi = channelApi;
-        _guildData = guildData;
+        _context = context;
         _feedback = feedback;
         _guildApi = guildApi;
+        _guildData = guildData;
         _userApi = userApi;
         _utility = utility;
     }
@@ -65,10 +66,10 @@ public class BanCommandGroup : CommandGroup
     /// </returns>
     /// <seealso cref="ExecuteUnban" />
     [Command("ban", "бан")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.BanMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Ban user")]
     [UsedImplicitly]
@@ -88,19 +89,19 @@ public class BanCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var data = await _guildData.GetData(guild.ID, CancellationToken);
@@ -128,7 +129,8 @@ public class BanCommandGroup : CommandGroup
     }
 
     private async Task<Result> BanUserAsync(
-        IUser executor, IUser target, string reason, TimeSpan? duration, IGuild guild, GuildData data, Snowflake channelId,
+        IUser executor, IUser target, string reason, TimeSpan? duration, IGuild guild, GuildData data,
+        Snowflake channelId,
         IUser bot, CancellationToken ct = default)
     {
         var existingBanResult = await _guildApi.GetGuildBanAsync(guild.ID, target.ID, ct);
@@ -141,10 +143,10 @@ public class BanCommandGroup : CommandGroup
         }
 
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Ban", ct);
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Ban", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -155,7 +157,8 @@ public class BanCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
         }
 
-        var builder = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason));
+        var builder =
+            new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason));
         if (duration is not null)
         {
             builder.AppendBulletPoint(
@@ -181,17 +184,19 @@ public class BanCommandGroup : CommandGroup
             await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.BannedUntil
+            = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
+
         var banResult = await _guildApi.CreateGuildBanAsync(
             guild.ID, target.ID, reason: $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct: ct);
         if (!banResult.IsSuccess)
         {
-            return Result.FromError(banResult.Error);
+            memberData.BannedUntil = null;
+            return ResultExtensions.FromError(banResult);
         }
 
-        var memberData = data.GetOrCreateMemberData(target.ID);
-        memberData.BannedUntil
-            = duration is not null ? DateTimeOffset.UtcNow.Add(duration.Value) : DateTimeOffset.MaxValue;
         memberData.Roles.Clear();
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -219,10 +224,10 @@ public class BanCommandGroup : CommandGroup
     /// <seealso cref="ExecuteBanAsync" />
     /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />
     [Command("unban")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.BanMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.BanMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.BanMembers)]
     [Description("Unban user")]
     [UsedImplicitly]
@@ -240,14 +245,14 @@ public class BanCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         // Needed to get the tag and avatar
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -274,7 +279,7 @@ public class BanCommandGroup : CommandGroup
             ct);
         if (!unbanResult.IsSuccess)
         {
-            return Result.FromError(unbanResult.Error);
+            return ResultExtensions.FromError(unbanResult);
         }
 
         data.GetOrCreateMemberData(target.ID).BannedUntil = null;
@@ -284,7 +289,8 @@ public class BanCommandGroup : CommandGroup
             .WithColour(ColorsList.Green).Build();
 
         var title = string.Format(Messages.UserUnbanned, target.GetTag());
-        var description = new StringBuilder().AppendBulletPoint(string.Format(Messages.DescriptionActionReason, reason));
+        var description =
+            new StringBuilder().AppendBulletPoint(string.Format(Messages.DescriptionActionReason, reason));
 
         _utility.LogAction(
             data.Settings, channelId, executor, title, description.ToString(), target, ColorsList.Green, ct: ct);

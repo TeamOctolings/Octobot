@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, welcome to {1}</value>
   </data>
-  <data name="Sound1" xml:space="preserve">
+  <data name="Generic1" xml:space="preserve">
       <value>Veemo!</value>
   </data>
-  <data name="Sound2" xml:space="preserve">
+  <data name="Generic2" xml:space="preserve">
       <value>Woomy!</value>
   </data>
-  <data name="Sound3" xml:space="preserve">
+  <data name="Generic3" xml:space="preserve">
       <value>Ngyes!</value>
   </data>
   <data name="YouWereBanned" xml:space="preserve">
@@ -203,6 +203,24 @@
   </data>
   <data name="MissingUser" xml:space="preserve">
     <value>You need to specify a user!</value>
+  </data>
+  <data name="UserCannotBanMembers" xml:space="preserve">
+    <value>You cannot ban users from this guild!</value>
+  </data>
+  <data name="UserCannotManageMessages" xml:space="preserve">
+    <value>You cannot manage messages in this guild!</value>
+  </data>
+  <data name="UserCannotKickMembers" xml:space="preserve">
+    <value>You cannot kick members from this guild!</value>
+  </data>
+    <data name="UserCannotMuteMembers" xml:space="preserve">
+    <value>You cannot mute members in this guild!</value>
+  </data>
+    <data name="UserCannotUnmuteMembers" xml:space="preserve">
+    <value>You cannot unmute members in this guild!</value>
+  </data>
+  <data name="UserCannotManageGuild" xml:space="preserve">
+    <value>You cannot manage this guild!</value>
   </data>
   <data name="BotCannotBanMembers" xml:space="preserve">
     <value>I cannot ban users from this guild!</value>
@@ -546,6 +564,12 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Report an issue</value>
   </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>See you soon, {0}!</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>Leave message</value>
+  </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>Time specified incorrectly!</value>
   </data>
@@ -617,5 +641,20 @@
   </data>
   <data name="TimeSpanExample" xml:space="preserve">
       <value>Example of a valid input: `1h30m`</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+      <value>Version: {0}</value>
+  </data>
+  <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
+      <value>Welcome messages channel</value>
+  </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>Can't report an issue in the development version</value>
+  </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>Open Octobot's Wiki</value>
+  </data>
+    <data name="SettingsModeratorRole" xml:space="preserve">
+      <value>Moderator role</value>
   </data>
 </root>

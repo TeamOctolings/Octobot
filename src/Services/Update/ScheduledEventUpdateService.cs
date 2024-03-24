@@ -53,7 +53,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         var eventsResult = await _eventApi.ListScheduledEventsForGuildAsync(guildId, ct: ct);
         if (!eventsResult.IsDefined(out var events))
         {
-            return Result.FromError(eventsResult);
+            return ResultExtensions.FromError(eventsResult);
         }
 
         SyncScheduledEvents(data, events);
@@ -147,7 +147,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             || eventData.EarlyNotificationSent
             || DateTimeOffset.UtcNow < scheduledEvent.ScheduledStartTime - offset)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var sendResult = await SendEarlyEventNotificationAsync(scheduledEvent, data, ct);
@@ -182,7 +182,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     {
         if (GuildSettings.EventNotificationChannel.Get(settings).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         if (!scheduledEvent.Creator.IsDefined(out var creator))
@@ -204,7 +204,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         if (!embedDescriptionResult.IsDefined(out var embedDescription))
         {
-            return Result.FromError(embedDescriptionResult);
+            return ResultExtensions.FromError(embedDescriptionResult);
         }
 
         var embed = new EmbedBuilder()
@@ -283,7 +283,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var embedDescriptionResult = scheduledEvent.EntityType switch
@@ -298,12 +298,12 @@ public sealed class ScheduledEventUpdateService : BackgroundService
             scheduledEvent, data, ct);
         if (!contentResult.IsDefined(out var content))
         {
-            return Result.FromError(contentResult);
+            return ResultExtensions.FromError(contentResult);
         }
 
         if (!embedDescriptionResult.IsDefined(out var embedDescription))
         {
-            return Result.FromError(embedDescriptionResult);
+            return ResultExtensions.FromError(embedDescriptionResult);
         }
 
         var startedEmbed = new EmbedBuilder()
@@ -324,7 +324,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
             data.ScheduledEvents.Remove(eventData.Id);
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var completedEmbed = new EmbedBuilder()
@@ -356,7 +356,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
             data.ScheduledEvents.Remove(eventData.Id);
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var embed = new EmbedBuilder()
@@ -409,14 +409,14 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     {
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var contentResult = await _utility.GetEventNotificationMentions(
             scheduledEvent, data, ct);
         if (!contentResult.IsDefined(out var content))
         {
-            return Result.FromError(contentResult);
+            return ResultExtensions.FromError(contentResult);
         }
 
         var earlyResult = new EmbedBuilder()

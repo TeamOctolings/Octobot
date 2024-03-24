@@ -28,6 +28,7 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class MuteCommandGroup : CommandGroup
 {
+    private readonly AccessControlService _access;
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
@@ -35,14 +36,14 @@ public class MuteCommandGroup : CommandGroup
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
-    public MuteCommandGroup(
-        ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, Utility utility)
+    public MuteCommandGroup(AccessControlService access, ICommandContext context, IFeedbackService feedback,
+        IDiscordRestGuildAPI guildApi, GuildDataService guildData, IDiscordRestUserAPI userApi, Utility utility)
     {
+        _access = access;
         _context = context;
-        _guildData = guildData;
         _feedback = feedback;
         _guildApi = guildApi;
+        _guildData = guildData;
         _userApi = userApi;
         _utility = utility;
     }
@@ -62,10 +63,10 @@ public class MuteCommandGroup : CommandGroup
     /// </returns>
     /// <seealso cref="ExecuteUnmute" />
     [Command("mute", "мут")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.ModerateMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Mute member")]
     [UsedImplicitly]
@@ -85,13 +86,13 @@ public class MuteCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -118,7 +119,8 @@ public class MuteCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot, CancellationToken);
+        return await MuteUserAsync(executor, target, reason, duration, guildId, data, channelId, bot,
+            CancellationToken);
     }
 
     private async Task<Result> MuteUserAsync(
@@ -126,11 +128,11 @@ public class MuteCommandGroup : CommandGroup
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(
+            = await _access.CheckInteractionsAsync(
                 guildId, executor.ID, target.ID, "Mute", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -143,14 +145,16 @@ public class MuteCommandGroup : CommandGroup
 
         var until = DateTimeOffset.UtcNow.Add(duration); // >:)
 
-        var muteMethodResult = await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
+        var muteMethodResult =
+            await SelectMuteMethodAsync(executor, target, reason, duration, guildId, data, bot, until, ct);
         if (!muteMethodResult.IsSuccess)
         {
-            return muteMethodResult;
+            return ResultExtensions.FromError(muteMethodResult);
         }
 
         var title = string.Format(Messages.UserMuted, target.GetTag());
-        var description = new StringBuilder().AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
+        var description = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
             .AppendBulletPoint(string.Format(
                 Messages.DescriptionActionExpiresAt, Markdown.Timestamp(until))).ToString();
 
@@ -236,10 +240,10 @@ public class MuteCommandGroup : CommandGroup
     /// <seealso cref="ExecuteMute" />
     /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />
     [Command("unmute", "размут")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.ModerateMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Unmute member")]
     [UsedImplicitly]
@@ -257,14 +261,14 @@ public class MuteCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         // Needed to get the tag and avatar
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -287,11 +291,11 @@ public class MuteCommandGroup : CommandGroup
         IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(
+            = await _access.CheckInteractionsAsync(
                 guildId, executor.ID, target.ID, "Unmute", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -324,14 +328,14 @@ public class MuteCommandGroup : CommandGroup
             await RemoveMuteRoleAsync(executor, target, reason, guildId, memberData, CancellationToken);
         if (!removeMuteRoleAsync.IsSuccess)
         {
-            return Result.FromError(removeMuteRoleAsync.Error);
+            return ResultExtensions.FromError(removeMuteRoleAsync);
         }
 
         var removeTimeoutResult =
             await RemoveTimeoutAsync(executor, target, reason, guildId, communicationDisabledUntil, CancellationToken);
         if (!removeTimeoutResult.IsSuccess)
         {
-            return Result.FromError(removeTimeoutResult.Error);
+            return ResultExtensions.FromError(removeTimeoutResult);
         }
 
         var title = string.Format(Messages.UserUnmuted, target.GetTag());
@@ -348,11 +352,12 @@ public class MuteCommandGroup : CommandGroup
     }
 
     private async Task<Result> RemoveMuteRoleAsync(
-        IUser executor, IUser target, string reason, Snowflake guildId, MemberData memberData, CancellationToken ct = default)
+        IUser executor, IUser target, string reason, Snowflake guildId, MemberData memberData,
+        CancellationToken ct = default)
     {
         if (memberData.MutedUntil is null)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
@@ -372,7 +377,7 @@ public class MuteCommandGroup : CommandGroup
     {
         if (communicationDisabledUntil is null)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(

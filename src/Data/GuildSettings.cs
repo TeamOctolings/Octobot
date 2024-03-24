@@ -13,16 +13,28 @@ public static class GuildSettings
     public static readonly LanguageOption Language = new("Language", "en");
 
     /// <summary>
-    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a new member joins the server.
+    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a new member joins the guild.
     /// </summary>
     /// <remarks>
     ///     <list type="bullet">
     ///         <item>No message will be sent if set to "off", "disable" or "disabled".</item>
-    ///         <item><see cref="Messages.DefaultWelcomeMessage" /> will be sent if set to "default" or "reset"</item>
+    ///         <item><see cref="Messages.DefaultWelcomeMessage" /> will be sent if set to "default" or "reset".</item>
     ///     </list>
     /// </remarks>
     /// <seealso cref="GuildMemberJoinedResponder" />
     public static readonly Option<string> WelcomeMessage = new("WelcomeMessage", "default");
+
+    /// <summary>
+    ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a member leaves the guild.
+    /// </summary>
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item>No message will be sent if set to "off", "disable" or "disabled".</item>
+    ///         <item><see cref="Messages.DefaultLeaveMessage" /> will be sent if set to "default" or "reset".</item>
+    ///     </list>
+    /// </remarks>
+    /// <seealso cref="GuildMemberLeftResponder" />
+    public static readonly Option<string> LeaveMessage = new("LeaveMessage", "default");
 
     /// <summary>
     ///     Controls whether or not the <see cref="Messages.Ready" /> message should be sent
@@ -56,9 +68,15 @@ public static class GuildSettings
     /// </summary>
     public static readonly SnowflakeOption PrivateFeedbackChannel = new("PrivateFeedbackChannel");
 
+    /// <summary>
+    ///     Controls what channel should welcome messages be sent to.
+    /// </summary>
+    public static readonly SnowflakeOption WelcomeMessagesChannel = new("WelcomeMessagesChannel");
+
     public static readonly SnowflakeOption EventNotificationChannel = new("EventNotificationChannel");
     public static readonly SnowflakeOption DefaultRole = new("DefaultRole");
     public static readonly SnowflakeOption MuteRole = new("MuteRole");
+    public static readonly SnowflakeOption ModeratorRole = new("ModeratorRole");
     public static readonly SnowflakeOption EventNotificationRole = new("EventNotificationRole");
 
     /// <summary>

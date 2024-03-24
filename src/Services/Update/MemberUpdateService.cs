@@ -26,20 +26,20 @@ public sealed partial class MemberUpdateService : BackgroundService
         "Torus", "Violet", "Vortex", "Vulture", "Wagon", "Whale", "Woodpecker", "Zebra", "Zigzag"
     ];
 
+    private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<MemberUpdateService> _logger;
-    private readonly Utility _utility;
 
-    public MemberUpdateService(IDiscordRestChannelAPI channelApi, IDiscordRestGuildAPI guildApi,
-        GuildDataService guildData, ILogger<MemberUpdateService> logger, Utility utility)
+    public MemberUpdateService(AccessControlService access, IDiscordRestChannelAPI channelApi,
+        IDiscordRestGuildAPI guildApi, GuildDataService guildData, ILogger<MemberUpdateService> logger)
     {
+        _access = access;
         _channelApi = channelApi;
         _guildApi = guildApi;
         _guildData = guildData;
         _logger = logger;
-        _utility = utility;
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -94,10 +94,10 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
 
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guildId, null, id, "Update", ct);
+            = await _access.CheckInteractionsAsync(guildId, null, id, "Update", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         var canInteract = interactionResult.Entity is null;
@@ -121,7 +121,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         if (!canInteract)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var autoUnmuteResult = await TryAutoUnmuteAsync(guildId, id, data, ct);
@@ -148,7 +148,14 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         if (data.BannedUntil is null || DateTimeOffset.UtcNow <= data.BannedUntil)
         {
-            return Result.FromSuccess();
+            return Result.Success;
+        }
+
+        var existingBanResult = await _guildApi.GetGuildBanAsync(guildId, id, ct);
+        if (!existingBanResult.IsDefined())
+        {
+            data.BannedUntil = null;
+            return Result.Success;
         }
 
         var unbanResult = await _guildApi.RemoveGuildBanAsync(
@@ -166,7 +173,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         if (data.MutedUntil is null || DateTimeOffset.UtcNow <= data.MutedUntil)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var unmuteResult = await _guildApi.ModifyGuildMemberAsync(
@@ -202,7 +209,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
         if (!usernameChanged)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var newNickname = string.Concat(characterList.ToArray());
@@ -223,12 +230,13 @@ public sealed partial class MemberUpdateService : BackgroundService
     {
         if (DateTimeOffset.UtcNow < reminder.At)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
-            .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
+            .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
+                $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.Reminder, user.GetTag()), user)
@@ -240,10 +248,10 @@ public sealed partial class MemberUpdateService : BackgroundService
             reminder.ChannelId.ToSnowflake(), Mention.User(user), embedResult: embed, ct: ct);
         if (!messageResult.IsSuccess)
         {
-            return messageResult;
+            return ResultExtensions.FromError(messageResult);
         }
 
         data.Reminders.Remove(reminder);
-        return Result.FromSuccess();
+        return Result.Success;
     }
 }

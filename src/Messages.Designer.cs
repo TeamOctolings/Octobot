@@ -66,21 +66,21 @@ namespace Octobot {
             }
         }
 
-        internal static string Sound1 {
+        internal static string Generic1 {
             get {
-                return ResourceManager.GetString("Sound1", resourceCulture);
+                return ResourceManager.GetString("Generic1", resourceCulture);
             }
         }
 
-        internal static string Sound2 {
+        internal static string Generic2 {
             get {
-                return ResourceManager.GetString("Sound2", resourceCulture);
+                return ResourceManager.GetString("Generic2", resourceCulture);
             }
         }
 
-        internal static string Sound3 {
+        internal static string Generic3 {
             get {
-                return ResourceManager.GetString("Sound3", resourceCulture);
+                return ResourceManager.GetString("Generic3", resourceCulture);
             }
         }
 
@@ -959,18 +959,26 @@ namespace Octobot {
             }
         }
 
-        internal static string InvalidTimeSpan
-        {
-            get
-            {
+        internal static string DefaultLeaveMessage {
+            get {
+                return ResourceManager.GetString("DefaultLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string SettingsLeaveMessage {
+            get {
+                return ResourceManager.GetString("SettingsLeaveMessage", resourceCulture);
+            }
+        }
+
+        internal static string InvalidTimeSpan {
+            get {
                 return ResourceManager.GetString("InvalidTimeSpan", resourceCulture);
             }
         }
 
-        internal static string UserInfoKicked
-        {
-            get
-            {
+        internal static string UserInfoKicked {
+            get {
                 return ResourceManager.GetString("UserInfoKicked", resourceCulture);
             }
         }
@@ -1104,6 +1112,30 @@ namespace Octobot {
         internal static string TimeSpanExample {
             get {
                 return ResourceManager.GetString("TimeSpanExample", resourceCulture);
+            }
+        }
+
+        internal static string Version {
+            get {
+                return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+
+        internal static string SettingsWelcomeMessagesChannel {
+            get {
+                return ResourceManager.GetString("SettingsWelcomeMessagesChannel", resourceCulture);
+            }
+        }
+
+        internal static string ButtonDirty {
+            get {
+                return ResourceManager.GetString("ButtonDirty", resourceCulture);
+            }
+        }
+
+        internal static string ButtonOpenWiki {
+            get {
+                return ResourceManager.GetString("ButtonOpenWiki", resourceCulture);
             }
         }
     }

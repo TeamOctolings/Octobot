@@ -33,6 +33,6 @@ public class LoggingPreparationErrorEvent : IPreparationErrorEvent
     {
         _logger.LogResult(preparationResult, "Error in slash command preparation.");
 
-        return Task.FromResult(Result.FromSuccess());
+        return Task.FromResult(Result.Success);
     }
 }
