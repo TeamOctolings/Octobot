@@ -705,4 +705,55 @@
   <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
       <value>Длительность наказания для предупреждений</value>
   </data>
+  <data name="ListWarnTitle" xml:space="preserve">
+      <value>Вот ваши предупреждения, {0}:</value>
+  </data>
+  <data name="YouHaveNoWarnings" xml:space="preserve">
+      <value>У вас нет предупреждений!</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+      <value>Получено {0}</value>
+  </data>
+  <data name="UserWarnRemoved" xml:space="preserve">
+      <value>Предупреждение №{0} было снято с {1}</value>
+  </data>
+  <data name="YourWarningHasBeenRevoked" xml:space="preserve">
+      <value>Ваше предупреждение было отозвано</value>
+  </data>
+  <data name="WrongWarningNumberSelected" xml:space="preserve">
+      <value>Выбрано неверное число предупреждения!</value>
+  </data>
+  <data name="UserCannotWarnBot" xml:space="preserve">
+      <value>Ты не можешь меня предупредить!</value>
+  </data>
+  <data name="UserCannotWarnOwner" xml:space="preserve">
+      <value>Ты не можешь предупредить владельца этого сервера!</value>
+  </data>
+  <data name="UserCannotWarnTarget" xml:space="preserve">
+      <value>Ты не можешь предупредить этого участника!</value>
+  </data>
+  <data name="UserCannotWarnThemselves" xml:space="preserve">
+      <value>Ты не можешь себя предупредить!</value>
+  </data>
+  <data name="UserCannotUnwarnBot" xml:space="preserve">
+      <value>Ты не можешь снять с меня предупреждения!</value>
+  </data>
+  <data name="UserCannotUnwarnOwner" xml:space="preserve">
+      <value>Ты не можешь снять предупреждения с владельца этого сервера!</value>
+  </data>
+  <data name="UserCannotUnwarnTarget" xml:space="preserve">
+      <value>Ты не можешь снять предупреждения с этого участника!</value>
+  </data>
+  <data name="UserCannotUnwarnThemselves" xml:space="preserve">
+      <value>Ты не можешь снять с себя предупреждения!</value>
+  </data>
+  <data name="BotCannotUnwarnTarget" xml:space="preserve">
+      <value>Я не могу снимать предупреждения этого участника!</value>
+  </data>
+  <data name="BotCannotWarnTarget" xml:space="preserve">
+      <value>Я не могу предупредить этого участника!</value>
+  </data>
+  <data name="BotCannotWarnMembers" xml:space="preserve">
+      <value>Я не могу предупреждать участников этого сервера!</value>
+  </data>
 </root>

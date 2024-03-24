@@ -1247,6 +1247,13 @@ namespace Octobot {
             }
         }
 
+        internal static string YouHaveNoWarnings
+        {
+            get {
+                return ResourceManager.GetString("YouHaveNoWarnings", resourceCulture);
+            }
+        }
+
         internal static string ReceivedTooManyWarnings
         {
             get {
@@ -1263,6 +1270,118 @@ namespace Octobot {
         internal static string ButtonOpenWiki {
             get {
                 return ResourceManager.GetString("ButtonOpenWiki", resourceCulture);
+            }
+        }
+
+        internal static string ListWarnTitle
+        {
+            get {
+                return ResourceManager.GetString("ListWarnTitle", resourceCulture);
+            }
+        }
+
+        internal static string ReceivedOn
+        {
+            get {
+                return ResourceManager.GetString("ReceivedOn", resourceCulture);
+            }
+        }
+
+        internal static string UserWarnRemoved
+        {
+            get {
+                return ResourceManager.GetString("UserWarnRemoved", resourceCulture);
+            }
+        }
+
+        internal static string YourWarningHasBeenRevoked
+        {
+            get {
+                return ResourceManager.GetString("YourWarningHasBeenRevoked", resourceCulture);
+            }
+        }
+
+        internal static string WrongWarningNumberSelected
+        {
+            get {
+                return ResourceManager.GetString("WrongWarningNumberSelected", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotWarnBot
+        {
+            get {
+                return ResourceManager.GetString("UserCannotWarnBot", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotWarnOwner
+        {
+            get {
+                return ResourceManager.GetString("UserCannotWarnOwner", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotWarnTarget
+        {
+            get {
+                return ResourceManager.GetString("UserCannotWarnTarget", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotWarnThemselves
+        {
+            get {
+                return ResourceManager.GetString("UserCannotWarnThemselves", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotUnwarnBot
+        {
+            get {
+                return ResourceManager.GetString("UserCannotUnwarnBot", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotUnwarnOwner
+        {
+            get {
+                return ResourceManager.GetString("UserCannotUnwarnOwner", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotUnwarnTarget
+        {
+            get {
+                return ResourceManager.GetString("UserCannotUnwarnTarget", resourceCulture);
+            }
+        }
+
+        internal static string UserCannotUnwarnThemselves
+        {
+            get {
+                return ResourceManager.GetString("UserCannotUnwarnThemselves", resourceCulture);
+            }
+        }
+
+        internal static string BotCannotWarnTarget
+        {
+            get {
+                return ResourceManager.GetString("BotCannotWarnTarget", resourceCulture);
+            }
+        }
+
+        internal static string BotCannotWarnMembers
+        {
+            get {
+                return ResourceManager.GetString("BotCannotWarnMembers", resourceCulture);
+            }
+        }
+
+        internal static string BotCannotUnwarnTarget
+        {
+            get {
+                return ResourceManager.GetString("BotCannotUnwarnTarget", resourceCulture);
             }
         }
     }

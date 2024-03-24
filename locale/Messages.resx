@@ -705,4 +705,55 @@
   <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
       <value>Punishment duration for warnings</value>
   </data>
+  <data name="ListWarnTitle" xml:space="preserve">
+      <value>Here's your warnings, {0}:</value>
+  </data>
+  <data name="YouHaveNoWarnings" xml:space="preserve">
+      <value>You have no warnings!</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+      <value>Received on {0}</value>
+  </data>
+  <data name="UserWarnRemoved" xml:space="preserve">
+      <value>Warning #{0} has been removed from {1}</value>
+  </data>
+  <data name="YourWarningHasBeenRevoked" xml:space="preserve">
+      <value>Your warning has been revoked</value>
+  </data>
+  <data name="WrongWarningNumberSelected" xml:space="preserve">
+      <value>Wrong warning number selected!</value>
+  </data>
+  <data name="UserCannotWarnBot" xml:space="preserve">
+      <value>You cannot warn me!</value>
+  </data>
+  <data name="UserCannotWarnOwner" xml:space="preserve">
+      <value>You cannot warn the owner of this guild!</value>
+  </data>
+  <data name="UserCannotWarnTarget" xml:space="preserve">
+      <value>You cannot warn this member!</value>
+  </data>
+  <data name="UserCannotWarnThemselves" xml:space="preserve">
+      <value>You cannot warn yourself!</value>
+  </data>
+  <data name="UserCannotUnwarnBot" xml:space="preserve">
+      <value>You cannot unwarn me!</value>
+  </data>
+  <data name="UserCannotUnwarnOwner" xml:space="preserve">
+      <value>You cannot unwarn the owner of this guild!</value>
+  </data>
+  <data name="UserCannotUnwarnTarget" xml:space="preserve">
+      <value>You cannot unwarn this member!</value>
+  </data>
+  <data name="UserCannotUnwarnThemselves" xml:space="preserve">
+      <value>You cannot unwarn yourself!</value>
+  </data>
+  <data name="BotCannotWarnMembers" xml:space="preserve">
+      <value>I cannot warn members from this guild!</value>
+  </data>
+  <data name="BotCannotWarnTarget" xml:space="preserve">
+      <value>I cannot warn this member!</value>
+  </data>
+  <data name="BotCannotUnwarnTarget" xml:space="preserve">
+      <value>I cannot unwarn this member!</value>
+  </data>
 </root>

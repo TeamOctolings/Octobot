@@ -685,7 +685,7 @@
       <value>вы схлопотали варн</value>
   </data>
   <data name="YourWarningsHaveBeenRevoked" xml:space="preserve">
-      <value>вы получили амнистию</value>
+      <value>вы получили карт-бланш</value>
   </data>
   <data name="DescriptionActionWarns" xml:space="preserve">
       <value>варнов: {0}</value>
@@ -704,5 +704,56 @@
   </data>
   <data name="SettingsWarnThreshold" xml:space="preserve">
       <value>сколько варнов чтобы потом бан</value>
+  </data>
+  <data name="ListWarnTitle" xml:space="preserve">
+      <value>хаха, смотри {0}, это все ты заслужил:</value>
+  </data>
+  <data name="YouHaveNoWarnings" xml:space="preserve">
+      <value>ого, да на тебя еще нет претензий!</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+      <value>получил {0}</value>
+  </data>
+  <data name="UserWarnRemoved" xml:space="preserve">
+      <value>варн {0} снят с {1}</value>
+  </data>
+  <data name="YourWarningHasBeenRevoked" xml:space="preserve">
+      <value>вы получили амнистию</value>
+  </data>
+  <data name="WrongWarningNumberSelected" xml:space="preserve">
+      <value>да нету такого варна вроде</value>
+  </data>
+  <data name="UserCannotWarnBot" xml:space="preserve">
+      <value>ээбля френдли фаер огонь по своим</value>
+  </data>
+  <data name="UserCannotWarnThemselves" xml:space="preserve">
+      <value>самовар нельзя</value>
+  </data>
+  <data name="UserCannotWarnTarget" xml:space="preserve">
+      <value>варн этому шизику нельзя</value>
+  </data>
+  <data name="UserCannotWarnOwner" xml:space="preserve">
+      <value>варн админу нельзя</value>
+  </data>
+  <data name="UserCannotUnwarnBot" xml:space="preserve">
+      <value>ну, к сожалению тебе этого не дано</value>
+  </data>
+  <data name="UserCannotUnwarnOwner" xml:space="preserve">
+      <value>разварн админу нельзя</value>
+  </data>
+  <data name="UserCannotUnwarnTarget" xml:space="preserve">
+      <value>разварн этому шизику нельзя</value>
+  </data>
+  <data name="UserCannotUnwarnThemselves" xml:space="preserve">
+      <value>саморазвар нельзя</value>
+  </data>
+  <data name="BotCannotWarnTarget" xml:space="preserve">
+      <value>я не могу его заварить...</value>
+  </data>
+  <data name="BotCannotUnwarnTarget" xml:space="preserve">
+      <value>я не могу его разварить...</value>
+  </data>
+  <data name="BotCannotWarnMembers" xml:space="preserve">
+      <value>я не могу ваще никого варить...</value>
   </data>
 </root>
