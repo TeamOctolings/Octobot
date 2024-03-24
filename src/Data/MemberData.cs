@@ -5,10 +5,9 @@ namespace Octobot.Data;
 /// </summary>
 public sealed class MemberData
 {
-    public MemberData(ulong id, DateTimeOffset? bannedUntil = null, List<Reminder>? reminders = null)
+    public MemberData(ulong id, List<Reminder>? reminders = null)
     {
         Id = id;
-        BannedUntil = bannedUntil;
         if (reminders is not null)
         {
             Reminders = reminders;
