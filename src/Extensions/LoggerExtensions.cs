@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Remora.Discord.Commands.Extensions;
 using Remora.Results;
 
 namespace Octobot.Extensions;
@@ -19,7 +18,7 @@ public static class LoggerExtensions
     /// <param name="message">The message to use if this result has failed.</param>
     public static void LogResult(this ILogger logger, IResult result, string? message = "")
     {
-        if (result.IsSuccess || result.Error.IsUserOrEnvironmentError())
+        if (result.IsSuccess)
         {
             return;
         }
