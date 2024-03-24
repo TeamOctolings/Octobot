@@ -231,8 +231,11 @@
   <data name="UserCannotKickMembers" xml:space="preserve">
     <value>кик шизиков нельзя</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
-    <value>тебе нельзя управлять шизоидами</value>
+    <data name="UserCannotMuteMembers" xml:space="preserve">
+    <value>тебе нельзя мутить шизоидов</value>
+  </data>
+    <data name="UserCannotUnmuteMembers" xml:space="preserve">
+    <value>тебе нельзя размучивать шизоидов</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
     <value>тебе нельзя редактировать дурку</value>
@@ -674,5 +677,8 @@
   </data>
   <data name="ButtonOpenWiki" xml:space="preserve">
       <value>вики Octobot (жмак)</value>
+  </data>
+    <data name="SettingsModeratorRole" xml:space="preserve">
+      <value>звание админа</value>
   </data>
 </root>

@@ -28,6 +28,7 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class MuteCommandGroup : CommandGroup
 {
+    private readonly AccessControlService _access;
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly IDiscordRestGuildAPI _guildApi;
@@ -35,14 +36,14 @@ public class MuteCommandGroup : CommandGroup
     private readonly IDiscordRestUserAPI _userApi;
     private readonly Utility _utility;
 
-    public MuteCommandGroup(
-        ICommandContext context, GuildDataService guildData, IFeedbackService feedback,
-        IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi, Utility utility)
+    public MuteCommandGroup(AccessControlService access, ICommandContext context, IFeedbackService feedback,
+        IDiscordRestGuildAPI guildApi, GuildDataService guildData, IDiscordRestUserAPI userApi, Utility utility)
     {
+        _access = access;
         _context = context;
-        _guildData = guildData;
         _feedback = feedback;
         _guildApi = guildApi;
+        _guildData = guildData;
         _userApi = userApi;
         _utility = utility;
     }
@@ -62,10 +63,10 @@ public class MuteCommandGroup : CommandGroup
     /// </returns>
     /// <seealso cref="ExecuteUnmute" />
     [Command("mute", "мут")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.ModerateMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Mute member")]
     [UsedImplicitly]
@@ -127,7 +128,7 @@ public class MuteCommandGroup : CommandGroup
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(
+            = await _access.CheckInteractionsAsync(
                 guildId, executor.ID, target.ID, "Mute", ct);
         if (!interactionResult.IsSuccess)
         {
@@ -239,10 +240,10 @@ public class MuteCommandGroup : CommandGroup
     /// <seealso cref="ExecuteMute" />
     /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />
     [Command("unmute", "размут")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.ModerateMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.ModerateMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.ModerateMembers)]
     [Description("Unmute member")]
     [UsedImplicitly]
@@ -290,7 +291,7 @@ public class MuteCommandGroup : CommandGroup
         IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(
+            = await _access.CheckInteractionsAsync(
                 guildId, executor.ID, target.ID, "Unmute", ct);
         if (!interactionResult.IsSuccess)
         {

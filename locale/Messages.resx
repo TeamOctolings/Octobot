@@ -231,8 +231,11 @@
   <data name="UserCannotKickMembers" xml:space="preserve">
     <value>You cannot kick members from this guild!</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
-    <value>You cannot moderate members in this guild!</value>
+    <data name="UserCannotMuteMembers" xml:space="preserve">
+    <value>You cannot mute members in this guild!</value>
+  </data>
+    <data name="UserCannotUnmuteMembers" xml:space="preserve">
+    <value>You cannot unmute members in this guild!</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
     <value>You cannot manage this guild!</value>
@@ -674,5 +677,8 @@
   </data>
   <data name="ButtonOpenWiki" xml:space="preserve">
       <value>Open Octobot's Wiki</value>
+  </data>
+    <data name="SettingsModeratorRole" xml:space="preserve">
+      <value>Moderator role</value>
   </data>
 </root>

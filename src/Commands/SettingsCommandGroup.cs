@@ -51,6 +51,7 @@ public class SettingsCommandGroup : CommandGroup
         GuildSettings.EventNotificationChannel,
         GuildSettings.DefaultRole,
         GuildSettings.MuteRole,
+        GuildSettings.ModeratorRole,
         GuildSettings.EventNotificationRole,
         GuildSettings.EventEarlyNotificationOffset
     ];
