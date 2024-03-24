@@ -44,6 +44,15 @@ public class ToolsCommandGroup : CommandGroup
         _userApi = userApi;
     }
 
+    [Command("exception")]
+    [UsedImplicitly]
+    public Task<Result> ExecuteExceptionAsync()
+    {
+        return Task.FromResult<Result>(
+            new ArgumentInvalidError(nameof(ExecuteExceptionAsync),
+                "A wild exception appears!"));
+    }
+
     /// <summary>
     ///     A slash command that shows information about user.
     /// </summary>
