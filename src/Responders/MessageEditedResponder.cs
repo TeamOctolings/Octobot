@@ -46,30 +46,18 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
             return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
         }
 
-        if (!gatewayEvent.GuildID.IsDefined(out var guildId))
+        if (!gatewayEvent.GuildID.IsDefined(out var guildId)
+            || !gatewayEvent.Author.IsDefined(out var author)
+            || !gatewayEvent.EditedTimestamp.IsDefined(out var timestamp)
+            || !gatewayEvent.Content.IsDefined(out var newContent))
         {
-            return Result.FromSuccess();
-        }
-
-        if (gatewayEvent.Author.IsDefined(out var author) && author.IsBot.OrDefault(false))
-        {
-            return Result.FromSuccess();
-        }
-
-        if (!gatewayEvent.EditedTimestamp.IsDefined(out var timestamp))
-        {
-            return Result.FromSuccess(); // The message wasn't actually edited
-        }
-
-        if (!gatewayEvent.Content.IsDefined(out var newContent))
-        {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var cfg = await _guildData.GetSettings(guildId, ct);
-        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        if (author.IsBot.OrDefault(false) || GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
@@ -78,12 +66,12 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
         if (!messageResult.IsDefined(out var message))
         {
             _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         if (message.Content == newContent)
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         // Custom event responders are called earlier than responders responsible for message caching
@@ -101,10 +89,11 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
-        var builder = new StringBuilder().AppendLine(
-                string.Format(Messages.DescriptionActionJumpToMessage,
-                    $"https://discord.com/channels/{guildId}/{channelId}/{messageId}"))
-            .AppendLine(diff.AsMarkdown());
+        var builder = new StringBuilder()
+            .AppendLine(diff.AsMarkdown())
+            .AppendLine(string.Format(Messages.DescriptionActionJumpToMessage,
+                $"https://discord.com/channels/{guildId}/{channelId}/{messageId}")
+            );
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.CachedMessageEdited, message.Author.GetTag()), message.Author)

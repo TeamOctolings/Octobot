@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Sound1" xml:space="preserve">
+  <data name="Generic1" xml:space="preserve">
       <value>Виимо!</value>
   </data>
-  <data name="Sound2" xml:space="preserve">
+  <data name="Generic2" xml:space="preserve">
       <value>Вууми!</value>
   </data>
-  <data name="Sound3" xml:space="preserve">
+  <data name="Generic3" xml:space="preserve">
       <value>Нгьес!</value>
   </data>
   <data name="PunishmentExpired" xml:space="preserve">
@@ -585,6 +585,12 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>Сообщить о проблеме</value>
   </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>До скорой встречи, {0}!</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>Сообщение о выходе</value>
+  </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>Неправильно указано время!</value>
   </data>
@@ -657,8 +663,17 @@
   <data name="TimeSpanExample" xml:space="preserve">
       <value>Пример правильного ввода: `1ч30м`</value>
   </data>
+  <data name="Version" xml:space="preserve">
+      <value>Версия: {0}</value>
+  </data>
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>Канал для приветствий</value>
+  </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>Нельзя сообщить о проблеме в версии под разработкой</value>
+  </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>Открыть Octobot's Wiki</value>
   </data>
   <data name="UserWarned" xml:space="preserve">
       <value>{0} получил предупреждение</value>

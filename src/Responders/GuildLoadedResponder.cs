@@ -42,7 +42,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
     {
         if (!gatewayEvent.Guild.IsT0) // Guild is not IAvailableGuild
         {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         var guild = gatewayEvent.Guild.AsT0;
@@ -57,7 +57,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var botResult = await _userApi.GetCurrentUserAsync(ct);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         if (data.DataLoadFailed)
@@ -68,27 +68,23 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var ownerResult = await _userApi.GetUserAsync(guild.OwnerID, ct);
         if (!ownerResult.IsDefined(out var owner))
         {
-            return Result.FromError(ownerResult);
+            return ResultExtensions.FromError(ownerResult);
         }
 
         _logger.LogInformation("Loaded guild \"{Name}\" ({ID}) owned by {Owner} ({OwnerID}) with {MemberCount} members",
             guild.Name, guild.ID, owner.GetTag(), owner.ID, guild.MemberCount);
 
-        if (!GuildSettings.ReceiveStartupMessages.Get(cfg))
+        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty()
+            || !GuildSettings.ReceiveStartupMessages.Get(cfg))
         {
-            return Result.FromSuccess();
-        }
-
-        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
-        {
-            return Result.FromSuccess();
+            return Result.Success;
         }
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
         var i = Random.Shared.Next(1, 4);
 
         var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
-            .WithTitle($"Sound{i}".Localized())
+            .WithTitle($"Generic{i}".Localized())
             .WithDescription(Messages.Ready)
             .WithCurrentTimestamp()
             .WithColour(ColorsList.Blue)
@@ -103,7 +99,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
         var channelResult = await _utility.GetEmergencyFeedbackChannel(guild, data, ct);
         if (!channelResult.IsDefined(out var channel))
         {
-            return Result.FromError(channelResult);
+            return ResultExtensions.FromError(channelResult);
         }
 
         var errorEmbed = new EmbedBuilder()
@@ -115,9 +111,12 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         var issuesButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.ButtonReportIssue,
+            BuildInfo.IsDirty
+                ? Messages.ButtonDirty
+                : Messages.ButtonReportIssue,
             new PartialEmoji(Name: "⚠️"),
-            URL: Octobot.IssuesUrl
+            URL: BuildInfo.IssuesUrl,
+            IsDisabled: BuildInfo.IsDirty
         );
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(channel, embedResult: errorEmbed,

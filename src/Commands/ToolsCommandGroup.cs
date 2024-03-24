@@ -35,7 +35,7 @@ public class ToolsCommandGroup : CommandGroup
     public ToolsCommandGroup(
         ICommandContext context, IFeedbackService feedback,
         GuildDataService guildData, IDiscordRestGuildAPI guildApi,
-        IDiscordRestUserAPI userApi, IDiscordRestChannelAPI channelApi)
+        IDiscordRestUserAPI userApi)
     {
         _context = context;
         _guildData = guildData;
@@ -81,13 +81,13 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -262,7 +262,7 @@ public class ToolsCommandGroup : CommandGroup
     /// </returns>
     [Command("guildinfo")]
     [DiscordDefaultDMPermission(false)]
-    [Description("Shows info current guild")]
+    [Description("Shows info about current guild")]
     [UsedImplicitly]
     public async Task<Result> ExecuteGuildInfoAsync()
     {
@@ -274,13 +274,13 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -353,7 +353,7 @@ public class ToolsCommandGroup : CommandGroup
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -439,13 +439,13 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -514,7 +514,7 @@ public class ToolsCommandGroup : CommandGroup
     [UsedImplicitly]
     public async Task<Result> ExecuteEightBallAsync(
         // let the user think he's actually asking the ball a question
-        string question)
+        [Description("Question to ask")] string question)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out _))
         {
@@ -524,7 +524,7 @@ public class ToolsCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);

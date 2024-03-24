@@ -20,7 +20,7 @@ public sealed class BoolOption : Option<bool>
         }
 
         settings[Name] = value;
-        return Result.FromSuccess();
+        return Result.Success;
     }
 
     private static bool TryParseBool(string from, out bool value)

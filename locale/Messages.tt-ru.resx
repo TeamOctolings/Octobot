@@ -117,13 +117,13 @@
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>{0}, добро пожаловать на сервер {1}</value>
   </data>
-  <data name="Sound1" xml:space="preserve">
+  <data name="Generic1" xml:space="preserve">
       <value>вииимо!</value>
   </data>
-  <data name="Sound2" xml:space="preserve">
+  <data name="Generic2" xml:space="preserve">
       <value>вуууми!</value>
   </data>
-  <data name="Sound3" xml:space="preserve">
+  <data name="Generic3" xml:space="preserve">
       <value>нгьес!</value>
   </data>
   <data name="YouWereBanned" xml:space="preserve">
@@ -585,6 +585,12 @@
   <data name="ButtonReportIssue" xml:space="preserve">
       <value>зарепортить баг</value>
   </data>
+  <data name="DefaultLeaveMessage" xml:space="preserve">
+      <value>ну, мы потеряли {0}</value>
+  </data>
+  <data name="SettingsLeaveMessage" xml:space="preserve">
+      <value>до свидания (типо настройка)</value>
+  </data>
   <data name="InvalidTimeSpan" xml:space="preserve">
       <value>ты там правильно напиши таймспан</value>
   </data>
@@ -657,8 +663,17 @@
   <data name="TimeSpanExample" xml:space="preserve">
       <value>правильно пишут так: `1h30m`</value>
   </data>
+  <data name="Version" xml:space="preserve">
+      <value>{0}</value>
+  </data>
   <data name="SettingsWelcomeMessagesChannel" xml:space="preserve">
       <value>канал куда говорить здравствуйте</value>
+  </data>
+  <data name="ButtonDirty" xml:space="preserve">
+      <value>вот иди сам и почини что сломал</value>
+  </data>
+  <data name="ButtonOpenWiki" xml:space="preserve">
+      <value>вики Octobot (жмак)</value>
   </data>
   <data name="UserWarned" xml:space="preserve">
       <value>{0} схлопотал варн</value>

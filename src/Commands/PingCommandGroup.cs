@@ -64,7 +64,7 @@ public class PingCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
@@ -84,14 +84,14 @@ public class PingCommandGroup : CommandGroup
                 channelId, limit: 1, ct: ct);
             if (!lastMessageResult.IsDefined(out var lastMessage))
             {
-                return Result.FromError(lastMessageResult);
+                return ResultExtensions.FromError(lastMessageResult);
             }
 
             latency = DateTimeOffset.UtcNow.Subtract(lastMessage.Single().Timestamp).TotalMilliseconds;
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(bot.GetTag(), bot)
-            .WithTitle($"Sound{Random.Shared.Next(1, 4)}".Localized())
+            .WithTitle($"Generic{Random.Shared.Next(1, 4)}".Localized())
             .WithDescription($"{latency:F0}{Messages.Milliseconds}")
             .WithColour(latency < 250 ? ColorsList.Green : latency < 500 ? ColorsList.Yellow : ColorsList.Red)
             .WithCurrentTimestamp()

@@ -13,7 +13,7 @@ public static class FeedbackServiceExtensions
     {
         if (!embedResult.IsDefined(out var embed))
         {
-            return Result.FromError(embedResult);
+            return ResultExtensions.FromError(embedResult);
         }
 
         return (Result)await feedback.SendContextualEmbedAsync(embed, options, ct);

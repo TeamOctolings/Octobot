@@ -33,6 +33,6 @@ public class GuildUnloadedResponder : IResponder<IGuildDelete>
             _logger.LogInformation("Unloaded guild {GuildId}", guildId);
         }
 
-        return Task.FromResult(Result.FromSuccess());
+        return Task.FromResult(Result.Success);
     }
 }

@@ -32,7 +32,7 @@ public static class CollectionExtensions
     {
         return list.Count switch
         {
-            0 => Result.FromSuccess(),
+            0 => Result.Success,
             1 => list[0],
             _ => new AggregateError(list.Cast<IResult>().ToArray())
         };

@@ -80,19 +80,19 @@ public class KickCommandGroup : CommandGroup
         var botResult = await _userApi.GetCurrentUserAsync(CancellationToken);
         if (!botResult.IsDefined(out var bot))
         {
-            return Result.FromError(botResult);
+            return ResultExtensions.FromError(botResult);
         }
 
         var executorResult = await _userApi.GetUserAsync(executorId, CancellationToken);
         if (!executorResult.IsDefined(out var executor))
         {
-            return Result.FromError(executorResult);
+            return ResultExtensions.FromError(executorResult);
         }
 
         var guildResult = await _guildApi.GetGuildAsync(guildId, ct: CancellationToken);
         if (!guildResult.IsDefined(out var guild))
         {
-            return Result.FromError(guildResult);
+            return ResultExtensions.FromError(guildResult);
         }
 
         var data = await _guildData.GetData(guildId, CancellationToken);
@@ -118,7 +118,7 @@ public class KickCommandGroup : CommandGroup
             = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Kick", ct);
         if (!interactionResult.IsSuccess)
         {
-            return Result.FromError(interactionResult);
+            return ResultExtensions.FromError(interactionResult);
         }
 
         if (interactionResult.Entity is not null)
@@ -143,17 +143,19 @@ public class KickCommandGroup : CommandGroup
             await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        memberData.Kicked = true;
+
         var kickResult = await _guildApi.RemoveGuildMemberAsync(
             guild.ID, target.ID, $"({executor.GetTag()}) {reason}".EncodeHeader(),
             ct);
         if (!kickResult.IsSuccess)
         {
-            return Result.FromError(kickResult.Error);
+            memberData.Kicked = false;
+            return ResultExtensions.FromError(kickResult);
         }
 
-        var memberData = data.GetOrCreateMemberData(target.ID);
         memberData.Roles.Clear();
-        memberData.Kicked = true;
 
         var title = string.Format(Messages.UserKicked, target.GetTag());
         var description = MarkdownExtensions.BulletPoint(string.Format(Messages.DescriptionActionReason, reason));

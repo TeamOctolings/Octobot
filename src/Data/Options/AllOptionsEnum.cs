@@ -15,6 +15,7 @@ public enum AllOptionsEnum
     [UsedImplicitly] Language,
     [UsedImplicitly] WarnPunishment,
     [UsedImplicitly] WelcomeMessage,
+    [UsedImplicitly] LeaveMessage,
     [UsedImplicitly] ReceiveStartupMessages,
     [UsedImplicitly] RemoveRolesOnMute,
     [UsedImplicitly] ReturnRolesOnRejoin,

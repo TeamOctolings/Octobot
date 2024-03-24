@@ -34,6 +34,6 @@ public class MessageCreateResponder : IResponder<IMessageCreate>
                 "лан" => "https://i.ibb.co/VYH2QLc/lan.jpg",
                 _ => default(Optional<string>)
             });
-        return Task.FromResult(Result.FromSuccess());
+        return Task.FromResult(Result.Success);
     }
 }
