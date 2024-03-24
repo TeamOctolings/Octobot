@@ -2,7 +2,7 @@
 
 public static class BuildInfo
 {
-    public static string RepositoryUrl => ThisAssembly.Git.RepositoryUrl;
+    public static string RepositoryUrl => "https://github.com/TeamOctolings/Octobot";
 
     public static string IssuesUrl => $"{RepositoryUrl}/issues";
 
