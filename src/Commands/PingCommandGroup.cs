@@ -76,6 +76,7 @@ public class PingCommandGroup : CommandGroup
     private async Task<Result> SendLatencyAsync(
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
+        return new NotSupportedError();
         var latency = _client.Latency.TotalMilliseconds;
         if (latency is 0)
         {
