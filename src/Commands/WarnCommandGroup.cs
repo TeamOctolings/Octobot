@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using JetBrains.Annotations;
@@ -24,6 +25,7 @@ namespace Octobot.Commands;
 [UsedImplicitly]
 public class WarnCommandGroup : CommandGroup
 {
+    private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
@@ -35,7 +37,7 @@ public class WarnCommandGroup : CommandGroup
     public WarnCommandGroup(
         ICommandContext context, IDiscordRestChannelAPI channelApi, GuildDataService guildData,
         IFeedbackService feedback, IDiscordRestGuildAPI guildApi, IDiscordRestUserAPI userApi,
-        Utility utility)
+        Utility utility, AccessControlService access)
     {
         _context = context;
         _channelApi = channelApi;
@@ -44,13 +46,14 @@ public class WarnCommandGroup : CommandGroup
         _guildApi = guildApi;
         _userApi = userApi;
         _utility = utility;
+        _access = access;
     }
 
     [Command("warn")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.KickMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.KickMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [RequireBotDiscordPermissions(DiscordPermission.KickMembers,
         DiscordPermission.ModerateMembers, DiscordPermission.BanMembers)]
     [Description("Warn user")]
@@ -93,7 +96,7 @@ public class WarnCommandGroup : CommandGroup
         GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Warn", ct);
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Warn", ct);
         if (!interactionResult.IsSuccess)
         {
             return ResultExtensions.FromError(interactionResult);
@@ -110,6 +113,17 @@ public class WarnCommandGroup : CommandGroup
         var memberData = data.GetOrCreateMemberData(target.ID);
         var warns = memberData.Warns;
 
+        var warnThreshold = GuildSettings.WarnsThreshold.Get(data.Settings);
+
+        if (warns.Count >= warnThreshold && warnThreshold is not 0)
+        {
+            var errorEmbed = new EmbedBuilder()
+                .WithSmallTitle(string.Format(Messages.WarnThresholdExceeded, warnThreshold), bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
+        }
+
         warns.Add(new Warn
         {
             WarnedBy = executor.ID.Value,
@@ -117,12 +131,10 @@ public class WarnCommandGroup : CommandGroup
             Reason = reason
         });
 
-        var warnsThreshold = GuildSettings.WarnsThreshold.Get(data.Settings);
-
         var builder = new StringBuilder()
             .AppendBulletPointLine(string.Format(Messages.DescriptionActionReason, reason))
-            .AppendBulletPointLine(string.Format(Messages.DescriptionActionWarns,
-                warnsThreshold is 0 ? warns.Count : $"{warns.Count}/{warnsThreshold}"));
+            .AppendBulletPointLine(string.Format(Messages.DescriptionWarns,
+                warnThreshold is 0 ? warns.Count : $"{warns.Count}/{warnThreshold}"));
 
         var title = string.Format(Messages.UserWarned, target.GetTag());
         var description = builder.ToString();
@@ -144,11 +156,10 @@ public class WarnCommandGroup : CommandGroup
         _utility.LogAction(
             data.Settings, channelId, executor, title, description, target, ColorsList.Yellow, false, ct);
 
-        if (warns.Count >= warnsThreshold &&
+        if (warns.Count >= warnThreshold &&
             GuildSettings.WarnPunishment.Get(data.Settings) is not "off" and not "disable" and not "disabled")
         {
-            warns.Clear();
-            return await PunishUserAsync(target, guild, data, channelId, bot, CancellationToken);
+            return await PunishUserAsync(target, guild, data, channelId, bot, warns, CancellationToken);
         }
 
         var embed = new EmbedBuilder().WithSmallTitle(
@@ -159,42 +170,56 @@ public class WarnCommandGroup : CommandGroup
     }
 
     private async Task<Result> PunishUserAsync(IUser target, IGuild guild,
-        GuildData data, Snowflake channelId, IUser bot, CancellationToken ct)
+        GuildData data, Snowflake channelId, IUser bot, IList warns, CancellationToken ct)
     {
         var settings = data.Settings;
+        var warnPunishment = GuildSettings.WarnPunishment.Get(settings);
         var duration = GuildSettings.WarnPunishmentDuration.Get(settings);
 
-        if (GuildSettings.WarnPunishment.Get(settings) is "ban"
-            && duration != TimeSpan.Zero)
+        if (warnPunishment is "ban" && duration != TimeSpan.Zero)
         {
-            var banCommandGroup = new BanCommandGroup(_context, _channelApi, _guildData, _feedback, _guildApi, _userApi, _utility);
+            warns.Clear();
+            var banCommandGroup = new BanCommandGroup(
+                _access, _channelApi, _context, _feedback, _guildApi, _guildData, _userApi, _utility);
             await banCommandGroup.BanUserAsync(bot, target, Messages.ReceivedTooManyWarnings,
                 duration, guild, data, channelId, bot, ct);
         }
 
-        if (GuildSettings.WarnPunishment.Get(settings) is "kick")
+        if (warnPunishment is "kick")
         {
-            var kickCommandGroup = new KickCommandGroup(_context, _channelApi, _guildData, _feedback, _guildApi, _userApi, _utility);
+            warns.Clear();
+            var kickCommandGroup = new KickCommandGroup(
+                _access, _channelApi, _context, _feedback, _guildApi, _guildData, _userApi, _utility);
             await kickCommandGroup.KickUserAsync(bot, target, Messages.ReceivedTooManyWarnings,
                 guild, channelId, data, bot, ct);
         }
 
-        if (GuildSettings.WarnPunishment.Get(settings) is "mute"
-            && duration != TimeSpan.Zero)
+        if (warnPunishment is "mute" && duration != TimeSpan.Zero)
         {
-            var muteCommandGroup = new MuteCommandGroup(_context, _guildData, _feedback, _guildApi, _userApi, _utility);
+            warns.Clear();
+            var muteCommandGroup = new MuteCommandGroup(
+                _access, _context, _feedback, _guildApi, _guildData, _userApi, _utility);
             await muteCommandGroup.MuteUserAsync(bot, target, Messages.ReceivedTooManyWarnings,
                 duration, guild.ID, data, channelId, bot, ct);
         }
 
-        return Result.FromSuccess();
+        if (warnPunishment is not ("ban" or "mute") || duration != TimeSpan.Zero)
+        {
+            return Result.FromSuccess();
+        }
+
+        var errorEmbed = new EmbedBuilder()
+            .WithSmallTitle(Messages.WarnPunishmentDurationNotSet, bot)
+            .WithColour(ColorsList.Red).Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
     }
 
     [Command("unwarn")]
-    [DiscordDefaultMemberPermissions(DiscordPermission.KickMembers)]
+    [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
     [DiscordDefaultDMPermission(false)]
     [RequireContext(ChannelContext.Guild)]
-    [RequireDiscordPermission(DiscordPermission.KickMembers)]
+    [RequireDiscordPermission(DiscordPermission.ManageMessages)]
     [Description("Remove warns from user")]
     [UsedImplicitly]
     public async Task<Result> ExecuteUnwarnAsync(
@@ -244,7 +269,7 @@ public class WarnCommandGroup : CommandGroup
         IGuild guild, GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", ct);
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", ct);
         if (!interactionResult.IsSuccess)
         {
             return ResultExtensions.FromError(interactionResult);
@@ -316,7 +341,7 @@ public class WarnCommandGroup : CommandGroup
         IGuild guild, GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
         var interactionResult
-            = await _utility.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", ct);
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", ct);
         if (!interactionResult.IsSuccess)
         {
             return ResultExtensions.FromError(interactionResult);
@@ -377,7 +402,9 @@ public class WarnCommandGroup : CommandGroup
     [Ephemeral]
     [Description("(Ephemeral) Get current warns")]
     [UsedImplicitly]
-    public async Task<Result> ExecuteListWarnsAsync()
+    public async Task<Result> ExecuteListWarnsAsync(
+        [Description("(Moderator-only) Get target's current warns")]
+        IUser? target = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out _, out var executorId))
         {
@@ -405,10 +432,75 @@ public class WarnCommandGroup : CommandGroup
         var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await ListWarnsAsync(executor, data, bot, CancellationToken);
+        if (target is not null)
+        {
+            return await ListTargetWarnsAsync(executor, target, guild, data, bot, CancellationToken);
+        }
+
+        return await ListExecutorWarnsAsync(executor, data, bot, CancellationToken);
     }
 
-    private async Task<Result> ListWarnsAsync(IUser executor, GuildData data, IUser bot, CancellationToken ct = default)
+    private async Task<Result> ListTargetWarnsAsync(IUser executor, IUser target, IGuild guild,
+        GuildData data, IUser bot, CancellationToken ct = default)
+    {
+        var interactionResult
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "GetWarns", ct);
+        if (!interactionResult.IsSuccess)
+        {
+            return ResultExtensions.FromError(interactionResult);
+        }
+
+        if (interactionResult.Entity is not null)
+        {
+            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
+        }
+
+        var memberData = data.GetOrCreateMemberData(target.ID);
+        var warns = memberData.Warns;
+
+        if (warns.Count is 0)
+        {
+            var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.UserHasNoWarnings, bot)
+                .WithColour(ColorsList.Green).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
+        }
+
+        var warnThreshold = GuildSettings.WarnsThreshold.Get(data.Settings);
+
+        var punishmentType = GuildSettings.WarnPunishment.Get(data.Settings);
+
+        var description = new StringBuilder()
+            .AppendLine(string.Format(Messages.DescriptionWarns,
+                warnThreshold is 0 ? warns.Count : $"{warns.Count}/{warnThreshold}"));
+        if (punishmentType is not "off" and not "disable" and not "disabled")
+        {
+            description.AppendLine(string.Format(
+                Messages.DescriptionPunishmentType, Markdown.InlineCode(punishmentType)));
+        }
+
+        var warnCount = 0;
+        foreach (var warn in warns)
+        {
+            warnCount++;
+            description.Append(warnCount).Append(". ").AppendLine(warn.Reason)
+                .AppendSubBulletPoint(Messages.IssuedBy).Append(' ').AppendLine(Mention.User(warn.WarnedBy.ToSnowflake()))
+                .AppendSubBulletPointLine(string.Format(Messages.ReceivedOn, Markdown.Timestamp(warn.At)));
+        }
+
+        var embed = new EmbedBuilder()
+            .WithSmallTitle(string.Format(Messages.ListTargetWarnsTitle, target.GetTag()), target)
+            .WithDescription(description.ToString())
+            .WithColour(ColorsList.Default).Build();
+
+        return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
+    private async Task<Result> ListExecutorWarnsAsync(IUser executor, GuildData data, IUser bot,
+        CancellationToken ct = default)
     {
         var memberData = data.GetOrCreateMemberData(executor.ID);
         var warns = memberData.Warns;
@@ -421,11 +513,18 @@ public class WarnCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
-        var warnsThreshold = GuildSettings.WarnsThreshold.Get(data.Settings);
+        var warnThreshold = GuildSettings.WarnsThreshold.Get(data.Settings);
+
+        var punishmentType = GuildSettings.WarnPunishment.Get(data.Settings);
 
         var description = new StringBuilder()
-            .AppendLine(string.Format(Messages.DescriptionActionWarns,
-                warnsThreshold is 0 ? warns.Count : $"{warns.Count}/{warnsThreshold}"));
+            .AppendLine(string.Format(Messages.DescriptionWarns,
+                warnThreshold is 0 ? warns.Count : $"{warns.Count}/{warnThreshold}"));
+        if (punishmentType is not "off" and not "disable" and not "disabled")
+        {
+            description.AppendLine(string.Format(
+                Messages.DescriptionPunishmentType, Markdown.InlineCode(punishmentType)));
+        }
 
         var warnCount = 0;
         foreach (var warn in warns)
@@ -437,7 +536,7 @@ public class WarnCommandGroup : CommandGroup
         }
 
         var embed = new EmbedBuilder()
-            .WithSmallTitle(string.Format(Messages.ListWarnTitle, executor.GetTag()), executor)
+            .WithSmallTitle(string.Format(Messages.ListExecutorWarnsTitle, executor.GetTag()), executor)
             .WithDescription(description.ToString())
             .WithColour(ColorsList.Default).Build();
 

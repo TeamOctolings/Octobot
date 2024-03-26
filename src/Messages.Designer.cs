@@ -1233,10 +1233,10 @@ namespace Octobot {
             }
         }
 
-        internal static string DescriptionActionWarns
+        internal static string DescriptionWarns
         {
             get {
-                return ResourceManager.GetString("DescriptionActionWarns", resourceCulture);
+                return ResourceManager.GetString("DescriptionWarns", resourceCulture);
             }
         }
 
@@ -1273,10 +1273,10 @@ namespace Octobot {
             }
         }
 
-        internal static string ListWarnTitle
+        internal static string ListTargetWarnsTitle
         {
             get {
-                return ResourceManager.GetString("ListWarnTitle", resourceCulture);
+                return ResourceManager.GetString("ListTargetWarnsTitle", resourceCulture);
             }
         }
 
@@ -1308,80 +1308,32 @@ namespace Octobot {
             }
         }
 
-        internal static string UserCannotWarnBot
+        internal static string ListExecutorWarnsTitle
         {
             get {
-                return ResourceManager.GetString("UserCannotWarnBot", resourceCulture);
+                return ResourceManager.GetString("ListExecutorWarnsTitle", resourceCulture);
             }
         }
 
-        internal static string UserCannotWarnOwner
+        internal static string DescriptionPunishmentType
         {
             get {
-                return ResourceManager.GetString("UserCannotWarnOwner", resourceCulture);
+                return ResourceManager.GetString("DescriptionPunishmentType", resourceCulture);
             }
         }
 
-        internal static string UserCannotWarnTarget
+        internal static string WarnThresholdExceeded
         {
             get {
-                return ResourceManager.GetString("UserCannotWarnTarget", resourceCulture);
+                return ResourceManager.GetString("WarnThresholdExceeded", resourceCulture);
             }
         }
 
-        internal static string UserCannotWarnThemselves
+        internal static string WarnPunishmentDurationNotSet
         {
-            get {
-                return ResourceManager.GetString("UserCannotWarnThemselves", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotUnwarnBot
-        {
-            get {
-                return ResourceManager.GetString("UserCannotUnwarnBot", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotUnwarnOwner
-        {
-            get {
-                return ResourceManager.GetString("UserCannotUnwarnOwner", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotUnwarnTarget
-        {
-            get {
-                return ResourceManager.GetString("UserCannotUnwarnTarget", resourceCulture);
-            }
-        }
-
-        internal static string UserCannotUnwarnThemselves
-        {
-            get {
-                return ResourceManager.GetString("UserCannotUnwarnThemselves", resourceCulture);
-            }
-        }
-
-        internal static string BotCannotWarnTarget
-        {
-            get {
-                return ResourceManager.GetString("BotCannotWarnTarget", resourceCulture);
-            }
-        }
-
-        internal static string BotCannotWarnMembers
-        {
-            get {
-                return ResourceManager.GetString("BotCannotWarnMembers", resourceCulture);
-            }
-        }
-
-        internal static string BotCannotUnwarnTarget
-        {
-            get {
-                return ResourceManager.GetString("BotCannotUnwarnTarget", resourceCulture);
+            get
+            {
+                return ResourceManager.GetString("WarnPunishmentDurationNotSet", resourceCulture);
             }
         }
     }

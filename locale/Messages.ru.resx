@@ -693,7 +693,7 @@
   <data name="YourWarningsHaveBeenRevoked" xml:space="preserve">
       <value>Ваши предупреждения были отозваны</value>
   </data>
-  <data name="DescriptionActionWarns" xml:space="preserve">
+  <data name="DescriptionWarns" xml:space="preserve">
       <value>Предупреждений: {0}</value>
   </data>
   <data name="UserHasNoWarnings" xml:space="preserve">
@@ -711,7 +711,7 @@
   <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
       <value>Длительность наказания для предупреждений</value>
   </data>
-  <data name="ListWarnTitle" xml:space="preserve">
+  <data name="ListExecutorWarnsTitle" xml:space="preserve">
       <value>Вот ваши предупреждения, {0}:</value>
   </data>
   <data name="YouHaveNoWarnings" xml:space="preserve">
@@ -761,5 +761,38 @@
   </data>
   <data name="BotCannotWarnMembers" xml:space="preserve">
       <value>Я не могу предупреждать участников этого сервера!</value>
+  </data>
+  <data name="UserCannotGetWarnsBot" xml:space="preserve">
+      <value>Ты не можешь просмотреть мои предупреждения!</value>
+  </data>
+  <data name="UserCannotGetWarnsOwner" xml:space="preserve">
+      <value>Ты не можешь просмотреть предупреждения владельца этого сервера!</value>
+  </data>
+  <data name="UserCannotGetWarnsTarget" xml:space="preserve">
+      <value>Ты не можешь просмотреть предупреждения этого участника!</value>
+  </data>
+  <data name="UserCannotGetWarnsThemselves" xml:space="preserve">
+      <value>Вместо этого, используйте эту команду без параметров.</value>
+  </data>
+  <data name="UserCannotUnwarnMembers" xml:space="preserve">
+      <value>Ты не можешь снимать предупреждения с участников этого сервера!</value>
+  </data>
+  <data name="UserCannotWarnMembers" xml:space="preserve">
+      <value>Ты не можешь предупреждать участников этого сервера!</value>
+  </data>
+  <data name="UserCannotGetWarnsMembers" xml:space="preserve">
+      <value>Ты не можешь просматривать предупреждения участников этого сервера!</value>
+  </data>
+  <data name="ListTargetWarnsTitle" xml:space="preserve">
+      <value>Предупреждения пользователя {0}:</value>
+  </data>
+  <data name="DescriptionPunishmentType" xml:space="preserve">
+      <value>Тип наказания: {0}</value>
+  </data>
+  <data name="WarnThresholdExceeded" xml:space="preserve">
+      <value>Превышен порог предупреждений. ({0})</value>
+  </data>
+  <data name="WarnPunishmentDurationNotSet" xml:space="preserve">
+      <value>Настройка WarnPunishmentDuration не установлена для текущего типа наказания.</value>
   </data>
 </root>
