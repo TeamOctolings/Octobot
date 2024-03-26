@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.Json.Nodes;
 using JetBrains.Annotations;
 using Octobot.Data;
 using Octobot.Extensions;
@@ -89,14 +90,8 @@ public class WarnCommandGroup : CommandGroup
         var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
-        return await WarnUserAsync(executor, target, reason, guild, data, channelId, bot, CancellationToken);
-    }
-
-    private async Task<Result> WarnUserAsync(IUser executor, IUser target, string reason, IGuild guild,
-        GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
-    {
         var interactionResult
-            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Warn", ct);
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Warn", CancellationToken);
         if (!interactionResult.IsSuccess)
         {
             return ResultExtensions.FromError(interactionResult);
@@ -107,13 +102,41 @@ public class WarnCommandGroup : CommandGroup
             var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
                 .WithColour(ColorsList.Red).Build();
 
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
         }
 
+        return await WarnPreparationAsync(executor, target, reason, guild, data, channelId, bot, CancellationToken);
+    }
+
+    private async Task<Result> WarnPreparationAsync(IUser executor, IUser target, string reason, IGuild guild,
+        GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
+    {
         var memberData = data.GetOrCreateMemberData(target.ID);
         var warns = memberData.Warns;
 
-        var warnThreshold = GuildSettings.WarnsThreshold.Get(data.Settings);
+        var settings = data.Settings;
+
+        var warnThreshold = GuildSettings.WarnsThreshold.Get(settings);
+        var warnPunishment = GuildSettings.WarnPunishment.Get(settings);
+        var warnDuration = GuildSettings.WarnPunishmentDuration.Get(settings);
+
+        if (warnPunishment is "off" or "disable" or "disabled" && warns.Count - 1 >= warnThreshold)
+        {
+            var errorEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.WarnPunishmentDisabled, bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
+        }
+
+        if (warnPunishment is "ban" or "mute" && warnDuration == TimeSpan.Zero)
+        {
+            var errorEmbed = new EmbedBuilder()
+                .WithSmallTitle(Messages.WarnPunishmentDurationNotSet, bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
+        }
 
         if (warns.Count >= warnThreshold && warnThreshold is not 0)
         {
@@ -124,6 +147,14 @@ public class WarnCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
         }
 
+        return await WarnUserAsync(executor, target, reason, guild, data, channelId, bot, settings,
+            warns, warnThreshold, warnPunishment, warnDuration, ct);
+    }
+
+    private async Task<Result> WarnUserAsync(IUser executor, IUser target, string reason, IGuild guild,
+        GuildData data, Snowflake channelId, IUser bot, JsonNode settings, IList warns, int warnThreshold,
+        string warnPunishment, TimeSpan warnDuration, CancellationToken ct = default)
+    {
         warns.Add(new Warn
         {
             WarnedBy = executor.ID.Value,
@@ -153,66 +184,51 @@ public class WarnCommandGroup : CommandGroup
             await _channelApi.CreateMessageWithEmbedResultAsync(dmChannel.ID, embedResult: dmEmbed, ct: ct);
         }
 
-        _utility.LogAction(
-            data.Settings, channelId, executor, title, description, target, ColorsList.Yellow, false, ct);
-
-        if (warns.Count >= warnThreshold &&
-            GuildSettings.WarnPunishment.Get(data.Settings) is not "off" and not "disable" and not "disabled")
-        {
-            return await PunishUserAsync(target, guild, data, channelId, bot, warns, CancellationToken);
-        }
+        _utility.LogAction(settings, channelId, executor, title, description,
+            target, ColorsList.Yellow, false, ct);
 
         var embed = new EmbedBuilder().WithSmallTitle(
                 title, target)
             .WithColour(ColorsList.Green).Build();
 
+        if (warns.Count >= warnThreshold)
+        {
+            return await PunishUserAsync(target, guild, data, channelId, bot, warns, warnPunishment, warnDuration, CancellationToken);
+        }
+
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
     }
 
-    private async Task<Result> PunishUserAsync(IUser target, IGuild guild,
-        GuildData data, Snowflake channelId, IUser bot, IList warns, CancellationToken ct)
+    private async Task<Result> PunishUserAsync(IUser target, IGuild guild, GuildData data,
+        Snowflake channelId, IUser bot, IList warns, string punishment, TimeSpan duration, CancellationToken ct)
     {
-        var settings = data.Settings;
-        var warnPunishment = GuildSettings.WarnPunishment.Get(settings);
-        var duration = GuildSettings.WarnPunishmentDuration.Get(settings);
+        warns.Clear();
 
-        if (warnPunishment is "ban" && duration != TimeSpan.Zero)
+        if (punishment is "ban" && duration != TimeSpan.Zero)
         {
-            warns.Clear();
             var banCommandGroup = new BanCommandGroup(
                 _access, _channelApi, _context, _feedback, _guildApi, _guildData, _userApi, _utility);
             await banCommandGroup.BanUserAsync(bot, target, Messages.ReceivedTooManyWarnings,
                 duration, guild, data, channelId, bot, ct);
         }
 
-        if (warnPunishment is "kick")
+        if (punishment is "kick")
         {
-            warns.Clear();
             var kickCommandGroup = new KickCommandGroup(
                 _access, _channelApi, _context, _feedback, _guildApi, _guildData, _userApi, _utility);
             await kickCommandGroup.KickUserAsync(bot, target, Messages.ReceivedTooManyWarnings,
                 guild, channelId, data, bot, ct);
         }
 
-        if (warnPunishment is "mute" && duration != TimeSpan.Zero)
+        if (punishment is "mute" && duration != TimeSpan.Zero)
         {
-            warns.Clear();
             var muteCommandGroup = new MuteCommandGroup(
                 _access, _context, _feedback, _guildApi, _guildData, _userApi, _utility);
             await muteCommandGroup.MuteUserAsync(bot, target, Messages.ReceivedTooManyWarnings,
                 duration, guild.ID, data, channelId, bot, ct);
         }
 
-        if (warnPunishment is not ("ban" or "mute") || duration != TimeSpan.Zero)
-        {
-            return Result.FromSuccess();
-        }
-
-        var errorEmbed = new EmbedBuilder()
-            .WithSmallTitle(Messages.WarnPunishmentDurationNotSet, bot)
-            .WithColour(ColorsList.Red).Build();
-
-        return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
+        return Result.FromSuccess();
     }
 
     [Command("unwarn")]
@@ -256,6 +272,21 @@ public class WarnCommandGroup : CommandGroup
         var data = await _guildData.GetData(guild.ID, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(data.Settings);
 
+        var interactionResult
+            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", CancellationToken);
+        if (!interactionResult.IsSuccess)
+        {
+            return ResultExtensions.FromError(interactionResult);
+        }
+
+        if (interactionResult.Entity is not null)
+        {
+            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
+        }
+
         if (number is not null)
         {
             return await RemoveUserWarnAsync(executor, target, reason, number.Value, guild, data, channelId, bot,
@@ -268,21 +299,6 @@ public class WarnCommandGroup : CommandGroup
     private async Task<Result> RemoveUserWarnAsync(IUser executor, IUser target, string reason, int warnNumber,
         IGuild guild, GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
-        var interactionResult
-            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", ct);
-        if (!interactionResult.IsSuccess)
-        {
-            return ResultExtensions.FromError(interactionResult);
-        }
-
-        if (interactionResult.Entity is not null)
-        {
-            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
-                .WithColour(ColorsList.Red).Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
-        }
-
         var memberData = data.GetOrCreateMemberData(target.ID);
         var warns = memberData.Warns;
 
@@ -340,21 +356,6 @@ public class WarnCommandGroup : CommandGroup
     private async Task<Result> RemoveUserWarnsAsync(IUser executor, IUser target, string reason,
         IGuild guild, GuildData data, Snowflake channelId, IUser bot, CancellationToken ct = default)
     {
-        var interactionResult
-            = await _access.CheckInteractionsAsync(guild.ID, executor.ID, target.ID, "Unwarn", ct);
-        if (!interactionResult.IsSuccess)
-        {
-            return ResultExtensions.FromError(interactionResult);
-        }
-
-        if (interactionResult.Entity is not null)
-        {
-            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
-                .WithColour(ColorsList.Red).Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
-        }
-
         var memberData = data.GetOrCreateMemberData(target.ID);
         var warns = memberData.Warns;
 

@@ -793,6 +793,9 @@
       <value>мы дошли до лимита варнов. ({0})</value>
   </data>
   <data name="WarnPunishmentDurationNotSet" xml:space="preserve">
-      <value>наказание что было установлено хочет установленного WarnPunishmentDuration</value>
+      <value>наказание что было установлено хочет установленную ддлительность в настройках</value>
+  </data>
+  <data name="WarnPunishmentDisabled" xml:space="preserve">
+      <value>лимит стоит, а наказания нет.</value>
   </data>
 </root>

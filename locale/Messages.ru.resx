@@ -793,6 +793,9 @@
       <value>Превышен порог предупреждений. ({0})</value>
   </data>
   <data name="WarnPunishmentDurationNotSet" xml:space="preserve">
-      <value>Настройка WarnPunishmentDuration не установлена для текущего типа наказания.</value>
+      <value>Длительность наказания предупреждения не установлена для текущего типа наказания.</value>
+  </data>
+  <data name="WarnPunishmentDisabled" xml:space="preserve">
+      <value>Порог предупреждения установлен, но наказание нет.</value>
   </data>
 </root>

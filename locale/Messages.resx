@@ -793,6 +793,9 @@
       <value>Warn threshold has been exceeded. ({0})</value>
   </data>
   <data name="WarnPunishmentDurationNotSet" xml:space="preserve">
-      <value>The WarnPunishmentDuration setting is not set for the current punishment type.</value>
+      <value>Warn Punishment Duration is not set for the current punishment type.</value>
+  </data>
+  <data name="WarnPunishmentDisabled" xml:space="preserve">
+      <value>Warn Threshold is set, but the Warn Punishment is not.</value>
   </data>
 </root>

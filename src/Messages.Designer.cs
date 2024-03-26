@@ -1336,5 +1336,13 @@ namespace Octobot {
                 return ResourceManager.GetString("WarnPunishmentDurationNotSet", resourceCulture);
             }
         }
+
+        internal static string WarnPunishmentDisabled
+        {
+            get
+            {
+                return ResourceManager.GetString("WarnPunishmentDisabled", resourceCulture);
+            }
+        }
     }
 }
