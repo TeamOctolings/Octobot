@@ -102,7 +102,9 @@ public class ClearCommandGroup : CommandGroup
         CancellationToken ct = default)
     {
         var idList = new List<Snowflake>(messages.Count);
-        var builder = new StringBuilder().AppendLine(Mention.Channel(channelId)).AppendLine();
+
+        var logEntries = new List<ClearedMessageEntry> { new() };
+        var currentLogEntry = 0;
         for (var i = messages.Count - 1; i >= 1; i--) // '>= 1' to skip last message ('Octobot is thinking...')
         {
             var message = messages[i];
@@ -112,8 +114,17 @@ public class ClearCommandGroup : CommandGroup
             }
 
             idList.Add(message.ID);
-            builder.AppendLine(string.Format(Messages.MessageFrom, Mention.User(message.Author)));
-            builder.Append(message.Content.InBlockCode());
+
+            var entry = logEntries[currentLogEntry];
+            var str = $"{string.Format(Messages.MessageFrom, Mention.User(message.Author))}\n{message.Content.InBlockCode()}";
+            if (entry.Builder.Length + str.Length > EmbedConstants.MaxDescriptionLength)
+            {
+                logEntries.Add(entry = new ClearedMessageEntry());
+                currentLogEntry++;
+            }
+
+            entry.Builder.Append(str);
+            entry.DeletedCount++;
         }
 
         if (idList.Count == 0)
@@ -127,7 +138,6 @@ public class ClearCommandGroup : CommandGroup
         var title = author is not null
             ? string.Format(Messages.MessagesClearedFiltered, idList.Count.ToString(), author.GetTag())
             : string.Format(Messages.MessagesCleared, idList.Count.ToString());
-        var description = builder.ToString();
 
         var deleteResult = await _channelApi.BulkDeleteMessagesAsync(
             channelId, idList, executor.GetTag().EncodeHeader(), ct);
@@ -136,12 +146,24 @@ public class ClearCommandGroup : CommandGroup
             return ResultExtensions.FromError(deleteResult);
         }
 
-        _utility.LogAction(
-            data.Settings, channelId, executor, title, description, bot, ColorsList.Red, false, ct);
+        foreach (var log in logEntries)
+        {
+            _utility.LogAction(
+                data.Settings, channelId, executor, author is not null
+                    ? string.Format(Messages.MessagesClearedFiltered, log.DeletedCount.ToString(), author.GetTag())
+                    : string.Format(Messages.MessagesCleared, log.DeletedCount.ToString()),
+                log.Builder.ToString(), bot, ColorsList.Red, false, ct);
+        }
 
         var embed = new EmbedBuilder().WithSmallTitle(title, bot)
             .WithColour(ColorsList.Green).Build();
 
         return await _feedback.SendContextualEmbedResultAsync(embed, ct: ct);
+    }
+
+    private sealed class ClearedMessageEntry
+    {
+        public StringBuilder Builder { get; } = new();
+        public int DeletedCount { get; set; }
     }
 }

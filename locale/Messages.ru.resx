@@ -228,8 +228,11 @@
   <data name="UserCannotKickMembers" xml:space="preserve">
     <value>Ты не можешь выгонять участников с этого сервера!</value>
   </data>
-  <data name="UserCannotModerateMembers" xml:space="preserve">
-    <value>Ты не можешь модерировать участников этого сервера!</value>
+    <data name="UserCannotMuteMembers" xml:space="preserve">
+    <value>Ты не можешь глушить участников этого сервера!</value>
+  </data>
+    <data name="UserCannotUnmuteMembers" xml:space="preserve">
+    <value>Ты не можешь разглушать участников этого сервера!</value>
   </data>
   <data name="UserCannotManageGuild" xml:space="preserve">
     <value>Ты не можешь настраивать этот сервер!</value>
@@ -674,6 +677,9 @@
   </data>
   <data name="ButtonOpenWiki" xml:space="preserve">
       <value>Открыть Octobot's Wiki</value>
+  </data>
+    <data name="SettingsModeratorRole" xml:space="preserve">
+      <value>Роль модератора</value>
   </data>
   <data name="UserWarned" xml:space="preserve">
       <value>{0} получил предупреждение</value>

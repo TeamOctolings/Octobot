@@ -80,6 +80,7 @@ public static class GuildSettings
     public static readonly SnowflakeOption EventNotificationChannel = new("EventNotificationChannel");
     public static readonly SnowflakeOption DefaultRole = new("DefaultRole");
     public static readonly SnowflakeOption MuteRole = new("MuteRole");
+    public static readonly SnowflakeOption ModeratorRole = new("ModeratorRole");
     public static readonly SnowflakeOption EventNotificationRole = new("EventNotificationRole");
 
     /// <summary>
