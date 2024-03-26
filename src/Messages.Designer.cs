@@ -1205,6 +1205,62 @@ namespace Octobot {
             }
         }
 
+        internal static string UserWarned
+        {
+            get {
+                return ResourceManager.GetString("UserWarned", resourceCulture);
+            }
+        }
+
+        internal static string UserWarnsRemoved
+        {
+            get {
+                return ResourceManager.GetString("UserWarnsRemoved", resourceCulture);
+            }
+        }
+
+        internal static string YouHaveBeenWarned
+        {
+            get {
+                return ResourceManager.GetString("YouHaveBeenWarned", resourceCulture);
+            }
+        }
+
+        internal static string YourWarningsHaveBeenRevoked
+        {
+            get {
+                return ResourceManager.GetString("YourWarningsHaveBeenRevoked", resourceCulture);
+            }
+        }
+
+        internal static string DescriptionWarns
+        {
+            get {
+                return ResourceManager.GetString("DescriptionWarns", resourceCulture);
+            }
+        }
+
+        internal static string UserHasNoWarnings
+        {
+            get {
+                return ResourceManager.GetString("UserHasNoWarnings", resourceCulture);
+            }
+        }
+
+        internal static string YouHaveNoWarnings
+        {
+            get {
+                return ResourceManager.GetString("YouHaveNoWarnings", resourceCulture);
+            }
+        }
+
+        internal static string ReceivedTooManyWarnings
+        {
+            get {
+                return ResourceManager.GetString("ReceivedTooManyWarnings", resourceCulture);
+            }
+        }
+
         internal static string ButtonDirty {
             get {
                 return ResourceManager.GetString("ButtonDirty", resourceCulture);
@@ -1214,6 +1270,78 @@ namespace Octobot {
         internal static string ButtonOpenWiki {
             get {
                 return ResourceManager.GetString("ButtonOpenWiki", resourceCulture);
+            }
+        }
+
+        internal static string ListTargetWarnsTitle
+        {
+            get {
+                return ResourceManager.GetString("ListTargetWarnsTitle", resourceCulture);
+            }
+        }
+
+        internal static string ReceivedOn
+        {
+            get {
+                return ResourceManager.GetString("ReceivedOn", resourceCulture);
+            }
+        }
+
+        internal static string UserWarnRemoved
+        {
+            get {
+                return ResourceManager.GetString("UserWarnRemoved", resourceCulture);
+            }
+        }
+
+        internal static string YourWarningHasBeenRevoked
+        {
+            get {
+                return ResourceManager.GetString("YourWarningHasBeenRevoked", resourceCulture);
+            }
+        }
+
+        internal static string WrongWarningNumberSelected
+        {
+            get {
+                return ResourceManager.GetString("WrongWarningNumberSelected", resourceCulture);
+            }
+        }
+
+        internal static string ListExecutorWarnsTitle
+        {
+            get {
+                return ResourceManager.GetString("ListExecutorWarnsTitle", resourceCulture);
+            }
+        }
+
+        internal static string DescriptionPunishmentType
+        {
+            get {
+                return ResourceManager.GetString("DescriptionPunishmentType", resourceCulture);
+            }
+        }
+
+        internal static string WarnThresholdExceeded
+        {
+            get {
+                return ResourceManager.GetString("WarnThresholdExceeded", resourceCulture);
+            }
+        }
+
+        internal static string WarnPunishmentDurationNotSet
+        {
+            get
+            {
+                return ResourceManager.GetString("WarnPunishmentDurationNotSet", resourceCulture);
+            }
+        }
+
+        internal static string WarnPunishmentDisabled
+        {
+            get
+            {
+                return ResourceManager.GetString("WarnPunishmentDisabled", resourceCulture);
             }
         }
     }

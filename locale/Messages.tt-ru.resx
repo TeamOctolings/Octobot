@@ -681,4 +681,121 @@
     <data name="SettingsModeratorRole" xml:space="preserve">
       <value>звание админа</value>
   </data>
+  <data name="UserWarned" xml:space="preserve">
+      <value>{0} схлопотал варн</value>
+  </data>
+  <data name="UserWarnsRemoved" xml:space="preserve">
+      <value>{0} получил амнистию</value>
+  </data>
+  <data name="YouHaveBeenWarned" xml:space="preserve">
+      <value>вы схлопотали варн</value>
+  </data>
+  <data name="YourWarningsHaveBeenRevoked" xml:space="preserve">
+      <value>вы получили карт-бланш</value>
+  </data>
+  <data name="DescriptionWarns" xml:space="preserve">
+      <value>варнов: {0}</value>
+  </data>
+  <data name="UserHasNoWarnings" xml:space="preserve">
+      <value>его еще никто ни в чем не обвинял</value>
+  </data>
+  <data name="ReceivedTooManyWarnings" xml:space="preserve">
+      <value>схлопотал много варнов</value>
+  </data>
+  <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
+      <value>сколько времени держать варновый бан</value>
+  </data>
+  <data name="SettingsWarnPunishment" xml:space="preserve">
+      <value>тип варнового бана</value>
+  </data>
+  <data name="SettingsWarnThreshold" xml:space="preserve">
+      <value>сколько варнов чтобы потом бан</value>
+  </data>
+  <data name="ListExecutorWarnsTitle" xml:space="preserve">
+      <value>хаха, смотри {0}, это все ты заслужил:</value>
+  </data>
+  <data name="YouHaveNoWarnings" xml:space="preserve">
+      <value>ого, да на тебя еще нет претензий!</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+      <value>получил {0}</value>
+  </data>
+  <data name="UserWarnRemoved" xml:space="preserve">
+      <value>варн {0} снят с {1}</value>
+  </data>
+  <data name="YourWarningHasBeenRevoked" xml:space="preserve">
+      <value>вы получили амнистию</value>
+  </data>
+  <data name="WrongWarningNumberSelected" xml:space="preserve">
+      <value>да нету такого варна вроде</value>
+  </data>
+  <data name="UserCannotWarnBot" xml:space="preserve">
+      <value>ээбля френдли фаер огонь по своим</value>
+  </data>
+  <data name="UserCannotWarnThemselves" xml:space="preserve">
+      <value>самовар нельзя</value>
+  </data>
+  <data name="UserCannotWarnTarget" xml:space="preserve">
+      <value>варн этому шизику нельзя</value>
+  </data>
+  <data name="UserCannotWarnOwner" xml:space="preserve">
+      <value>варн админу нельзя</value>
+  </data>
+  <data name="UserCannotUnwarnBot" xml:space="preserve">
+      <value>ну, к сожалению тебе этого не дано</value>
+  </data>
+  <data name="UserCannotUnwarnOwner" xml:space="preserve">
+      <value>разварн админу нельзя</value>
+  </data>
+  <data name="UserCannotUnwarnTarget" xml:space="preserve">
+      <value>разварн этому шизику нельзя</value>
+  </data>
+  <data name="UserCannotUnwarnThemselves" xml:space="preserve">
+      <value>саморазвар нельзя</value>
+  </data>
+  <data name="BotCannotWarnTarget" xml:space="preserve">
+      <value>я не могу его заварить...</value>
+  </data>
+  <data name="BotCannotUnwarnTarget" xml:space="preserve">
+      <value>я не могу его разварить...</value>
+  </data>
+  <data name="BotCannotWarnMembers" xml:space="preserve">
+      <value>я не могу ваще никого варить...</value>
+  </data>
+  <data name="UserCannotWarnMembers" xml:space="preserve">
+      <value>тебе нельзя варить шизоидов</value>
+  </data>
+  <data name="UserCannotUnwarnMembers" xml:space="preserve">
+      <value>тебе нельзя разваривать шизоидов</value>
+  </data>
+  <data name="UserCannotGetWarnsThemselves" xml:space="preserve">
+      <value>а ты специально указал себя когда мог этого не делать?</value>
+  </data>
+  <data name="UserCannotGetWarnsMembers" xml:space="preserve">
+      <value>тебе нельзя чекать варны шизоидов</value>
+  </data>
+  <data name="UserCannotGetWarnsOwner" xml:space="preserve">
+      <value>чекать варны админа нельзя</value>
+  </data>
+  <data name="UserCannotGetWarnsBot" xml:space="preserve">
+      <value>чекать варны бота нельзя</value>
+  </data>
+  <data name="UserCannotGetWarnsTarget" xml:space="preserve">
+      <value>чекать варты этого шизика нельзя</value>
+  </data>
+  <data name="ListTargetWarnsTitle" xml:space="preserve">
+      <value>самовары {0}:</value>
+  </data>
+  <data name="DescriptionPunishmentType" xml:space="preserve">
+      <value>тип бана: {0}</value>
+  </data>
+  <data name="WarnThresholdExceeded" xml:space="preserve">
+      <value>мы дошли до лимита варнов. ({0})</value>
+  </data>
+  <data name="WarnPunishmentDurationNotSet" xml:space="preserve">
+      <value>наказание что было установлено хочет установленную ддлительность в настройках</value>
+  </data>
+  <data name="WarnPunishmentDisabled" xml:space="preserve">
+      <value>лимит стоит, а наказания нет.</value>
+  </data>
 </root>

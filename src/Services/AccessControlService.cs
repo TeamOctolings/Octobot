@@ -116,7 +116,8 @@ public sealed class AccessControlService
             {
                 "Ban" => DiscordPermission.BanMembers,
                 "Kick" => DiscordPermission.KickMembers,
-                "Mute" or "Unmute" => DiscordPermission.ModerateMembers,
+                "Mute" or "Unmute" or "Warn" or "Unwarn" or "GetWarns"
+                    => DiscordPermission.ModerateMembers,
                 _ => throw new Exception()
             });
 
