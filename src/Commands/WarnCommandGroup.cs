@@ -191,7 +191,7 @@ public class WarnCommandGroup : CommandGroup
                 title, target)
             .WithColour(ColorsList.Green).Build();
 
-        if (warns.Count >= warnThreshold)
+        if (warns.Count >= warnThreshold && warnThreshold is not 0)
         {
             return await PunishUserAsync(target, guild, data, channelId, bot, warns, warnPunishment, warnDuration, CancellationToken);
         }
@@ -202,8 +202,6 @@ public class WarnCommandGroup : CommandGroup
     private async Task<Result> PunishUserAsync(IUser target, IGuild guild, GuildData data,
         Snowflake channelId, IUser bot, IList warns, string punishment, TimeSpan duration, CancellationToken ct)
     {
-        warns.Clear();
-
         if (punishment is "ban" && duration != TimeSpan.Zero)
         {
             var banCommandGroup = new BanCommandGroup(
@@ -228,6 +226,7 @@ public class WarnCommandGroup : CommandGroup
                 duration, guild.ID, data, channelId, bot, ct);
         }
 
+        warns.Clear();
         return Result.FromSuccess();
     }
 
