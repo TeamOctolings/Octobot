@@ -134,11 +134,6 @@ public sealed class AccessControlService
             return new ArgumentNullError(nameof(targetMember.User));
         }
 
-        if (!interacter.User.IsDefined(out var interacterUser))
-        {
-            return new ArgumentNullError(nameof(interacter.User));
-        }
-
         if (botMember.User == targetMember.User)
         {
             return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
