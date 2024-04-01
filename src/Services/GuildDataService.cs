@@ -78,7 +78,7 @@ public sealed class GuildDataService : BackgroundService
         var settingsPath = $"{path}/Settings.json";
         var scheduledEventsPath = $"{path}/ScheduledEvents.json";
 
-        MigrateGuildData(guildId, path);
+        await MigrateGuildData(guildId, path, ct);
 
         Directory.CreateDirectory(path);
 
@@ -155,7 +155,7 @@ public sealed class GuildDataService : BackgroundService
         return finalData;
     }
 
-    private void MigrateGuildData(Snowflake guildId, string newPath)
+    private async Task MigrateGuildData(Snowflake guildId, string newPath, CancellationToken ct)
     {
         var oldPath = $"{guildId}";
 
@@ -166,6 +166,14 @@ public sealed class GuildDataService : BackgroundService
 
             _logger.LogInformation("Moved guild data to separate folder: \"{OldPath}\" -> \"{NewPath}\"", oldPath,
                 newPath);
+        }
+
+        var settings = (await GetData(guildId, ct)).Settings;
+
+        if (GuildSettings.Language.Get(settings).Name is "tt-RU")
+        {
+            GuildSettings.Language.Set(settings, "ru");
+            _logger.LogInformation("Switched from unsupported language in \"{GuildID}\": mctaylors-ru -> ru", guildId.Value);
         }
     }
 
