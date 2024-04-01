@@ -114,7 +114,7 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             BuildInfo.IsDirty
                 ? Messages.ButtonDirty
                 : Messages.ButtonReportIssue,
-            new PartialEmoji(Name: "⚠️"),
+            new PartialEmoji(Name: "\u26a0\ufe0f"),
             URL: BuildInfo.IssuesUrl,
             IsDisabled: BuildInfo.IsDirty
         );
