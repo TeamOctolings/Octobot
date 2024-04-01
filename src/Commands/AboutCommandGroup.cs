@@ -107,14 +107,14 @@ public class AboutCommandGroup : CommandGroup
         var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonOpenRepository,
-            new PartialEmoji(Name: "🌐"),
+            new PartialEmoji(Name: "\ud83c\udf10"), // 'GLOBE WITH MERIDIANS' (U+1F310)
             URL: BuildInfo.RepositoryUrl
         );
 
         var wikiButton = new ButtonComponent(
             ButtonComponentStyle.Link,
             Messages.ButtonOpenWiki,
-            new PartialEmoji(Name: "📖"),
+            new PartialEmoji(Name: "\ud83d\udcd6"), // 'OPEN BOOK' (U+1F4D6)
             URL: BuildInfo.WikiUrl
         );
 
@@ -123,7 +123,7 @@ public class AboutCommandGroup : CommandGroup
             BuildInfo.IsDirty
                 ? Messages.ButtonDirty
                 : Messages.ButtonReportIssue,
-            new PartialEmoji(Name: "⚠️"),
+            new PartialEmoji(Name: "\u26a0\ufe0f"), // 'WARNING SIGN' (U+26A0)
             URL: BuildInfo.IssuesUrl,
             IsDisabled: BuildInfo.IsDirty
         );
