@@ -100,7 +100,7 @@ public class AboutCommandGroup : CommandGroup
             .WithSmallTitle(string.Format(Messages.AboutBot, bot.Username), bot)
             .WithDescription(builder.ToString())
             .WithColour(ColorsList.Cyan)
-            .WithImageUrl("https://i.ibb.co/fS6wZhh/octobot-banner.png")
+            .WithImageUrl("https://github.com/TeamOctolings/Octobot/raw/master/docs/octobot-banner.png")
             .WithFooter(string.Format(Messages.Version, BuildInfo.Version))
             .Build();
 
