@@ -71,6 +71,8 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
             return ResultExtensions.FromError(ownerResult);
         }
 
+        await MigrateDataAsync(data);
+
         _logger.LogInformation("Loaded guild \"{Name}\" ({ID}) owned by {Owner} ({OwnerID}) with {MemberCount} members",
             guild.Name, guild.ID, owner.GetTag(), owner.ID, guild.MemberCount);
 
@@ -92,6 +94,18 @@ public class GuildLoadedResponder : IResponder<IGuildCreate>
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed, ct: ct);
+    }
+
+    private static Task MigrateDataAsync(GuildData data)
+    {
+        var settings = data.Settings;
+
+        if (GuildSettings.Language.Get(settings).Name is "tt-RU")
+        {
+            GuildSettings.Language.Set(settings, "ru");
+        }
+
+        return Task.CompletedTask;
     }
 
     private async Task<Result> SendDataLoadFailed(IGuild guild, GuildData data, IUser bot, CancellationToken ct)
