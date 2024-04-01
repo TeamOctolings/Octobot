@@ -73,7 +73,7 @@ public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
             BuildInfo.IsDirty
                 ? Messages.ButtonDirty
                 : Messages.ButtonReportIssue,
-            new PartialEmoji(Name: "\u26a0\ufe0f"),
+            new PartialEmoji(Name: "\u26a0\ufe0f"), // 'WARNING SIGN' (U+26A0)
             URL: BuildInfo.IssuesUrl,
             IsDisabled: BuildInfo.IsDirty
         );
