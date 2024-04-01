@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
 using System.Text;
 using JetBrains.Annotations;
 using Octobot.Data;
@@ -79,6 +80,12 @@ public class AboutCommandGroup : CommandGroup
         var cfg = await _guildData.GetSettings(guildId, CancellationToken);
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
+        var today = DateTime.Today;
+        if (today.Month is 4 && today.Day is 1)
+        {
+            return await SendNotAboutBotAsync(bot, CancellationToken);
+        }
+
         return await SendAboutBotAsync(bot, guildId, CancellationToken);
     }
 
@@ -126,6 +133,59 @@ public class AboutCommandGroup : CommandGroup
             new PartialEmoji(Name: "⚠️"),
             URL: BuildInfo.IssuesUrl,
             IsDisabled: BuildInfo.IsDirty
+        );
+
+        return await _feedback.SendContextualEmbedResultAsync(embed,
+            new FeedbackMessageOptions(MessageComponents: new[]
+            {
+                new ActionRowComponent(new[] { repositoryButton, wikiButton, issuesButton })
+            }), ct);
+    }
+
+    private async Task<Result> SendNotAboutBotAsync(IUser bot, CancellationToken ct = default)
+    {
+        var builder = new StringBuilder().AppendLine("### maintainers");
+        builder.AppendBulletPointLine("@mctaylors — maintainer of the whole joke")
+            .AppendBulletPointLine("@Octol1ttle — Octobot developer")
+            .AppendBulletPointLine("@neroduckale — cool dude");
+
+        Color[] colors =
+        [
+            ColorsList.Red,
+            ColorsList.Green,
+            ColorsList.Yellow,
+            ColorsList.Blue,
+            ColorsList.Magenta
+        ];
+
+        var embed = new EmbedBuilder()
+            .WithSmallTitle("about inkbot", bot)
+            .WithDescription(builder.ToString())
+            .WithColour(colors[Random.Shared.Next(colors.Length)])
+            .WithImageUrl("https://i.ibb.co/QPzXLxm/inkbot-banner.png")
+            .WithFooter($"foolish version: {BuildInfo.Version}")
+            .Build();
+
+        var repositoryButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            "inkbot's source code",
+            new PartialEmoji(Name: "🌐"),
+            URL: BuildInfo.RepositoryUrl
+        );
+
+        var wikiButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            "open inkbot's wiki",
+            new PartialEmoji(Name: "📖"),
+            URL: BuildInfo.WikiUrl
+        );
+
+        var issuesButton = new ButtonComponent(
+            ButtonComponentStyle.Link,
+            "can't",
+            new PartialEmoji(Name: "\u26d4"),
+            URL: BuildInfo.IssuesUrl,
+            IsDisabled: true
         );
 
         return await _feedback.SendContextualEmbedResultAsync(embed,
