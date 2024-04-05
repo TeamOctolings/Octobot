@@ -32,6 +32,11 @@ public sealed class SongUpdateService : BackgroundService
         ("Off the Hook", "Fly Octo Fly ~ Ebb & Flow (Octo)", new TimeSpan(0, 3, 5))
     ];
 
+    private static readonly (string Author, string Name, TimeSpan Duration)[] SpecialSongList =
+    [
+        ("Squid Sisters", "Maritime Memory", new TimeSpan(0, 2, 47))
+    ];
+
     private readonly List<Activity> _activityList = [new Activity("with Remora.Discord", ActivityType.Game)];
 
     private readonly DiscordGatewayClient _client;
@@ -54,19 +59,33 @@ public sealed class SongUpdateService : BackgroundService
 
         while (!ct.IsCancellationRequested)
         {
-            var nextSong = SongList[_nextSongIndex];
+            var nextSong = NextSong();
             _activityList[0] = new Activity($"{nextSong.Name} / {nextSong.Author}",
                 ActivityType.Listening);
             _client.SubmitCommand(
                 new UpdatePresence(
                     UserStatus.Online, false, DateTimeOffset.UtcNow, _activityList));
-            _nextSongIndex++;
-            if (_nextSongIndex >= SongList.Length)
-            {
-                _nextSongIndex = 0;
-            }
 
             await Task.Delay(nextSong.Duration, ct);
         }
+    }
+
+    private (string Author, string Name, TimeSpan Duration) NextSong()
+    {
+        var today = DateTime.Today;
+        // Discontinuation of Online Services for Nintendo Wii U
+        if (today.Day is 8 or 9 && today.Month is 4)
+        {
+            return SpecialSongList[0]; // Maritime Memory / Squid Sisters
+        }
+
+        var nextSong = SongList[_nextSongIndex];
+        _nextSongIndex++;
+        if (_nextSongIndex >= SongList.Length)
+        {
+            _nextSongIndex = 0;
+        }
+
+        return nextSong;
     }
 }
