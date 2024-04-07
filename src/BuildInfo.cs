@@ -2,7 +2,11 @@
 
 public static class BuildInfo
 {
-    public const string RepositoryUrl = "https://github.com/TeamOctolings/Octobot";
+    private const string RepositoryAuthor = "TeamOctolings";
+
+    private const string RepositoryName = "Octobot";
+
+    public const string RepositoryUrl = $"https://github.com/{RepositoryAuthor}/{RepositoryName}";
 
     public const string IssuesUrl = $"{RepositoryUrl}/issues";
 
