@@ -10,7 +10,7 @@ public static class BuildInfo
 
     private const string Commit = ThisAssembly.Git.Commit;
 
-    private const string Branch = ThisAssembly.Git.Branch;
+    public const string Branch = ThisAssembly.Git.Branch;
 
     public static bool IsDirty => ThisAssembly.Git.IsDirty;
 
