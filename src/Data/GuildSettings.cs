@@ -12,7 +12,7 @@ public static class GuildSettings
 {
     public static readonly LanguageOption Language = new("Language", "en");
 
-    public static readonly Option<string> WarnPunishment = new("WarnPunishment", "disabled");
+    public static readonly PunishmentOption WarnPunishment = new("WarnPunishment", "disabled");
 
     /// <summary>
     ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a new member joins the guild.

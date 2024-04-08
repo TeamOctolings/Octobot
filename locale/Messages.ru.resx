@@ -798,4 +798,7 @@
   <data name="WarnThresholdExceededDescription" xml:space="preserve">
       <value>Увеличьте порог предупреждения или установите наказание за предупреждение.</value>
   </data>
+  <data name="InvalidWarnPunishment" xml:space="preserve">
+      <value>Установлено неверное наказание за предупреждение.</value>
+  </data>
 </root>

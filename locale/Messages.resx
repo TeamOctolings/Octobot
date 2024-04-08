@@ -798,4 +798,7 @@
   <data name="WarnThresholdExceededDescription" xml:space="preserve">
       <value>Increase the Warn Threshold or set a Warn Punishment.</value>
   </data>
+  <data name="InvalidWarnPunishment" xml:space="preserve">
+      <value>Invalid Warn Punishment is set.</value>
+  </data>
 </root>

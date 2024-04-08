@@ -141,6 +141,28 @@ public class WarnCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
         }
 
+        if (warns.Count + 1 < warnThreshold)
+        {
+            return await WarnUserAsync(executor, target, reason, guild, data, channelId, bot, settings,
+                warns, warnThreshold, warnPunishment, warnDuration, ct);
+        }
+
+        var interactionResult
+            = await _access.CheckInteractionsAsync(guild.ID, bot.ID, target.ID,
+                $"{char.ToUpperInvariant(warnPunishment[0])}{warnPunishment[1..]}", ct);
+        if (!interactionResult.IsSuccess)
+        {
+            return ResultExtensions.FromError(interactionResult);
+        }
+
+        if (interactionResult.Entity is not null)
+        {
+            var errorEmbed = new EmbedBuilder().WithSmallTitle(interactionResult.Entity, bot)
+                .WithColour(ColorsList.Red).Build();
+
+            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
+        }
+
         return await WarnUserAsync(executor, target, reason, guild, data, channelId, bot, settings,
             warns, warnThreshold, warnPunishment, warnDuration, ct);
     }
@@ -181,8 +203,7 @@ public class WarnCommandGroup : CommandGroup
         _utility.LogAction(settings, channelId, executor, title, description,
             target, ColorsList.Yellow, false, ct);
 
-        var embed = new EmbedBuilder().WithSmallTitle(
-                title, target)
+        var embed = new EmbedBuilder().WithSmallTitle(title, target)
             .WithColour(ColorsList.Green).Build();
 
         if (warns.Count >= warnThreshold && warnThreshold is not 0)
