@@ -141,7 +141,7 @@ public class WarnCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
         }
 
-        if (warns.Count + 1 < warnThreshold)
+        if (warns.Count + 1 < warnThreshold || warnThreshold is 0)
         {
             return await WarnUserAsync(executor, target, reason, guild, data, channelId, bot, settings,
                 warns, warnThreshold, warnPunishment, warnDuration, ct);
