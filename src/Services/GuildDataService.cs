@@ -78,7 +78,7 @@ public sealed class GuildDataService : BackgroundService
         var settingsPath = $"{path}/Settings.json";
         var scheduledEventsPath = $"{path}/ScheduledEvents.json";
 
-        MigrateGuildData(guildId, path);
+        MigrateDataDirectory(guildId, path);
 
         Directory.CreateDirectory(path);
 
@@ -104,6 +104,11 @@ public sealed class GuildDataService : BackgroundService
         {
             _logger.LogError(e, "Guild settings load failed: {Path}", settingsPath);
             dataLoadFailed = true;
+        }
+
+        if (jsonSettings is not null)
+        {
+            FixJsonSettings(jsonSettings);
         }
 
         await using var eventsStream = File.OpenRead(scheduledEventsPath);
@@ -155,7 +160,7 @@ public sealed class GuildDataService : BackgroundService
         return finalData;
     }
 
-    private void MigrateGuildData(Snowflake guildId, string newPath)
+    private void MigrateDataDirectory(Snowflake guildId, string newPath)
     {
         var oldPath = $"{guildId}";
 
@@ -166,6 +171,15 @@ public sealed class GuildDataService : BackgroundService
 
             _logger.LogInformation("Moved guild data to separate folder: \"{OldPath}\" -> \"{NewPath}\"", oldPath,
                 newPath);
+        }
+    }
+
+    private static void FixJsonSettings(JsonNode settings)
+    {
+        var language = settings[GuildSettings.Language.Name]?.GetValue<string>();
+        if (language is "mctaylors-ru")
+        {
+            settings[GuildSettings.Language.Name] = "ru";
         }
     }
 

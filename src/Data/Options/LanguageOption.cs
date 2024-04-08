@@ -11,8 +11,7 @@ public sealed class LanguageOption : Option<CultureInfo>
     private static readonly Dictionary<string, CultureInfo> CultureInfoCache = new()
     {
         { "en", new CultureInfo("en-US") },
-        { "ru", new CultureInfo("ru-RU") },
-        { "mctaylors-ru", new CultureInfo("tt-RU") }
+        { "ru", new CultureInfo("ru-RU") }
     };
 
     public LanguageOption(string name, string defaultValue) : base(name, CultureInfoCache[defaultValue]) { }
