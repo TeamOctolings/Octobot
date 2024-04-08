@@ -120,10 +120,13 @@ public class WarnCommandGroup : CommandGroup
         var warnPunishment = GuildSettings.WarnPunishment.Get(settings);
         var warnDuration = GuildSettings.WarnPunishmentDuration.Get(settings);
 
-        if (warnPunishment is "off" or "disable" or "disabled" && warns.Count - 1 >= warnThreshold)
+        if (warnPunishment is "off" or "disable" or "disabled"
+            && warns.Count + 1 >= warnThreshold
+            && warnThreshold is not 0)
         {
             var errorEmbed = new EmbedBuilder()
-                .WithSmallTitle(Messages.WarnPunishmentDisabled, bot)
+                .WithSmallTitle(string.Format(Messages.WarnThresholdExceeded, warnThreshold), bot)
+                .WithDescription(Messages.WarnThresholdExceededDescription)
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
@@ -136,15 +139,6 @@ public class WarnCommandGroup : CommandGroup
                 .WithColour(ColorsList.Red).Build();
 
             return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: CancellationToken);
-        }
-
-        if (warns.Count >= warnThreshold && warnThreshold is not 0)
-        {
-            var errorEmbed = new EmbedBuilder()
-                .WithSmallTitle(string.Format(Messages.WarnThresholdExceeded, warnThreshold), bot)
-                .WithColour(ColorsList.Red).Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(errorEmbed, ct: ct);
         }
 
         return await WarnUserAsync(executor, target, reason, guild, data, channelId, bot, settings,

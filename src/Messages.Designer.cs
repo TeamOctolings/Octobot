@@ -1337,11 +1337,11 @@ namespace Octobot {
             }
         }
 
-        internal static string WarnPunishmentDisabled
+        internal static string WarnThresholdExceededDescription
         {
             get
             {
-                return ResourceManager.GetString("WarnPunishmentDisabled", resourceCulture);
+                return ResourceManager.GetString("WarnThresholdExceededDescription", resourceCulture);
             }
         }
     }
