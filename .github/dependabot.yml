@@ -15,6 +15,10 @@ updates:
     labels:
       - "type: change"
       - "area: build/ci"
+    # For all packages, ignore all patch updates
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-patch" ]
 
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/" # Location of package manifests
@@ -30,3 +34,7 @@ updates:
       remora:
         patterns:
           - "Remora.Discord.*"
+    # For all packages, ignore all patch updates
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-patch" ]
