@@ -21,7 +21,6 @@ public static class ResultExtensions
         return casted;
     }
 
-    [Conditional("DEBUG")]
     private static void LogResultStackTrace(Result result)
     {
         if (Octobot.StaticLogger is null || result.IsSuccess)
