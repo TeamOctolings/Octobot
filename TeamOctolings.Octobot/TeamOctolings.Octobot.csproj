@@ -18,6 +18,7 @@
         <Description>A general-purpose Discord bot for moderation written in C#</Description>
         <ApplicationIcon>../docs/octobot.ico</ApplicationIcon>
         <GitVersion>false</GitVersion>
+        <AssemblyName>Octobot</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
