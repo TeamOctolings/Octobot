@@ -67,6 +67,6 @@ public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.WelcomeMessagesChannel.Get(cfg), embedResult: embed,
-            allowedMentions: Program.NoMentions, ct: ct);
+            allowedMentions: Utility.NoMentions, ct: ct);
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.API.Objects;
 using Remora.Discord.Caching.Extensions;
 using Remora.Discord.Caching.Services;
 using Remora.Discord.Commands.Extensions;
@@ -12,9 +11,7 @@ using Remora.Discord.Commands.Services;
 using Remora.Discord.Extensions.Extensions;
 using Remora.Discord.Gateway;
 using Remora.Discord.Hosting.Extensions;
-using Remora.Rest.Core;
 using Serilog.Extensions.Logging;
-using TeamOctolings.Octobot.Attributes;
 using TeamOctolings.Octobot.Commands.Events;
 using TeamOctolings.Octobot.Services;
 using TeamOctolings.Octobot.Services.Update;
@@ -23,17 +20,11 @@ namespace TeamOctolings.Octobot;
 
 public sealed class Program
 {
-    public static readonly AllowedMentions NoMentions = new(
-        Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
-
-    [StaticCallersOnly]
-    public static ILogger<Program>? StaticLogger { get; private set; }
-
     public static async Task Main(string[] args)
     {
         var host = CreateHostBuilder(args).UseConsoleLifetime().Build();
         var services = host.Services;
-        StaticLogger = services.GetRequiredService<ILogger<Program>>();
+        Utility.StaticLogger = services.GetRequiredService<ILogger<Program>>();
 
         var slashService = services.GetRequiredService<SlashService>();
         // Providing a guild ID to this call will result in command duplicates!

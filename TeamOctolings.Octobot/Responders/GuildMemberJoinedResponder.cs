@@ -77,7 +77,7 @@ public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.WelcomeMessagesChannel.Get(cfg), embedResult: embed,
-            allowedMentions: Program.NoMentions, ct: ct);
+            allowedMentions: Utility.NoMentions, ct: ct);
     }
 
     private async Task<Result> TryReturnRolesAsync(

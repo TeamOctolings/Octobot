@@ -23,18 +23,23 @@ public static class ResultExtensions
 
     private static void LogResultStackTrace(Result result)
     {
-        if (Program.StaticLogger is null || result.IsSuccess)
+        if (result.IsSuccess)
         {
             return;
         }
 
-        Program.StaticLogger.LogError("{ErrorType}: {ErrorMessage}{NewLine}{StackTrace}",
+        if (Utility.StaticLogger is null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        Utility.StaticLogger.LogError("{ErrorType}: {ErrorMessage}{NewLine}{StackTrace}",
             result.Error.GetType().FullName, result.Error.Message, Environment.NewLine, ConstructStackTrace());
 
         var inner = result.Inner;
         while (inner is { IsSuccess: false })
         {
-            Program.StaticLogger.LogError("Caused by: {ResultType}: {ResultMessage}",
+            Utility.StaticLogger.LogError("Caused by: {ResultType}: {ResultMessage}",
                 inner.Error.GetType().FullName, inner.Error.Message);
 
             inner = inner.Inner;

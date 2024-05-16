@@ -104,6 +104,6 @@ public class MessageEditedResponder : IResponder<IMessageUpdate>
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed,
-            allowedMentions: Program.NoMentions, ct: ct);
+            allowedMentions: Utility.NoMentions, ct: ct);
     }
 }

@@ -102,6 +102,6 @@ public class MessageDeletedResponder : IResponder<IMessageDelete>
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed,
-            allowedMentions: Program.NoMentions, ct: ct);
+            allowedMentions: Utility.NoMentions, ct: ct);
     }
 }

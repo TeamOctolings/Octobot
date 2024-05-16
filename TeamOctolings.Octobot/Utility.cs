@@ -1,12 +1,15 @@
 using System.Drawing;
 using System.Text;
 using System.Text.Json.Nodes;
+using Microsoft.Extensions.Logging;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
+using Remora.Discord.API.Objects;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Discord.Extensions.Formatting;
 using Remora.Rest.Core;
 using Remora.Results;
+using TeamOctolings.Octobot.Attributes;
 using TeamOctolings.Octobot.Data;
 using TeamOctolings.Octobot.Extensions;
 
@@ -18,6 +21,9 @@ namespace TeamOctolings.Octobot;
 /// </summary>
 public sealed class Utility
 {
+    public static readonly AllowedMentions NoMentions = new(
+        Array.Empty<MentionType>(), Array.Empty<Snowflake>(), Array.Empty<Snowflake>());
+
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildScheduledEventAPI _eventApi;
     private readonly IDiscordRestGuildAPI _guildApi;
@@ -29,6 +35,9 @@ public sealed class Utility
         _eventApi = eventApi;
         _guildApi = guildApi;
     }
+
+    [StaticCallersOnly]
+    public static ILogger<Program>? StaticLogger { get; set; }
 
     /// <summary>
     ///     Gets the string mentioning the <see cref="GuildSettings.EventNotificationRole" /> and event subscribers related to
