@@ -10,7 +10,7 @@ using Remora.Results;
 using TeamOctolings.Octobot.Data;
 using TeamOctolings.Octobot.Extensions;
 
-namespace TeamOctolings.Octobot.Services;
+namespace TeamOctolings.Octobot;
 
 /// <summary>
 ///     Provides utility methods that cannot be transformed to extension methods because they require usage
