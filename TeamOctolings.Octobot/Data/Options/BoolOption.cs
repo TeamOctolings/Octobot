@@ -3,7 +3,7 @@ using Remora.Results;
 
 namespace TeamOctolings.Octobot.Data.Options;
 
-public sealed class BoolOption : Option<bool>
+public sealed class BoolOption : GuildOption<bool>
 {
     public BoolOption(string name, bool defaultValue) : base(name, defaultValue) { }
 

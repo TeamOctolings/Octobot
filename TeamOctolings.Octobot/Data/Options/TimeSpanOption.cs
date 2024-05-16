@@ -4,7 +4,7 @@ using TeamOctolings.Octobot.Parsers;
 
 namespace TeamOctolings.Octobot.Data.Options;
 
-public sealed class TimeSpanOption : Option<TimeSpan>
+public sealed class TimeSpanOption : GuildOption<TimeSpan>
 {
     public TimeSpanOption(string name, TimeSpan defaultValue) : base(name, defaultValue) { }
 

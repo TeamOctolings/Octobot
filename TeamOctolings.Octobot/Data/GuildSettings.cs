@@ -22,7 +22,7 @@ public static class GuildSettings
     ///     </list>
     /// </remarks>
     /// <seealso cref="GuildMemberJoinedResponder" />
-    public static readonly Option<string> WelcomeMessage = new("WelcomeMessage", "default");
+    public static readonly GuildOption<string> WelcomeMessage = new("WelcomeMessage", "default");
 
     /// <summary>
     ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a member leaves the guild.
@@ -34,7 +34,7 @@ public static class GuildSettings
     ///     </list>
     /// </remarks>
     /// <seealso cref="GuildMemberLeftResponder" />
-    public static readonly Option<string> LeaveMessage = new("LeaveMessage", "default");
+    public static readonly GuildOption<string> LeaveMessage = new("LeaveMessage", "default");
 
     /// <summary>
     ///     Controls whether or not the <see cref="Messages.Ready" /> message should be sent

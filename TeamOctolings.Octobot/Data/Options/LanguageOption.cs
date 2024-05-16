@@ -6,7 +6,7 @@ using Remora.Results;
 namespace TeamOctolings.Octobot.Data.Options;
 
 /// <inheritdoc />
-public sealed class LanguageOption : Option<CultureInfo>
+public sealed class LanguageOption : GuildOption<CultureInfo>
 {
     private static readonly Dictionary<string, CultureInfo> CultureInfoCache = new()
     {

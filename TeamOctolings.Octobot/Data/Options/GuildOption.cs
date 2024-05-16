@@ -5,15 +5,15 @@ using Remora.Results;
 namespace TeamOctolings.Octobot.Data.Options;
 
 /// <summary>
-///     Represents an per-guild option.
+///     Represents a per-guild option.
 /// </summary>
 /// <typeparam name="T">The type of the option.</typeparam>
-public class Option<T> : IOption
+public class GuildOption<T> : IGuildOption
     where T : notnull
 {
     protected readonly T DefaultValue;
 
-    public Option(string name, T defaultValue)
+    public GuildOption(string name, T defaultValue)
     {
         Name = name;
         DefaultValue = defaultValue;

@@ -3,7 +3,7 @@ using Remora.Results;
 
 namespace TeamOctolings.Octobot.Data.Options;
 
-public interface IOption
+public interface IGuildOption
 {
     string Name { get; }
     string Display(JsonNode settings);

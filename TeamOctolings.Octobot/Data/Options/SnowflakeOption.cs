@@ -7,7 +7,7 @@ using TeamOctolings.Octobot.Extensions;
 
 namespace TeamOctolings.Octobot.Data.Options;
 
-public sealed partial class SnowflakeOption : Option<Snowflake>
+public sealed partial class SnowflakeOption : GuildOption<Snowflake>
 {
     public SnowflakeOption(string name) : base(name, 0UL.ToSnowflake()) { }
 

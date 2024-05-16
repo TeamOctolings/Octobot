@@ -29,13 +29,13 @@ namespace TeamOctolings.Octobot.Commands;
 public class SettingsCommandGroup : CommandGroup
 {
     /// <summary>
-    ///     Represents all options as an array of objects implementing <see cref="IOption" />.
+    ///     Represents all options as an array of objects implementing <see cref="IGuildOption" />.
     /// </summary>
     /// <remarks>
     ///     WARNING: If you update this array in any way, you must also update <see cref="AllOptionsEnum" /> and make sure
     ///     that the orders match.
     /// </remarks>
-    private static readonly IOption[] AllOptions =
+    private static readonly IGuildOption[] AllOptions =
     [
         GuildSettings.Language,
         GuildSettings.WelcomeMessage,
@@ -199,7 +199,7 @@ public class SettingsCommandGroup : CommandGroup
     }
 
     private async Task<Result> EditSettingAsync(
-        IOption option, string value, GuildData data, Snowflake channelId, IUser executor, IUser bot,
+        IGuildOption option, string value, GuildData data, Snowflake channelId, IUser executor, IUser bot,
         CancellationToken ct = default)
     {
         var setResult = option.Set(data.Settings, value);
@@ -270,7 +270,7 @@ public class SettingsCommandGroup : CommandGroup
     }
 
     private async Task<Result> ResetSingleSettingAsync(JsonNode cfg, IUser bot,
-        IOption option, CancellationToken ct = default)
+        IGuildOption option, CancellationToken ct = default)
     {
         var resetResult = option.Reset(cfg);
         if (!resetResult.IsSuccess)
