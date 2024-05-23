@@ -113,6 +113,11 @@ public sealed class AccessControlService
         string action, IGuild guild, IReadOnlyList<IRole> roles, MemberData targetData, MemberData botData,
         MemberData interacterData)
     {
+        if (botData.Id == targetData.Id)
+        {
+            return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
+        }
+
         if (targetData.Id == guild.OwnerID)
         {
             return Result<string?>.FromSuccess($"UserCannot{action}Owner".Localized());
