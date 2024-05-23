@@ -20,18 +20,17 @@ public sealed class AccessControlService
         _userApi = userApi;
     }
 
-    private static bool CheckPermission(IEnumerable<IRole> roles, GuildData data, Snowflake memberId,
-        IGuildMember member,
+    private static bool CheckPermission(IEnumerable<IRole> roles, GuildData data, MemberData memberData,
         DiscordPermission permission)
     {
         var moderatorRole = GuildSettings.ModeratorRole.Get(data.Settings);
-        if (!moderatorRole.Empty() && data.GetOrCreateMemberData(memberId).Roles.Contains(moderatorRole.Value))
+        if (!moderatorRole.Empty() && memberData.Roles.Contains(moderatorRole.Value))
         {
             return true;
         }
 
         return roles
-            .Where(r => member.Roles.Contains(r.ID))
+            .Where(r => memberData.Roles.Contains(r.ID.Value))
             .Any(r =>
                 r.Permissions.HasPermission(permission)
             );
@@ -80,38 +79,23 @@ public sealed class AccessControlService
             return Result<string?>.FromError(botResult);
         }
 
-        var botMemberResult = await _guildApi.GetGuildMemberAsync(guildId, bot.ID, ct);
-        if (!botMemberResult.IsDefined(out var botMember))
-        {
-            return Result<string?>.FromError(botMemberResult);
-        }
-
-        var targetMemberResult = await _guildApi.GetGuildMemberAsync(guildId, targetId, ct);
-        if (!targetMemberResult.IsDefined(out var targetMember))
-        {
-            return Result<string?>.FromSuccess(null);
-        }
-
         var rolesResult = await _guildApi.GetGuildRolesAsync(guildId, ct);
         if (!rolesResult.IsDefined(out var roles))
         {
             return Result<string?>.FromError(rolesResult);
         }
 
+        var data = await _data.GetData(guildId, ct);
+        var targetData = data.GetOrCreateMemberData(targetId);
+        var botData = data.GetOrCreateMemberData(bot.ID);
+
         if (interacterId is null)
         {
-            return CheckInteractions(action, guild, roles, targetMember, botMember, botMember);
+            return CheckInteractions(action, guild, roles, targetData, botData, botData);
         }
 
-        var interacterResult = await _guildApi.GetGuildMemberAsync(guildId, interacterId.Value, ct);
-        if (!interacterResult.IsDefined(out var interacter))
-        {
-            return Result<string?>.FromError(interacterResult);
-        }
-
-        var data = await _data.GetData(guildId, ct);
-
-        var hasPermission = CheckPermission(roles, data, interacterId.Value, interacter,
+        var interacterData = data.GetOrCreateMemberData(interacterId.Value);
+        var hasPermission = CheckPermission(roles, data, interacterData,
             action switch
             {
                 "Ban" => DiscordPermission.BanMembers,
@@ -121,31 +105,21 @@ public sealed class AccessControlService
             });
 
         return hasPermission
-            ? CheckInteractions(action, guild, roles, targetMember, botMember, interacter)
+            ? CheckInteractions(action, guild, roles, targetData, botData, interacterData)
             : Result<string?>.FromSuccess($"UserCannot{action}Members".Localized());
     }
 
     private static Result<string?> CheckInteractions(
-        string action, IGuild guild, IReadOnlyList<IRole> roles, IGuildMember targetMember, IGuildMember botMember,
-        IGuildMember interacter)
+        string action, IGuild guild, IReadOnlyList<IRole> roles, MemberData targetData, MemberData botData,
+        MemberData interacterData)
     {
-        if (!targetMember.User.IsDefined(out var targetUser))
-        {
-            return new ArgumentNullError(nameof(targetMember.User));
-        }
-
-        if (botMember.User == targetMember.User)
-        {
-            return Result<string?>.FromSuccess($"UserCannot{action}Bot".Localized());
-        }
-
-        if (targetUser.ID == guild.OwnerID)
+        if (targetData.Id == guild.OwnerID)
         {
             return Result<string?>.FromSuccess($"UserCannot{action}Owner".Localized());
         }
 
-        var targetRoles = roles.Where(r => targetMember.Roles.Contains(r.ID)).ToList();
-        var botRoles = roles.Where(r => botMember.Roles.Contains(r.ID));
+        var targetRoles = roles.Where(r => targetData.Roles.Contains(r.ID.Value)).ToList();
+        var botRoles = roles.Where(r => botData.Roles.Contains(r.ID.Value));
 
         var targetBotRoleDiff = targetRoles.MaxOrDefault(r => r.Position) - botRoles.MaxOrDefault(r => r.Position);
         if (targetBotRoleDiff >= 0)
@@ -153,7 +127,7 @@ public sealed class AccessControlService
             return Result<string?>.FromSuccess($"BotCannot{action}Target".Localized());
         }
 
-        var interacterRoles = roles.Where(r => interacter.Roles.Contains(r.ID));
+        var interacterRoles = roles.Where(r => interacterData.Roles.Contains(r.ID.Value));
         var targetInteracterRoleDiff
             = targetRoles.MaxOrDefault(r => r.Position) - interacterRoles.MaxOrDefault(r => r.Position);
         return targetInteracterRoleDiff < 0
