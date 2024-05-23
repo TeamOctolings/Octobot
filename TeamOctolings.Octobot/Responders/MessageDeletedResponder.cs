@@ -18,7 +18,7 @@ namespace TeamOctolings.Octobot.Responders;
 ///     to a guild's <see cref="GuildSettings.PrivateFeedbackChannel" /> if one is set.
 /// </summary>
 [UsedImplicitly]
-public class MessageDeletedResponder : IResponder<IMessageDelete>
+public sealed class MessageDeletedResponder : IResponder<IMessageDelete>
 {
     private readonly IDiscordRestAuditLogAPI _auditLogApi;
     private readonly IDiscordRestChannelAPI _channelApi;

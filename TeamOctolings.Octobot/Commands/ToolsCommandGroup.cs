@@ -22,7 +22,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles tool commands: /random, /timestamp, /8ball.
 /// </summary>
 [UsedImplicitly]
-public class ToolsCommandGroup : CommandGroup
+public sealed class ToolsCommandGroup : CommandGroup
 {
     private static readonly TimestampStyle[] AllStyles =
     [

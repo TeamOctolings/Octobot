@@ -18,7 +18,7 @@ namespace TeamOctolings.Octobot.Responders;
 /// </summary>
 /// <seealso cref="GuildSettings.WelcomeMessage" />
 [UsedImplicitly]
-public class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
+public sealed class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildAPI _guildApi;

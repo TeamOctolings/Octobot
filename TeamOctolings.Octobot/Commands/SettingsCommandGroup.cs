@@ -26,7 +26,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles the commands to list and modify per-guild settings: /settings and /settings list.
 /// </summary>
 [UsedImplicitly]
-public class SettingsCommandGroup : CommandGroup
+public sealed class SettingsCommandGroup : CommandGroup
 {
     /// <summary>
     ///     Represents all options as an array of objects implementing <see cref="IGuildOption" />.

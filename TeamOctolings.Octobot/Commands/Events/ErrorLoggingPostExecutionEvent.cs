@@ -18,7 +18,7 @@ namespace TeamOctolings.Octobot.Commands.Events;
 ///     Handles error logging for slash command groups.
 /// </summary>
 [UsedImplicitly]
-public class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
+public sealed class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
 {
     private readonly IFeedbackService _feedback;
     private readonly ILogger<ErrorLoggingPostExecutionEvent> _logger;

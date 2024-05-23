@@ -20,7 +20,7 @@ namespace TeamOctolings.Octobot.Responders;
 ///     to a guild's <see cref="GuildSettings.PrivateFeedbackChannel" /> if one is set.
 /// </summary>
 [UsedImplicitly]
-public class MessageEditedResponder : IResponder<IMessageUpdate>
+public sealed class MessageEditedResponder : IResponder<IMessageUpdate>
 {
     private readonly CacheService _cacheService;
     private readonly IDiscordRestChannelAPI _channelApi;

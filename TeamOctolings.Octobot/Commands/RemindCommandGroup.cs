@@ -25,13 +25,13 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles commands to manage reminders: /remind, /listremind, /delremind
 /// </summary>
 [UsedImplicitly]
-public class RemindCommandGroup : CommandGroup
+public sealed class RemindCommandGroup : CommandGroup
 {
     private readonly IInteractionCommandContext _context;
     private readonly IFeedbackService _feedback;
     private readonly GuildDataService _guildData;
-    private readonly IDiscordRestUserAPI _userApi;
     private readonly IDiscordRestInteractionAPI _interactionApi;
+    private readonly IDiscordRestUserAPI _userApi;
 
     public RemindCommandGroup(
         IInteractionCommandContext context, GuildDataService guildData, IFeedbackService feedback,

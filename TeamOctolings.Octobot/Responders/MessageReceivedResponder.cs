@@ -11,7 +11,7 @@ namespace TeamOctolings.Octobot.Responders;
 ///     Handles sending replies to easter egg messages.
 /// </summary>
 [UsedImplicitly]
-public class MessageCreateResponder : IResponder<IMessageCreate>
+public sealed class MessageCreateResponder : IResponder<IMessageCreate>
 {
     private readonly IDiscordRestChannelAPI _channelApi;
 

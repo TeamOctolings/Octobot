@@ -23,7 +23,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles the command to clear messages in a channel: /clear.
 /// </summary>
 [UsedImplicitly]
-public class ClearCommandGroup : CommandGroup
+public sealed class ClearCommandGroup : CommandGroup
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly ICommandContext _context;
