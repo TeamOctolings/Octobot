@@ -23,7 +23,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles info commands: /userinfo, /guildinfo.
 /// </summary>
 [UsedImplicitly]
-public class InfoCommandGroup : CommandGroup
+public sealed class InfoCommandGroup : CommandGroup
 {
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;

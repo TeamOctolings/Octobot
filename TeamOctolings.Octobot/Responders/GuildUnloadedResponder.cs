@@ -12,7 +12,7 @@ namespace TeamOctolings.Octobot.Responders;
 ///     Handles removing guild ID from <see cref="GuildData" /> if the guild becomes unavailable.
 /// </summary>
 [UsedImplicitly]
-public class GuildUnloadedResponder : IResponder<IGuildDelete>
+public sealed class GuildUnloadedResponder : IResponder<IGuildDelete>
 {
     private readonly GuildDataService _guildData;
     private readonly ILogger<GuildUnloadedResponder> _logger;

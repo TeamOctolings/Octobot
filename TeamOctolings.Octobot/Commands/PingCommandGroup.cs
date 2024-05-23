@@ -22,7 +22,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles the command to get the time taken for the gateway to respond to the last heartbeat: /ping
 /// </summary>
 [UsedImplicitly]
-public class PingCommandGroup : CommandGroup
+public sealed class PingCommandGroup : CommandGroup
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly DiscordGatewayClient _client;

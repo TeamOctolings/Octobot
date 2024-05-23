@@ -22,7 +22,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles the command to kick members of a guild: /kick.
 /// </summary>
 [UsedImplicitly]
-public class KickCommandGroup : CommandGroup
+public sealed class KickCommandGroup : CommandGroup
 {
     private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;

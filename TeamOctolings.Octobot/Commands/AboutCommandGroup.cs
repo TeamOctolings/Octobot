@@ -25,7 +25,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles the command to show information about this bot: /about.
 /// </summary>
 [UsedImplicitly]
-public class AboutCommandGroup : CommandGroup
+public sealed class AboutCommandGroup : CommandGroup
 {
     private static readonly (string Username, Snowflake Id)[] Developers =
     [
@@ -36,9 +36,9 @@ public class AboutCommandGroup : CommandGroup
 
     private readonly ICommandContext _context;
     private readonly IFeedbackService _feedback;
+    private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly IDiscordRestUserAPI _userApi;
-    private readonly IDiscordRestGuildAPI _guildApi;
 
     public AboutCommandGroup(
         ICommandContext context, GuildDataService guildData,

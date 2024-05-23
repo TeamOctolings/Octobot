@@ -11,7 +11,7 @@ namespace TeamOctolings.Octobot.Commands.Events;
 ///     Handles error logging for slash commands that couldn't be successfully prepared.
 /// </summary>
 [UsedImplicitly]
-public class LoggingPreparationErrorEvent : IPreparationErrorEvent
+public sealed class LoggingPreparationErrorEvent : IPreparationErrorEvent
 {
     private readonly ILogger<LoggingPreparationErrorEvent> _logger;
 

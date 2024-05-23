@@ -19,7 +19,7 @@ namespace TeamOctolings.Octobot.Responders;
 ///     has <see cref="GuildSettings.ReceiveStartupMessages" /> enabled
 /// </summary>
 [UsedImplicitly]
-public class GuildLoadedResponder : IResponder<IGuildCreate>
+public sealed class GuildLoadedResponder : IResponder<IGuildCreate>
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly GuildDataService _guildData;

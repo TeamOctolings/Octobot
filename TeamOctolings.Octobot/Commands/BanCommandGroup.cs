@@ -26,7 +26,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles commands related to ban management: /ban and /unban.
 /// </summary>
 [UsedImplicitly]
-public class BanCommandGroup : CommandGroup
+public sealed class BanCommandGroup : CommandGroup
 {
     private readonly AccessControlService _access;
     private readonly IDiscordRestChannelAPI _channelApi;

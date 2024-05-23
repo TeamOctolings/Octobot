@@ -26,7 +26,7 @@ namespace TeamOctolings.Octobot.Commands;
 ///     Handles commands related to mute management: /mute and /unmute.
 /// </summary>
 [UsedImplicitly]
-public class MuteCommandGroup : CommandGroup
+public sealed class MuteCommandGroup : CommandGroup
 {
     private readonly AccessControlService _access;
     private readonly ICommandContext _context;

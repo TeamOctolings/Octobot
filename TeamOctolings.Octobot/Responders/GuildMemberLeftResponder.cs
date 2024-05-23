@@ -15,7 +15,7 @@ namespace TeamOctolings.Octobot.Responders;
 /// </summary>
 /// <seealso cref="GuildSettings.LeaveMessage" />
 [UsedImplicitly]
-public class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
+public sealed class GuildMemberLeftResponder : IResponder<IGuildMemberRemove>
 {
     private readonly IDiscordRestChannelAPI _channelApi;
     private readonly IDiscordRestGuildAPI _guildApi;
