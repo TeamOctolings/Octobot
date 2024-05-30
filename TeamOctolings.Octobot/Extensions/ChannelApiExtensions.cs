@@ -12,11 +12,12 @@ public static class ChannelApiExtensions
     public static async Task<Result> CreateMessageWithEmbedResultAsync(this IDiscordRestChannelAPI channelApi,
         Snowflake channelId, Optional<string> message = default, Optional<string> nonce = default,
         Optional<bool> isTextToSpeech = default, Optional<Result<Embed>> embedResult = default,
-        Optional<IAllowedMentions> allowedMentions = default, Optional<IMessageReference> messageRefenence = default,
+        Optional<IAllowedMentions> allowedMentions = default, Optional<IMessageReference> messageReference = default,
         Optional<IReadOnlyList<IMessageComponent>> components = default,
         Optional<IReadOnlyList<Snowflake>> stickerIds = default,
         Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
-        Optional<MessageFlags> flags = default, CancellationToken ct = default)
+        Optional<MessageFlags> flags = default, Optional<bool> enforceNonce = default,
+        Optional<IPollCreateRequest> poll = default, CancellationToken ct = default)
     {
         if (!embedResult.IsDefined() || !embedResult.Value.IsDefined(out var embed))
         {
@@ -24,6 +25,6 @@ public static class ChannelApiExtensions
         }
 
         return (Result)await channelApi.CreateMessageAsync(channelId, message, nonce, isTextToSpeech, new[] { embed },
-            allowedMentions, messageRefenence, components, stickerIds, attachments, flags, ct);
+            allowedMentions, messageReference, components, stickerIds, attachments, flags, enforceNonce, poll, ct);
     }
 }
