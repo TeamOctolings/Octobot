@@ -64,6 +64,7 @@ public sealed class ClearCommandGroup : CommandGroup
     public async Task<Result> ExecuteClear(
         [Description("Number of messages to remove (2-100)")] [MinValue(2)] [MaxValue(100)]
         int amount,
+        [Description("Ignore messages except from the specified author")]
         IUser? author = null)
     {
         if (!_context.TryGetContextIDs(out var guildId, out var channelId, out var executorId))
