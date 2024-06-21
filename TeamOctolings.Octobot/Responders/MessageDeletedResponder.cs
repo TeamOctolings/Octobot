@@ -66,10 +66,10 @@ public sealed class MessageDeletedResponder : IResponder<IMessageDelete>
             return ResultExtensions.FromError(auditLogResult);
         }
 
-        var auditLog = auditLogPage.AuditLogEntries.Single();
-
         var deleterResult = Result<IUser>.FromSuccess(message.Author);
-        if (auditLog.UserID is not null
+
+        var auditLog = auditLogPage.AuditLogEntries.SingleOrDefault();
+        if (auditLog is { UserID: not null }
             && auditLog.Options.Value.ChannelID == gatewayEvent.ChannelID
             && DateTimeOffset.UtcNow.Subtract(auditLog.ID.Timestamp).TotalSeconds <= 2)
         {
