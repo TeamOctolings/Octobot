@@ -94,7 +94,7 @@ public sealed class GuildLoadedResponder : IResponder<IGuildCreate>
             GuildSettings.PrivateFeedbackChannel.Get(cfg), embedResult: embed, ct: ct);
     }
 
-    private async Task<Result> SendDataLoadFailed(IGuild guild, GuildData data, IUser bot, CancellationToken ct)
+    private async Task<Result> SendDataLoadFailed(IGuild guild, GuildData data, IUser bot, CancellationToken ct = default)
     {
         var channelResult = await _utility.GetEmergencyFeedbackChannel(guild, data, ct);
         if (!channelResult.IsDefined(out var channel))

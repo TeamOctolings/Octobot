@@ -288,7 +288,7 @@ public sealed class InfoCommandGroup : CommandGroup
         return await ShowGuildInfoAsync(bot, guild, CancellationToken);
     }
 
-    private Task<Result> ShowGuildInfoAsync(IUser bot, IGuild guild, CancellationToken ct)
+    private Task<Result> ShowGuildInfoAsync(IUser bot, IGuild guild, CancellationToken ct = default)
     {
         var description = new StringBuilder().AppendLine($"## {guild.Name}");
 

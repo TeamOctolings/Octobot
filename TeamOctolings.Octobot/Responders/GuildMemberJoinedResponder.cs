@@ -81,7 +81,7 @@ public sealed class GuildMemberJoinedResponder : IResponder<IGuildMemberAdd>
     }
 
     private async Task<Result> TryReturnRolesAsync(
-        JsonNode cfg, MemberData memberData, Snowflake guildId, Snowflake userId, CancellationToken ct)
+        JsonNode cfg, MemberData memberData, Snowflake guildId, Snowflake userId, CancellationToken ct = default)
     {
         if (!GuildSettings.ReturnRolesOnRejoin.Get(cfg))
         {
