@@ -81,6 +81,7 @@ public sealed class Program
                         // Services
                         .AddSingleton<AccessControlService>()
                         .AddSingleton<GuildDataService>()
+                        .AddSingleton<ReminderService>()
                         .AddSingleton<Utility>()
                         .AddHostedService<GuildDataService>(provider => provider.GetRequiredService<GuildDataService>())
                         .AddHostedService<MemberUpdateService>()

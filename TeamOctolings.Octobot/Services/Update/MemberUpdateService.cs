@@ -31,15 +31,17 @@ public sealed partial class MemberUpdateService : BackgroundService
     private readonly IDiscordRestGuildAPI _guildApi;
     private readonly GuildDataService _guildData;
     private readonly ILogger<MemberUpdateService> _logger;
+    private readonly ReminderService _reminders;
 
     public MemberUpdateService(AccessControlService access, IDiscordRestChannelAPI channelApi,
-        IDiscordRestGuildAPI guildApi, GuildDataService guildData, ILogger<MemberUpdateService> logger)
+        IDiscordRestGuildAPI guildApi, GuildDataService guildData, ILogger<MemberUpdateService> logger, ReminderService reminders)
     {
         _access = access;
         _channelApi = channelApi;
         _guildApi = guildApi;
         _guildData = guildData;
         _logger = logger;
+        _reminders = reminders;
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -113,11 +115,7 @@ public sealed partial class MemberUpdateService : BackgroundService
             return failedResults.AggregateErrors();
         }
 
-        for (var i = data.Reminders.Count - 1; i >= 0; i--)
-        {
-            var reminderTickResult = await TickReminderAsync(data.Reminders[i], user, data, guildId, ct);
-            failedResults.AddIfFailed(reminderTickResult);
-        }
+        await _reminders.TickRemindersAsync(guildId, user, data.Reminders, failedResults, ct);
 
         if (!canInteract)
         {
@@ -224,34 +222,4 @@ public sealed partial class MemberUpdateService : BackgroundService
 
     [GeneratedRegex("[^0-9A-Za-zА-Яа-яЁё]")]
     private static partial Regex IllegalChars();
-
-    private async Task<Result> TickReminderAsync(Reminder reminder, IUser user, MemberData data, Snowflake guildId,
-        CancellationToken ct)
-    {
-        if (DateTimeOffset.UtcNow < reminder.At)
-        {
-            return Result.Success;
-        }
-
-        var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
-            .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
-                $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
-
-        var embed = new EmbedBuilder().WithSmallTitle(
-                string.Format(Messages.Reminder, user.GetTag()), user)
-            .WithDescription(builder.ToString())
-            .WithColour(ColorsList.Magenta)
-            .Build();
-
-        var messageResult = await _channelApi.CreateMessageWithEmbedResultAsync(
-            reminder.ChannelId.ToSnowflake(), Mention.User(user), embedResult: embed, ct: ct);
-        if (!messageResult.IsSuccess)
-        {
-            return ResultExtensions.FromError(messageResult);
-        }
-
-        data.Reminders.Remove(reminder);
-        return Result.Success;
-    }
 }
