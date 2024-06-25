@@ -27,7 +27,7 @@ public sealed class GuildDataService : BackgroundService
         return SaveAsync(ct);
     }
 
-    private Task SaveAsync(CancellationToken ct)
+    private Task SaveAsync(CancellationToken ct = default)
     {
         var tasks = new List<Task>();
         var datas = _datas.Values.ToArray();
