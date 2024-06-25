@@ -170,7 +170,7 @@ public sealed class MuteCommandGroup : CommandGroup
 
     private async Task<Result> SelectMuteMethodAsync(
         IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
-        IUser bot, DateTimeOffset until, CancellationToken ct)
+        IUser bot, DateTimeOffset until, CancellationToken ct = default)
     {
         var muteRole = GuildSettings.MuteRole.Get(data.Settings);
 
@@ -186,7 +186,7 @@ public sealed class MuteCommandGroup : CommandGroup
 
     private async Task<Result> RoleMuteUserAsync(
         IUser executor, IUser target, string reason, Snowflake guildId, GuildData data,
-        DateTimeOffset until, Snowflake muteRole, CancellationToken ct)
+        DateTimeOffset until, Snowflake muteRole, CancellationToken ct = default)
     {
         var assignRoles = new List<Snowflake> { muteRole };
         var memberData = data.GetOrCreateMemberData(target.ID);
@@ -208,7 +208,7 @@ public sealed class MuteCommandGroup : CommandGroup
 
     private async Task<Result> TimeoutUserAsync(
         IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId,
-        IUser bot, DateTimeOffset until, CancellationToken ct)
+        IUser bot, DateTimeOffset until, CancellationToken ct = default)
     {
         if (duration.TotalDays >= 28)
         {

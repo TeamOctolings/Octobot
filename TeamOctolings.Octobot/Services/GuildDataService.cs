@@ -27,7 +27,7 @@ public sealed class GuildDataService : BackgroundService
         return SaveAsync(ct);
     }
 
-    private Task SaveAsync(CancellationToken ct)
+    private Task SaveAsync(CancellationToken ct = default)
     {
         var tasks = new List<Task>();
         var datas = _datas.Values.ToArray();
@@ -44,7 +44,7 @@ public sealed class GuildDataService : BackgroundService
         return Task.WhenAll(tasks);
     }
 
-    private static async Task SerializeObjectSafelyAsync<T>(T obj, string path, CancellationToken ct)
+    private static async Task SerializeObjectSafelyAsync<T>(T obj, string path, CancellationToken ct = default)
     {
         var tempFilePath = path + ".tmp";
         await using (var tempFileStream = File.Create(tempFilePath))

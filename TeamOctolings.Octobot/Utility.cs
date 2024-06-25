@@ -125,7 +125,7 @@ public sealed class Utility
         }
     }
 
-    public async Task<Result<Snowflake>> GetEmergencyFeedbackChannel(IGuild guild, GuildData data, CancellationToken ct)
+    public async Task<Result<Snowflake>> GetEmergencyFeedbackChannel(IGuild guild, GuildData data, CancellationToken ct = default)
     {
         var privateFeedback = GuildSettings.PrivateFeedbackChannel.Get(data.Settings);
         if (!privateFeedback.Empty())

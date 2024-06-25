@@ -46,7 +46,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
         }
     }
 
-    private async Task<Result> TickScheduledEventsAsync(Snowflake guildId, CancellationToken ct)
+    private async Task<Result> TickScheduledEventsAsync(Snowflake guildId, CancellationToken ct = default)
     {
         var failedResults = new List<Result>();
         var data = await _guildData.GetData(guildId, ct);
@@ -133,7 +133,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
     private async Task<Result> TickScheduledEventAsync(
         Snowflake guildId, GuildData data, IGuildScheduledEvent scheduledEvent, ScheduledEventData eventData,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         if (GuildSettings.AutoStartEvents.Get(data.Settings)
             && DateTimeOffset.UtcNow >= scheduledEvent.ScheduledStartTime
@@ -160,7 +160,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     }
 
     private async Task<Result> AutoStartEventAsync(
-        Snowflake guildId, IGuildScheduledEvent scheduledEvent, CancellationToken ct)
+        Snowflake guildId, IGuildScheduledEvent scheduledEvent, CancellationToken ct = default)
     {
         return (Result)await _eventApi.ModifyGuildScheduledEventAsync(
             guildId, scheduledEvent.ID,
@@ -319,7 +319,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     }
 
     private async Task<Result> SendScheduledEventCompletedMessage(ScheduledEventData eventData, GuildData data,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
@@ -351,7 +351,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     }
 
     private async Task<Result> SendScheduledEventCancelledMessage(ScheduledEventData eventData, GuildData data,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {
@@ -405,7 +405,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
     }
 
     private async Task<Result> SendEarlyEventNotificationAsync(
-        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct)
+        IGuildScheduledEvent scheduledEvent, GuildData data, CancellationToken ct = default)
     {
         if (GuildSettings.EventNotificationChannel.Get(data.Settings).Empty())
         {

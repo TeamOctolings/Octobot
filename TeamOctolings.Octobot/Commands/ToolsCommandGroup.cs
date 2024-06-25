@@ -90,7 +90,7 @@ public sealed class ToolsCommandGroup : CommandGroup
     }
 
     private Task<Result> SendRandomNumberAsync(long first, long? secondNullable,
-        IUser executor, CancellationToken ct)
+        IUser executor, CancellationToken ct = default)
     {
         const long secondDefault = 0;
         var second = secondNullable ?? secondDefault;
@@ -187,7 +187,7 @@ public sealed class ToolsCommandGroup : CommandGroup
         return await SendTimestampAsync(offset, executor, CancellationToken);
     }
 
-    private Task<Result> SendTimestampAsync(TimeSpan? offset, IUser executor, CancellationToken ct)
+    private Task<Result> SendTimestampAsync(TimeSpan? offset, IUser executor, CancellationToken ct = default)
     {
         var timestamp = DateTimeOffset.UtcNow.Add(offset ?? TimeSpan.Zero).ToUnixTimeSeconds();
 
@@ -249,7 +249,7 @@ public sealed class ToolsCommandGroup : CommandGroup
         return await AnswerEightBallAsync(bot, CancellationToken);
     }
 
-    private Task<Result> AnswerEightBallAsync(IUser bot, CancellationToken ct)
+    private Task<Result> AnswerEightBallAsync(IUser bot, CancellationToken ct = default)
     {
         var typeNumber = Random.Shared.Next(0, 4);
         var embedColor = typeNumber switch

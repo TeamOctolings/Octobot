@@ -62,7 +62,7 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
     }
 
-    private async Task<Result> TickMemberDatasAsync(Snowflake guildId, CancellationToken ct)
+    private async Task<Result> TickMemberDatasAsync(Snowflake guildId, CancellationToken ct = default)
     {
         var guildData = await _guildData.GetData(guildId, ct);
         var defaultRole = GuildSettings.DefaultRole.Get(guildData.Settings);
@@ -79,7 +79,7 @@ public sealed partial class MemberUpdateService : BackgroundService
 
     private async Task<Result> TickMemberDataAsync(Snowflake guildId, GuildData guildData, Snowflake defaultRole,
         MemberData data,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         var failedResults = new List<Result>();
         var id = data.Id.ToSnowflake();
@@ -144,7 +144,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     }
 
     private async Task<Result> TryAutoUnbanAsync(
-        Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct)
+        Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct = default)
     {
         if (data.BannedUntil is null || DateTimeOffset.UtcNow <= data.BannedUntil)
         {
@@ -169,7 +169,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     }
 
     private async Task<Result> TryAutoUnmuteAsync(
-        Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct)
+        Snowflake guildId, Snowflake id, MemberData data, CancellationToken ct = default)
     {
         if (data.MutedUntil is null || DateTimeOffset.UtcNow <= data.MutedUntil)
         {
@@ -188,7 +188,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     }
 
     private async Task<Result> FilterNicknameAsync(Snowflake guildId, IUser user, IGuildMember member,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         var currentNickname = member.Nickname.IsDefined(out var nickname)
             ? nickname
@@ -226,7 +226,7 @@ public sealed partial class MemberUpdateService : BackgroundService
     private static partial Regex IllegalChars();
 
     private async Task<Result> TickReminderAsync(Reminder reminder, IUser user, MemberData data, Snowflake guildId,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         if (DateTimeOffset.UtcNow < reminder.At)
         {

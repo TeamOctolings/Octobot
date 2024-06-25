@@ -78,7 +78,7 @@ public sealed class RemindCommandGroup : CommandGroup
         return await ListRemindersAsync(data.GetOrCreateMemberData(executorId), guildId, executor, bot, CancellationToken);
     }
 
-    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot, CancellationToken ct)
+    private Task<Result> ListRemindersAsync(MemberData data, Snowflake guildId, IUser executor, IUser bot, CancellationToken ct = default)
     {
         if (data.Reminders.Count == 0)
         {
@@ -353,7 +353,7 @@ public sealed class RemindCommandGroup : CommandGroup
     }
 
     private Task<Result> DeleteReminderAsync(MemberData data, int index, IUser bot,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         if (index >= data.Reminders.Count)
         {
