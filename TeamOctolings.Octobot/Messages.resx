@@ -681,4 +681,10 @@
     <data name="SettingsModeratorRole" xml:space="preserve">
       <value>Moderator role</value>
   </data>
+  <data name="ReminderTextContainedBanned" xml:space="preserve">
+      <value>Reminder text contained banned characters.</value>
+  </data>
+  <data name="ReminderTextOnlyBanned" xml:space="preserve">
+      <value>Reminder text contains only banned characters!</value>
+  </data>
 </root>
