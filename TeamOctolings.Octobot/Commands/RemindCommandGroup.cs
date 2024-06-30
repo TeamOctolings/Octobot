@@ -158,16 +158,6 @@ public sealed class RemindCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        if (text.Contains('`'))
-        {
-            var failedEmbed = new EmbedBuilder()
-                .WithSmallTitle(Messages.RemindBannedText, bot)
-                .WithColour(ColorsList.Red)
-                .Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
-        }
-
         return await AddReminderAsync(timeSpan, text, data, channelId, executor, CancellationToken);
     }
 

@@ -681,7 +681,4 @@
     <data name="SettingsModeratorRole" xml:space="preserve">
       <value>Роль модератора</value>
   </data>
-  <data name="RemindBannedText" xml:space="preserve">
-      <value>Текст имеет запрещенные символы!</value>
-  </data>
 </root>
