@@ -1196,17 +1196,5 @@ namespace TeamOctolings.Octobot {
                 return ResourceManager.GetString("SettingsModeratorRole", resourceCulture);
             }
         }
-        
-        internal static string ReminderTextContainedBanned {
-            get {
-                return ResourceManager.GetString("ReminderTextContainedBanned", resourceCulture);
-            }
-        }
-        
-        internal static string ReminderTextOnlyBanned {
-            get {
-                return ResourceManager.GetString("ReminderTextOnlyBanned", resourceCulture);
-            }
-        }
     }
 }

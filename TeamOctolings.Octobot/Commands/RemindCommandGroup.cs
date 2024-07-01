@@ -158,22 +158,11 @@ public sealed class RemindCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
         }
 
-        var replacedText = text.Replace("`", "");
-        if (replacedText.Equals(string.Empty))
-        {
-            var failedEmbed = new EmbedBuilder()
-                .WithSmallTitle(Messages.ReminderTextOnlyBanned, bot)
-                .WithColour(ColorsList.Red)
-                .Build();
-
-            return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: CancellationToken);
-        }
-
-        return await AddReminderAsync(timeSpan, text, replacedText, data, channelId, executor, CancellationToken);
+        return await AddReminderAsync(timeSpan, text, data, channelId, executor, CancellationToken);
     }
 
-    private async Task<Result> AddReminderAsync(TimeSpan timeSpan, string text, string replacedText,
-        GuildData data, Snowflake channelId, IUser executor, CancellationToken ct = default)
+    private async Task<Result> AddReminderAsync(TimeSpan timeSpan, string text, GuildData data,
+        Snowflake channelId, IUser executor, CancellationToken ct = default)
     {
         var memberData = data.GetOrCreateMemberData(executor.ID);
         var remindAt = DateTimeOffset.UtcNow.Add(timeSpan);
@@ -188,24 +177,17 @@ public sealed class RemindCommandGroup : CommandGroup
             {
                 At = remindAt,
                 ChannelId = channelId.Value,
-                Text = replacedText,
+                Text = text,
                 MessageId = response.ID.Value
             });
 
-        var textEqualsReplaced = text.Equals(replacedText);
-        var builder = new StringBuilder().AppendBulletPointLine(
-            string.Format(Messages.ReminderText, Markdown.InlineCode(replacedText)));
-        if (!textEqualsReplaced)
-        {
-            builder.AppendSubBulletPointLine(Messages.ReminderTextContainedBanned);
-        }
-
-        builder.AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
-
+        var builder = new StringBuilder()
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
+            .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
             .WithDescription(builder.ToString())
-            .WithColour(textEqualsReplaced ? ColorsList.Green : ColorsList.Yellow)
+            .WithColour(ColorsList.Green)
             .WithFooter(string.Format(Messages.ReminderPosition, memberData.Reminders.Count))
             .Build();
 
