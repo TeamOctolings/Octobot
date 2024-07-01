@@ -13,4 +13,16 @@ public static class MarkdownExtensions
     {
         return $"- {text}";
     }
+
+    /// <summary>
+    /// Formats a string to use Markdown Quote formatting.
+    /// </summary>
+    /// <param name="text">The input text to format.</param>
+    /// <returns>
+    /// A markdown-formatted quote string.
+    /// </returns>
+    public static string Quote(string text)
+    {
+        return $"> {text}";
+    }
 }
