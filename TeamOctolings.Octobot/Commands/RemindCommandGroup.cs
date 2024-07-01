@@ -94,7 +94,7 @@ public sealed class RemindCommandGroup : CommandGroup
         {
             var reminder = data.Reminders[i];
             builder.AppendBulletPointLine(string.Format(Messages.ReminderPosition, Markdown.InlineCode((i + 1).ToString())))
-                .AppendSubBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+                .AppendSubBulletPointLine(string.Format(Messages.ReminderText, reminder.Text))
                 .AppendSubBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)))
                 .AppendSubBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage, $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
         }
@@ -182,7 +182,7 @@ public sealed class RemindCommandGroup : CommandGroup
             });
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(text)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, text))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
@@ -279,7 +279,7 @@ public sealed class RemindCommandGroup : CommandGroup
         data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(oldReminder.Text)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, oldReminder.Text))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderEdited, executor.GetTag()), executor)
@@ -309,7 +309,7 @@ public sealed class RemindCommandGroup : CommandGroup
         data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(value)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, value))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(oldReminder.At)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderEdited, executor.GetTag()), executor)
@@ -367,7 +367,7 @@ public sealed class RemindCommandGroup : CommandGroup
         var reminder = data.Reminders[index];
 
         var description = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, Markdown.InlineCode(reminder.Text)))
+            .AppendBulletPointLine(string.Format(Messages.ReminderText, reminder.Text))
             .AppendBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
 
         data.Reminders.RemoveAt(index);
