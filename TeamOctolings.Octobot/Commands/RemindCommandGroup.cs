@@ -182,7 +182,7 @@ public sealed class RemindCommandGroup : CommandGroup
             });
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, text))
+            .AppendLine(MarkdownExtensions.Quote(text))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderCreated, executor.GetTag()), executor)
@@ -279,7 +279,7 @@ public sealed class RemindCommandGroup : CommandGroup
         data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, oldReminder.Text))
+            .AppendLine(MarkdownExtensions.Quote(oldReminder.Text))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(remindAt)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderEdited, executor.GetTag()), executor)
@@ -309,7 +309,7 @@ public sealed class RemindCommandGroup : CommandGroup
         data.Reminders.RemoveAt(index);
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, value))
+            .AppendLine(MarkdownExtensions.Quote(value))
             .AppendBulletPoint(string.Format(Messages.ReminderTime, Markdown.Timestamp(oldReminder.At)));
         var embed = new EmbedBuilder().WithSmallTitle(
                 string.Format(Messages.ReminderEdited, executor.GetTag()), executor)
@@ -367,7 +367,7 @@ public sealed class RemindCommandGroup : CommandGroup
         var reminder = data.Reminders[index];
 
         var description = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.ReminderText, reminder.Text))
+            .AppendLine(MarkdownExtensions.Quote(reminder.Text))
             .AppendBulletPointLine(string.Format(Messages.ReminderTime, Markdown.Timestamp(reminder.At)));
 
         data.Reminders.RemoveAt(index);

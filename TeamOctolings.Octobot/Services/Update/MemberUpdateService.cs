@@ -234,7 +234,7 @@ public sealed partial class MemberUpdateService : BackgroundService
         }
 
         var builder = new StringBuilder()
-            .AppendBulletPointLine(string.Format(Messages.DescriptionReminder, Markdown.InlineCode(reminder.Text)))
+            .AppendLine(MarkdownExtensions.Quote(reminder.Text))
             .AppendBulletPointLine(string.Format(Messages.DescriptionActionJumpToMessage,
                 $"https://discord.com/channels/{guildId.Value}/{reminder.ChannelId}/{reminder.MessageId}"));
 
