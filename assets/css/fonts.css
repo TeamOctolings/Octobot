@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'BlitzBold';
+    font-weight: normal;
+    src: url(/assets/woff2/BlitzBold.woff2);
+}
+
+@font-face {
+    font-family: 'BlitzMain';
+    font-weight: normal;
+    src: url(/assets/woff2/BlitzMain.woff2);
+}
