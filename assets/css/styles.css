@@ -77,10 +77,10 @@ a.alternative {
 }
 
 .content > .card {
-    mask-image: url("/assets/svg/card-header.svg");
+    mask-image: url("../svg/card-header.svg");
     mask-size: 2000px auto;
     mask-position: top;
-    background-image: url("/assets/png/tapes-transparent.png");
+    background-image: url("../png/tapes-transparent.png");
     background-size: contain;
     width: 480px;
     min-height: 520px;
