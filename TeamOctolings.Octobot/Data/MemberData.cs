@@ -5,12 +5,17 @@ namespace TeamOctolings.Octobot.Data;
 /// </summary>
 public sealed class MemberData
 {
-    public MemberData(ulong id, List<Reminder>? reminders = null)
+    public MemberData(ulong id, List<Reminder>? reminders = null, List<Warn>? warns = null)
     {
         Id = id;
         if (reminders is not null)
         {
             Reminders = reminders;
+        }
+
+        if (warns is not null)
+        {
+            Warns = warns;
         }
     }
 
@@ -20,4 +25,5 @@ public sealed class MemberData
     public bool Kicked { get; set; }
     public List<ulong> Roles { get; set; } = [];
     public List<Reminder> Reminders { get; } = [];
+    public List<Warn> Warns { get; } = [];
 }

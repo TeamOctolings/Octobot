@@ -12,6 +12,8 @@ public static class GuildSettings
 {
     public static readonly LanguageOption Language = new("Language", "en");
 
+    public static readonly PunishmentOption WarnPunishment = new("WarnPunishment", "disabled");
+
     /// <summary>
     ///     Controls what message should be sent in <see cref="PublicFeedbackChannel" /> when a new member joins the guild.
     /// </summary>
@@ -58,6 +60,8 @@ public static class GuildSettings
     /// </summary>
     public static readonly BoolOption RenameHoistedUsers = new("RenameHoistedUsers", false);
 
+    public static readonly IntOption WarnsThreshold = new("WarnsThreshold", 0);
+
     /// <summary>
     ///     Controls what channel should all public messages be sent to.
     /// </summary>
@@ -84,4 +88,7 @@ public static class GuildSettings
     /// </summary>
     public static readonly TimeSpanOption EventEarlyNotificationOffset = new(
         "EventEarlyNotificationOffset", TimeSpan.Zero);
+
+    public static readonly TimeSpanOption WarnPunishmentDuration = new(
+        "WarnPunishmentDuration", TimeSpan.Zero);
 }

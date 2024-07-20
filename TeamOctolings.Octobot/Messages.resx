@@ -681,4 +681,124 @@
     <data name="SettingsModeratorRole" xml:space="preserve">
       <value>Moderator role</value>
   </data>
+  <data name="UserWarned" xml:space="preserve">
+      <value>{0} received a warning</value>
+  </data>
+  <data name="UserWarnsRemoved" xml:space="preserve">
+      <value>{0} no longer has warnings</value>
+  </data>
+  <data name="YouHaveBeenWarned" xml:space="preserve">
+      <value>You have been warned</value>
+  </data>
+  <data name="YourWarningsHaveBeenRevoked" xml:space="preserve">
+      <value>Your warnings have been revoked</value>
+  </data>
+  <data name="DescriptionWarns" xml:space="preserve">
+      <value>Warns: {0}</value>
+  </data>
+  <data name="UserHasNoWarnings" xml:space="preserve">
+      <value>This user has no warnings!</value>
+  </data>
+  <data name="ReceivedTooManyWarnings" xml:space="preserve">
+      <value>Received too many warnings</value>
+  </data>
+  <data name="SettingsWarnPunishment" xml:space="preserve">
+      <value>Punishment type for warnings</value>
+  </data>
+  <data name="SettingsWarnThreshold" xml:space="preserve">
+      <value>Warnings threshold</value>
+  </data>
+  <data name="SettingsWarnPunishmentDuration" xml:space="preserve">
+      <value>Punishment duration for warnings</value>
+  </data>
+  <data name="ListExecutorWarnsTitle" xml:space="preserve">
+      <value>Here's your warnings, {0}:</value>
+  </data>
+  <data name="YouHaveNoWarnings" xml:space="preserve">
+      <value>You have no warnings!</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+      <value>Received on {0}</value>
+  </data>
+  <data name="UserWarnRemoved" xml:space="preserve">
+      <value>Warning #{0} has been removed from {1}</value>
+  </data>
+  <data name="YourWarningHasBeenRevoked" xml:space="preserve">
+      <value>Your warning has been revoked</value>
+  </data>
+  <data name="WrongWarningNumberSelected" xml:space="preserve">
+      <value>Wrong warning number selected!</value>
+  </data>
+  <data name="UserCannotWarnBot" xml:space="preserve">
+      <value>You cannot warn me!</value>
+  </data>
+  <data name="UserCannotWarnOwner" xml:space="preserve">
+      <value>You cannot warn the owner of this guild!</value>
+  </data>
+  <data name="UserCannotWarnTarget" xml:space="preserve">
+      <value>You cannot warn this member!</value>
+  </data>
+  <data name="UserCannotWarnThemselves" xml:space="preserve">
+      <value>You cannot warn yourself!</value>
+  </data>
+  <data name="UserCannotUnwarnBot" xml:space="preserve">
+      <value>You cannot unwarn me!</value>
+  </data>
+  <data name="UserCannotUnwarnOwner" xml:space="preserve">
+      <value>You cannot unwarn the owner of this guild!</value>
+  </data>
+  <data name="UserCannotUnwarnTarget" xml:space="preserve">
+      <value>You cannot unwarn this member!</value>
+  </data>
+  <data name="UserCannotUnwarnThemselves" xml:space="preserve">
+      <value>You cannot unwarn yourself!</value>
+  </data>
+  <data name="BotCannotWarnMembers" xml:space="preserve">
+      <value>I cannot warn members from this guild!</value>
+  </data>
+  <data name="BotCannotWarnTarget" xml:space="preserve">
+      <value>I cannot warn this member!</value>
+  </data>
+  <data name="BotCannotUnwarnTarget" xml:space="preserve">
+      <value>I cannot unwarn this member!</value>
+  </data>
+  <data name="UserCannotGetWarnsBot" xml:space="preserve">
+      <value>You cannot get my warns!</value>
+  </data>
+  <data name="UserCannotGetWarnsOwner" xml:space="preserve">
+      <value>You cannot get owner's warns!</value>
+  </data>
+  <data name="UserCannotGetWarnsTarget" xml:space="preserve">
+      <value>You cannot get warns of this member!</value>
+  </data>
+  <data name="UserCannotGetWarnsThemselves" xml:space="preserve">
+      <value>Use this command without options instead.</value>
+  </data>
+  <data name="UserCannotWarnMembers" xml:space="preserve">
+      <value>You cannot warn members in this guild!</value>
+  </data>
+  <data name="UserCannotUnwarnMembers" xml:space="preserve">
+      <value>You cannot unwarn members in this guild!</value>
+  </data>
+  <data name="UserCannotGetWarnsMembers" xml:space="preserve">
+      <value>You cannot get warns of other members in this guild!</value>
+  </data>
+  <data name="ListTargetWarnsTitle" xml:space="preserve">
+      <value>Warnings given to {0}:</value>
+  </data>
+  <data name="DescriptionPunishmentType" xml:space="preserve">
+      <value>Punishment type: {0}</value>
+  </data>
+  <data name="WarnThresholdExceeded" xml:space="preserve">
+      <value>Warn threshold has been exceeded. ({0})</value>
+  </data>
+  <data name="WarnPunishmentDurationNotSet" xml:space="preserve">
+      <value>Warn Punishment Duration is not set for the current punishment type.</value>
+  </data>
+  <data name="WarnThresholdExceededDescription" xml:space="preserve">
+      <value>Increase the Warn Threshold or set a Warn Punishment.</value>
+  </data>
+  <data name="InvalidWarnPunishment" xml:space="preserve">
+      <value>Invalid Warn Punishment is set.</value>
+  </data>
 </root>

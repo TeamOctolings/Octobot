@@ -128,7 +128,7 @@ public sealed class BanCommandGroup : CommandGroup
         return await BanUserAsync(executor, target, reason, timeSpan, guild, data, channelId, bot, CancellationToken);
     }
 
-    private async Task<Result> BanUserAsync(
+    public async Task<Result> BanUserAsync(
         IUser executor, IUser target, string reason, TimeSpan? duration, IGuild guild, GuildData data,
         Snowflake channelId,
         IUser bot, CancellationToken ct = default)

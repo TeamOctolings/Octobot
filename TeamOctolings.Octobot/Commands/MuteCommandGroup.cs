@@ -123,7 +123,7 @@ public sealed class MuteCommandGroup : CommandGroup
             CancellationToken);
     }
 
-    private async Task<Result> MuteUserAsync(
+    public async Task<Result> MuteUserAsync(
         IUser executor, IUser target, string reason, TimeSpan duration, Snowflake guildId, GuildData data,
         Snowflake channelId, IUser bot, CancellationToken ct = default)
     {

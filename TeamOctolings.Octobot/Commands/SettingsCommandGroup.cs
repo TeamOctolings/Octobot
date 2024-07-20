@@ -38,6 +38,7 @@ public sealed class SettingsCommandGroup : CommandGroup
     private static readonly IGuildOption[] AllOptions =
     [
         GuildSettings.Language,
+        GuildSettings.WarnPunishment,
         GuildSettings.WelcomeMessage,
         GuildSettings.LeaveMessage,
         GuildSettings.ReceiveStartupMessages,
@@ -45,6 +46,7 @@ public sealed class SettingsCommandGroup : CommandGroup
         GuildSettings.ReturnRolesOnRejoin,
         GuildSettings.AutoStartEvents,
         GuildSettings.RenameHoistedUsers,
+        GuildSettings.WarnsThreshold,
         GuildSettings.PublicFeedbackChannel,
         GuildSettings.PrivateFeedbackChannel,
         GuildSettings.WelcomeMessagesChannel,
@@ -53,7 +55,8 @@ public sealed class SettingsCommandGroup : CommandGroup
         GuildSettings.MuteRole,
         GuildSettings.ModeratorRole,
         GuildSettings.EventNotificationRole,
-        GuildSettings.EventEarlyNotificationOffset
+        GuildSettings.EventEarlyNotificationOffset,
+        GuildSettings.WarnPunishmentDuration
     ];
 
     private readonly ICommandContext _context;

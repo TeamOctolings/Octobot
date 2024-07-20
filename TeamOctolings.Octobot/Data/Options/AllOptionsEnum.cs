@@ -13,6 +13,7 @@ namespace TeamOctolings.Octobot.Data.Options;
 public enum AllOptionsEnum
 {
     [UsedImplicitly] Language,
+    [UsedImplicitly] WarnPunishment,
     [UsedImplicitly] WelcomeMessage,
     [UsedImplicitly] LeaveMessage,
     [UsedImplicitly] ReceiveStartupMessages,
@@ -20,6 +21,7 @@ public enum AllOptionsEnum
     [UsedImplicitly] ReturnRolesOnRejoin,
     [UsedImplicitly] AutoStartEvents,
     [UsedImplicitly] RenameHoistedUsers,
+    [UsedImplicitly] WarnsThreshold,
     [UsedImplicitly] PublicFeedbackChannel,
     [UsedImplicitly] PrivateFeedbackChannel,
     [UsedImplicitly] WelcomeMessagesChannel,
@@ -28,5 +30,6 @@ public enum AllOptionsEnum
     [UsedImplicitly] MuteRole,
     [UsedImplicitly] ModeratorRole,
     [UsedImplicitly] EventNotificationRole,
-    [UsedImplicitly] EventEarlyNotificationOffset
+    [UsedImplicitly] EventEarlyNotificationOffset,
+    [UsedImplicitly] WarnPunishmentDuration
 }
