@@ -21,9 +21,20 @@ public class GuildOption<T> : IGuildOption
 
     public string Name { get; }
 
+    public virtual string Value(JsonNode settings)
+    {
+        return Get(settings).ToString() ?? throw new InvalidOperationException();
+    }
+
     public virtual string Display(JsonNode settings)
     {
-        return Markdown.InlineCode(Get(settings).ToString() ?? throw new InvalidOperationException());
+        return Markdown.InlineCode(Value(settings));
+    }
+
+    public virtual Result ValueEquals(JsonNode settings, string value, out bool equals)
+    {
+        equals = Value(settings).Equals(value);
+        return Result.Success;
     }
 
     /// <summary>

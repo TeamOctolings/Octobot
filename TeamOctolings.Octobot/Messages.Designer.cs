@@ -1196,5 +1196,11 @@ namespace TeamOctolings.Octobot {
                 return ResourceManager.GetString("SettingsModeratorRole", resourceCulture);
             }
         }
+        
+        internal static string SettingValueEquals {
+            get {
+                return ResourceManager.GetString("SettingValueEquals", resourceCulture);
+            }
+        }
     }
 }

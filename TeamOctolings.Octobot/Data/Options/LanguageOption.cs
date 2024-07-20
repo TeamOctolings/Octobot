@@ -16,9 +16,9 @@ public sealed class LanguageOption : GuildOption<CultureInfo>
 
     public LanguageOption(string name, string defaultValue) : base(name, CultureInfoCache[defaultValue]) { }
 
-    public override string Display(JsonNode settings)
+    public override string Value(JsonNode settings)
     {
-        return Markdown.InlineCode(settings[Name]?.GetValue<string>() ?? "en");
+        return settings[Name]?.GetValue<string>() ?? "en";
     }
 
     /// <inheritdoc />

@@ -681,4 +681,7 @@
     <data name="SettingsModeratorRole" xml:space="preserve">
       <value>Роль модератора</value>
   </data>
+  <data name="SettingValueEquals" xml:space="preserve">
+      <value>Значение настройки такое же, как и вводное значение.</value>
+  </data>
 </root>

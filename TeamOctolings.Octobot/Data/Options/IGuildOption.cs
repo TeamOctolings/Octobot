@@ -6,7 +6,9 @@ namespace TeamOctolings.Octobot.Data.Options;
 public interface IGuildOption
 {
     string Name { get; }
+    string Value(JsonNode settings);
     string Display(JsonNode settings);
+    Result ValueEquals(JsonNode settings, string value, out bool equals);
     Result Set(JsonNode settings, string from);
     Result Reset(JsonNode settings);
 }
