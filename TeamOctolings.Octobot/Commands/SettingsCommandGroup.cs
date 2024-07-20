@@ -202,8 +202,6 @@ public sealed class SettingsCommandGroup : CommandGroup
         IGuildOption option, string value, GuildData data, Snowflake channelId, IUser executor, IUser bot,
         CancellationToken ct = default)
     {
-        Console.WriteLine(option.Value(data.Settings));
-
         var equalsResult = option.ValueEquals(data.Settings, value, out var equals);
         if (!equalsResult.IsSuccess)
         {
