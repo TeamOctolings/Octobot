@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
-using Remora.Discord.Extensions.Formatting;
 using Remora.Results;
 
 namespace TeamOctolings.Octobot.Data.Options;
