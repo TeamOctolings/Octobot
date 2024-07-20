@@ -21,7 +21,7 @@ public class GuildOption<T> : IGuildOption
 
     public string Name { get; }
 
-    public virtual string Value(JsonNode settings)
+    protected virtual string Value(JsonNode settings)
     {
         return Get(settings).ToString() ?? throw new InvalidOperationException();
     }

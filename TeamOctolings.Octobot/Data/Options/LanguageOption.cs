@@ -15,7 +15,7 @@ public sealed class LanguageOption : GuildOption<CultureInfo>
 
     public LanguageOption(string name, string defaultValue) : base(name, CultureInfoCache[defaultValue]) { }
 
-    public override string Value(JsonNode settings)
+    protected override string Value(JsonNode settings)
     {
         return settings[Name]?.GetValue<string>() ?? "en";
     }
