@@ -31,10 +31,9 @@ public class GuildOption<T> : IGuildOption
         return Markdown.InlineCode(Value(settings));
     }
 
-    public virtual Result ValueEquals(JsonNode settings, string value, out bool equals)
+    public virtual Result<bool> ValueEquals(JsonNode settings, string value)
     {
-        equals = Value(settings).Equals(value);
-        return Result.Success;
+        return Value(settings).Equals(value);
     }
 
     /// <summary>

@@ -7,7 +7,7 @@ public interface IGuildOption
 {
     string Name { get; }
     string Display(JsonNode settings);
-    Result ValueEquals(JsonNode settings, string value, out bool equals);
+    Result<bool> ValueEquals(JsonNode settings, string value);
     Result Set(JsonNode settings, string from);
     Result Reset(JsonNode settings);
 }

@@ -12,16 +12,14 @@ public sealed class BoolOption : GuildOption<bool>
         return Get(settings) ? Messages.Yes : Messages.No;
     }
 
-    public override Result ValueEquals(JsonNode settings, string value, out bool equals)
+    public override Result<bool> ValueEquals(JsonNode settings, string value)
     {
         if (!TryParseBool(value, out var boolean))
         {
-            equals = false;
             return new ArgumentInvalidError(nameof(value), Messages.InvalidSettingValue);
         }
 
-        equals = Value(settings).Equals(boolean.ToString());
-        return Result.Success;
+        return Value(settings).Equals(boolean.ToString());
     }
 
     public override Result Set(JsonNode settings, string from)

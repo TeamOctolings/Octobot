@@ -202,7 +202,7 @@ public sealed class SettingsCommandGroup : CommandGroup
         IGuildOption option, string value, GuildData data, Snowflake channelId, IUser executor, IUser bot,
         CancellationToken ct = default)
     {
-        var equalsResult = option.ValueEquals(data.Settings, value, out var equals);
+        var equalsResult = option.ValueEquals(data.Settings, value);
         if (!equalsResult.IsSuccess)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.SettingNotChanged, bot)
@@ -213,7 +213,7 @@ public sealed class SettingsCommandGroup : CommandGroup
             return await _feedback.SendContextualEmbedResultAsync(failedEmbed, ct: ct);
         }
 
-        if (equals)
+        if (equalsResult.Entity)
         {
             var failedEmbed = new EmbedBuilder().WithSmallTitle(Messages.SettingNotChanged, bot)
                 .WithDescription(Messages.SettingValueEquals)
