@@ -681,4 +681,7 @@
     <data name="SettingsModeratorRole" xml:space="preserve">
       <value>Moderator role</value>
   </data>
+  <data name="SettingValueEquals" xml:space="preserve">
+      <value>The setting value is the same as the input value.</value>
+  </data>
 </root>

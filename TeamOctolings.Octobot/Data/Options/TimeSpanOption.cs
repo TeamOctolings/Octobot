@@ -8,6 +8,16 @@ public sealed class TimeSpanOption : GuildOption<TimeSpan>
 {
     public TimeSpanOption(string name, TimeSpan defaultValue) : base(name, defaultValue) { }
 
+    public override Result<bool> ValueEquals(JsonNode settings, string value)
+    {
+        if (!TimeSpanParser.TryParse(value).IsDefined(out var span))
+        {
+            return new ArgumentInvalidError(nameof(value), Messages.InvalidSettingValue);
+        }
+
+        return Value(settings).Equals(span.ToString());
+    }
+
     public override TimeSpan Get(JsonNode settings)
     {
         var property = settings[Name];
