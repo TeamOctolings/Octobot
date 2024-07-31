@@ -23,7 +23,7 @@ public static class ResultExtensions
 
     private static void LogResultStackTrace(Result result)
     {
-        if (result.IsSuccess)
+        if (result.IsSuccess || result.Error is ExceptionError { Exception: OperationCanceledException })
         {
             return;
         }

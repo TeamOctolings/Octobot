@@ -25,7 +25,7 @@ public static class LoggerExtensions
 
         if (result.Error is ExceptionError exe)
         {
-            if (exe.Exception is TaskCanceledException)
+            if (exe.Exception is OperationCanceledException)
             {
                 return;
             }
