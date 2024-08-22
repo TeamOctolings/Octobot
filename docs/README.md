@@ -15,23 +15,16 @@ Veemo! I'm a general-purpose bot for moderation (formerly known as Boyfriend) wr
 * Reminding everyone about that new event you made
 * Renaming those annoying self-hoisting members
 * Log everything from joining the server to deleting messages
-* Listen to music!
+* Listen to Inkantation!
 
 *...a-a-and more!*
 
 ## Building Octobot
 
-1. Install [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-2. Go to the [Discord Developer Portal](https://discord.com/developers), create a new application and get a bot token. Don't forget to also enable all intents!
-3. Clone this repository and open `Octobot` folder.
-```
-git clone https://github.com/TeamOctolings/Octobot
-cd Octobot
-```
-4. Run Octobot using `dotnet` with `BOT_TOKEN` variable.
-```
-dotnet run BOT_TOKEN='ENTER_TOKEN_HERE'
-```
+Check out the Octobot's Wiki for details.
+
+| [Windows](https://github.com/TeamOctolings/Octobot/wiki/Installing-Windows) | [Linux/macOS](https://github.com/TeamOctolings/Octobot/wiki/Installing-Unix) |
+| --- | --- |
 
 ## Contributing
 
