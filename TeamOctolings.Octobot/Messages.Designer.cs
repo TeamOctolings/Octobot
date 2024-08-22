@@ -633,9 +633,9 @@ namespace TeamOctolings.Octobot {
             }
         }
         
-        internal static string ButtonOpenRepository {
+        internal static string ButtonOpenWebsite {
             get {
-                return ResourceManager.GetString("ButtonOpenRepository", resourceCulture);
+                return ResourceManager.GetString("ButtonOpenWebsite", resourceCulture);
             }
         }
         
