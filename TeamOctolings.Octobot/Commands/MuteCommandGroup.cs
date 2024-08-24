@@ -59,7 +59,7 @@ public sealed class MuteCommandGroup : CommandGroup
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the member
-    ///     was muted and vice-versa.
+    ///     was muted and vice versa.
     /// </returns>
     /// <seealso cref="ExecuteUnmute" />
     [Command("mute", "мут")]
@@ -235,7 +235,7 @@ public sealed class MuteCommandGroup : CommandGroup
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the member
-    ///     was unmuted and vice-versa.
+    ///     was unmuted and vice versa.
     /// </returns>
     /// <seealso cref="ExecuteMute" />
     /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />

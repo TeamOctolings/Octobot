@@ -1,9 +1,9 @@
 namespace TeamOctolings.Octobot.Data;
 
-public struct Reminder
+public sealed record Reminder
 {
-    public DateTimeOffset At { get; init; }
-    public string Text { get; init; }
-    public ulong ChannelId { get; init; }
-    public ulong MessageId { get; init; }
+    public required DateTimeOffset At { get; init; }
+    public required string Text { get; init; }
+    public required ulong ChannelId { get; init; }
+    public required ulong MessageId { get; init; }
 }

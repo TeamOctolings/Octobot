@@ -131,7 +131,7 @@ public sealed class AboutCommandGroup : CommandGroup
         return await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
-                new ActionRowComponent(new[] { repositoryButton, wikiButton, issuesButton })
+                new ActionRowComponent([repositoryButton, wikiButton, issuesButton])
             }), ct);
     }
 }

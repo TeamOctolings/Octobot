@@ -229,7 +229,7 @@ public sealed class ScheduledEventUpdateService : BackgroundService
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(
             GuildSettings.EventNotificationChannel.Get(settings), roleMention, embedResult: embed,
-            components: new[] { new ActionRowComponent(new[] { button }) }, ct: ct);
+            components: new[] { new ActionRowComponent([button]) }, ct: ct);
     }
 
     private static Result<string> GetExternalScheduledEventCreatedEmbedDescription(

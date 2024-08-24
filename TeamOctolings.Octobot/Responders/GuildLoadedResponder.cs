@@ -120,6 +120,6 @@ public sealed class GuildLoadedResponder : IResponder<IGuildCreate>
         );
 
         return await _channelApi.CreateMessageWithEmbedResultAsync(channel, embedResult: errorEmbed,
-            components: new[] { new ActionRowComponent(new[] { issuesButton }) }, ct: ct);
+            components: new[] { new ActionRowComponent([issuesButton]) }, ct: ct);
     }
 }
