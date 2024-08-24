@@ -106,9 +106,9 @@ public sealed class AboutCommandGroup : CommandGroup
 
         var repositoryButton = new ButtonComponent(
             ButtonComponentStyle.Link,
-            Messages.ButtonOpenRepository,
+            Messages.ButtonOpenWebsite,
             new PartialEmoji(Name: "\ud83c\udf10"), // 'GLOBE WITH MERIDIANS' (U+1F310)
-            URL: BuildInfo.RepositoryUrl
+            URL: BuildInfo.WebsiteUrl
         );
 
         var wikiButton = new ButtonComponent(
