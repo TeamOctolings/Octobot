@@ -81,7 +81,7 @@ public sealed class ErrorLoggingPostExecutionEvent : IPostExecutionEvent
         return ResultExtensions.FromError(await _feedback.SendContextualEmbedResultAsync(embed,
             new FeedbackMessageOptions(MessageComponents: new[]
             {
-                new ActionRowComponent(new[] { issuesButton })
+                new ActionRowComponent([issuesButton])
             }), ct)
         );
     }

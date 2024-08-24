@@ -62,7 +62,7 @@ public sealed class BanCommandGroup : CommandGroup
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
-    ///     was banned and vice-versa.
+    ///     was banned and vice versa.
     /// </returns>
     /// <seealso cref="ExecuteUnban" />
     [Command("ban", "бан")]
@@ -219,7 +219,7 @@ public sealed class BanCommandGroup : CommandGroup
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the user
-    ///     was unbanned and vice-versa.
+    ///     was unbanned and vice versa.
     /// </returns>
     /// <seealso cref="ExecuteBanAsync" />
     /// <seealso cref="MemberUpdateService.TickMemberDataAsync" />

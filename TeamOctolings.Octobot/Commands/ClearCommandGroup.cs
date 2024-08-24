@@ -51,7 +51,7 @@ public sealed class ClearCommandGroup : CommandGroup
     /// <param name="author">The user whose messages will be cleared.</param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that any messages
-    ///     were cleared and vice-versa.
+    ///     were cleared and vice versa.
     /// </returns>
     [Command("clear", "очистить")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
