@@ -57,7 +57,7 @@ public sealed class KickCommandGroup : CommandGroup
     /// </param>
     /// <returns>
     ///     A feedback sending result which may or may not have succeeded. A successful result does not mean that the member
-    ///     was kicked and vice-versa.
+    ///     was kicked and vice versa.
     /// </returns>
     [Command("kick", "кик")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
