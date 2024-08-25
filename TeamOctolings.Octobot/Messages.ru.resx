@@ -399,8 +399,8 @@
   <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>Разработчики:</value>
   </data>
-  <data name="ButtonOpenRepository" xml:space="preserve">
-    <value>Исходный код Octobot</value>
+  <data name="ButtonOpenWebsite" xml:space="preserve">
+      <value>Открыть веб-сайт</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
       <value>О боте {0}</value>

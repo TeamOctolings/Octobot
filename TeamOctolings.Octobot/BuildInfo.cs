@@ -2,7 +2,9 @@
 
 public static class BuildInfo
 {
-    public const string RepositoryUrl = "https://github.com/TeamOctolings/Octobot";
+    public const string WebsiteUrl = "https://teamoctolings.github.io/Octobot";
+
+    private const string RepositoryUrl = "https://github.com/TeamOctolings/Octobot";
 
     public const string IssuesUrl = $"{RepositoryUrl}/issues";
 

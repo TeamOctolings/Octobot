@@ -399,8 +399,8 @@
   <data name="AboutTitleDevelopers" xml:space="preserve">
     <value>Developers:</value>
   </data>
-  <data name="ButtonOpenRepository" xml:space="preserve">
-    <value>Octobot's source code</value>
+  <data name="ButtonOpenWebsite" xml:space="preserve">
+      <value>Open Website</value>
   </data>
   <data name="AboutBot" xml:space="preserve">
       <value>About {0}</value>
