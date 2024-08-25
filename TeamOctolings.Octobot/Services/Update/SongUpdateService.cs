@@ -29,7 +29,11 @@ public sealed class SongUpdateService : BackgroundService
         ("Callie", "Bomb Rush Blush", new TimeSpan(0, 2, 18)),
         ("Turquoise October", "Octoling Rendezvous", new TimeSpan(0, 1, 57)),
         ("Damp Socks feat. Off the Hook", "Tentacle to the Metal", new TimeSpan(0, 2, 51)),
-        ("Off the Hook", "Fly Octo Fly ~ Ebb & Flow (Octo)", new TimeSpan(0, 3, 5))
+        ("Off the Hook feat. Dedf1sh", "Spectrum Obligato ~ Ebb & Flow (Out of Order)", new TimeSpan(0, 4, 30)),
+        ("Dedf1sh feat. Off the Hook", "#47 onward", new TimeSpan(0, 4, 40)),
+        ("Free Association", "EchΘ Θnslaught", new TimeSpan(0, 2, 52)),
+        ("Off the Hook", "Short Order", new TimeSpan(0, 3, 36)),
+        ("Deep Cut", "Fins in the Air", new TimeSpan(0, 3, 1))
     ];
 
     private static readonly (string Author, string Name, TimeSpan Duration)[] SpecialSongList =
