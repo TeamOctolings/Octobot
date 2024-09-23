@@ -41,7 +41,7 @@ public sealed class SongUpdateService : BackgroundService
         ("Squid Sisters", "Maritime Memory", new TimeSpan(0, 2, 47))
     ];
 
-    private readonly List<Activity> _activityList = [new Activity("with Remora.Discord", ActivityType.Game)];
+    private readonly List<Activity> _activityList = [new("with Remora.Discord", ActivityType.Game)];
 
     private readonly DiscordGatewayClient _client;
     private readonly GuildDataService _guildData;
