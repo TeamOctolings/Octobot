@@ -21,3 +21,4 @@ services:
     network_mode: service:wireguard
     depends_on:
       - wireguard
+    restart: unless-stopped

@@ -6,7 +6,7 @@ COPY . ./
 # Restore as distinct layers
 RUN dotnet restore
 # Load build argument with publish options
-ARG PUBLISH_OPTIONS=-c Release
+ARG PUBLISH_OPTIONS="-c Release"
 # Build and publish a release
 RUN dotnet publish ./TeamOctolings.Octobot.csproj $PUBLISH_OPTIONS -o out
 
