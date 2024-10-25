@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
 
   octobot:
+    container_name: octobot
     build:
       context: .
       args:
@@ -21,4 +22,11 @@ services:
     network_mode: service:wireguard
     depends_on:
       - wireguard
+    volumes:
+      - guild-data:/Octobot/GuildData
+      - logs:/Octobot/Logs
     restart: unless-stopped
+
+volumes:
+  guild-data:
+  logs:
