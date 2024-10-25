@@ -6,9 +6,9 @@ COPY . ./
 # Restore as distinct layers
 RUN dotnet restore
 # Load build argument with publish options
-ARG PUBLISH_OPTIONS
+ARG PUBLISH_OPTIONS=-c Release
 # Build and publish a release
-RUN dotnet publish ./TeamOctolings.Octobot.csproj $OPTIONS -o out
+RUN dotnet publish ./TeamOctolings.Octobot.csproj $PUBLISH_OPTIONS -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/runtime:8.0@sha256:a335dccd3231f7f9e2122691b21c634f96e187d3840c8b7dbad61ee09500e408
