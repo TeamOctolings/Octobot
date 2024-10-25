@@ -1,0 +1,23 @@
+services:
+  wireguard:
+    container_name: wireguard
+    image: jordanpotter/wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: 1
+    volumes:
+      - /etc/wireguard/octobot.conf:/etc/wireguard/wg0.conf
+    restart: unless-stopped
+
+  octobot:
+    build:
+      context: .
+      args:
+        - PUBLISH_OPTIONS
+    environment:
+      - BOT_TOKEN
+    network_mode: service:wireguard
+    depends_on:
+      - wireguard
