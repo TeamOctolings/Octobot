@@ -8,6 +8,29 @@ on:
     branches: [ "master" ]
 
 jobs:
+  upload-container:
+    name: Upload Octobot Docker container
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build container
+        run: docker build -t octobot -f Dockerfile .
+        shell: bash
+
+      - name: Push container
+        run: |
+          echo $CR_PAT | docker login ghcr.io -u TeamOctolings --password-stdin
+          docker push ghcr.io/teamoctolings/octobot:latest
+        shell: bash
+        env:
+          CR_PAT: ${{secrets.GITHUB_TOKEN}}
+
   upload-solution:
     name: Upload Octobot to production
     runs-on: ubuntu-latest
