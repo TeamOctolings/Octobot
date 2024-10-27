@@ -1,0 +1,17 @@
+services:
+  octobot:
+    container_name: octobot
+    build:
+      context: .
+      args:
+        - PUBLISH_OPTIONS
+    environment:
+      - BOT_TOKEN
+    volumes:
+      - guild-data:/Octobot/GuildData
+      - logs:/Octobot/Logs
+    restart: unless-stopped
+
+volumes:
+  guild-data:
+  logs:

@@ -8,22 +8,39 @@ on:
     branches: [ "master" ]
 
 jobs:
-  upload-solution:
-    name: Upload Octobot to production
+  upload-container:
+    name: Upload Octobot Docker container
     runs-on: ubuntu-latest
     permissions:
-      actions: read
-      contents: read
+      packages: write
     environment: production
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Publish solution
-        run: dotnet publish $PUBLISH_FLAGS
+      - name: Build container
+        run: docker build --build-arg PUBLISH_OPTIONS=$PUBLISH_OPTIONS -t $IMAGE_NAME -f Dockerfile .
+        shell: bash
         env:
-          PUBLISH_FLAGS: ${{vars.PUBLISH_FLAGS}}
+          PUBLISH_OPTIONS: ${{vars.PUBLISH_OPTIONS}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
+
+      - name: Push container
+        run: |
+          echo $CR_PAT | docker login ghcr.io -u $REPO_OWNER --password-stdin
+          docker push ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
+        shell: bash
+        env:
+          CR_PAT: ${{secrets.GITHUB_TOKEN}}
+          NAMESPACE: ${{vars.NAMESPACE}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
+          REPO_OWNER: ${{github.repository_owner}}
+
+  upload-solution:
+    name: Upload Octobot to production
+    runs-on: ubuntu-latest
+    environment: production
 
       - name: Setup SSH key
         run: |
@@ -44,15 +61,15 @@ jobs:
           SSH_HOST: ${{secrets.SSH_HOST}}
           STOP_COMMAND: ${{vars.STOP_COMMAND}}
 
-      - name: Upload published solution
+      - name: Update Docker image
         run: |
-          scp -r $UPLOAD_FROM $SSH_USER@$SSH_HOST:$UPLOAD_TO
+          ssh $SSH_USER@$SSH_HOST docker pull ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
         shell: bash
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
-          UPLOAD_FROM: ${{vars.UPLOAD_FROM}}
-          UPLOAD_TO: ${{vars.UPLOAD_TO}}
+          NAMESPACE: ${{vars.NAMESPACE}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
 
       - name: Start new instance
         run: |

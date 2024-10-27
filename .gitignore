@@ -8,3 +8,4 @@ riderModule.iml
 /.vs/
 GuildData/
 Logs/
+compose.yaml
