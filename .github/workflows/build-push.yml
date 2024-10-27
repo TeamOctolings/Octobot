@@ -28,13 +28,14 @@ jobs:
 
       - name: Push container
         run: |
-          echo $CR_PAT | docker login ghcr.io -u TeamOctolings --password-stdin
+          echo $CR_PAT | docker login ghcr.io -u $REPO_OWNER --password-stdin
           docker push ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
         shell: bash
         env:
           CR_PAT: ${{secrets.GITHUB_TOKEN}}
           NAMESPACE: ${{vars.NAMESPACE}}
           IMAGE_NAME: ${{vars.IMAGE_NAME}}
+          REPO_OWNER: ${{github.repository_owner}}
 
   upload-solution:
     name: Upload Octobot to production
