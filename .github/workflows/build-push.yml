@@ -34,9 +34,6 @@ jobs:
   upload-solution:
     name: Upload Octobot to production
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
     environment: production
 
     steps:
@@ -62,7 +59,7 @@ jobs:
           SSH_HOST: ${{secrets.SSH_HOST}}
           STOP_COMMAND: ${{vars.STOP_COMMAND}}
 
-      - name: Update Docker container
+      - name: Update Docker image
         run: |
           ssh $SSH_USER@$SSH_HOST docker pull ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
         shell: bash
