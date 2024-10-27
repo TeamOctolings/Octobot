@@ -67,15 +67,15 @@ jobs:
           SSH_HOST: ${{secrets.SSH_HOST}}
           STOP_COMMAND: ${{vars.STOP_COMMAND}}
 
-      - name: Upload published solution
+      - name: Update Docker container
         run: |
-          scp -r $UPLOAD_FROM $SSH_USER@$SSH_HOST:$UPLOAD_TO
+          ssh $SSH_USER@$SSH_HOST docker pull ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
         shell: bash
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
-          UPLOAD_FROM: ${{vars.UPLOAD_FROM}}
-          UPLOAD_TO: ${{vars.UPLOAD_TO}}
+          NAMESPACE: ${{vars.NAMESPACE}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
 
       - name: Start new instance
         run: |
