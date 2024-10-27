@@ -20,25 +20,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build container
-        run: docker build -t octobot -f Dockerfile .
+        run: docker build --build-arg PUBLISH_OPTIONS=$PUBLISH_OPTIONS -t $IMAGE_NAME -f Dockerfile .
         shell: bash
+        env:
+          PUBLISH_OPTIONS: ${{vars.PUBLISH_OPTIONS}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
 
       - name: Push container
         run: |
           echo $CR_PAT | docker login ghcr.io -u TeamOctolings --password-stdin
-          docker push ghcr.io/teamoctolings/octobot:latest
+          docker push ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
         shell: bash
         env:
           CR_PAT: ${{secrets.GITHUB_TOKEN}}
+          NAMESPACE: ${{vars.NAMESPACE}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
 
   upload-solution:
     name: Upload Octobot to production
     runs-on: ubuntu-latest
     environment: production
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Setup SSH key
         run: |
