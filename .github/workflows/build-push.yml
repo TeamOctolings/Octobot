@@ -42,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    steps:
       - name: Setup SSH key
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
