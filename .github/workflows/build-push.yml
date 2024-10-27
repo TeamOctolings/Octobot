@@ -8,29 +8,43 @@ on:
     branches: [ "master" ]
 
 jobs:
-  upload-solution:
-    name: Upload Octobot to production
+  upload-image:
+    name: Upload Octobot Docker image
     runs-on: ubuntu-latest
     permissions:
-      actions: read
-      contents: read
+      packages: write
     environment: production
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish solution
-        run: dotnet publish $PUBLISH_FLAGS
-        env:
-          PUBLISH_FLAGS: ${{vars.PUBLISH_FLAGS}}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/${{vars.NAMESPACE}}/${{vars.IMAGE_NAME}}:latest
+          build-args: |
+            BUILDKIT_CONTEXT_KEEP_GIT_DIR=1
+            PUBLISH_OPTIONS=${{vars.PUBLISH_OPTIONS}}
 
+  update-production:
+    name: Update Octobot on production
+    runs-on: ubuntu-latest
+    environment: production
+    needs: upload-image
+
+    steps:
       - name: Setup SSH key
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           ssh-keyscan -H $SSH_HOST > ~/.ssh/known_hosts
-        shell: bash
+        shell: bash {0}
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_HOST: ${{secrets.SSH_HOST}}
@@ -38,26 +52,26 @@ jobs:
       - name: Stop currently running instance
         run: |
           ssh $SSH_USER@$SSH_HOST $STOP_COMMAND
-        shell: bash
+        shell: bash {0}
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
           STOP_COMMAND: ${{vars.STOP_COMMAND}}
 
-      - name: Upload published solution
+      - name: Update Docker image
         run: |
-          scp -r $UPLOAD_FROM $SSH_USER@$SSH_HOST:$UPLOAD_TO
-        shell: bash
+          ssh $SSH_USER@$SSH_HOST docker pull ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
+        shell: bash {0}
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
-          UPLOAD_FROM: ${{vars.UPLOAD_FROM}}
-          UPLOAD_TO: ${{vars.UPLOAD_TO}}
+          NAMESPACE: ${{vars.NAMESPACE}}
+          IMAGE_NAME: ${{vars.IMAGE_NAME}}
 
       - name: Start new instance
         run: |
           ssh $SSH_USER@$SSH_HOST $START_COMMAND
-        shell: bash
+        shell: bash {0}
         env:
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
