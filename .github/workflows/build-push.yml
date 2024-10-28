@@ -39,30 +39,38 @@ jobs:
     needs: upload-image
 
     steps:
-      - name: Setup SSH key
+      - name: Copy SSH key
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          ssh-keyscan -H $SSH_HOST > ~/.ssh/known_hosts
-        shell: bash {0}
+        shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          
+      - name: Generate SSH known hosts file
+        run: |
+          ssh-keyscan -H $SSH_HOST -p $SSH_PORT > ~/.ssh/known_hosts
+        shell: bash
+        env:
           SSH_HOST: ${{secrets.SSH_HOST}}
-
+          SSH_PORT: ${{secrets.SSH_PORT}}
+          
       - name: Stop currently running instance
         run: |
-          ssh $SSH_USER@$SSH_HOST $STOP_COMMAND
-        shell: bash {0}
+          ssh -p $SSH_PORT $SSH_USER@$SSH_HOST $STOP_COMMAND
+        shell: bash
         env:
+          SSH_PORT: ${{secrets.SSH_PORT}}
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
           STOP_COMMAND: ${{vars.STOP_COMMAND}}
 
       - name: Update Docker image
         run: |
-          ssh $SSH_USER@$SSH_HOST docker pull ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
-        shell: bash {0}
+          ssh -p $SSH_PORT $SSH_USER@$SSH_HOST docker pull ghcr.io/$NAMESPACE/$IMAGE_NAME:latest
+        shell: bash
         env:
+          SSH_PORT: ${{secrets.SSH_PORT}}
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
           NAMESPACE: ${{vars.NAMESPACE}}
@@ -70,9 +78,10 @@ jobs:
 
       - name: Start new instance
         run: |
-          ssh $SSH_USER@$SSH_HOST $START_COMMAND
-        shell: bash {0}
+          ssh -p $SSH_PORT $SSH_USER@$SSH_HOST $START_COMMAND
+        shell: bash
         env:
+          SSH_PORT: ${{secrets.SSH_PORT}}
           SSH_USER: ${{secrets.SSH_USER}}
           SSH_HOST: ${{secrets.SSH_HOST}}
           START_COMMAND: ${{vars.START_COMMAND}}
