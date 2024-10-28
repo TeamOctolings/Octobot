@@ -5,7 +5,7 @@ concurrency:
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "deploy-test" ]
 
 jobs:
   upload-image:
@@ -49,7 +49,7 @@ jobs:
           
       - name: Generate SSH known hosts file
         run: |
-          ssh-keyscan -H $SSH_HOST -p $SSH_PORT > ~/.ssh/known_hosts
+          ssh-keyscan -H -p $SSH_PORT $SSH_HOST > ~/.ssh/known_hosts
         shell: bash
         env:
           SSH_HOST: ${{secrets.SSH_HOST}}
