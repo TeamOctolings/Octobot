@@ -36,5 +36,6 @@ updates:
           - "Remora.Discord.*"
     # For all packages, ignore all patch updates
     ignore:
+      - dependency-name: "GitInfo"
       - dependency-name: "*"
         update-types: [ "version-update:semver-patch" ]
