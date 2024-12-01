@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:35792ea4ad1db051981f62b313f1be3b46b1f45cadbaa3c288cd0d3056eefb83 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:9.0@sha256:7d24e90a392e88eb56093e4eb325ff883ad609382a55d42f17fd557b997022ca AS build-env
 WORKDIR /Octobot
 
 # Copy everything
@@ -9,7 +9,7 @@ ARG PUBLISH_OPTIONS="-c Release"
 RUN dotnet publish ./TeamOctolings.Octobot $PUBLISH_OPTIONS -o out
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/runtime:8.0@sha256:a335dccd3231f7f9e2122691b21c634f96e187d3840c8b7dbad61ee09500e408
+FROM mcr.microsoft.com/dotnet/runtime:9.0@sha256:1e5eb0ed94ca96a34a914456db80e48bd1bb7bc3e3c8eda5e2c3d89c153c3081
 WORKDIR /Octobot
 COPY --from=build-env /Octobot/out .
 ENTRYPOINT ["./TeamOctolings.Octobot"]
