@@ -75,78 +75,48 @@ public sealed class GuildDataService : BackgroundService
     {
         var path = $"GuildData/{guildId}";
         var memberDataPath = $"{path}/MemberData";
+
         var settingsPath = $"{path}/Settings.json";
+
         var scheduledEventsPath = $"{path}/ScheduledEvents.json";
 
         MigrateDataDirectory(guildId, path);
 
         Directory.CreateDirectory(path);
 
-        if (!File.Exists(settingsPath))
-        {
-            await File.WriteAllTextAsync(settingsPath, "{}", ct);
-        }
-
-        if (!File.Exists(scheduledEventsPath))
-        {
-            await File.WriteAllTextAsync(scheduledEventsPath, "{}", ct);
-        }
-
         var dataLoadFailed = false;
 
-        await using var settingsStream = File.OpenRead(settingsPath);
-        JsonNode? jsonSettings = null;
-        try
-        {
-            jsonSettings = await JsonNode.ParseAsync(settingsStream, cancellationToken: ct);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Guild settings load failed: {Path}", settingsPath);
-            dataLoadFailed = true;
-        }
-
+        var jsonSettings = await LoadGuildSettings(settingsPath, ct);
         if (jsonSettings is not null)
         {
             FixJsonSettings(jsonSettings);
         }
-
-        await using var eventsStream = File.OpenRead(scheduledEventsPath);
-        Dictionary<ulong, ScheduledEventData>? events = null;
-        try
+        else
         {
-            events = await JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
-                eventsStream, cancellationToken: ct);
+            dataLoadFailed = true;
         }
-        catch (Exception e)
+
+        var events = await LoadScheduledEvents(scheduledEventsPath, ct);
+        if (events is null)
         {
-            _logger.LogError(e, "Guild scheduled events load failed: {Path}", scheduledEventsPath);
             dataLoadFailed = true;
         }
 
         var memberData = new Dictionary<ulong, MemberData>();
-        foreach (var dataFileInfo in Directory.CreateDirectory(memberDataPath).GetFiles())
+        foreach (var dataFileInfo in Directory.CreateDirectory(memberDataPath).GetFiles()
+                     .Where(dataFileInfo =>
+                         !memberData.ContainsKey(
+                             ulong.Parse(dataFileInfo.Name.Replace(".json", "").Replace(".tmp", "")))))
         {
-            await using var dataStream = dataFileInfo.OpenRead();
-            MemberData? data;
-            try
+            var data = await LoadMemberData(dataFileInfo, memberDataPath, true, ct);
+
+            if (data == null)
             {
-                data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Member data load failed: {MemberDataPath}/{FileName}", memberDataPath,
-                    dataFileInfo.Name);
                 dataLoadFailed = true;
                 continue;
             }
 
-            if (data is null)
-            {
-                continue;
-            }
-
-            memberData.Add(data.Id, data);
+            memberData.TryAdd(data.Id, data);
         }
 
         var finalData = new GuildData(
@@ -158,6 +128,133 @@ public sealed class GuildDataService : BackgroundService
         _datas.TryAdd(guildId, finalData);
 
         return finalData;
+    }
+
+    private async Task<MemberData?> LoadMemberData(FileInfo dataFileInfo, string memberDataPath, bool loadTmp,
+        CancellationToken ct = default)
+    {
+        MemberData? data;
+        var temporaryPath = $"{dataFileInfo.FullName}.tmp";
+        var usedInfo = loadTmp && File.Exists(temporaryPath) ? new FileInfo(temporaryPath) : dataFileInfo;
+
+        var isTmp = usedInfo.Extension is ".tmp";
+        try
+        {
+            await using var dataStream = usedInfo.OpenRead();
+            data = await JsonSerializer.DeserializeAsync<MemberData>(dataStream, cancellationToken: ct);
+            if (isTmp)
+            {
+                usedInfo.CopyTo(usedInfo.FullName.Replace(".tmp", ""), true);
+                usedInfo.Delete();
+            }
+        }
+        catch (Exception e)
+        {
+            if (isTmp)
+            {
+                _logger.LogWarning(e,
+                    "Unable to load temporary member data file, deleting: {MemberDataPath}/{FileName}", memberDataPath,
+                    usedInfo.Name);
+                usedInfo.Delete();
+                return await LoadMemberData(dataFileInfo, memberDataPath, false, ct);
+            }
+
+            _logger.LogError(e, "Member data load failed: {MemberDataPath}/{FileName}", memberDataPath,
+                usedInfo.Name);
+            return null;
+        }
+
+        return data;
+    }
+
+    private async Task<Dictionary<ulong, ScheduledEventData>?> LoadScheduledEvents(string scheduledEventsPath,
+        CancellationToken ct = default)
+    {
+        var tempScheduledEventsPath = $"{scheduledEventsPath}.tmp";
+
+        if (!File.Exists(scheduledEventsPath) && !File.Exists(tempScheduledEventsPath))
+        {
+            return new Dictionary<ulong, ScheduledEventData>();
+        }
+
+        if (File.Exists(tempScheduledEventsPath))
+        {
+            _logger.LogWarning("Found temporary scheduled events file, will try to parse and copy to main: ${Path}",
+                tempScheduledEventsPath);
+            try
+            {
+                await using var tempEventsStream = File.OpenRead(tempScheduledEventsPath);
+                var events = await JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
+                    tempEventsStream, cancellationToken: ct);
+                File.Copy(tempScheduledEventsPath, scheduledEventsPath, true);
+                File.Delete(tempScheduledEventsPath);
+
+                _logger.LogInformation("Successfully loaded temporary scheduled events file: ${Path}",
+                    tempScheduledEventsPath);
+                return events;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unable to load temporary scheduled events file: {Path}, deleting",
+                    tempScheduledEventsPath);
+                File.Delete(tempScheduledEventsPath);
+            }
+        }
+
+        try
+        {
+            await using var eventsStream = File.OpenRead(scheduledEventsPath);
+            return await JsonSerializer.DeserializeAsync<Dictionary<ulong, ScheduledEventData>>(
+                eventsStream, cancellationToken: ct);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Guild scheduled events load failed: {Path}", scheduledEventsPath);
+            return null;
+        }
+    }
+
+    private async Task<JsonNode?> LoadGuildSettings(string settingsPath, CancellationToken ct = default)
+    {
+        var tempSettingsPath = $"{settingsPath}.tmp";
+
+        if (!File.Exists(settingsPath) && !File.Exists(tempSettingsPath))
+        {
+            return new JsonObject();
+        }
+
+        if (File.Exists(tempSettingsPath))
+        {
+            _logger.LogWarning("Found temporary settings file, will try to parse and copy to main: ${Path}",
+                tempSettingsPath);
+            try
+            {
+                await using var tempSettingsStream = File.OpenRead(tempSettingsPath);
+                var jsonSettings = await JsonNode.ParseAsync(tempSettingsStream, cancellationToken: ct);
+
+                File.Copy(tempSettingsPath, settingsPath, true);
+                File.Delete(tempSettingsPath);
+
+                _logger.LogInformation("Successfully loaded temporary settings file: ${Path}", tempSettingsPath);
+                return jsonSettings;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unable to load temporary settings file: {Path}, deleting", tempSettingsPath);
+                File.Delete(tempSettingsPath);
+            }
+        }
+
+        try
+        {
+            await using var settingsStream = File.OpenRead(settingsPath);
+            return await JsonNode.ParseAsync(settingsStream, cancellationToken: ct);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Guild settings load failed: {Path}", settingsPath);
+            return null;
+        }
     }
 
     private void MigrateDataDirectory(Snowflake guildId, string newPath)
