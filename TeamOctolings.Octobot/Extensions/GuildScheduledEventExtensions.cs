@@ -10,7 +10,7 @@ public static class GuildScheduledEventExtensions
         out string? location)
     {
         endTime = default;
-        location = default;
+        location = null;
         if (!scheduledEvent.EntityMetadata.AsOptional().IsDefined(out var metadata))
         {
             return new ArgumentNullError(nameof(scheduledEvent.EntityMetadata));
