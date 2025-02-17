@@ -36,40 +36,29 @@ public sealed class MessageEditedResponder : IResponder<IMessageUpdate>
 
     public async Task<Result> RespondAsync(IMessageUpdate gatewayEvent, CancellationToken ct = default)
     {
-        if (!gatewayEvent.ID.IsDefined(out var messageId))
-        {
-            return new ArgumentNullError(nameof(gatewayEvent.ID));
-        }
-
-        if (!gatewayEvent.ChannelID.IsDefined(out var channelId))
-        {
-            return new ArgumentNullError(nameof(gatewayEvent.ChannelID));
-        }
-
         if (!gatewayEvent.GuildID.IsDefined(out var guildId)
-            || !gatewayEvent.Author.IsDefined(out var author)
-            || !gatewayEvent.EditedTimestamp.IsDefined(out var timestamp)
-            || !gatewayEvent.Content.IsDefined(out var newContent))
+            || !gatewayEvent.EditedTimestamp.HasValue
+            || gatewayEvent.Author.IsBot.OrDefault(false))
         {
             return Result.Success;
         }
 
         var cfg = await _guildData.GetSettings(guildId, ct);
-        if (author.IsBot.OrDefault(false) || GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
+        if (GuildSettings.PrivateFeedbackChannel.Get(cfg).Empty())
         {
             return Result.Success;
         }
 
-        var cacheKey = new KeyHelpers.MessageCacheKey(channelId, messageId);
+        var cacheKey = new KeyHelpers.MessageCacheKey(gatewayEvent.ChannelID, gatewayEvent.ID);
         var messageResult = await _cacheService.TryGetValueAsync<IMessage>(
             cacheKey, ct);
         if (!messageResult.IsDefined(out var message))
         {
-            _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
+            _ = _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
             return Result.Success;
         }
 
-        if (message.Content == newContent)
+        if (message.Content == gatewayEvent.Content)
         {
             return Result.Success;
         }
@@ -83,22 +72,22 @@ public sealed class MessageEditedResponder : IResponder<IMessageUpdate>
         // We don't need to await this since the result is not needed
         // NOTE: Because this is not awaited, there may be a race condition depending on how fast clients are able to edit their messages
         // NOTE: Awaiting this might not even solve this if the same responder is called asynchronously
-        _ = _channelApi.GetChannelMessageAsync(channelId, messageId, ct);
+        _ = _channelApi.GetChannelMessageAsync(gatewayEvent.ChannelID, gatewayEvent.ID, ct);
 
-        var diff = InlineDiffBuilder.Diff(message.Content, newContent);
+        var diff = InlineDiffBuilder.Diff(message.Content, gatewayEvent.Content);
 
         Messages.Culture = GuildSettings.Language.Get(cfg);
 
         var builder = new StringBuilder()
             .AppendLine(diff.AsMarkdown())
             .AppendLine(string.Format(Messages.DescriptionActionJumpToMessage,
-                $"https://discord.com/channels/{guildId}/{channelId}/{messageId}")
+                $"https://discord.com/channels/{guildId}/{gatewayEvent.ChannelID}/{gatewayEvent.ID}")
             );
 
         var embed = new EmbedBuilder()
             .WithSmallTitle(string.Format(Messages.CachedMessageEdited, message.Author.GetTag()), message.Author)
             .WithDescription(builder.ToString())
-            .WithTimestamp(timestamp.Value)
+            .WithTimestamp(gatewayEvent.EditedTimestamp.Value)
             .WithColour(ColorsList.Yellow)
             .Build();
 
